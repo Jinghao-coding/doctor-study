@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文工作 · doctor-study</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a class="home" href="../index.html">← 首页</a>
+  <span class="sep">·</span>
+  <a href="papers.html">论文</a>
+  <a href="gpu-inference.html">GPU &amp; 推理</a>
+  <a href="kubernetes.html">Kubernetes</a>
+  <a href="scheduling.html">调度理论</a>
+  <a href="cluster-management.html">集群管理</a>
+  <a href="performance-prediction.html">性能预测</a>
+  <a href="system-design.html">系统设计</a>
+</nav>
+<div class="wrap">
+<h1>论文工作</h1>
+<p class="sub">Maestro · DeepShare · 互补关系与面试叙事</p>
+
+<h2><span class="badge badge-m">ICDCS 2026</span> Maestro — LLM 多智能体系统的工作负载感知调度</h2>
+
+<div class="card card-m">
+<h3>问题背景</h3>
+<p>传统 LLM 推理面对的是独立的一问一答请求。但现在越来越多的应用把多个 agent 组成协作工作流：比如旅行助手里有"需求分析 agent"、"机票搜索 agent"、"酒店推荐 agent"、"行程整合 agent"，它们之间有 DAG 依赖，一个用户请求触发十几次甚至几十次 LLM 推理调用（称为 stage）。</p>
+<p>这带来了三个新挑战：</p>
+<ol>
+<li><strong>输出长度剧烈波动</strong>：工具调用输出几十 token（JSON），用户交互输出几百上千 token。KV 缓存需求差异巨大，固定分配要么浪费要么 OOM。</li>
+<li><strong>多模型共存的内存压力</strong>：不同 agent 使用不同模型，一块 GPU 需要同时驻留多个模型权重加上所有请求的 KV 缓存。</li>
+<li><strong>混合延迟要求</strong>：交互式 stage 要低延迟，批处理 stage 要高吞吐。不区分优先级就会造成队头阻塞。</li>
+</ol>
+</div>
+
+<div class="card card-m">
+<h3>系统设计</h3>
+<p>核心思路：<span class="hl">不把 LLM 请求当黑盒，利用 agent 上下文做前瞻性预测，指导内存管理和调度。</span></p>
+
+<div class="comp">
+<div class="comp-t">组件一：两阶段输出长度预测</div>
+<p><strong>第一阶段——工具调用分类器</strong>：LightGBM 判断当前 stage 是否会触发工具调用，AUC = 0.9625。特征包括结构化特征（agent 角色、工作流位置、调用索引、工具可用性）和语义特征（MiniLM 编码 prompt，PCA 从 384 维降到 32 维）。</p>
+<p><strong>第二阶段——输出长度回归器</strong>：拿到分类器的预测概率 p̂_tool 作为额外特征，预测输出 token 数。MAE = 165 tokens，R² = 0.78。对 token 数做 log 变换处理长尾分布，用 isotonic regression 校准分类器概率。</p>
+<p><strong>为什么分两阶段？</strong>输出长度呈双峰分布——工具调用短、用户交互长。单一回归器在双峰上表现差。分类器先识别模式，回归器在给定模式下预测。消融实验：去掉分类器 MAE 从 134 升到 142。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">组件二：节点级弹性内存管理</div>
+<p><strong>模型状态管理</strong>：五种状态按层级流转——</p>
+<ul>
+<li><strong>Running</strong>：权重在 GPU，可立即执行推理</li>
+<li><strong>Sleeping</strong>：权重移到 CPU，但 GPU 上保留 CUDA Graph 和 JIT 内核缓存（约 0.5GB），重新激活省 5-8 秒</li>
+<li><strong>CPU-resident</strong>：权重完全在 CPU 内存</li>
+<li><strong>Disk-resident</strong>：权重在本地 NVMe</li>
+<li><strong>Remote</strong>：权重在远程存储</li>
+</ul>
+<p>层级化 LRU 逐级淘汰，最热的模型留 GPU，最冷的逐步退到远端。</p>
+<p><strong>KV 缓存管理</strong>：CUDA VMM 虚拟内存超配——40GB 物理 GPU 上分配 122GB 虚拟地址池（3 倍超配）。关键在于虚拟地址和物理页分离，按需映射物理页。三层防护：(1) 虚拟 vs 物理分离，不会同时达峰；(2) 准入控制——每个 stage 检查剩余物理页是否够；(3) 映射失败时拒绝 stage 而非崩溃。五级降级策略保证极端情况也不会 OOM。</p>
+<p><strong>内存核算</strong>：M_kv + M_res ≤ M_total，安全裕度 ρ ∈ [0.1, 0.3]，偏向高估以避免低估导致 OOM。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">组件三：工作流感知 SRTF 调度</div>
+<p>基于预测的剩余执行时间排队（SRTF），优先执行快要完成的工作流。交互式和批处理 stage 分开排队。Stage 边界抢占——只在两次 LLM 调用之间切换，不打断正在解码的请求。</p>
+<p><strong>节点选择</strong>：适应度评分 S(N,T) = A(N,T) − λ·T_ready − μ·C_deg，综合模型就绪延迟和降级代价。</p>
+</div>
+
+<h3>核心结果</h3>
+<div class="grid">
+<div class="gi"><div class="gv">+23.6pp</div><div class="gl">SLO 达成率 (vs EDF)</div></div>
+<div class="gi"><div class="gv">−67.2%</div><div class="gl">KV 预留内存</div></div>
+<div class="gi"><div class="gv">−84.8%</div><div class="gl">交互排队延迟</div></div>
+<div class="gi"><div class="gv">64×A100</div><div class="gl">14.4 万 stage</div></div>
+</div>
+</div>
+
+<div class="card card-m">
+<h3>Maestro 高频问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 低估输出长度和高估，哪个危害更大？</div>
+<div class="qa-a"><p><strong>低估远比高估危害大</strong>：(1) KV 缓存方面，低估导致预分配不够，解码到一半 OOM，请求被杀；高估只是暂时多占。(2) SRTF 调度方面，低估剩余时间导致长作业排到队首，造成队头阻塞；高估则长作业排后面，影响较小。所以设计安全裕度 ρ 偏向高估。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA VMM 超配 3 倍不怕 OOM 吗？</div>
+<div class="qa-a"><p>三层防护：(1) 122GB 是虚拟地址空间，物理页按需映射，不会同时分配满；(2) 每个 stage 进来先做准入控制，检查剩余物理页是否够预测需求；(3) cuMemMap 返回失败时拒绝该 stage 而非崩溃。多 agent 的 KV 使用弹性大，统计上不会同时达峰，类似内存超卖的思路。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 五种模型状态 vs 四层存储的关系？</div>
+<div class="qa-a"><p>四层存储：GPU → CPU → Disk → Remote。五种状态多出一个 <strong>Sleeping</strong>——权重在 CPU，但 GPU 上保留 CUDA Graph 和 JIT 内核缓存（约 0.5GB），重新激活省 5-8 秒。Sleeping 横跨 GPU 和 CPU 两层。设计原因：模型切换频繁时，CUDA Graph 的重建开销可观。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Stage 边界抢占够用吗？为什么不做 token 级？</div>
+<div class="qa-a"><p>Token 级抢占需要和解码引擎深度集成，还要做 KV 缓存迁移，工程复杂度极高。Stage 边界抢占只需更新元数据，实测效果已足够：交互排队从 11 秒降到 2 毫秒。超长解码阶段可作为 future work。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 新 agent 角色上线没有历史数据怎么办？</div>
+<div class="qa-a"><p>三级回退：(1) per-role 数据不足时回退到全局模型；(2) 结构化特征（工作流位置、工具可用性）本身就有信号；(3) post-execution profiling 增量更新，几轮执行后适应新角色。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 适应度评分 S(N,T) 的权重怎么设？</div>
+<div class="qa-a"><p>S(N,T) = A(N,T) − λ·T_ready − μ·C_deg。默认 λ = μ = 1（毫秒量级）。交互式 stage 增大网络延迟权重。用 robust min-max 归一化（5/95 分位数裁剪），防止异常值主导。验证集上选定后跨负载固定。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2><span class="badge badge-d">IEEE Cluster 2026</span> DeepShare — 多租户 GPU 集群的保障驱动调度</h2>
+
+<div class="card card-d">
+<h3>问题背景</h3>
+<p>多团队共享 GPU 集群的核心矛盾：</p>
+<ul>
+<li><strong>配额闲置</strong>：某个团队暂时没有训练任务时 GPU 空转浪费，实测集群平均利用率只有 40%。</li>
+<li><strong>配额不够</strong>：另一个团队赶 deadline 想多用几块卡，却因超配额被拒。</li>
+</ul>
+<p>固定配额简单但浪费严重，完全共享利用率高但无法保障 SLA。问题本质：<strong>在保障每个租户配额的前提下，把闲置资源借给需要的人，原主需要时及时收回。</strong></p>
+<p>额外问题：即使 GPU 被分配出去了，很多训练任务在 I/O 或 CPU 预处理阶段 GPU 是空闲的。两个任务合用同一块 GPU 可以提升利用率，但会互相干扰——抢占 SM 和显存带宽，搞不好两个任务都变慢。</p>
+</div>
+
+<div class="card card-d">
+<h3>系统设计</h3>
+<p>统一控制信号——<span class="hl">配额保障度 QAD</span>，同时驱动三个子系统：</p>
+<div class="formula">QAD = AG_i(t) / min(q_i, DG_i(t))</div>
+<p>QAD = 1.0 恰好满足，&lt; 1.0 欠缺，&gt; 1.0 使用借来的额外资源。经 EMA 平滑避免瞬时波动。</p>
+
+<div class="comp">
+<div class="comp-t">子系统一：弹性配额借用（DRA）</div>
+<p>空闲 GPU 可被其他租户借走跑低优先级任务。原主提交新任务导致 QAD 下降时，按 QAD 优先级回收——最欠缺的租户最先被满足。和固定配额的区别：闲置资源不浪费，但需要时保证能收回。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">子系统二：预测性调度</div>
+<p>Random Forest 预测作业运行时间（MAPE 31.84%，R² = 0.73）。调度排序采用词典序：</p>
+<div class="formula">(Q̃_i(t)↑, T̂(j)↑) — 先按 QAD 升序（优先欠缺的租户），再按预测运行时间升序（短作业优先）</div>
+<p>抢占牺牲者选择：代价基抢占效率</p>
+<div class="formula">E_j = R_j · T̂(j) / (1 + α · C_p(j))</div>
+<p>综合释放资源量 R_j、剩余时间 T̂(j) 和抢占代价 C_p(j)（已完成进度的浪费 + checkpoint 保存时间）。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">子系统三：干扰感知 GPU 合用</div>
+<p>Random Forest 预测两个任务共享同一块 GPU 时的性能保持率（R² = 0.902）。特征来自硬件计数器（SM activity、memory bandwidth），而非模型架构，保证跨框架泛化。只有预测保持率高于动态容忍阈值时才允许合用。运行时持续监控，实际性能下降超过容忍度时立即驱逐低优先级伙伴。</p>
+</div>
+
+<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter → Score → Reserve → PostFilter → Permit 五个扩展点，端到端调度延迟 &lt; 50ms。</p>
+
+<h3>核心结果</h3>
+<div class="grid">
+<div class="gi"><div class="gv g">70.58%</div><div class="gl">GPU 利用率 (基线 39.64%)</div></div>
+<div class="gi"><div class="gv g">−46%</div><div class="gl">排队延迟</div></div>
+<div class="gi"><div class="gv g">−34%</div><div class="gl">作业完成时间</div></div>
+<div class="gi"><div class="gv g">93%</div><div class="gl">QoS 合规 (QAD≥0.95)</div></div>
+</div>
+</div>
+
+<div class="card card-d">
+<h3>DeepShare 高频问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: QAD 和 DRF（Dominant Resource Fairness）的区别？</div>
+<div class="qa-a"><p>DRF 追求均等分配，不区分保障和尽力而为。QAD 量化"距离保障配额有多远"——允许过量分配（QAD &gt; 1），但超额可回收。QAD 同时服务调度优先级、合用准入、QoS 报告三个子系统，是一个统一控制信号；DRF 只做资源分配。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 JCT 只改善 6.3% 但排队延迟改善 46%？</div>
+<div class="qa-a"><p>JCT = 排队时间 + 执行时间。执行时间由计算量决定，对所有调度策略相同。调度只能影响排队部分。当执行时间占 JCT 主要部分时，排队大幅改善只带来 JCT 小幅改善。这恰好说明调度的优化空间集中在排队环节。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: nvidia.com/gpu 不可修改，GPU 共享怎么实现？</div>
+<div class="qa-a"><p>K8s Extended Resource admit 后不能修改。GPU 共享通过 NVIDIA MPS 在驱动层做多路复用，设 per-client 内存限制。每块 GPU 部署一个 MPS control daemon（DaemonSet 方式）。CPU 和内存可通过 InPlacePodVerticalScaling 动态调整，但 GPU 分配必须在调度时确定。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 干扰模型为什么选 Random Forest 而不用深度学习？</div>
+<div class="qa-a"><p>三个原因：(1) 推理延迟——RF 推理 &lt; 1ms，满足实时调度预算；对比 GAN-based 方法需要 50-200ms。(2) 精度足够——R² = 0.902。(3) 硬件计数器特征跨框架泛化，不需要针对每种模型架构重新训练。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 过载时怎么表现？</div>
+<div class="qa-a"><p>大约 8% 高峰时段过载：按 QAD 升序优先最欠缺租户；最坏 QAD = 0.72，过载消退后 3.2 个周期（约 160ms）恢复到 ≥ 0.95。Best-effort 排队延迟增加 2.1 倍，Guaranteed 仅增加 14%，体现服务分级。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2><span class="badge badge-s">共通</span> 两篇论文的关系与面试叙事</h2>
+
+<div class="card card-s">
+<h3>互补关系</h3>
+<p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
+
+<h3>共通设计理念</h3>
+<table>
+<tr><th>理念</th><th>Maestro</th><th>DeepShare</th></tr>
+<tr><td>预测驱动调度</td><td>预测输出长度 → 内存管理 + 排队</td><td>预测运行时间 → 排序 + 抢占</td></tr>
+<tr><td>代价感知抢占</td><td>量化降级代价 C_deg 选最小影响路径</td><td>量化抢占效率 E_j 考虑进度损失</td></tr>
+<tr><td>弹性资源管理</td><td>CUDA VMM 3× 超配</td><td>DRA 弹性配额借用</td></tr>
+<tr><td>分层架构</td><td>全局调度器 + 节点运行时</td><td>全局调度器 + 节点 DaemonSet</td></tr>
+</table>
+
+<h3>自我介绍中的论文定位</h3>
+<div class="comp">
+<p>我的研究聚焦于 <strong>GPU 集群的资源调度与性能预测</strong>，在训练和推理两个互补场景下展开：</p>
+<p><strong>DeepShare</strong>（IEEE Cluster 2026）解决多租户 GPU 集群中训练作业的调度。核心创新是配额保障度 QAD，统一驱动弹性配额管理、预测性调度和干扰感知合用，在 219 GPU 的 K8s 集群上实现 70.58% GPU 利用率和 93% QoS 合规率。</p>
+<p><strong>Maestro</strong>（ICDCS 2026）面向 LLM 多智能体系统的推理调度。核心挑战是输出长度不确定性和多模型内存压力。设计了两阶段预测器加 CUDA VMM 超配加 SRTF 调度，在 64 块 A100 上将 SLO 达成率提升 23.6 个百分点。</p>
+<p>贯穿核心能力：<strong>用轻量预测模型为调度器提供前瞻性信号，再设计弹性资源管理和抢占策略来利用这些信号。</strong></p>
+</div>
+
+<h3>与工业界系统的区别</h3>
+<table>
+<tr><th>对比对象</th><th>区别</th></tr>
+<tr><td>vLLM / SGLang</td><td>它们是单节点推理引擎，Maestro 在其之上做多模型管理和跨节点调度</td></tr>
+<tr><td>Volcano</td><td>面向 Gang scheduling，DeepShare 在配额弹性、干扰感知、运行时间预测方面做了增强</td></tr>
+<tr><td>Orca / FastServe</td><td>它们关注单模型的迭代级调度，Maestro 关注多模型多 agent 的工作流级调度</td></tr>
+</table>
+</div>
+
+</div>
+<script src="../assets/script.js"></script>
+</body>
+</html>

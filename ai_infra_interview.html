@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Infra 面试准备</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--pri:#2563eb;--pri-l:#dbeafe;--sec:#059669;--sec-l:#d1fae5;--acc:#7c3aed;--acc-l:#ede9fe;--warn:#d97706;--warn-l:#fef3c7;--danger:#dc2626;--danger-l:#fee2e2;--txt:#1e293b;--muted:#64748b;--border:#e2e8f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif;background:var(--bg);color:var(--txt);line-height:1.75;font-size:15px}
+.wrap{max-width:980px;margin:0 auto;padding:1.5rem}
+h1{text-align:center;font-size:1.9rem;color:var(--pri);margin-bottom:.3rem}
+.sub{text-align:center;color:var(--muted);margin-bottom:1.5rem;font-size:.9rem}
+/* tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:.65rem 1rem;cursor:pointer;font-weight:600;font-size:.9rem;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none}
+.tab:hover{color:var(--pri)}
+.tab.active{color:var(--pri);border-bottom-color:var(--pri)}
+.panel{display:none}
+.panel.active{display:block}
+/* cards */
+.card{background:var(--card);border-radius:10px;padding:1.5rem;margin:1rem 0;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border)}
+.card-m{border-left:4px solid var(--pri)}
+.card-d{border-left:4px solid var(--sec)}
+.card-s{border-left:4px solid var(--acc)}
+.card-w{border-left:4px solid var(--warn)}
+.card-r{border-left:4px solid var(--danger)}
+h2{font-size:1.35rem;margin:1.8rem 0 .8rem;color:var(--pri);border-bottom:2px solid var(--pri);padding-bottom:.4rem}
+h3{font-size:1.1rem;margin:1.2rem 0 .6rem}
+h4{font-size:1rem;margin:1rem 0 .4rem;color:var(--muted)}
+p{margin:.5rem 0}
+.hl{background:var(--warn-l);padding:.1rem .4rem;border-radius:3px;font-weight:600}
+.comp{margin:.8rem 0;padding:.8rem 1rem;background:#f1f5f9;border-radius:8px}
+.comp-t{font-weight:700;margin-bottom:.3rem}
+ul,ol{padding-left:1.4rem;margin:.4rem 0}
+li{margin:.3rem 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;margin:.8rem 0}
+.gi{text-align:center;padding:.8rem;background:#f8fafc;border-radius:8px;border:1px solid var(--border)}
+.gv{font-size:1.3rem;font-weight:700;color:var(--pri)}
+.gv.g{color:var(--sec)}
+.gl{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+hr.div{border:none;border-top:2px dashed var(--border);margin:2rem 0}
+/* QA */
+.qa{margin:.8rem 0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.qa-q{padding:.8rem 1rem;background:#f1f5f9;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.qa-q::after{content:'▼';font-size:.7rem;transition:transform .2s}
+.qa.open .qa-q::after{transform:rotate(180deg)}
+.qa-a{padding:0 1rem;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.qa.open .qa-a{padding:.8rem 1rem;max-height:3000px}
+table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.88rem}
+th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left}
+th{background:#f1f5f9;font-weight:600}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.72rem;font-weight:600;margin-right:.4rem;vertical-align:middle}
+.badge-m{background:var(--pri-l);color:var(--pri)}
+.badge-d{background:var(--sec-l);color:var(--sec)}
+.badge-s{background:var(--acc-l);color:var(--acc)}
+.formula{background:#f8fafc;border:1px solid var(--border);border-radius:6px;padding:.6rem 1rem;margin:.6rem 0;font-family:'SF Mono','Fira Code',monospace;font-size:.85rem;overflow-x:auto}
+code{background:#f1f5f9;padding:.1rem .3rem;border-radius:3px;font-family:'SF Mono','Fira Code',monospace;font-size:.85rem}
+pre{background:#1e293b;color:#e2e8f0;border-radius:8px;padding:1rem;margin:.8rem 0;overflow-x:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+@media(max-width:640px){.grid{grid-template-columns:1fr 1fr}body{font-size:.9rem}.wrap{padding:1rem}.tab{padding:.5rem .7rem;font-size:.8rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>AI Infra 面试准备</h1>
+<p class="sub">论文 · GPU 基础 · Kubernetes · 调度理论 · 集群管理 · 性能预测 · 系统设计</p>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" onclick="switchTab(0)">论文</div>
+  <div class="tab" onclick="switchTab(1)">GPU 与推理</div>
+  <div class="tab" onclick="switchTab(2)">Kubernetes</div>
+  <div class="tab" onclick="switchTab(3)">任务调度</div>
+  <div class="tab" onclick="switchTab(4)">集群管理</div>
+  <div class="tab" onclick="switchTab(5)">性能预测</div>
+  <div class="tab" onclick="switchTab(6)">系统设计</div>
+</div>
+
+<!-- ================================================================ -->
+<!--                        TAB 0: 论文                                -->
+<!-- ================================================================ -->
+<div class="panel active" id="p0">
+
+<h2><span class="badge badge-m">ICDCS 2026</span> Maestro — LLM 多智能体系统的工作负载感知调度</h2>
+
+<div class="card card-m">
+<h3>问题背景</h3>
+<p>传统 LLM 推理面对的是独立的一问一答请求。但现在越来越多的应用把多个 agent 组成协作工作流：比如旅行助手里有"需求分析 agent"、"机票搜索 agent"、"酒店推荐 agent"、"行程整合 agent"，它们之间有 DAG 依赖，一个用户请求触发十几次甚至几十次 LLM 推理调用（称为 stage）。</p>
+<p>这带来了三个新挑战：</p>
+<ol>
+<li><strong>输出长度剧烈波动</strong>：工具调用输出几十 token（JSON），用户交互输出几百上千 token。KV 缓存需求差异巨大，固定分配要么浪费要么 OOM。</li>
+<li><strong>多模型共存的内存压力</strong>：不同 agent 使用不同模型，一块 GPU 需要同时驻留多个模型权重加上所有请求的 KV 缓存。</li>
+<li><strong>混合延迟要求</strong>：交互式 stage 要低延迟，批处理 stage 要高吞吐。不区分优先级就会造成队头阻塞。</li>
+</ol>
+</div>
+
+<div class="card card-m">
+<h3>系统设计</h3>
+<p>核心思路：<span class="hl">不把 LLM 请求当黑盒，利用 agent 上下文做前瞻性预测，指导内存管理和调度。</span></p>
+
+<div class="comp">
+<div class="comp-t">组件一：两阶段输出长度预测</div>
+<p><strong>第一阶段——工具调用分类器</strong>：LightGBM 判断当前 stage 是否会触发工具调用，AUC = 0.9625。特征包括结构化特征（agent 角色、工作流位置、调用索引、工具可用性）和语义特征（MiniLM 编码 prompt，PCA 从 384 维降到 32 维）。</p>
+<p><strong>第二阶段——输出长度回归器</strong>：拿到分类器的预测概率 p̂_tool 作为额外特征，预测输出 token 数。MAE = 165 tokens，R² = 0.78。对 token 数做 log 变换处理长尾分布，用 isotonic regression 校准分类器概率。</p>
+<p><strong>为什么分两阶段？</strong>输出长度呈双峰分布——工具调用短、用户交互长。单一回归器在双峰上表现差。分类器先识别模式，回归器在给定模式下预测。消融实验：去掉分类器 MAE 从 134 升到 142。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">组件二：节点级弹性内存管理</div>
+<p><strong>模型状态管理</strong>：五种状态按层级流转——</p>
+<ul>
+<li><strong>Running</strong>：权重在 GPU，可立即执行推理</li>
+<li><strong>Sleeping</strong>：权重移到 CPU，但 GPU 上保留 CUDA Graph 和 JIT 内核缓存（约 0.5GB），重新激活省 5-8 秒</li>
+<li><strong>CPU-resident</strong>：权重完全在 CPU 内存</li>
+<li><strong>Disk-resident</strong>：权重在本地 NVMe</li>
+<li><strong>Remote</strong>：权重在远程存储</li>
+</ul>
+<p>层级化 LRU 逐级淘汰，最热的模型留 GPU，最冷的逐步退到远端。</p>
+<p><strong>KV 缓存管理</strong>：CUDA VMM 虚拟内存超配——40GB 物理 GPU 上分配 122GB 虚拟地址池（3 倍超配）。关键在于虚拟地址和物理页分离，按需映射物理页。三层防护：(1) 虚拟 vs 物理分离，不会同时达峰；(2) 准入控制——每个 stage 检查剩余物理页是否够；(3) 映射失败时拒绝 stage 而非崩溃。五级降级策略保证极端情况也不会 OOM。</p>
+<p><strong>内存核算</strong>：M_kv + M_res ≤ M_total，安全裕度 ρ ∈ [0.1, 0.3]，偏向高估以避免低估导致 OOM。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">组件三：工作流感知 SRTF 调度</div>
+<p>基于预测的剩余执行时间排队（SRTF），优先执行快要完成的工作流。交互式和批处理 stage 分开排队。Stage 边界抢占——只在两次 LLM 调用之间切换，不打断正在解码的请求。</p>
+<p><strong>节点选择</strong>：适应度评分 S(N,T) = A(N,T) − λ·T_ready − μ·C_deg，综合模型就绪延迟和降级代价。</p>
+</div>
+
+<h3>核心结果</h3>
+<div class="grid">
+<div class="gi"><div class="gv">+23.6pp</div><div class="gl">SLO 达成率 (vs EDF)</div></div>
+<div class="gi"><div class="gv">−67.2%</div><div class="gl">KV 预留内存</div></div>
+<div class="gi"><div class="gv">−84.8%</div><div class="gl">交互排队延迟</div></div>
+<div class="gi"><div class="gv">64×A100</div><div class="gl">14.4 万 stage</div></div>
+</div>
+</div>
+
+<div class="card card-m">
+<h3>Maestro 高频问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 低估输出长度和高估，哪个危害更大？</div>
+<div class="qa-a"><p><strong>低估远比高估危害大</strong>：(1) KV 缓存方面，低估导致预分配不够，解码到一半 OOM，请求被杀；高估只是暂时多占。(2) SRTF 调度方面，低估剩余时间导致长作业排到队首，造成队头阻塞；高估则长作业排后面，影响较小。所以设计安全裕度 ρ 偏向高估。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA VMM 超配 3 倍不怕 OOM 吗？</div>
+<div class="qa-a"><p>三层防护：(1) 122GB 是虚拟地址空间，物理页按需映射，不会同时分配满；(2) 每个 stage 进来先做准入控制，检查剩余物理页是否够预测需求；(3) cuMemMap 返回失败时拒绝该 stage 而非崩溃。多 agent 的 KV 使用弹性大，统计上不会同时达峰，类似内存超卖的思路。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 五种模型状态 vs 四层存储的关系？</div>
+<div class="qa-a"><p>四层存储：GPU → CPU → Disk → Remote。五种状态多出一个 <strong>Sleeping</strong>——权重在 CPU，但 GPU 上保留 CUDA Graph 和 JIT 内核缓存（约 0.5GB），重新激活省 5-8 秒。Sleeping 横跨 GPU 和 CPU 两层。设计原因：模型切换频繁时，CUDA Graph 的重建开销可观。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Stage 边界抢占够用吗？为什么不做 token 级？</div>
+<div class="qa-a"><p>Token 级抢占需要和解码引擎深度集成，还要做 KV 缓存迁移，工程复杂度极高。Stage 边界抢占只需更新元数据，实测效果已足够：交互排队从 11 秒降到 2 毫秒。超长解码阶段可作为 future work。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 新 agent 角色上线没有历史数据怎么办？</div>
+<div class="qa-a"><p>三级回退：(1) per-role 数据不足时回退到全局模型；(2) 结构化特征（工作流位置、工具可用性）本身就有信号；(3) post-execution profiling 增量更新，几轮执行后适应新角色。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 适应度评分 S(N,T) 的权重怎么设？</div>
+<div class="qa-a"><p>S(N,T) = A(N,T) − λ·T_ready − μ·C_deg。默认 λ = μ = 1（毫秒量级）。交互式 stage 增大网络延迟权重。用 robust min-max 归一化（5/95 分位数裁剪），防止异常值主导。验证集上选定后跨负载固定。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2><span class="badge badge-d">IEEE Cluster 2026</span> DeepShare — 多租户 GPU 集群的保障驱动调度</h2>
+
+<div class="card card-d">
+<h3>问题背景</h3>
+<p>多团队共享 GPU 集群的核心矛盾：</p>
+<ul>
+<li><strong>配额闲置</strong>：某个团队暂时没有训练任务时 GPU 空转浪费，实测集群平均利用率只有 40%。</li>
+<li><strong>配额不够</strong>：另一个团队赶 deadline 想多用几块卡，却因超配额被拒。</li>
+</ul>
+<p>固定配额简单但浪费严重，完全共享利用率高但无法保障 SLA。问题本质：<strong>在保障每个租户配额的前提下，把闲置资源借给需要的人，原主需要时及时收回。</strong></p>
+<p>额外问题：即使 GPU 被分配出去了，很多训练任务在 I/O 或 CPU 预处理阶段 GPU 是空闲的。两个任务合用同一块 GPU 可以提升利用率，但会互相干扰——抢占 SM 和显存带宽，搞不好两个任务都变慢。</p>
+</div>
+
+<div class="card card-d">
+<h3>系统设计</h3>
+<p>统一控制信号——<span class="hl">配额保障度 QAD</span>，同时驱动三个子系统：</p>
+<div class="formula">QAD = AG_i(t) / min(q_i, DG_i(t))</div>
+<p>QAD = 1.0 恰好满足，&lt; 1.0 欠缺，&gt; 1.0 使用借来的额外资源。经 EMA 平滑避免瞬时波动。</p>
+
+<div class="comp">
+<div class="comp-t">子系统一：弹性配额借用（DRA）</div>
+<p>空闲 GPU 可被其他租户借走跑低优先级任务。原主提交新任务导致 QAD 下降时，按 QAD 优先级回收——最欠缺的租户最先被满足。和固定配额的区别：闲置资源不浪费，但需要时保证能收回。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">子系统二：预测性调度</div>
+<p>Random Forest 预测作业运行时间（MAPE 31.84%，R² = 0.73）。调度排序采用词典序：</p>
+<div class="formula">(Q̃_i(t)↑, T̂(j)↑) — 先按 QAD 升序（优先欠缺的租户），再按预测运行时间升序（短作业优先）</div>
+<p>抢占牺牲者选择：代价基抢占效率</p>
+<div class="formula">E_j = R_j · T̂(j) / (1 + α · C_p(j))</div>
+<p>综合释放资源量 R_j、剩余时间 T̂(j) 和抢占代价 C_p(j)（已完成进度的浪费 + checkpoint 保存时间）。</p>
+</div>
+
+<div class="comp">
+<div class="comp-t">子系统三：干扰感知 GPU 合用</div>
+<p>Random Forest 预测两个任务共享同一块 GPU 时的性能保持率（R² = 0.902）。特征来自硬件计数器（SM activity、memory bandwidth），而非模型架构，保证跨框架泛化。只有预测保持率高于动态容忍阈值时才允许合用。运行时持续监控，实际性能下降超过容忍度时立即驱逐低优先级伙伴。</p>
+</div>
+
+<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter → Score → Reserve → PostFilter → Permit 五个扩展点，端到端调度延迟 &lt; 50ms。</p>
+
+<h3>核心结果</h3>
+<div class="grid">
+<div class="gi"><div class="gv g">70.58%</div><div class="gl">GPU 利用率 (基线 39.64%)</div></div>
+<div class="gi"><div class="gv g">−46%</div><div class="gl">排队延迟</div></div>
+<div class="gi"><div class="gv g">−34%</div><div class="gl">作业完成时间</div></div>
+<div class="gi"><div class="gv g">93%</div><div class="gl">QoS 合规 (QAD≥0.95)</div></div>
+</div>
+</div>
+
+<div class="card card-d">
+<h3>DeepShare 高频问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: QAD 和 DRF（Dominant Resource Fairness）的区别？</div>
+<div class="qa-a"><p>DRF 追求均等分配，不区分保障和尽力而为。QAD 量化"距离保障配额有多远"——允许过量分配（QAD &gt; 1），但超额可回收。QAD 同时服务调度优先级、合用准入、QoS 报告三个子系统，是一个统一控制信号；DRF 只做资源分配。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 JCT 只改善 6.3% 但排队延迟改善 46%？</div>
+<div class="qa-a"><p>JCT = 排队时间 + 执行时间。执行时间由计算量决定，对所有调度策略相同。调度只能影响排队部分。当执行时间占 JCT 主要部分时，排队大幅改善只带来 JCT 小幅改善。这恰好说明调度的优化空间集中在排队环节。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: nvidia.com/gpu 不可修改，GPU 共享怎么实现？</div>
+<div class="qa-a"><p>K8s Extended Resource admit 后不能修改。GPU 共享通过 NVIDIA MPS 在驱动层做多路复用，设 per-client 内存限制。每块 GPU 部署一个 MPS control daemon（DaemonSet 方式）。CPU 和内存可通过 InPlacePodVerticalScaling 动态调整，但 GPU 分配必须在调度时确定。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 干扰模型为什么选 Random Forest 而不用深度学习？</div>
+<div class="qa-a"><p>三个原因：(1) 推理延迟——RF 推理 &lt; 1ms，满足实时调度预算；对比 GAN-based 方法需要 50-200ms。(2) 精度足够——R² = 0.902。(3) 硬件计数器特征跨框架泛化，不需要针对每种模型架构重新训练。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 过载时怎么表现？</div>
+<div class="qa-a"><p>大约 8% 高峰时段过载：按 QAD 升序优先最欠缺租户；最坏 QAD = 0.72，过载消退后 3.2 个周期（约 160ms）恢复到 ≥ 0.95。Best-effort 排队延迟增加 2.1 倍，Guaranteed 仅增加 14%，体现服务分级。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2><span class="badge badge-s">共通</span> 两篇论文的关系与面试叙事</h2>
+
+<div class="card card-s">
+<h3>互补关系</h3>
+<p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
+
+<h3>共通设计理念</h3>
+<table>
+<tr><th>理念</th><th>Maestro</th><th>DeepShare</th></tr>
+<tr><td>预测驱动调度</td><td>预测输出长度 → 内存管理 + 排队</td><td>预测运行时间 → 排序 + 抢占</td></tr>
+<tr><td>代价感知抢占</td><td>量化降级代价 C_deg 选最小影响路径</td><td>量化抢占效率 E_j 考虑进度损失</td></tr>
+<tr><td>弹性资源管理</td><td>CUDA VMM 3× 超配</td><td>DRA 弹性配额借用</td></tr>
+<tr><td>分层架构</td><td>全局调度器 + 节点运行时</td><td>全局调度器 + 节点 DaemonSet</td></tr>
+</table>
+
+<h3>自我介绍中的论文定位</h3>
+<div class="comp">
+<p>我的研究聚焦于 <strong>GPU 集群的资源调度与性能预测</strong>，在训练和推理两个互补场景下展开：</p>
+<p><strong>DeepShare</strong>（IEEE Cluster 2026）解决多租户 GPU 集群中训练作业的调度。核心创新是配额保障度 QAD，统一驱动弹性配额管理、预测性调度和干扰感知合用，在 219 GPU 的 K8s 集群上实现 70.58% GPU 利用率和 93% QoS 合规率。</p>
+<p><strong>Maestro</strong>（ICDCS 2026）面向 LLM 多智能体系统的推理调度。核心挑战是输出长度不确定性和多模型内存压力。设计了两阶段预测器加 CUDA VMM 超配加 SRTF 调度，在 64 块 A100 上将 SLO 达成率提升 23.6 个百分点。</p>
+<p>贯穿核心能力：<strong>用轻量预测模型为调度器提供前瞻性信号，再设计弹性资源管理和抢占策略来利用这些信号。</strong></p>
+</div>
+
+<h3>与工业界系统的区别</h3>
+<table>
+<tr><th>对比对象</th><th>区别</th></tr>
+<tr><td>vLLM / SGLang</td><td>它们是单节点推理引擎，Maestro 在其之上做多模型管理和跨节点调度</td></tr>
+<tr><td>Volcano</td><td>面向 Gang scheduling，DeepShare 在配额弹性、干扰感知、运行时间预测方面做了增强</td></tr>
+<tr><td>Orca / FastServe</td><td>它们关注单模型的迭代级调度，Maestro 关注多模型多 agent 的工作流级调度</td></tr>
+</table>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 1: GPU 与 LLM 推理                        -->
+<!-- ================================================================ -->
+<div class="panel" id="p1">
+
+<h2>GPU 硬件基础</h2>
+
+<div class="card card-s">
+<h3>GPU 架构要点</h3>
+<table>
+<tr><th>概念</th><th>说明</th></tr>
+<tr><td>SM（Streaming Multiprocessor）</td><td>GPU 基本计算单元，包含若干 CUDA Core 和 Tensor Core。A100 有 108 个 SM</td></tr>
+<tr><td>Tensor Core</td><td>矩阵乘加专用硬件。A100 第三代支持 TF32/FP16/BF16/INT8，H100 第四代新增 FP8</td></tr>
+<tr><td>HBM（High Bandwidth Memory）</td><td>高带宽显存。A100 80GB 版带宽 2TB/s，H100 80GB 版 3.35TB/s</td></tr>
+<tr><td>NVLink</td><td>GPU 间高速互联。A100 NVLink 3.0 单向 300GB/s（6 条），H100 NVLink 4.0 单向 450GB/s</td></tr>
+<tr><td>NVSwitch</td><td>多 GPU 全互联交换芯片。DGX A100 用 6 个 NVSwitch 连 8 块 GPU</td></tr>
+<tr><td>PCIe</td><td>CPU-GPU 互联。Gen4 x16 单向 32GB/s，Gen5 翻倍到 64GB/s</td></tr>
+</table>
+</div>
+
+<div class="card card-s">
+<h3>主流 GPU 对比</h3>
+<table>
+<tr><th>指标</th><th>A100 (80GB)</th><th>H100 (80GB)</th><th>H200 (141GB)</th></tr>
+<tr><td>架构</td><td>Ampere</td><td>Hopper</td><td>Hopper</td></tr>
+<tr><td>SM 数</td><td>108</td><td>132</td><td>132</td></tr>
+<tr><td>FP16 算力</td><td>312 TFLOPS</td><td>989 TFLOPS</td><td>989 TFLOPS</td></tr>
+<tr><td>显存</td><td>80GB HBM2e</td><td>80GB HBM3</td><td>141GB HBM3e</td></tr>
+<tr><td>带宽</td><td>2.0 TB/s</td><td>3.35 TB/s</td><td>4.8 TB/s</td></tr>
+<tr><td>TDP</td><td>400W</td><td>700W</td><td>700W</td></tr>
+</table>
+</div>
+
+<h2>LLM 推理流程</h2>
+
+<div class="card card-m">
+<h3>四阶段流程</h3>
+<ol>
+<li><strong>模型加载</strong>：权重从存储（磁盘/网络）加载到 GPU 显存。大模型可能需要几十秒到几分钟</li>
+<li><strong>Prefill（预填充，计算密集）</strong>：一次性处理整个 prompt，并行计算所有 token 的 attention，生成初始 KV 缓存。延迟主要取决于 prompt 长度和模型大小</li>
+<li><strong>Decode（解码，内存密集）</strong>：自回归逐 token 生成。每步只计算一个新 token 的 attention，但需要读取全量 KV 缓存。带宽瓶颈，GPU 计算单元大量空闲</li>
+<li><strong>返回结果</strong>：流式输出或一次性返回</li>
+</ol>
+
+<h3>关键性能指标</h3>
+<table>
+<tr><th>指标</th><th>含义</th><th>影响因素</th></tr>
+<tr><td>TTFT（Time to First Token）</td><td>首 token 延迟</td><td>模型加载 + prefill 时间</td></tr>
+<tr><td>TPOT（Time Per Output Token）</td><td>每 token 延迟</td><td>decode 单步时间，受显存带宽限制</td></tr>
+<tr><td>Throughput</td><td>吞吐（tokens/s）</td><td>batch size × 单步速度</td></tr>
+<tr><td>SLO 达成率</td><td>满足延迟目标的请求比例</td><td>排队 + 计算 + 内存管理</td></tr>
+</table>
+
+<h3>Prefill vs Decode 的计算特性差异</h3>
+<table>
+<tr><th>维度</th><th>Prefill</th><th>Decode</th></tr>
+<tr><td>计算模式</td><td>并行处理 N 个 token</td><td>每步只处理 1 个 token</td></tr>
+<tr><td>瓶颈</td><td>计算密集（矩阵乘法）</td><td>内存密集（读 KV 缓存）</td></tr>
+<tr><td>GPU 利用率</td><td>高（Tensor Core 饱和）</td><td>低（大量等待显存读取）</td></tr>
+<tr><td>优化方向</td><td>算子融合、FlashAttention</td><td>增大 batch、KV 缓存压缩</td></tr>
+</table>
+</div>
+
+<h2>KV 缓存与 Attention 优化</h2>
+
+<div class="card card-w">
+<h3>KV 缓存机制</h3>
+<p>自回归解码时，每步需要之前所有 token 的 Key 和 Value 向量。如果每步重新计算，代价是 O(n²)。KV 缓存把之前算过的 K/V 存下来，每步只计算新 token 的 K/V 并追加。</p>
+<div class="formula">KV 缓存大小 = 2 × num_layers × num_heads × head_dim × seq_len × dtype_size</div>
+<p>以 LLaMA-70B 为例：2 × 80 × 8 × 128 × 4096 × 2（FP16）≈ 10.7GB（单个请求）。</p>
+<p><strong>为什么 KV 缓存是瓶颈？</strong>GPU 显存有限（80GB），模型权重占 140GB（FP16）需要张量并行到多卡。剩余显存被 KV 缓存瓜分，决定了能同时服务多少请求。</p>
+
+<h3>PagedAttention（vLLM）</h3>
+<p>传统 KV 缓存预分配连续内存，最大长度固定，短请求浪费严重。PagedAttention 借鉴操作系统虚拟内存的分页思想：</p>
+<ul>
+<li>把 KV 缓存切成固定大小的 block（如 16 token 一块）</li>
+<li>用 block table 维护逻辑到物理的映射</li>
+<li>按需分配，请求结束释放，消除内部碎片</li>
+<li>支持 copy-on-write，多个 beam 可共享公共前缀</li>
+</ul>
+
+<h3>Attention 变体</h3>
+<table>
+<tr><th>变体</th><th>KV Head 数</th><th>KV 缓存大小</th><th>代表模型</th></tr>
+<tr><td>MHA（Multi-Head Attention）</td><td>= Query Head 数</td><td>最大</td><td>GPT-3, LLaMA-1</td></tr>
+<tr><td>GQA（Grouped-Query Attention）</td><td>Query Head 数 / G</td><td>缩小 G 倍</td><td>LLaMA-2/3, Mixtral</td></tr>
+<tr><td>MQA（Multi-Query Attention）</td><td>1</td><td>最小</td><td>Falcon, StarCoder</td></tr>
+</table>
+<p>GQA 是实际部署的主流选择——在质量和效率之间取得平衡。</p>
+
+<h3>FlashAttention</h3>
+<p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p>
+</div>
+
+<h2>GPU 共享方式</h2>
+
+<div class="card card-s">
+<table>
+<tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
+<tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离</td></tr>
+<tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并行执行 kernel</td><td>训练合用、I/O 互补</td></tr>
+<tr><td>时间片</td><td>时间级复用</td><td>CUDA 调度器轮换上下文</td><td>轻量共享、交互式</td></tr>
+<tr><td>CUDA VMM</td><td>虚拟内存</td><td>虚拟地址空间超配，物理页按需映射</td><td>KV 缓存弹性管理</td></tr>
+<tr><td>vGPU</td><td>虚拟化</td><td>Hypervisor 层虚拟化 GPU</td><td>云服务多租户</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MIG 和 MPS 的本质区别？</div>
+<div class="qa-a"><p><strong>MIG</strong> 是硬件级切分——GPU 被物理切成若干独立实例，每个实例有自己的 SM、显存控制器和缓存，互相完全隔离，类似物理分区。<strong>MPS</strong> 是软件级复用——多个进程共享同一个 GPU 上下文，kernel 可以并行执行在不同 SM 上，但共享显存和缓存，有干扰风险。MIG 安全但粒度粗（A100 最多 7 个实例），MPS 灵活但需要干扰控制。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
+<div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
+</div>
+</div>
+
+<h2>推理优化技术</h2>
+
+<div class="card card-s">
+<h3>常见优化手段</h3>
+<table>
+<tr><th>技术</th><th>原理</th><th>效果</th></tr>
+<tr><td>连续批处理（Continuous Batching）</td><td>请求完成立即释放位置，新请求加入，不等整批结束</td><td>吞吐提升 2-5×</td></tr>
+<tr><td>张量并行（Tensor Parallelism）</td><td>单层的矩阵乘法切分到多卡并行计算</td><td>降低延迟，需 NVLink</td></tr>
+<tr><td>流水线并行（Pipeline Parallelism）</td><td>不同层放不同卡，请求依次流过</td><td>支持更大模型</td></tr>
+<tr><td>投机解码（Speculative Decoding）</td><td>小模型快速生成候选 token，大模型验证</td><td>延迟降低 2-3×</td></tr>
+<tr><td>量化（INT8/FP8/INT4）</td><td>降低权重和激活精度</td><td>显存减半，速度提升</td></tr>
+<tr><td>前缀缓存（Prefix Caching）</td><td>共享前缀的请求复用 KV 缓存</td><td>减少重复计算</td></tr>
+<tr><td>CUDA Graph</td><td>录制 kernel 调用序列为图，一次提交</td><td>减少 CPU-GPU 启动开销</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 连续批处理和传统静态批处理的区别？</div>
+<div class="qa-a"><p>静态批处理：一批请求同时开始，最慢的请求完成后整批释放。短请求等长请求，GPU 空转。连续批处理（iteration-level scheduling）：每个 decode step 结束后检查，已完成的请求释放位置，等待的请求立即加入。GPU 始终满载。vLLM、TensorRT-LLM 都采用连续批处理。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 投机解码为什么能加速？不是算了两次吗？</div>
+<div class="qa-a"><p>关键在于 decode 阶段是内存密集型——GPU 算力大量闲置。小模型（draft model）快速自回归生成 K 个候选 token，大模型（target model）一次性并行验证这 K 个 token（相当于做一次 prefill）。验证比逐个解码快，因为并行利用了算力。如果候选全部接受，等价于一次 forward 生成了 K 个 token。</p></div>
+</div>
+</div>
+
+<h2>主流推理引擎</h2>
+
+<div class="card card-s">
+<table>
+<tr><th>引擎</th><th>核心特点</th><th>适用场景</th></tr>
+<tr><td>vLLM</td><td>PagedAttention、连续批处理、开源</td><td>通用 LLM serving</td></tr>
+<tr><td>SGLang</td><td>RadixAttention 前缀树复用、编程接口</td><td>多轮对话、结构化输出</td></tr>
+<tr><td>TensorRT-LLM</td><td>NVIDIA 官方优化、kernel 融合、FP8</td><td>NVIDIA GPU 极致性能</td></tr>
+<tr><td>DeepSpeed-Inference</td><td>模型并行、ZeRO 推理</td><td>超大模型</td></tr>
+</table>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 2: Kubernetes 核心                         -->
+<!-- ================================================================ -->
+<div class="panel" id="p2">
+
+<h2>Kubernetes 架构概览</h2>
+
+<div class="card card-s">
+<h3>控制面组件</h3>
+<table>
+<tr><th>组件</th><th>职责</th><th>关键细节</th></tr>
+<tr><td>kube-apiserver</td><td>集群 API 入口，所有操作的网关</td><td>无状态，支持水平扩展。所有组件通过它通信</td></tr>
+<tr><td>etcd</td><td>分布式键值存储，集群唯一的持久化状态</td><td>Raft 共识，建议 3 或 5 节点。性能瓶颈往往在 etcd</td></tr>
+<tr><td>kube-scheduler</td><td>为未绑定的 Pod 选择合适节点</td><td>可插件化扩展（Scheduling Framework）</td></tr>
+<tr><td>kube-controller-manager</td><td>运行控制循环：Deployment、ReplicaSet、Node 等</td><td>声明式 API 的执行者，负责将实际状态收敛到期望状态</td></tr>
+</table>
+
+<h3>数据面组件</h3>
+<table>
+<tr><th>组件</th><th>职责</th></tr>
+<tr><td>kubelet</td><td>节点代理，管理 Pod 生命周期。通过 CRI 调用容器运行时</td></tr>
+<tr><td>kube-proxy</td><td>维护网络规则（iptables/IPVS），实现 Service 负载均衡</td></tr>
+<tr><td>容器运行时</td><td>containerd / CRI-O，负责拉镜像和运行容器</td></tr>
+</table>
+</div>
+
+<h2>Scheduling Framework 详解</h2>
+
+<div class="card card-m">
+<h3>核心流程</h3>
+<p>K8s 1.19+ 引入 Scheduling Framework，把调度流程拆成 <strong>11 个扩展点</strong>（extension points），每个扩展点可以挂载多个插件。调度一个 Pod 经过两个阶段：</p>
+
+<h4>调度周期（Scheduling Cycle）——串行，对一个 Pod</h4>
+<ol>
+<li><strong>QueueSort</strong>：决定待调度队列中 Pod 的排序。默认按优先级降序 + 时间戳升序</li>
+<li><strong>PreFilter</strong>：预处理和检查，计算 Pod 需要的资源汇总。如果检查失败直接拒绝，不进入后续流程</li>
+<li><strong>Filter（预选）</strong>：遍历所有节点，排除不满足硬约束的。常见过滤条件：资源不足、NodeSelector 不匹配、Taint/Toleration 不满足、亲和性冲突。并行执行，默认取 min(numNodes, 100) 个可行节点后停止（percentageOfNodesToScore）</li>
+<li><strong>PostFilter</strong>：当 Filter 没有找到任何可行节点时触发。默认行为是尝试抢占——找到优先级更低的 Pod 驱逐后能释放出足够资源的节点</li>
+<li><strong>PreScore</strong>：Score 的预处理，可以共享计算结果给多个 Score 插件</li>
+<li><strong>Score（优选）</strong>：对 Filter 通过的候选节点打分（0-100）。常见策略：LeastRequestedPriority（资源剩余最多）、BalancedResourceAllocation（CPU/内存比例均衡）、NodeAffinityPriority</li>
+<li><strong>NormalizeScore</strong>：将各 Score 插件的分数归一化到 [0, 100]，然后加权求和</li>
+<li><strong>Reserve</strong>：预占资源——在调度器缓存中扣减节点资源，防止后续 Pod 重复分配同一资源。这是乐观并发控制：先占再绑定</li>
+</ol>
+
+<h4>绑定周期（Binding Cycle）——可并行，多个 Pod 同时绑定</h4>
+<ol start="9">
+<li><strong>Permit</strong>：最终准入控制。三种决定：Approve（放行）、Deny（拒绝，回退 Reserve）、Wait（挂起，等条件满足后放行）</li>
+<li><strong>PreBind</strong>：绑定前的准备工作，如挂载 PV</li>
+<li><strong>Bind</strong>：写入 API Server，告诉 kubelet 在该节点启动 Pod</li>
+<li><strong>PostBind</strong>：清理和通知，如更新指标、发事件</li>
+</ol>
+</div>
+
+<div class="card card-m">
+<h3>三个队列</h3>
+<table>
+<tr><th>队列</th><th>用途</th><th>流转条件</th></tr>
+<tr><td>ActiveQ（活跃队列）</td><td>待调度的 Pod，按 QueueSort 排序</td><td>新 Pod 加入 / BackoffQ 到期 / 集群事件触发重试</td></tr>
+<tr><td>BackoffQ（退避队列）</td><td>调度失败但可以重试的 Pod</td><td>等待指数退避时间（1s, 2s, 4s...最大 10s）后移入 ActiveQ</td></tr>
+<tr><td>UnschedulableQ（不可调度队列）</td><td>当前集群状态下无法调度的 Pod</td><td>等待集群事件（节点加入、Pod 删除等）后移入 BackoffQ 或 ActiveQ</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod 调度失败后的完整流转过程？</div>
+<div class="qa-a">
+<p>1. Pod 在 ActiveQ 中被取出调度</p>
+<p>2. Filter 阶段找不到可行节点</p>
+<p>3. PostFilter 尝试抢占，如果成功→标记 nominatedNode，Pod 回 ActiveQ 等待被抢占 Pod 终止</p>
+<p>4. 如果抢占也失败→Pod 进入 UnschedulableQ</p>
+<p>5. 集群发生变化（节点资源释放、新节点加入）→触发 Pod 移到 BackoffQ</p>
+<p>6. 退避时间到期→Pod 移回 ActiveQ 重新调度</p>
+</div>
+</div>
+</div>
+
+<div class="card card-m">
+<h3>抢占机制详解</h3>
+<p>当一个高优先级 Pod 无法调度时，调度器尝试找到一个节点，驱逐上面优先级更低的 Pod 以释放资源：</p>
+<ol>
+<li><strong>候选筛选</strong>：遍历节点，模拟驱逐低优先级 Pod 后是否满足需求</li>
+<li><strong>牺牲者选择</strong>：选择需要驱逐最少 Pod 的节点；同等条件下选择驱逐优先级最低 Pod 的方案</li>
+<li><strong>优雅终止</strong>：被驱逐 Pod 收到 SIGTERM，等待 terminationGracePeriodSeconds 后强制终止</li>
+<li><strong>PDB 保护</strong>：PodDisruptionBudget 可以限制同时被驱逐的 Pod 数量，保证服务可用性</li>
+</ol>
+</div>
+
+<h2>资源模型</h2>
+
+<div class="card card-w">
+<h3>资源类型</h3>
+<table>
+<tr><th>类别</th><th>资源</th><th>特点</th></tr>
+<tr><td>原生资源</td><td>cpu, memory</td><td>可压缩（cpu）和不可压缩（memory）。Pod 设 requests/limits</td></tr>
+<tr><td>扩展资源（Extended Resource）</td><td>nvidia.com/gpu</td><td>整数分配，<strong>admit 后不可修改</strong></td></tr>
+<tr><td>临时存储</td><td>ephemeral-storage</td><td>节点本地磁盘</td></tr>
+</table>
+
+<h3>Requests vs Limits</h3>
+<table>
+<tr><th>维度</th><th>Requests</th><th>Limits</th></tr>
+<tr><td>调度依据</td><td>是（调度器只看 requests）</td><td>否</td></tr>
+<tr><td>运行时行为</td><td>保障最低资源</td><td>限制最大使用量</td></tr>
+<tr><td>超出时</td><td>—</td><td>CPU 被 throttle，内存被 OOM Kill</td></tr>
+</table>
+
+<h3>QoS 等级</h3>
+<table>
+<tr><th>QoS</th><th>条件</th><th>驱逐优先级</th></tr>
+<tr><td>Guaranteed</td><td>所有容器的 requests = limits</td><td>最后被驱逐</td></tr>
+<tr><td>Burstable</td><td>至少一个容器设了 requests 但 requests ≠ limits</td><td>中间</td></tr>
+<tr><td>BestEffort</td><td>没有设任何 requests 和 limits</td><td>最先被驱逐</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>InPlacePodVerticalScaling（1.27 alpha）</h3>
+<p>传统修改资源需要重建 Pod。InPlace 允许在不重启容器的情况下动态调整 CPU 和 Memory 的 requests/limits。</p>
+<p><strong>限制</strong>：只支持 CPU 和 Memory，<strong>不支持 GPU</strong>。GPU 是 Extended Resource，admit 后不可修改。GPU 分配必须在调度时确定，运行时只能通过 MPS 等方式做软共享。</p>
+</div>
+
+<h2>K8s 面试高频问答</h2>
+
+<div class="card card-s">
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 一个 Pod 从创建到运行经历了什么？</div>
+<div class="qa-a">
+<ol>
+<li>用户提交 Pod 到 API Server</li>
+<li>API Server 验证、持久化到 etcd</li>
+<li>Scheduler 通过 Informer 监听到新的未绑定 Pod</li>
+<li>Scheduler 执行 Filter → Score → Reserve → Bind</li>
+<li>Bind 结果写入 API Server（Pod.spec.nodeName）</li>
+<li>目标节点的 kubelet 通过 Informer 发现分配给自己的 Pod</li>
+<li>kubelet 调用 CRI 创建容器，调用 CNI 配置网络，调用 CSI 挂载存储</li>
+<li>容器启动，kubelet 上报状态到 API Server</li>
+</ol>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Informer 机制是什么？为什么不直接轮询 API Server？</div>
+<div class="qa-a"><p><strong>Informer</strong> 是 client-go 提供的本地缓存 + Watch 机制。首次 List 获取全量数据存入本地缓存（Store），之后通过 Watch 接收增量事件（Added/Modified/Deleted）。相比轮询：(1) 实时性——事件驱动而非定期拉取；(2) 性能——减少 API Server 负载；(3) 可靠性——Watch 断线后通过 ResourceVersion 续接。Informer 还包含 Indexer（高效查询）和 WorkQueue（去重合并）。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: etcd 为什么是性能瓶颈？怎么优化？</div>
+<div class="qa-a"><p>etcd 是集群唯一的持久化存储，所有写操作都要经过 Raft 共识（至少过半节点确认）。大集群下 event、configmap、secret 的频繁写入导致延迟上升。优化方法：(1) SSD 磁盘降低 fsync 延迟；(2) 分离 event 到独立 etcd 集群；(3) API Server 启用 watch cache；(4) 合理设置 compaction 周期减小数据库体积。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何实现自定义调度器？有几种方案？</div>
+<div class="qa-a">
+<p>三种方案：</p>
+<ol>
+<li><strong>Scheduler Plugin（推荐）</strong>：实现 Scheduling Framework 的扩展点接口（Filter/Score/Reserve 等），编译进调度器二进制。优点：性能好，原生集成</li>
+<li><strong>Scheduler Extender</strong>：HTTP webhook 方式，调度器在 Filter/Score 后调用外部服务。优点：不需要重编译调度器；缺点：网络延迟，不支持所有扩展点</li>
+<li><strong>完全自定义调度器</strong>：独立二进制，通过 Pod 的 schedulerName 字段指定。优点：完全自由；缺点：不能复用默认插件，维护成本高</li>
+</ol>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: K8s GPU 调度的挑战和解决方案？</div>
+<div class="qa-a">
+<p>核心挑战：</p>
+<ol>
+<li><strong>整数分配</strong>：nvidia.com/gpu 是 Extended Resource，只能整数分配，不支持 0.5 GPU</li>
+<li><strong>拓扑无感</strong>：默认调度器不感知 GPU 间的 NVLink 拓扑，可能把需要通信的 Pod 放到不同 PCIe 树</li>
+<li><strong>无法修改</strong>：admit 后 GPU 数量不可调整</li>
+</ol>
+<p>解决方案：</p>
+<ol>
+<li>GPU 共享：MPS / MIG / 时间片（需要 device plugin 配合）</li>
+<li>拓扑感知：Topology Manager + 自定义 Score 插件</li>
+<li>弹性训练：Elastic Horovod / PyTorch Elastic（运行时加减 worker）</li>
+</ol>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Device Plugin 怎么工作？</div>
+<div class="qa-a"><p>Device Plugin 是 kubelet 的扩展机制，用于管理非标准硬件资源。工作流程：(1) Device Plugin 启动后通过 gRPC 向 kubelet 注册资源名称（如 nvidia.com/gpu）；(2) kubelet 向 API Server 上报节点有多少该资源；(3) 调度器基于这些资源做 Filter/Score；(4) Pod 调度到节点后，kubelet 调用 Device Plugin 的 Allocate 方法获取设备信息（如 /dev/nvidia0）；(5) 设备信息注入容器环境。NVIDIA 的 k8s-device-plugin 就是这样实现 GPU 调度的。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
+<div class="qa-a"><p>ClusterIP Service 有一个虚拟 IP，kube-proxy 做负载均衡。Headless Service（clusterIP: None）不分配虚拟 IP，DNS 查询直接返回所有后端 Pod 的 IP。<strong>在 AI Infra 中的用途</strong>：分布式训练需要所有 worker 直接通信（NCCL AllReduce），用 Headless Service 让每个 Pod 能解析其他 Pod 的 IP，建立直连。</p></div>
+</div>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 3: 任务调度理论                             -->
+<!-- ================================================================ -->
+<div class="panel" id="p3">
+
+<h2>经典调度算法</h2>
+
+<div class="card card-m">
+<h3>基础调度策略</h3>
+<table>
+<tr><th>算法</th><th>原理</th><th>可抢占</th><th>需要预测</th><th>优缺点</th></tr>
+<tr><td>FIFO</td><td>先到先服务</td><td>否</td><td>否</td><td>简单公平，但短作业可能被长作业阻塞</td></tr>
+<tr><td>SJF</td><td>最短作业优先</td><td>否</td><td>是</td><td>最优平均等待时间，但长作业可能饥饿</td></tr>
+<tr><td>SRTF</td><td>最短剩余时间优先</td><td>是</td><td>是</td><td>SJF 的抢占版本，新短作业到达可抢占长作业</td></tr>
+<tr><td>EDF</td><td>最早截止时间优先</td><td>是</td><td>否</td><td>适合实时系统，需要知道 deadline</td></tr>
+<tr><td>Round Robin</td><td>时间片轮转</td><td>是</td><td>否</td><td>公平但上下文切换开销大</td></tr>
+<tr><td>优先级调度</td><td>按静态/动态优先级排序</td><td>可选</td><td>否</td><td>灵活但需要合理设定优先级</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: SRTF 和 SJF 的本质区别？什么时候用 SRTF？</div>
+<div class="qa-a"><p>SJF 按总执行时间排序，<strong>不可抢占</strong>——一旦开始执行就必须跑完。SRTF 按<strong>剩余</strong>时间排序，<strong>可抢占</strong>——新来的短作业可以打断正在执行的长作业。当作业到达时间不确定时 SRTF 更优：比如多 agent 工作流中，不断有新 stage 到达，SRTF 可以让新来的短 stage 立即执行，避免被长 stage 阻塞。代价是需要抢占机制和更精确的剩余时间预测。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: SJF 为什么最优？会有什么问题？</div>
+<div class="qa-a"><p>可以数学证明：SJF 最小化平均等待时间（把短作业排前面，它们的等待时间短，长作业无论排哪里都要等，放后面对总和影响最小）。问题是<strong>饥饿</strong>——如果短作业源源不断到达，长作业可能永远轮不到。解决办法：老化机制（aging），等待时间越长优先级越高；或者混合策略，如词典序先看保障度再看时间。</p></div>
+</div>
+</div>
+
+<div class="card card-d">
+<h3>公平性调度</h3>
+
+<h4>DRF（Dominant Resource Fairness）</h4>
+<p>多维资源（CPU + 内存 + GPU）场景下的公平分配算法。核心思想：每个用户的<strong>主导资源</strong>（demand/capacity 比值最大的资源维度）应该被均等分配。</p>
+<p><strong>例子</strong>：集群有 100 CPU 和 100GB 内存。用户 A 的任务需要 (2CPU, 8GB)，用户 B 的任务需要 (4CPU, 2GB)。A 的主导资源是内存（8%），B 的主导资源是 CPU（4%）。DRF 让两者的主导资源份额相等。</p>
+<p><strong>性质</strong>：共享激励（sharing incentive）、无嫉妒（envy-free）、帕累托效率。</p>
+<p><strong>QAD vs DRF</strong>：DRF 追求均等分配，不区分保障和弹性。QAD 允许超额分配（QAD &gt; 1）但可回收，更适合有配额保障需求的场景。</p>
+
+<h4>Max-Min Fairness</h4>
+<p>按需分配，每个用户至少获得 1/N 份额，不需要更多的用户把多余份额让给需要的人。递归地最大化最小分配。</p>
+</div>
+
+<div class="card card-w">
+<h3>GPU 集群特有的调度策略</h3>
+
+<h4>Gang Scheduling</h4>
+<p>分布式训练任务的所有 worker 必须<strong>同时</strong>被调度，要么全部启动，要么全不启动（all-or-nothing）。原因：如果只启动部分 worker，NCCL AllReduce 会阻塞等待其余 worker，已启动的 GPU 完全空转。</p>
+<p><strong>实现</strong>：Volcano 的 PodGroup + minMember 机制。调度器检查集群是否能同时满足 PodGroup 中所有 Pod 的资源需求。不能则整组等待。</p>
+
+<h4>Bin Packing vs Spread</h4>
+<table>
+<tr><th>策略</th><th>原理</th><th>适用场景</th></tr>
+<tr><td>Bin Packing</td><td>尽量把 Pod 塞满已有节点，减少碎片</td><td>提高资源利用率，适合计算密集任务</td></tr>
+<tr><td>Spread</td><td>尽量把 Pod 分散到不同节点</td><td>高可用，避免单点故障</td></tr>
+</table>
+<p>GPU 集群通常用 Bin Packing：GPU 是昂贵资源，碎片化（一个节点剩 1 GPU，另一个节点也剩 1 GPU，但需要 2 GPU 的任务无法调度）是大问题。</p>
+
+<h4>弹性训练（Elastic Training）</h4>
+<p>运行中的训练任务可以动态增减 worker 数量，不需要重启。PyTorch Elastic（torchrun）和 Elastic Horovod 支持。优势：(1) 有空闲 GPU 时扩展加速训练；(2) 需要回收 GPU 时缩减而非杀死。挑战：数据并行 batch size 变化、learning rate 需要调整。</p>
+
+<h4>Backfill Scheduling</h4>
+<p>当大作业等待资源时，小作业如果能在大作业预期开始前完成，就"见缝插针"地先执行。SLURM 和 PBS 常用策略。需要预测作业执行时间。</p>
+</div>
+
+<div class="card card-s">
+<h3>调度算法面试问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Head-of-line blocking 怎么解决？</div>
+<div class="qa-a"><p>三种思路：(1) <strong>预测驱动排序</strong>——SRTF/SJF 让短任务先执行，减少被长任务阻塞的概率。(2) <strong>抢占</strong>——长任务阻塞时强制让位给高优先级任务。(3) <strong>多队列</strong>——不同类型任务分开排队，互不干扰。实际系统中常常同时使用多种：SRTF 排序 + 抢占 + 分队列。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 抢占的代价有哪些？怎么降低？</div>
+<div class="qa-a"><p>代价：(1) <strong>进度浪费</strong>——被抢占作业已完成的计算全部丢失（除非有 checkpoint）。(2) <strong>重启开销</strong>——重新排队、加载模型/数据。(3) <strong>系统开销</strong>——保存状态、清理资源。降低代价：(1) checkpoint 机制减少进度损失；(2) 代价基抢占选择沉没成本最小的牺牲者；(3) 在自然间隔（如 stage 边界）抢占，零中断。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 多维资源调度的挑战？</div>
+<div class="qa-a"><p>GPU 集群的资源是多维的——CPU、内存、GPU、网络带宽。挑战：(1) <strong>碎片化</strong>——某些维度剩余很多，但另一个维度不够，整个节点不可用。(2) <strong>耦合性</strong>——GPU 任务通常也需要大量 CPU 做数据预处理。(3) <strong>异构性</strong>——不同 GPU 型号性能差异大。DRF 从理论上解决公平性，但实际中还需要拓扑感知（NVLink 拓扑）和亲和性约束。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 调度延迟和调度质量的 trade-off？</div>
+<div class="qa-a"><p>更好的调度决策需要更多信息和更多计算，但用户不想等太久。解决：(1) 两阶段调度——Filter 快速排除明显不行的，Score 只在少量候选中精选；(2) 缓存——Informer 本地缓存避免每次查 API Server；(3) 近似算法——不需要最优解，足够好就行；(4) 异步——Bind 阶段异步执行，不阻塞下一个 Pod 的调度。</p></div>
+</div>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 4: GPU 集群管理                             -->
+<!-- ================================================================ -->
+<div class="panel" id="p4">
+
+<h2>GPU 集群调度框架</h2>
+
+<div class="card card-d">
+<h3>主流框架对比</h3>
+<table>
+<tr><th>框架</th><th>定位</th><th>核心能力</th><th>局限</th></tr>
+<tr><td>Volcano</td><td>批处理调度</td><td>Gang scheduling、Queue 管理、PodGroup、Fair-share</td><td>缺少干扰感知、配额弹性不够灵活</td></tr>
+<tr><td>Yunikorn</td><td>多租户资源管理</td><td>层级队列、应用感知调度、跨 K8s/YARN</td><td>GPU 拓扑支持有限</td></tr>
+<tr><td>Kueue</td><td>作业排队管理</td><td>ResourceFlavor、ClusterQueue、Workload 抽象</td><td>较新，生态还在发展</td></tr>
+<tr><td>Run:ai</td><td>GPU 虚拟化平台</td><td>GPU 分时/共享、配额管理、可视化</td><td>商业产品，闭源</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Volcano 的核心设计？它的局限性？</div>
+<div class="qa-a">
+<p>Volcano 的核心是 <strong>PodGroup + Queue + Policy</strong>：PodGroup 定义 Gang scheduling 语义（minMember），Queue 管理多租户配额，Policy（Gang/DRF/Priority）定义调度策略。</p>
+<p>Volcano 的局限性：(1) 配额是静态的（min/max），不支持连续保障度信号；(2) 没有干扰感知合用能力；(3) 不做运行时间预测；(4) 抢占是简单的优先级抢占，不考虑沉没成本。在需要弹性配额、干扰感知等能力时，需从 Scheduling Framework 原生构建，获得更大的灵活性。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kueue 的 ResourceFlavor 是什么概念？</div>
+<div class="qa-a"><p>ResourceFlavor 抽象了不同类型的资源——比如 A100 GPU 是一种 Flavor，H100 GPU 是另一种。ClusterQueue 可以关联多个 Flavor，每个 Flavor 有独立的配额。Workload 提交时可以指定 Flavor 偏好，Kueue 根据配额和排队情况分配。这对异构 GPU 集群很有用。</p></div>
+</div>
+</div>
+
+<h2>多租户管理</h2>
+
+<div class="card card-w">
+<h3>配额管理方案对比</h3>
+<table>
+<tr><th>方案</th><th>保障性</th><th>弹性</th><th>回收</th><th>公平度量</th></tr>
+<tr><td>固定配额</td><td>强</td><td>无</td><td>不需要</td><td>—</td></tr>
+<tr><td>ElasticQuota</td><td>min 保障</td><td>max 上限</td><td>抢占</td><td>—</td></tr>
+<tr><td>弹性保障（DRA 类）</td><td>QAD ≥ 0.95</td><td>无上限（借用）</td><td>QAD 驱动回收</td><td>QAD</td></tr>
+<tr><td>DRF</td><td>弱</td><td>按比例</td><td>—</td><td>Dominant Share</td></tr>
+</table>
+
+<h3>多租户隔离层次</h3>
+<ol>
+<li><strong>Namespace 级别</strong>：ResourceQuota 限制总量，LimitRange 限制单个 Pod。最基本的隔离</li>
+<li><strong>Queue 级别</strong>：Volcano Queue / Kueue ClusterQueue。更灵活的配额管理和排队</li>
+<li><strong>节点级别</strong>：NodeSelector / Taint-Toleration 把特定节点专属于特定租户</li>
+<li><strong>GPU 级别</strong>：MIG 硬件切片 / MPS 软件共享。GPU 内部的隔离</li>
+</ol>
+</div>
+
+<h2>GPU 拓扑与通信</h2>
+
+<div class="card card-s">
+<h3>集群拓扑层次</h3>
+<table>
+<tr><th>层级</th><th>互联</th><th>带宽</th><th>延迟</th></tr>
+<tr><td>GPU 内部</td><td>SM ↔ HBM</td><td>2-4.8 TB/s</td><td>ns 级</td></tr>
+<tr><td>节点内 GPU 间</td><td>NVLink / NVSwitch</td><td>300-900 GB/s</td><td>μs 级</td></tr>
+<tr><td>节点内 CPU-GPU</td><td>PCIe Gen4/5</td><td>32-64 GB/s</td><td>μs 级</td></tr>
+<tr><td>节点间</td><td>InfiniBand / RoCE</td><td>200-400 Gbps</td><td>几 μs</td></tr>
+<tr><td>机柜间</td><td>交换机</td><td>几百 Gbps</td><td>几十 μs</td></tr>
+</table>
+<p><strong>调度意义</strong>：分布式训练的通信模式（AllReduce）对带宽敏感。拓扑感知调度把同一任务的 worker 放在 NVLink 可达的 GPU 上，或者至少同一个机柜内，显著减少通信时间。</p>
+
+<h3>集合通信原语</h3>
+<table>
+<tr><th>原语</th><th>操作</th><th>训练中的用途</th></tr>
+<tr><td>AllReduce</td><td>所有节点的数据聚合（如求和），结果广播到所有节点</td><td>数据并行梯度同步</td></tr>
+<tr><td>AllGather</td><td>所有节点收集所有节点的数据</td><td>张量并行参数同步</td></tr>
+<tr><td>ReduceScatter</td><td>先 Reduce 再 Scatter 分片</td><td>ZeRO 优化</td></tr>
+<tr><td>Broadcast</td><td>一个节点广播到所有节点</td><td>参数初始化</td></tr>
+<tr><td>P2P Send/Recv</td><td>点对点传输</td><td>流水线并行</td></tr>
+</table>
+<p>NCCL（NVIDIA Collective Communication Library）自动选择最优通信路径（NVLink &gt; PCIe &gt; InfiniBand）。</p>
+</div>
+
+<h2>分布式训练</h2>
+
+<div class="card card-m">
+<h3>并行策略</h3>
+<table>
+<tr><th>策略</th><th>切分维度</th><th>通信模式</th><th>适用场景</th></tr>
+<tr><td>数据并行（DP）</td><td>数据 batch</td><td>AllReduce 梯度</td><td>模型能放进单卡</td></tr>
+<tr><td>张量并行（TP）</td><td>模型层内矩阵</td><td>AllReduce/AllGather</td><td>大矩阵乘法，需要 NVLink</td></tr>
+<tr><td>流水线并行（PP）</td><td>模型层间</td><td>P2P Send/Recv</td><td>模型太大放不进单节点</td></tr>
+<tr><td>专家并行（EP）</td><td>MoE 专家</td><td>All-to-All</td><td>MoE 模型（Mixtral）</td></tr>
+<tr><td>ZeRO（1/2/3）</td><td>优化器状态/梯度/参数</td><td>AllGather + ReduceScatter</td><td>减少显存占用</td></tr>
+</table>
+
+<h3>3D 并行</h3>
+<p>大模型训练通常组合使用 DP + TP + PP。典型配置（8 节点 × 8 GPU = 64 GPU 训练 175B 模型）：</p>
+<ul>
+<li>TP = 8（节点内 8 卡 NVLink 互联，通信量大需要高带宽）</li>
+<li>PP = 4（跨 4 个节点做流水线，通信量小，可以走 InfiniBand）</li>
+<li>DP = 2（两组流水线做数据并行，每个 micro-batch 结束同步梯度）</li>
+</ul>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ZeRO 三个阶段分别做了什么？</div>
+<div class="qa-a">
+<p>训练一个模型需要存储三类数据：优化器状态（如 Adam 的 momentum + variance，每参数 12 字节）、梯度（每参数 4 字节）、模型参数（FP16 每参数 2 字节）。</p>
+<ul>
+<li><strong>ZeRO-1</strong>：切分优化器状态。每张卡只存 1/N 的优化器状态。省最多内存的部分</li>
+<li><strong>ZeRO-2</strong>：切分优化器状态 + 梯度。梯度 reduce 后只保留对应分片</li>
+<li><strong>ZeRO-3</strong>：切分优化器状态 + 梯度 + 参数。前向/反向时按需 AllGather 参数，用完释放。通信量最大但内存最省</li>
+</ul>
+<p>ZeRO-3 + 64 卡可以训练 1T 参数的模型（每卡只存 1/64 参数）。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 数据并行的梯度同步有什么优化？</div>
+<div class="qa-a"><p>(1) <strong>梯度压缩</strong>——只传 top-k 梯度或用低精度传输。(2) <strong>梯度累积</strong>——多个 micro-batch 的梯度在本地累积后再同步，减少通信次数。(3) <strong>通信-计算重叠</strong>——反向传播过程中，已计算完的层立即开始 AllReduce，不等所有层都算完。(4) <strong>Ring AllReduce</strong>——通信量 2(N-1)/N × data_size，线性扩展。</p></div>
+</div>
+</div>
+
+<h2>故障处理与弹性</h2>
+
+<div class="card card-r">
+<h3>GPU 集群常见故障</h3>
+<table>
+<tr><th>故障类型</th><th>频率</th><th>影响</th><th>应对</th></tr>
+<tr><td>GPU ECC 错误</td><td>每周/每月</td><td>单卡不可用</td><td>自动检测 + 标记不可调度</td></tr>
+<tr><td>NVLink 降级</td><td>偶发</td><td>通信带宽下降</td><td>重新拓扑发现 + 调整并行策略</td></tr>
+<tr><td>节点宕机</td><td>大集群每天</td><td>丢失所有进程</td><td>checkpoint 恢复 + 弹性训练</td></tr>
+<tr><td>网络分区</td><td>偶发</td><td>NCCL 超时</td><td>超时检测 + 重连</td></tr>
+<tr><td>显存泄漏</td><td>常见</td><td>OOM Kill</td><td>监控 + 自动重启</td></tr>
+</table>
+
+<h3>Checkpoint 策略</h3>
+<ul>
+<li><strong>周期性 checkpoint</strong>：每 N 步保存一次完整状态（模型 + 优化器 + 数据迭代器位置）</li>
+<li><strong>异步 checkpoint</strong>：后台线程写入存储，不阻塞训练</li>
+<li><strong>增量 checkpoint</strong>：只保存变化部分，减少 I/O</li>
+<li><strong>分布式 checkpoint</strong>：每张卡只保存自己的分片，并行写入</li>
+</ul>
+<p>大模型的 checkpoint 可能上百 GB，存储带宽和频率是 trade-off：太频繁影响训练速度，太稀疏丢失进度多。</p>
+</div>
+
+<h2>集群管理面试问答</h2>
+
+<div class="card card-s">
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU 利用率为什么普遍很低？怎么提升？</div>
+<div class="qa-a">
+<p>原因：(1) <strong>碎片化</strong>——剩余 GPU 分散在不同节点，大任务放不进去。(2) <strong>I/O 瓶颈</strong>——数据加载阶段 GPU 空闲。(3) <strong>配额闲置</strong>——有配额但没任务。(4) <strong>通信开销</strong>——AllReduce 时 GPU 等待网络。</p>
+<p>提升方法：(1) Bin Packing 减少碎片；(2) 弹性配额借用（DRA）解决配额闲置；(3) MPS 合用解决 I/O 阶段空闲；(4) 通信-计算重叠。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何监控 GPU 集群？</div>
+<div class="qa-a">
+<p>三层监控：</p>
+<ol>
+<li><strong>硬件层</strong>：DCGM（Data Center GPU Manager）收集 GPU 温度、功耗、ECC 错误、SM 利用率、显存使用</li>
+<li><strong>调度层</strong>：调度延迟、排队深度、配额使用率（QAD）、抢占频率</li>
+<li><strong>任务层</strong>：训练 loss 曲线、吞吐（samples/s）、GPU 利用率、checkpoint 频率</li>
+</ol>
+<p>通常 DCGM → Prometheus → Grafana 的技术栈。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 训练任务和推理任务的调度有什么区别？</div>
+<div class="qa-a">
+<table>
+<tr><th>维度</th><th>训练</th><th>推理</th></tr>
+<tr><td>时间尺度</td><td>小时到天</td><td>毫秒到秒</td></tr>
+<tr><td>资源模式</td><td>独占整卡，Gang scheduling</td><td>可共享，弹性伸缩</td></tr>
+<tr><td>失败代价</td><td>高（可能丢失小时级进度）</td><td>低（重试即可）</td></tr>
+<tr><td>调度频率</td><td>低（每个任务调度一次）</td><td>高（每秒数千请求路由）</td></tr>
+<tr><td>SLO 指标</td><td>JCT、公平性</td><td>TTFT、TPOT、P99 延迟</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 5: 性能预测与建模                           -->
+<!-- ================================================================ -->
+<div class="panel" id="p5">
+
+<h2>调度系统中的预测方法示例</h2>
+
+<div class="card card-s">
+<table>
+<tr><th>维度</th><th>推理场景</th><th>训练场景</th></tr>
+<tr><td>预测目标</td><td>输出 token 长度</td><td>作业执行时间</td></tr>
+<tr><td>模型</td><td>LightGBM（两阶段）</td><td>Random Forest</td></tr>
+<tr><td>特征来源</td><td>结构化（角色、位置）+ 语义（MiniLM → PCA）</td><td>硬件计数器 + 历史统计</td></tr>
+<tr><td>精度</td><td>分类 AUC 0.96，回归 R² 0.78</td><td>MAPE ~30%, R² 0.73</td></tr>
+<tr><td>推理延迟</td><td>~10ms</td><td>&lt; 1ms</td></tr>
+<tr><td>冷启动</td><td>per-role → 全局 fallback</td><td>≥ 50 历史样本后有效</td></tr>
+<tr><td>更新策略</td><td>post-execution profiling + EWMA</td><td>周期性再训练 + EMA 平滑</td></tr>
+</table>
+</div>
+
+<h2>为什么用树模型</h2>
+
+<div class="card card-m">
+<h3>树模型 vs 深度学习的选择依据</h3>
+<table>
+<tr><th>考虑因素</th><th>树模型（LightGBM/RF）</th><th>深度学习</th></tr>
+<tr><td>训练数据量</td><td>几百到几千条就足够</td><td>需要大量数据</td></tr>
+<tr><td>推理延迟</td><td>微秒到毫秒级</td><td>毫秒到百毫秒</td></tr>
+<tr><td>可解释性</td><td>特征重要性、决策路径清晰</td><td>黑盒</td></tr>
+<tr><td>表格数据</td><td>通常优于 DNN</td><td>需要特殊架构（TabNet）</td></tr>
+<tr><td>特征工程</td><td>需要手工设计</td><td>自动学习表示</td></tr>
+</table>
+<p><strong>调度系统中的具体考量</strong>：</p>
+<ul>
+<li>推理场景：per-role 可能只有几百条训练数据；推理延迟必须 &lt; 15ms（在调度路径上）；需要特征重要性分析证明哪些特征有用</li>
+<li>训练场景：推理 &lt; 1ms 才能不影响调度延迟（总预算 50ms）；硬件计数器是结构化特征，树模型天然擅长</li>
+</ul>
+</div>
+
+<h2>特征工程</h2>
+
+<div class="card card-w">
+<h3>推理输出长度预测特征</h3>
+<table>
+<tr><th>类别</th><th>特征</th><th>信号</th></tr>
+<tr><td rowspan="4">结构化特征</td><td>agent 角色 ID</td><td>不同角色输出模式不同</td></tr>
+<tr><td>工作流位置（DAG 深度）</td><td>初始 stage 倾向短输出，终端 stage 倾向长输出</td></tr>
+<tr><td>当前调用索引</td><td>对话中越后面的调用越可能是总结</td></tr>
+<tr><td>工具可用性标记</td><td>有工具的 stage 更可能做工具调用</td></tr>
+<tr><td rowspan="2">语义特征</td><td>MiniLM prompt 嵌入</td><td>捕捉语义内容信号</td></tr>
+<tr><td>PCA 384→32 维</td><td>降维减少过拟合和推理时间</td></tr>
+<tr><td>交叉特征</td><td>分类器预测概率 p̂_tool</td><td>告诉回归器当前处于哪个分布模式</td></tr>
+</table>
+
+<h3>训练运行时间预测特征</h3>
+<table>
+<tr><th>类别</th><th>特征</th><th>来源</th></tr>
+<tr><td rowspan="3">硬件计数器</td><td>SM activity（%）</td><td>DCGM</td></tr>
+<tr><td>Memory bandwidth 利用率</td><td>DCGM</td></tr>
+<tr><td>PCIe 吞吐</td><td>DCGM</td></tr>
+<tr><td rowspan="3">历史统计</td><td>同类作业历史运行时间</td><td>调度器数据库</td></tr>
+<tr><td>请求资源量（GPU 数、CPU、内存）</td><td>Pod spec</td></tr>
+<tr><td>数据集大小</td><td>作业元数据</td></tr>
+</table>
+</div>
+
+<h2>评估指标</h2>
+
+<div class="card card-s">
+<h3>回归评估指标</h3>
+<table>
+<tr><th>指标</th><th>公式/含义</th><th>适用场景</th></tr>
+<tr><td>MAE</td><td>平均绝对误差，对异常值不敏感</td><td>输出长度预测</td></tr>
+<tr><td>MAPE</td><td>平均绝对百分比误差，无量纲，跨尺度可比</td><td>运行时间预测</td></tr>
+<tr><td>R²</td><td>决定系数，1 为完美预测，0 为均值基线</td><td>衡量整体拟合</td></tr>
+<tr><td>RMSE</td><td>均方根误差，对大误差敏感</td><td>关注极端情况时使用</td></tr>
+</table>
+
+<h3>分类评估指标</h3>
+<table>
+<tr><th>指标</th><th>含义</th><th>使用</th></tr>
+<tr><td>AUC</td><td>ROC 曲线下面积，阈值无关的整体判别力</td><td>工具调用分类等二分类任务</td></tr>
+<tr><td>Precision</td><td>预测为正的里面实际为正的比例</td><td>避免假阳性</td></tr>
+<tr><td>Recall</td><td>实际为正的里面被预测为正的比例</td><td>避免假阴性</td></tr>
+<tr><td>F1</td><td>Precision 和 Recall 的调和平均</td><td>不均衡分类</td></tr>
+</table>
+</div>
+
+<h2>预测不准怎么办</h2>
+
+<div class="card card-r">
+<h3>四层防御机制</h3>
+<table>
+<tr><th>层次</th><th>推理场景</th><th>训练场景</th></tr>
+<tr><td>安全裕度</td><td>ρ ∈ [0.1, 0.3]，偏向高估</td><td>—</td></tr>
+<tr><td>在线校准</td><td>EWMA 跟踪误差分位数，误差增大自动扩大裕度</td><td>EMA 平滑 QAD，过滤瞬时噪声</td></tr>
+<tr><td>Fallback</td><td>per-role 数据不足 → 全局模型</td><td>新作业无历史 → 集群级中位数</td></tr>
+<tr><td>增量更新</td><td>post-execution profiling 持续收集真实数据</td><td>周期性再训练（如每天/每周）</td></tr>
+</table>
+</div>
+
+<div class="card card-s">
+<h3>Concept Drift 应对</h3>
+<p>模型部署后，数据分布会随时间变化——新 agent 上线、用户行为变化、模型版本升级。应对策略：</p>
+<ol>
+<li><strong>滑动窗口训练</strong>：只用最近 N 天的数据重训，自动遗忘过时模式</li>
+<li><strong>置信度监控</strong>：EWMA 跟踪预测误差，误差持续增大说明 drift 发生</li>
+<li><strong>异常检测</strong>：误差突增超过阈值 → 告警通知人工检查</li>
+<li><strong>模型热加载</strong>：新模型训练好后在线替换，不停服更新</li>
+</ol>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 预测模型本身会不会成为系统瓶颈？</div>
+<div class="qa-a"><p>需要从两个维度评估：(1) <strong>延迟</strong>——推理场景预测约 10ms，对比 LLM 推理本身几百毫秒到几秒，可忽略；训练场景预测 &lt; 1ms，调度总预算 50ms 中占比极小。(2) <strong>吞吐</strong>——树模型推理是纯 CPU 计算，单核每秒可做上万次预测，不会成为瓶颈。如果未来需要更复杂的模型，可以考虑异步预测 + 缓存结果。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 MAPE ~30% 的预测精度能接受？</div>
+<div class="qa-a"><p>三个原因：(1) 预测用于<strong>排序</strong>而非精确计时——只要排序大致正确，SJF 效果就好。(2) 实际作业运行时间跨度大（分钟到小时），30% 的误差在排序上影响有限。(3) 有退化保护——预测完全不准时退化为 FIFO，不会比基线差。类似的，Backfill scheduling 中 SLURM 的运行时间估计误差常超过 100%，但依然有效。</p></div>
+</div>
+</div>
+
+</div>
+
+<!-- ================================================================ -->
+<!--                    TAB 6: 系统设计题                               -->
+<!-- ================================================================ -->
+<div class="panel" id="p6">
+
+<h2>设计多模型 LLM 推理系统</h2>
+
+<div class="card card-m">
+<h3>题目</h3>
+<p>设计一个支持多模型的 LLM 推理服务，要求低延迟高利用率，多个 agent 组成工作流协作。</p>
+
+<h3>设计要点</h3>
+<ol>
+<li><strong>模型驻留管理</strong>
+  <ul>
+  <li>层级化 LRU：Running → Sleeping → CPU → Disk → Remote</li>
+  <li>Sleeping 状态保留 CUDA Graph + JIT 缓存，加速重新激活</li>
+  <li>热门模型常驻 GPU，冷门模型逐级退出</li>
+  </ul>
+</li>
+<li><strong>内存管理</strong>
+  <ul>
+  <li>核算约束：M_kv + M_res ≤ M_total</li>
+  <li>CUDA VMM 超配：虚拟地址池 3× 物理显存，按需映射</li>
+  <li>准入控制：每个请求进来先检查资源是否够</li>
+  </ul>
+</li>
+<li><strong>请求路由</strong>
+  <ul>
+  <li>适应度评分综合就绪延迟、KV 适配度、降级代价</li>
+  <li>交互和批处理分队列，避免 HoL blocking</li>
+  </ul>
+</li>
+<li><strong>排队策略</strong>
+  <ul>
+  <li>SRTF 基于预测剩余时间排序</li>
+  <li>Stage 边界抢占，不打断解码中的请求</li>
+  </ul>
+</li>
+<li><strong>预测驱动</strong>
+  <ul>
+  <li>输出长度预测 → KV 需求 → 准入控制 + 内存预分配</li>
+  <li>安全裕度偏向高估，防止 OOM</li>
+  </ul>
+</li>
+</ol>
+
+<h3>追问方向</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：如何处理突发流量？</div>
+<div class="qa-a"><p>(1) 排队 + 准入控制：超出容量的请求排队等待，不是直接拒绝。(2) 降级策略：用更小的模型替代、减少最大输出长度、增大 batch。(3) 弹性扩缩：基于排队深度自动启动新实例（但模型加载需要时间，所以要预热）。(4) 优先级分级：VIP 请求优先，普通请求可延迟。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：模型更新（A/B 测试）怎么做？</div>
+<div class="qa-a"><p>(1) 金丝雀部署：新模型先加载到少量节点，小比例流量路由过去。(2) 适应度评分中加入模型版本权重。(3) Sleeping 状态帮助快速回滚——旧模型保留在 CPU，回滚只需重新激活。(4) KV 缓存不兼容不同模型版本，新模型需要重新 prefill。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2>设计多租户 GPU 集群调度系统</h2>
+
+<div class="card card-d">
+<h3>题目</h3>
+<p>设计一个多团队共享的 GPU 训练集群调度系统，要求公平且高效。</p>
+
+<h3>设计要点</h3>
+<ol>
+<li><strong>配额管理</strong>
+  <ul>
+  <li>QAD 连续信号替代二元配额（有/没有）</li>
+  <li>DRA 弹性借用：闲置资源可借，需要时按 QAD 优先级回收</li>
+  </ul>
+</li>
+<li><strong>调度排序</strong>
+  <ul>
+  <li>词典序 (QAD↑, T̂↑)：先满足最欠缺的租户，同等 QAD 下短作业优先</li>
+  <li>代价基抢占：综合释放资源量和沉没成本</li>
+  </ul>
+</li>
+<li><strong>资源共享</strong>
+  <ul>
+  <li>干扰感知合用：RF 预测性能保持率 → 高于阈值才合用</li>
+  <li>运行时监控 + 驱逐机制保护主任务</li>
+  </ul>
+</li>
+<li><strong>K8s 原生</strong>
+  <ul>
+  <li>Scheduler Plugin 覆盖 5 个扩展点</li>
+  <li>DaemonSet 部署 MPS daemon + DCGM 监控</li>
+  <li>Lease-based 选主保证高可用</li>
+  </ul>
+</li>
+</ol>
+
+<h3>追问方向</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：怎么处理大任务和小任务的矛盾？</div>
+<div class="qa-a"><p>大任务（需要 64 GPU）和小任务（需要 1 GPU）的调度矛盾：(1) Gang scheduling 保证大任务原子性。(2) Backfill 让小任务见缝插针。(3) 大任务可以拆分为弹性训练（先用 32 GPU 开始，有空闲再扩到 64）。(4) 预留机制：为大任务预留资源窗口，避免永远等不到足够资源。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：如何处理异构 GPU？</div>
+<div class="qa-a"><p>(1) ResourceFlavor 区分不同 GPU 型号（A100/H100/V100）。(2) 运行时间预测模型需要区分 GPU 类型——同样的作业在 A100 和 H100 上时间不同。(3) 价格/性能比引导调度：不紧急的任务用便宜 GPU，紧急任务用高端 GPU。(4) 混合精度兼容性：H100 支持 FP8，A100 只支持到 FP16/BF16。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2>设计分布式训练平台</h2>
+
+<div class="card card-s">
+<h3>题目</h3>
+<p>设计一个端到端的分布式训练平台，支持从提交任务到训练完成的全流程。</p>
+
+<h3>设计要点</h3>
+<ol>
+<li><strong>任务抽象</strong>
+  <ul>
+  <li>用户提交训练配置：模型代码、数据路径、并行策略、资源需求</li>
+  <li>平台生成 PodGroup + 配置 ConfigMap + Headless Service</li>
+  </ul>
+</li>
+<li><strong>资源调度</strong>
+  <ul>
+  <li>Gang scheduling 保证所有 worker 同时启动</li>
+  <li>拓扑感知：优先同节点（NVLink）→ 同机柜（高速交换）→ 跨机柜</li>
+  </ul>
+</li>
+<li><strong>训练生命周期</strong>
+  <ul>
+  <li>初始化：参数同步 + NCCL 通信组建立</li>
+  <li>训练循环：数据加载 → 前向 → 反向 → AllReduce → 更新</li>
+  <li>Checkpoint：周期性异步保存到分布式存储</li>
+  </ul>
+</li>
+<li><strong>容错机制</strong>
+  <ul>
+  <li>Worker 故障检测（心跳超时）</li>
+  <li>弹性恢复：从最近 checkpoint 重启，支持 worker 数量变化</li>
+  <li>GPU 健康检查：ECC 错误检测 + 自动标记不可用</li>
+  </ul>
+</li>
+<li><strong>可观测性</strong>
+  <ul>
+  <li>训练指标：loss、throughput、GPU 利用率</li>
+  <li>系统指标：网络吞吐、存储 IOPS、调度延迟</li>
+  <li>日志和事件：统一收集到日志平台</li>
+  </ul>
+</li>
+</ol>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：如何优化大模型训练的启动时间？</div>
+<div class="qa-a"><p>(1) <strong>镜像预热</strong>：在目标节点预拉取训练镜像（几十 GB），避免冷启动拉镜像。(2) <strong>模型缓存</strong>：预训练 checkpoint 缓存在节点本地 NVMe，不用每次从分布式存储下载。(3) <strong>NCCL 初始化优化</strong>：减少初始化时的全互联探测时间。(4) <strong>数据预加载</strong>：提前将训练数据加载到内存或本地 SSD。</p></div>
+</div>
+</div>
+
+<hr class="div">
+
+<h2>设计 KV 缓存管理系统</h2>
+
+<div class="card card-w">
+<h3>题目</h3>
+<p>为 LLM 推理集群设计高效的 KV 缓存管理系统。</p>
+
+<h3>设计要点</h3>
+<ol>
+<li><strong>分页管理</strong>：借鉴 PagedAttention，KV 缓存切成固定大小 block，block table 维护映射</li>
+<li><strong>按需分配</strong>：不预分配最大长度，根据预测输出长度分配初始 block，不够时动态追加</li>
+<li><strong>前缀共享</strong>：相同系统 prompt 的请求共享 KV 缓存前缀（RadixAttention），copy-on-write 语义</li>
+<li><strong>层级存储</strong>：GPU → CPU → 磁盘三级缓存。热请求在 GPU，暂停的请求 offload 到 CPU</li>
+<li><strong>驱逐策略</strong>：LRU 基础上考虑请求优先级——低优先级请求的 KV 先被驱逐</li>
+<li><strong>内存核算</strong>：M_kv + M_res ≤ M_total，准入控制防止过载</li>
+</ol>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">追问：多模型场景下 KV 缓存管理有什么额外挑战？</div>
+<div class="qa-a"><p>(1) <strong>异构 block 大小</strong>：不同模型的 head_dim、num_heads 不同，block 大小不统一。解决：统一到字节粒度的 slab allocator。(2) <strong>模型切换时的缓存失效</strong>：模型从 GPU 换出时，其 KV 缓存也要处理——可以保留等模型回来，也可以驱逐释放空间。(3) <strong>预测准确性依赖模型</strong>：不同模型的输出长度分布不同，需要 per-model 预测器。</p></div>
+</div>
+</div>
+
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,idx)=>{t.classList.toggle('active',idx===i)});
+  document.querySelectorAll('.panel').forEach((p,idx)=>{p.classList.toggle('active',idx===i)});
+}
+// collapse/expand all Q&A in current tab
+document.addEventListener('keydown',function(e){
+  if(e.key==='e'&&e.altKey){
+    var active=document.querySelector('.panel.active');
+    if(!active)return;
+    var qas=active.querySelectorAll('.qa');
+    var allOpen=[...qas].every(q=>q.classList.contains('open'));
+    qas.forEach(q=>{allOpen?q.classList.remove('open'):q.classList.add('open')});
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU 集群管理 · doctor-study</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a class="home" href="../index.html">← 首页</a>
+  <span class="sep">·</span>
+  <a href="papers.html">论文</a>
+  <a href="gpu-inference.html">GPU &amp; 推理</a>
+  <a href="kubernetes.html">Kubernetes</a>
+  <a href="scheduling.html">调度理论</a>
+  <a href="cluster-management.html">集群管理</a>
+  <a href="performance-prediction.html">性能预测</a>
+  <a href="system-design.html">系统设计</a>
+</nav>
+<div class="wrap">
+<h1>GPU 集群管理</h1>
+<p class="sub">调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错</p>
+
+<h2>GPU 集群调度框架</h2>
+
+<div class="card card-d">
+<h3>主流框架对比</h3>
+<table>
+<tr><th>框架</th><th>定位</th><th>核心能力</th><th>局限</th></tr>
+<tr><td>Volcano</td><td>批处理调度</td><td>Gang scheduling、Queue 管理、PodGroup、Fair-share</td><td>缺少干扰感知、配额弹性不够灵活</td></tr>
+<tr><td>Yunikorn</td><td>多租户资源管理</td><td>层级队列、应用感知调度、跨 K8s/YARN</td><td>GPU 拓扑支持有限</td></tr>
+<tr><td>Kueue</td><td>作业排队管理</td><td>ResourceFlavor、ClusterQueue、Workload 抽象</td><td>较新，生态还在发展</td></tr>
+<tr><td>Run:ai</td><td>GPU 虚拟化平台</td><td>GPU 分时/共享、配额管理、可视化</td><td>商业产品，闭源</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Volcano 的核心设计？它的局限性？</div>
+<div class="qa-a">
+<p>Volcano 的核心是 <strong>PodGroup + Queue + Policy</strong>：PodGroup 定义 Gang scheduling 语义（minMember），Queue 管理多租户配额，Policy（Gang/DRF/Priority）定义调度策略。</p>
+<p>Volcano 的局限性：(1) 配额是静态的（min/max），不支持连续保障度信号；(2) 没有干扰感知合用能力；(3) 不做运行时间预测；(4) 抢占是简单的优先级抢占，不考虑沉没成本。在需要弹性配额、干扰感知等能力时，需从 Scheduling Framework 原生构建，获得更大的灵活性。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kueue 的 ResourceFlavor 是什么概念？</div>
+<div class="qa-a"><p>ResourceFlavor 抽象了不同类型的资源——比如 A100 GPU 是一种 Flavor，H100 GPU 是另一种。ClusterQueue 可以关联多个 Flavor，每个 Flavor 有独立的配额。Workload 提交时可以指定 Flavor 偏好，Kueue 根据配额和排队情况分配。这对异构 GPU 集群很有用。</p></div>
+</div>
+</div>
+
+<h2>多租户管理</h2>
+
+<div class="card card-w">
+<h3>配额管理方案对比</h3>
+<table>
+<tr><th>方案</th><th>保障性</th><th>弹性</th><th>回收</th><th>公平度量</th></tr>
+<tr><td>固定配额</td><td>强</td><td>无</td><td>不需要</td><td>—</td></tr>
+<tr><td>ElasticQuota</td><td>min 保障</td><td>max 上限</td><td>抢占</td><td>—</td></tr>
+<tr><td>弹性保障（DRA 类）</td><td>QAD ≥ 0.95</td><td>无上限（借用）</td><td>QAD 驱动回收</td><td>QAD</td></tr>
+<tr><td>DRF</td><td>弱</td><td>按比例</td><td>—</td><td>Dominant Share</td></tr>
+</table>
+
+<h3>多租户隔离层次</h3>
+<ol>
+<li><strong>Namespace 级别</strong>：ResourceQuota 限制总量，LimitRange 限制单个 Pod。最基本的隔离</li>
+<li><strong>Queue 级别</strong>：Volcano Queue / Kueue ClusterQueue。更灵活的配额管理和排队</li>
+<li><strong>节点级别</strong>：NodeSelector / Taint-Toleration 把特定节点专属于特定租户</li>
+<li><strong>GPU 级别</strong>：MIG 硬件切片 / MPS 软件共享。GPU 内部的隔离</li>
+</ol>
+</div>
+
+<h2>GPU 拓扑与通信</h2>
+
+<div class="card card-s">
+<h3>集群拓扑层次</h3>
+<table>
+<tr><th>层级</th><th>互联</th><th>带宽</th><th>延迟</th></tr>
+<tr><td>GPU 内部</td><td>SM ↔ HBM</td><td>2-4.8 TB/s</td><td>ns 级</td></tr>
+<tr><td>节点内 GPU 间</td><td>NVLink / NVSwitch</td><td>300-900 GB/s</td><td>μs 级</td></tr>
+<tr><td>节点内 CPU-GPU</td><td>PCIe Gen4/5</td><td>32-64 GB/s</td><td>μs 级</td></tr>
+<tr><td>节点间</td><td>InfiniBand / RoCE</td><td>200-400 Gbps</td><td>几 μs</td></tr>
+<tr><td>机柜间</td><td>交换机</td><td>几百 Gbps</td><td>几十 μs</td></tr>
+</table>
+<p><strong>调度意义</strong>：分布式训练的通信模式（AllReduce）对带宽敏感。拓扑感知调度把同一任务的 worker 放在 NVLink 可达的 GPU 上，或者至少同一个机柜内，显著减少通信时间。</p>
+
+<h3>集合通信原语</h3>
+<table>
+<tr><th>原语</th><th>操作</th><th>训练中的用途</th></tr>
+<tr><td>AllReduce</td><td>所有节点的数据聚合（如求和），结果广播到所有节点</td><td>数据并行梯度同步</td></tr>
+<tr><td>AllGather</td><td>所有节点收集所有节点的数据</td><td>张量并行参数同步</td></tr>
+<tr><td>ReduceScatter</td><td>先 Reduce 再 Scatter 分片</td><td>ZeRO 优化</td></tr>
+<tr><td>Broadcast</td><td>一个节点广播到所有节点</td><td>参数初始化</td></tr>
+<tr><td>P2P Send/Recv</td><td>点对点传输</td><td>流水线并行</td></tr>
+</table>
+<p>NCCL（NVIDIA Collective Communication Library）自动选择最优通信路径（NVLink &gt; PCIe &gt; InfiniBand）。</p>
+</div>
+
+<h2>分布式训练</h2>
+
+<div class="card card-m">
+<h3>并行策略</h3>
+<table>
+<tr><th>策略</th><th>切分维度</th><th>通信模式</th><th>适用场景</th></tr>
+<tr><td>数据并行（DP）</td><td>数据 batch</td><td>AllReduce 梯度</td><td>模型能放进单卡</td></tr>
+<tr><td>张量并行（TP）</td><td>模型层内矩阵</td><td>AllReduce/AllGather</td><td>大矩阵乘法，需要 NVLink</td></tr>
+<tr><td>流水线并行（PP）</td><td>模型层间</td><td>P2P Send/Recv</td><td>模型太大放不进单节点</td></tr>
+<tr><td>专家并行（EP）</td><td>MoE 专家</td><td>All-to-All</td><td>MoE 模型（Mixtral）</td></tr>
+<tr><td>ZeRO（1/2/3）</td><td>优化器状态/梯度/参数</td><td>AllGather + ReduceScatter</td><td>减少显存占用</td></tr>
+</table>
+
+<h3>3D 并行</h3>
+<p>大模型训练通常组合使用 DP + TP + PP。典型配置（8 节点 × 8 GPU = 64 GPU 训练 175B 模型）：</p>
+<ul>
+<li>TP = 8（节点内 8 卡 NVLink 互联，通信量大需要高带宽）</li>
+<li>PP = 4（跨 4 个节点做流水线，通信量小，可以走 InfiniBand）</li>
+<li>DP = 2（两组流水线做数据并行，每个 micro-batch 结束同步梯度）</li>
+</ul>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ZeRO 三个阶段分别做了什么？</div>
+<div class="qa-a">
+<p>训练一个模型需要存储三类数据：优化器状态（如 Adam 的 momentum + variance，每参数 12 字节）、梯度（每参数 4 字节）、模型参数（FP16 每参数 2 字节）。</p>
+<ul>
+<li><strong>ZeRO-1</strong>：切分优化器状态。每张卡只存 1/N 的优化器状态。省最多内存的部分</li>
+<li><strong>ZeRO-2</strong>：切分优化器状态 + 梯度。梯度 reduce 后只保留对应分片</li>
+<li><strong>ZeRO-3</strong>：切分优化器状态 + 梯度 + 参数。前向/反向时按需 AllGather 参数，用完释放。通信量最大但内存最省</li>
+</ul>
+<p>ZeRO-3 + 64 卡可以训练 1T 参数的模型（每卡只存 1/64 参数）。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 数据并行的梯度同步有什么优化？</div>
+<div class="qa-a"><p>(1) <strong>梯度压缩</strong>——只传 top-k 梯度或用低精度传输。(2) <strong>梯度累积</strong>——多个 micro-batch 的梯度在本地累积后再同步，减少通信次数。(3) <strong>通信-计算重叠</strong>——反向传播过程中，已计算完的层立即开始 AllReduce，不等所有层都算完。(4) <strong>Ring AllReduce</strong>——通信量 2(N-1)/N × data_size，线性扩展。</p></div>
+</div>
+</div>
+
+<h2>故障处理与弹性</h2>
+
+<div class="card card-r">
+<h3>GPU 集群常见故障</h3>
+<table>
+<tr><th>故障类型</th><th>频率</th><th>影响</th><th>应对</th></tr>
+<tr><td>GPU ECC 错误</td><td>每周/每月</td><td>单卡不可用</td><td>自动检测 + 标记不可调度</td></tr>
+<tr><td>NVLink 降级</td><td>偶发</td><td>通信带宽下降</td><td>重新拓扑发现 + 调整并行策略</td></tr>
+<tr><td>节点宕机</td><td>大集群每天</td><td>丢失所有进程</td><td>checkpoint 恢复 + 弹性训练</td></tr>
+<tr><td>网络分区</td><td>偶发</td><td>NCCL 超时</td><td>超时检测 + 重连</td></tr>
+<tr><td>显存泄漏</td><td>常见</td><td>OOM Kill</td><td>监控 + 自动重启</td></tr>
+</table>
+
+<h3>Checkpoint 策略</h3>
+<ul>
+<li><strong>周期性 checkpoint</strong>：每 N 步保存一次完整状态（模型 + 优化器 + 数据迭代器位置）</li>
+<li><strong>异步 checkpoint</strong>：后台线程写入存储，不阻塞训练</li>
+<li><strong>增量 checkpoint</strong>：只保存变化部分，减少 I/O</li>
+<li><strong>分布式 checkpoint</strong>：每张卡只保存自己的分片，并行写入</li>
+</ul>
+<p>大模型的 checkpoint 可能上百 GB，存储带宽和频率是 trade-off：太频繁影响训练速度，太稀疏丢失进度多。</p>
+</div>
+
+<h2>集群管理面试问答</h2>
+
+<div class="card card-s">
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU 利用率为什么普遍很低？怎么提升？</div>
+<div class="qa-a">
+<p>原因：(1) <strong>碎片化</strong>——剩余 GPU 分散在不同节点，大任务放不进去。(2) <strong>I/O 瓶颈</strong>——数据加载阶段 GPU 空闲。(3) <strong>配额闲置</strong>——有配额但没任务。(4) <strong>通信开销</strong>——AllReduce 时 GPU 等待网络。</p>
+<p>提升方法：(1) Bin Packing 减少碎片；(2) 弹性配额借用（DRA）解决配额闲置；(3) MPS 合用解决 I/O 阶段空闲；(4) 通信-计算重叠。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何监控 GPU 集群？</div>
+<div class="qa-a">
+<p>三层监控：</p>
+<ol>
+<li><strong>硬件层</strong>：DCGM（Data Center GPU Manager）收集 GPU 温度、功耗、ECC 错误、SM 利用率、显存使用</li>
+<li><strong>调度层</strong>：调度延迟、排队深度、配额使用率（QAD）、抢占频率</li>
+<li><strong>任务层</strong>：训练 loss 曲线、吞吐（samples/s）、GPU 利用率、checkpoint 频率</li>
+</ol>
+<p>通常 DCGM → Prometheus → Grafana 的技术栈。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 训练任务和推理任务的调度有什么区别？</div>
+<div class="qa-a">
+<table>
+<tr><th>维度</th><th>训练</th><th>推理</th></tr>
+<tr><td>时间尺度</td><td>小时到天</td><td>毫秒到秒</td></tr>
+<tr><td>资源模式</td><td>独占整卡，Gang scheduling</td><td>可共享，弹性伸缩</td></tr>
+<tr><td>失败代价</td><td>高（可能丢失小时级进度）</td><td>低（重试即可）</td></tr>
+<tr><td>调度频率</td><td>低（每个任务调度一次）</td><td>高（每秒数千请求路由）</td></tr>
+<tr><td>SLO 指标</td><td>JCT、公平性</td><td>TTFT、TPOT、P99 延迟</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+</div>
+<script src="../assets/script.js"></script>
+</body>
+</html>

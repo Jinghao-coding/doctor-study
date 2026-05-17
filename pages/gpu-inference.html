@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPU 与 LLM 推理 · doctor-study</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a class="home" href="../index.html">← 首页</a>
+  <span class="sep">·</span>
+  <a href="papers.html">论文</a>
+  <a href="gpu-inference.html">GPU &amp; 推理</a>
+  <a href="kubernetes.html">Kubernetes</a>
+  <a href="scheduling.html">调度理论</a>
+  <a href="cluster-management.html">集群管理</a>
+  <a href="performance-prediction.html">性能预测</a>
+  <a href="system-design.html">系统设计</a>
+</nav>
+<div class="wrap">
+<h1>GPU 与 LLM 推理</h1>
+<p class="sub">硬件基础 · 推理流程 · KV 缓存 · 共享方式 · 推理引擎</p>
+
+<h2>GPU 硬件基础</h2>
+
+<div class="card card-s">
+<h3>GPU 架构要点</h3>
+<table>
+<tr><th>概念</th><th>说明</th></tr>
+<tr><td>SM（Streaming Multiprocessor）</td><td>GPU 基本计算单元，包含若干 CUDA Core 和 Tensor Core。A100 有 108 个 SM</td></tr>
+<tr><td>Tensor Core</td><td>矩阵乘加专用硬件。A100 第三代支持 TF32/FP16/BF16/INT8，H100 第四代新增 FP8</td></tr>
+<tr><td>HBM（High Bandwidth Memory）</td><td>高带宽显存。A100 80GB 版带宽 2TB/s，H100 80GB 版 3.35TB/s</td></tr>
+<tr><td>NVLink</td><td>GPU 间高速互联。A100 NVLink 3.0 单向 300GB/s（6 条），H100 NVLink 4.0 单向 450GB/s</td></tr>
+<tr><td>NVSwitch</td><td>多 GPU 全互联交换芯片。DGX A100 用 6 个 NVSwitch 连 8 块 GPU</td></tr>
+<tr><td>PCIe</td><td>CPU-GPU 互联。Gen4 x16 单向 32GB/s，Gen5 翻倍到 64GB/s</td></tr>
+</table>
+</div>
+
+<div class="card card-s">
+<h3>主流 GPU 对比</h3>
+<table>
+<tr><th>指标</th><th>A100 (80GB)</th><th>H100 (80GB)</th><th>H200 (141GB)</th></tr>
+<tr><td>架构</td><td>Ampere</td><td>Hopper</td><td>Hopper</td></tr>
+<tr><td>SM 数</td><td>108</td><td>132</td><td>132</td></tr>
+<tr><td>FP16 算力</td><td>312 TFLOPS</td><td>989 TFLOPS</td><td>989 TFLOPS</td></tr>
+<tr><td>显存</td><td>80GB HBM2e</td><td>80GB HBM3</td><td>141GB HBM3e</td></tr>
+<tr><td>带宽</td><td>2.0 TB/s</td><td>3.35 TB/s</td><td>4.8 TB/s</td></tr>
+<tr><td>TDP</td><td>400W</td><td>700W</td><td>700W</td></tr>
+</table>
+</div>
+
+<h2>LLM 推理流程</h2>
+
+<div class="card card-m">
+<h3>四阶段流程</h3>
+<ol>
+<li><strong>模型加载</strong>：权重从存储（磁盘/网络）加载到 GPU 显存。大模型可能需要几十秒到几分钟</li>
+<li><strong>Prefill（预填充，计算密集）</strong>：一次性处理整个 prompt，并行计算所有 token 的 attention，生成初始 KV 缓存。延迟主要取决于 prompt 长度和模型大小</li>
+<li><strong>Decode（解码，内存密集）</strong>：自回归逐 token 生成。每步只计算一个新 token 的 attention，但需要读取全量 KV 缓存。带宽瓶颈，GPU 计算单元大量空闲</li>
+<li><strong>返回结果</strong>：流式输出或一次性返回</li>
+</ol>
+
+<h3>关键性能指标</h3>
+<table>
+<tr><th>指标</th><th>含义</th><th>影响因素</th></tr>
+<tr><td>TTFT（Time to First Token）</td><td>首 token 延迟</td><td>模型加载 + prefill 时间</td></tr>
+<tr><td>TPOT（Time Per Output Token）</td><td>每 token 延迟</td><td>decode 单步时间，受显存带宽限制</td></tr>
+<tr><td>Throughput</td><td>吞吐（tokens/s）</td><td>batch size × 单步速度</td></tr>
+<tr><td>SLO 达成率</td><td>满足延迟目标的请求比例</td><td>排队 + 计算 + 内存管理</td></tr>
+</table>
+
+<h3>Prefill vs Decode 的计算特性差异</h3>
+<table>
+<tr><th>维度</th><th>Prefill</th><th>Decode</th></tr>
+<tr><td>计算模式</td><td>并行处理 N 个 token</td><td>每步只处理 1 个 token</td></tr>
+<tr><td>瓶颈</td><td>计算密集（矩阵乘法）</td><td>内存密集（读 KV 缓存）</td></tr>
+<tr><td>GPU 利用率</td><td>高（Tensor Core 饱和）</td><td>低（大量等待显存读取）</td></tr>
+<tr><td>优化方向</td><td>算子融合、FlashAttention</td><td>增大 batch、KV 缓存压缩</td></tr>
+</table>
+</div>
+
+<h2>KV 缓存与 Attention 优化</h2>
+
+<div class="card card-w">
+<h3>KV 缓存机制</h3>
+<p>自回归解码时，每步需要之前所有 token 的 Key 和 Value 向量。如果每步重新计算，代价是 O(n²)。KV 缓存把之前算过的 K/V 存下来，每步只计算新 token 的 K/V 并追加。</p>
+<div class="formula">KV 缓存大小 = 2 × num_layers × num_heads × head_dim × seq_len × dtype_size</div>
+<p>以 LLaMA-70B 为例：2 × 80 × 8 × 128 × 4096 × 2（FP16）≈ 10.7GB（单个请求）。</p>
+<p><strong>为什么 KV 缓存是瓶颈？</strong>GPU 显存有限（80GB），模型权重占 140GB（FP16）需要张量并行到多卡。剩余显存被 KV 缓存瓜分，决定了能同时服务多少请求。</p>
+
+<h3>PagedAttention（vLLM）</h3>
+<p>传统 KV 缓存预分配连续内存，最大长度固定，短请求浪费严重。PagedAttention 借鉴操作系统虚拟内存的分页思想：</p>
+<ul>
+<li>把 KV 缓存切成固定大小的 block（如 16 token 一块）</li>
+<li>用 block table 维护逻辑到物理的映射</li>
+<li>按需分配，请求结束释放，消除内部碎片</li>
+<li>支持 copy-on-write，多个 beam 可共享公共前缀</li>
+</ul>
+
+<h3>Attention 变体</h3>
+<table>
+<tr><th>变体</th><th>KV Head 数</th><th>KV 缓存大小</th><th>代表模型</th></tr>
+<tr><td>MHA（Multi-Head Attention）</td><td>= Query Head 数</td><td>最大</td><td>GPT-3, LLaMA-1</td></tr>
+<tr><td>GQA（Grouped-Query Attention）</td><td>Query Head 数 / G</td><td>缩小 G 倍</td><td>LLaMA-2/3, Mixtral</td></tr>
+<tr><td>MQA（Multi-Query Attention）</td><td>1</td><td>最小</td><td>Falcon, StarCoder</td></tr>
+</table>
+<p>GQA 是实际部署的主流选择——在质量和效率之间取得平衡。</p>
+
+<h3>FlashAttention</h3>
+<p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p>
+</div>
+
+<h2>GPU 共享方式</h2>
+
+<div class="card card-s">
+<table>
+<tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
+<tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离</td></tr>
+<tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并行执行 kernel</td><td>训练合用、I/O 互补</td></tr>
+<tr><td>时间片</td><td>时间级复用</td><td>CUDA 调度器轮换上下文</td><td>轻量共享、交互式</td></tr>
+<tr><td>CUDA VMM</td><td>虚拟内存</td><td>虚拟地址空间超配，物理页按需映射</td><td>KV 缓存弹性管理</td></tr>
+<tr><td>vGPU</td><td>虚拟化</td><td>Hypervisor 层虚拟化 GPU</td><td>云服务多租户</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MIG 和 MPS 的本质区别？</div>
+<div class="qa-a"><p><strong>MIG</strong> 是硬件级切分——GPU 被物理切成若干独立实例，每个实例有自己的 SM、显存控制器和缓存，互相完全隔离，类似物理分区。<strong>MPS</strong> 是软件级复用——多个进程共享同一个 GPU 上下文，kernel 可以并行执行在不同 SM 上，但共享显存和缓存，有干扰风险。MIG 安全但粒度粗（A100 最多 7 个实例），MPS 灵活但需要干扰控制。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
+<div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
+</div>
+</div>
+
+<h2>推理优化技术</h2>
+
+<div class="card card-s">
+<h3>常见优化手段</h3>
+<table>
+<tr><th>技术</th><th>原理</th><th>效果</th></tr>
+<tr><td>连续批处理（Continuous Batching）</td><td>请求完成立即释放位置，新请求加入，不等整批结束</td><td>吞吐提升 2-5×</td></tr>
+<tr><td>张量并行（Tensor Parallelism）</td><td>单层的矩阵乘法切分到多卡并行计算</td><td>降低延迟，需 NVLink</td></tr>
+<tr><td>流水线并行（Pipeline Parallelism）</td><td>不同层放不同卡，请求依次流过</td><td>支持更大模型</td></tr>
+<tr><td>投机解码（Speculative Decoding）</td><td>小模型快速生成候选 token，大模型验证</td><td>延迟降低 2-3×</td></tr>
+<tr><td>量化（INT8/FP8/INT4）</td><td>降低权重和激活精度</td><td>显存减半，速度提升</td></tr>
+<tr><td>前缀缓存（Prefix Caching）</td><td>共享前缀的请求复用 KV 缓存</td><td>减少重复计算</td></tr>
+<tr><td>CUDA Graph</td><td>录制 kernel 调用序列为图，一次提交</td><td>减少 CPU-GPU 启动开销</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 连续批处理和传统静态批处理的区别？</div>
+<div class="qa-a"><p>静态批处理：一批请求同时开始，最慢的请求完成后整批释放。短请求等长请求，GPU 空转。连续批处理（iteration-level scheduling）：每个 decode step 结束后检查，已完成的请求释放位置，等待的请求立即加入。GPU 始终满载。vLLM、TensorRT-LLM 都采用连续批处理。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 投机解码为什么能加速？不是算了两次吗？</div>
+<div class="qa-a"><p>关键在于 decode 阶段是内存密集型——GPU 算力大量闲置。小模型（draft model）快速自回归生成 K 个候选 token，大模型（target model）一次性并行验证这 K 个 token（相当于做一次 prefill）。验证比逐个解码快，因为并行利用了算力。如果候选全部接受，等价于一次 forward 生成了 K 个 token。</p></div>
+</div>
+</div>
+
+<h2>主流推理引擎</h2>
+
+<div class="card card-s">
+<table>
+<tr><th>引擎</th><th>核心特点</th><th>适用场景</th></tr>
+<tr><td>vLLM</td><td>PagedAttention、连续批处理、开源</td><td>通用 LLM serving</td></tr>
+<tr><td>SGLang</td><td>RadixAttention 前缀树复用、编程接口</td><td>多轮对话、结构化输出</td></tr>
+<tr><td>TensorRT-LLM</td><td>NVIDIA 官方优化、kernel 融合、FP8</td><td>NVIDIA GPU 极致性能</td></tr>
+<tr><td>DeepSpeed-Inference</td><td>模型并行、ZeRO 推理</td><td>超大模型</td></tr>
+</table>
+</div>
+
+</div>
+<script src="../assets/script.js"></script>
+</body>
+</html>

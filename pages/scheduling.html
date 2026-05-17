@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>调度理论 · doctor-study</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <a class="home" href="../index.html">← 首页</a>
+  <span class="sep">·</span>
+  <a href="papers.html">论文</a>
+  <a href="gpu-inference.html">GPU &amp; 推理</a>
+  <a href="kubernetes.html">Kubernetes</a>
+  <a href="scheduling.html">调度理论</a>
+  <a href="cluster-management.html">集群管理</a>
+  <a href="performance-prediction.html">性能预测</a>
+  <a href="system-design.html">系统设计</a>
+</nav>
+<div class="wrap">
+<h1>任务调度理论</h1>
+<p class="sub">经典算法 · 公平性 · GPU 集群特有策略</p>
+
+<h2>经典调度算法</h2>
+
+<div class="card card-m">
+<h3>基础调度策略</h3>
+<table>
+<tr><th>算法</th><th>原理</th><th>可抢占</th><th>需要预测</th><th>优缺点</th></tr>
+<tr><td>FIFO</td><td>先到先服务</td><td>否</td><td>否</td><td>简单公平，但短作业可能被长作业阻塞</td></tr>
+<tr><td>SJF</td><td>最短作业优先</td><td>否</td><td>是</td><td>最优平均等待时间，但长作业可能饥饿</td></tr>
+<tr><td>SRTF</td><td>最短剩余时间优先</td><td>是</td><td>是</td><td>SJF 的抢占版本，新短作业到达可抢占长作业</td></tr>
+<tr><td>EDF</td><td>最早截止时间优先</td><td>是</td><td>否</td><td>适合实时系统，需要知道 deadline</td></tr>
+<tr><td>Round Robin</td><td>时间片轮转</td><td>是</td><td>否</td><td>公平但上下文切换开销大</td></tr>
+<tr><td>优先级调度</td><td>按静态/动态优先级排序</td><td>可选</td><td>否</td><td>灵活但需要合理设定优先级</td></tr>
+</table>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: SRTF 和 SJF 的本质区别？什么时候用 SRTF？</div>
+<div class="qa-a"><p>SJF 按总执行时间排序，<strong>不可抢占</strong>——一旦开始执行就必须跑完。SRTF 按<strong>剩余</strong>时间排序，<strong>可抢占</strong>——新来的短作业可以打断正在执行的长作业。当作业到达时间不确定时 SRTF 更优：比如多 agent 工作流中，不断有新 stage 到达，SRTF 可以让新来的短 stage 立即执行，避免被长 stage 阻塞。代价是需要抢占机制和更精确的剩余时间预测。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: SJF 为什么最优？会有什么问题？</div>
+<div class="qa-a"><p>可以数学证明：SJF 最小化平均等待时间（把短作业排前面，它们的等待时间短，长作业无论排哪里都要等，放后面对总和影响最小）。问题是<strong>饥饿</strong>——如果短作业源源不断到达，长作业可能永远轮不到。解决办法：老化机制（aging），等待时间越长优先级越高；或者混合策略，如词典序先看保障度再看时间。</p></div>
+</div>
+</div>
+
+<div class="card card-d">
+<h3>公平性调度</h3>
+
+<h4>DRF（Dominant Resource Fairness）</h4>
+<p>多维资源（CPU + 内存 + GPU）场景下的公平分配算法。核心思想：每个用户的<strong>主导资源</strong>（demand/capacity 比值最大的资源维度）应该被均等分配。</p>
+<p><strong>例子</strong>：集群有 100 CPU 和 100GB 内存。用户 A 的任务需要 (2CPU, 8GB)，用户 B 的任务需要 (4CPU, 2GB)。A 的主导资源是内存（8%），B 的主导资源是 CPU（4%）。DRF 让两者的主导资源份额相等。</p>
+<p><strong>性质</strong>：共享激励（sharing incentive）、无嫉妒（envy-free）、帕累托效率。</p>
+<p><strong>QAD vs DRF</strong>：DRF 追求均等分配，不区分保障和弹性。QAD 允许超额分配（QAD &gt; 1）但可回收，更适合有配额保障需求的场景。</p>
+
+<h4>Max-Min Fairness</h4>
+<p>按需分配，每个用户至少获得 1/N 份额，不需要更多的用户把多余份额让给需要的人。递归地最大化最小分配。</p>
+</div>
+
+<div class="card card-w">
+<h3>GPU 集群特有的调度策略</h3>
+
+<h4>Gang Scheduling</h4>
+<p>分布式训练任务的所有 worker 必须<strong>同时</strong>被调度，要么全部启动，要么全不启动（all-or-nothing）。原因：如果只启动部分 worker，NCCL AllReduce 会阻塞等待其余 worker，已启动的 GPU 完全空转。</p>
+<p><strong>实现</strong>：Volcano 的 PodGroup + minMember 机制。调度器检查集群是否能同时满足 PodGroup 中所有 Pod 的资源需求。不能则整组等待。</p>
+
+<h4>Bin Packing vs Spread</h4>
+<table>
+<tr><th>策略</th><th>原理</th><th>适用场景</th></tr>
+<tr><td>Bin Packing</td><td>尽量把 Pod 塞满已有节点，减少碎片</td><td>提高资源利用率，适合计算密集任务</td></tr>
+<tr><td>Spread</td><td>尽量把 Pod 分散到不同节点</td><td>高可用，避免单点故障</td></tr>
+</table>
+<p>GPU 集群通常用 Bin Packing：GPU 是昂贵资源，碎片化（一个节点剩 1 GPU，另一个节点也剩 1 GPU，但需要 2 GPU 的任务无法调度）是大问题。</p>
+
+<h4>弹性训练（Elastic Training）</h4>
+<p>运行中的训练任务可以动态增减 worker 数量，不需要重启。PyTorch Elastic（torchrun）和 Elastic Horovod 支持。优势：(1) 有空闲 GPU 时扩展加速训练；(2) 需要回收 GPU 时缩减而非杀死。挑战：数据并行 batch size 变化、learning rate 需要调整。</p>
+
+<h4>Backfill Scheduling</h4>
+<p>当大作业等待资源时，小作业如果能在大作业预期开始前完成，就"见缝插针"地先执行。SLURM 和 PBS 常用策略。需要预测作业执行时间。</p>
+</div>
+
+<div class="card card-s">
+<h3>调度算法面试问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Head-of-line blocking 怎么解决？</div>
+<div class="qa-a"><p>三种思路：(1) <strong>预测驱动排序</strong>——SRTF/SJF 让短任务先执行，减少被长任务阻塞的概率。(2) <strong>抢占</strong>——长任务阻塞时强制让位给高优先级任务。(3) <strong>多队列</strong>——不同类型任务分开排队，互不干扰。实际系统中常常同时使用多种：SRTF 排序 + 抢占 + 分队列。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 抢占的代价有哪些？怎么降低？</div>
+<div class="qa-a"><p>代价：(1) <strong>进度浪费</strong>——被抢占作业已完成的计算全部丢失（除非有 checkpoint）。(2) <strong>重启开销</strong>——重新排队、加载模型/数据。(3) <strong>系统开销</strong>——保存状态、清理资源。降低代价：(1) checkpoint 机制减少进度损失；(2) 代价基抢占选择沉没成本最小的牺牲者；(3) 在自然间隔（如 stage 边界）抢占，零中断。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 多维资源调度的挑战？</div>
+<div class="qa-a"><p>GPU 集群的资源是多维的——CPU、内存、GPU、网络带宽。挑战：(1) <strong>碎片化</strong>——某些维度剩余很多，但另一个维度不够，整个节点不可用。(2) <strong>耦合性</strong>——GPU 任务通常也需要大量 CPU 做数据预处理。(3) <strong>异构性</strong>——不同 GPU 型号性能差异大。DRF 从理论上解决公平性，但实际中还需要拓扑感知（NVLink 拓扑）和亲和性约束。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 调度延迟和调度质量的 trade-off？</div>
+<div class="qa-a"><p>更好的调度决策需要更多信息和更多计算，但用户不想等太久。解决：(1) 两阶段调度——Filter 快速排除明显不行的，Score 只在少量候选中精选；(2) 缓存——Informer 本地缓存避免每次查 API Server；(3) 近似算法——不需要最优解，足够好就行；(4) 异步——Bind 阶段异步执行，不阻塞下一个 Pod 的调度。</p></div>
+</div>
+</div>
+
+</div>
+<script src="../assets/script.js"></script>
+</body>
+</html>
