@@ -20,10 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>论文工作</h1>
-<p class="sub">Maestro · DeepShare · 互补关系与面试叙事</p>
-<h2>ICDCS 2026 Maestro — LLM 多智能体系统的工作负载感知调度</h2>
-<div class="card card-m">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Research Work</div><h1>论文工作</h1><p class="sub">Maestro · DeepShare · 互补关系与面试叙事</p><div class="hero-tags"><span>papers</span><span>maestro</span><span>deepshare</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="论文工作"><button class="tab-button active" type="button" role="tab" id="papers-tabs-tab-1" aria-controls="papers-tabs-panel-1" aria-selected="true"><span class="tab-title">ICDCS 2026 Maestro</span><span class="tab-desc">LLM 多智能体推理调度、输出长度预测、CUDA VMM</span></button><button class="tab-button" type="button" role="tab" id="papers-tabs-tab-2" aria-controls="papers-tabs-panel-2" aria-selected="false"><span class="tab-title">IEEE Cluster 2026 DeepShare</span><span class="tab-desc">多租户 GPU 集群、QAD 保障、干扰感知合用</span></button><button class="tab-button" type="button" role="tab" id="papers-tabs-tab-3" aria-controls="papers-tabs-panel-3" aria-selected="false"><span class="tab-title">关系与面试叙事</span><span class="tab-desc">互补关系、共通理念、自我介绍定位</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="papers-tabs-panel-1" aria-labelledby="papers-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>ICDCS 2026 Maestro</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>问题背景</h3>
 <p>传统 LLM 推理面对的是独立的一问一答请求。但现在越来越多的应用把多个 agent 组成协作工作流：比如旅行助手里有"需求分析 agent"、"机票搜索 agent"、"酒店推荐 agent"、"行程整合 agent"，它们之间有 DAG 依赖，一个用户请求触发十几次甚至几十次 LLM 推理调用（称为 stage）。</p>
 <p>这带来了三个新挑战：</p>
@@ -96,10 +95,7 @@
 <div class="qa-a"><p>S(N,T) = A(N,T) − λ·T_ready − μ·C_deg。默认 λ = μ = 1（毫秒量级）。交互式 stage 增大网络延迟权重。用 robust min-max 归一化（5/95 分位数裁剪），防止异常值主导。验证集上选定后跨负载固定。</p></div>
 </div>
 </div>
-<hr class="div">
-
-<h2>IEEE Cluster 2026 DeepShare — 多租户 GPU 集群的保障驱动调度</h2>
-<div class="card card-d">
+<hr class="div"></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-2" aria-labelledby="papers-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>IEEE Cluster 2026 DeepShare</h2></div><div class="tab-panel-body"><div class="card card-d">
 <h3>问题背景</h3>
 <p>多团队共享 GPU 集群的核心矛盾：</p>
 <ul>
@@ -162,10 +158,7 @@
 <div class="qa-a"><p>大约 8% 高峰时段过载：按 QAD 升序优先最欠缺租户；最坏 QAD = 0.72，过载消退后 3.2 个周期（约 160ms）恢复到 ≥ 0.95。Best-effort 排队延迟增加 2.1 倍，Guaranteed 仅增加 14%，体现服务分级。</p></div>
 </div>
 </div>
-<hr class="div">
-
-<h2>共通 两篇论文的关系与面试叙事</h2>
-<div class="card card-s">
+<hr class="div"></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-3" aria-labelledby="papers-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>关系与面试叙事</h2></div><div class="tab-panel-body"><div class="card card-s">
 <h3>互补关系</h3>
 <p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
 <h3>共通设计理念</h3>
@@ -190,7 +183,7 @@
 <tr><td>Volcano</td><td>面向 Gang scheduling，DeepShare 在配额弹性、干扰感知、运行时间预测方面做了增强</td></tr>
 <tr><td>Orca / FastServe</td><td>它们关注单模型的迭代级调度，Maestro 关注多模型多 agent 的工作流级调度</td></tr>
 </table>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

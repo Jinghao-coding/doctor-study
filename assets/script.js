@@ -1,3 +1,11 @@
+// Theme: respect saved preference, then system preference.
+(function(){
+  var savedTheme = localStorage.getItem('doctor-study-theme');
+  if(savedTheme === 'light' || savedTheme === 'dark'){
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+})();
+
 // QA blocks already have inline onclick="this.classList.toggle('open')".
 // Alt+E: expand / collapse all Q&A on current page.
 document.addEventListener('keydown', function(e){
@@ -11,10 +19,76 @@ document.addEventListener('keydown', function(e){
   }
 });
 
+document.addEventListener('DOMContentLoaded', function(){
+  var nav = document.querySelector('.topnav');
+  if(!nav) return;
+
+  var toggle = document.createElement('button');
+  toggle.className = 'theme-toggle';
+  toggle.type = 'button';
+
+  function currentTheme(){
+    var explicit = document.documentElement.getAttribute('data-theme');
+    if(explicit) return explicit;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function render(){
+    var theme = currentTheme();
+    toggle.textContent = theme === 'dark' ? '日间' : '夜间';
+    toggle.setAttribute('aria-label', theme === 'dark' ? '切换到日间模式' : '切换到夜间模式');
+  }
+
+  toggle.addEventListener('click', function(){
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('doctor-study-theme', next);
+    render();
+  });
+
+  nav.appendChild(toggle);
+  render();
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var buttons = Array.from(group.querySelectorAll('.tab-button'));
+    var panels = Array.from(group.querySelectorAll('.tab-panel'));
+    if(!buttons.length || !panels.length) return;
+
+    function activate(index){
+      buttons.forEach(function(button, i){
+        var active = i === index;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panels.forEach(function(panel, i){
+        var active = i === index;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+      });
+    }
+
+    buttons.forEach(function(button, index){
+      button.addEventListener('click', function(){ activate(index); });
+      button.addEventListener('keydown', function(e){
+        if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        var next = e.key === 'ArrowRight' ? index + 1 : index - 1;
+        if(next < 0) next = buttons.length - 1;
+        if(next >= buttons.length) next = 0;
+        buttons[next].focus();
+        activate(next);
+      });
+    });
+  });
+});
+
 // Long pages get a hidden drawer table of contents from h2/h3.
 document.addEventListener('DOMContentLoaded', function(){
   var wrap = document.querySelector('.wrap');
   if(!wrap || !document.querySelector('.topnav')) return;
+  if(document.querySelector('[data-tabs]')) return;
 
   var allHeadings = Array.from(wrap.querySelectorAll('h2, h3')).filter(function(heading){
     return heading.textContent.trim().length > 0;

@@ -20,10 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>GPU 集群管理</h1>
-<p class="sub">调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错</p>
-<h2>GPU 集群调度框架</h2>
-<div class="card card-d">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Cluster Management</div><h1>GPU 集群管理</h1><p class="sub">调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错</p><div class="hero-tags"><span>cluster</span><span>volcano</span><span>zero</span><span>fault-tolerance</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="GPU 集群管理内容模块"><button class="tab-button active" type="button" role="tab" id="cluster-management-tabs-tab-1" aria-controls="cluster-management-tabs-panel-1" aria-selected="true"><span class="tab-title">调度框架</span><span class="tab-desc">Volcano、YuniKorn、Kueue 与批调度能力</span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-2" aria-controls="cluster-management-tabs-panel-2" aria-selected="false"><span class="tab-title">多租户管理</span><span class="tab-desc">配额、隔离、公平性与资源治理</span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-3" aria-controls="cluster-management-tabs-panel-3" aria-selected="false"><span class="tab-title">拓扑与通信</span><span class="tab-desc">GPU 拓扑、NCCL 通信与作业放置</span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-4" aria-controls="cluster-management-tabs-panel-4" aria-selected="false"><span class="tab-title">分布式训练</span><span class="tab-desc">数据并行、模型并行、Pipeline 与 ZeRO</span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-5" aria-controls="cluster-management-tabs-panel-5" aria-selected="false"><span class="tab-title">故障与弹性</span><span class="tab-desc">Checkpoint、重试、容错与弹性训练</span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-6" aria-controls="cluster-management-tabs-panel-6" aria-selected="false"><span class="tab-title">面试问答</span><span class="tab-desc">集群管理高频问题与回答要点</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="cluster-management-tabs-panel-1" aria-labelledby="cluster-management-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>调度框架</h2></div><div class="tab-panel-body"><div class="card card-d">
 <h3>主流框架对比</h3>
 <table>
 <tr><th>框架</th><th>定位</th><th>核心能力</th><th>局限</th></tr>
@@ -43,10 +42,7 @@
 <div class="qa-q">Q: Kueue 的 ResourceFlavor 是什么概念？</div>
 <div class="qa-a"><p>ResourceFlavor 抽象了不同类型的资源——比如 A100 GPU 是一种 Flavor，H100 GPU 是另一种。ClusterQueue 可以关联多个 Flavor，每个 Flavor 有独立的配额。Workload 提交时可以指定 Flavor 偏好，Kueue 根据配额和排队情况分配。这对异构 GPU 集群很有用。</p></div>
 </div>
-</div>
-
-<h2>多租户管理</h2>
-<div class="card card-w">
+</div></div></article><article class="tab-panel" role="tabpanel" id="cluster-management-tabs-panel-2" aria-labelledby="cluster-management-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多租户管理</h2></div><div class="tab-panel-body"><div class="card card-w">
 <h3>配额管理方案对比</h3>
 <table>
 <tr><th>方案</th><th>保障性</th><th>弹性</th><th>回收</th><th>公平度量</th></tr>
@@ -62,10 +58,7 @@
 <li><strong>节点级别</strong>：NodeSelector / Taint-Toleration 把特定节点专属于特定租户</li>
 <li><strong>GPU 级别</strong>：MIG 硬件切片 / MPS 软件共享。GPU 内部的隔离</li>
 </ol>
-</div>
-
-<h2>GPU 拓扑与通信</h2>
-<div class="card card-s">
+</div></div></article><article class="tab-panel" role="tabpanel" id="cluster-management-tabs-panel-3" aria-labelledby="cluster-management-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>拓扑与通信</h2></div><div class="tab-panel-body"><div class="card card-s">
 <h3>集群拓扑层次</h3>
 <table>
 <tr><th>层级</th><th>互联</th><th>带宽</th><th>延迟</th></tr>
@@ -86,10 +79,7 @@
 <tr><td>P2P Send/Recv</td><td>点对点传输</td><td>流水线并行</td></tr>
 </table>
 <p>NCCL（NVIDIA Collective Communication Library）自动选择最优通信路径（NVLink &gt; PCIe &gt; InfiniBand）。</p>
-</div>
-
-<h2>分布式训练</h2>
-<div class="card card-m">
+</div></div></article><article class="tab-panel" role="tabpanel" id="cluster-management-tabs-panel-4" aria-labelledby="cluster-management-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>分布式训练</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>并行策略</h3>
 <table>
 <tr><th>策略</th><th>切分维度</th><th>通信模式</th><th>适用场景</th></tr>
@@ -122,10 +112,7 @@
 <div class="qa-q">Q: 数据并行的梯度同步有什么优化？</div>
 <div class="qa-a"><p>(1) <strong>梯度压缩</strong>——只传 top-k 梯度或用低精度传输。(2) <strong>梯度累积</strong>——多个 micro-batch 的梯度在本地累积后再同步，减少通信次数。(3) <strong>通信-计算重叠</strong>——反向传播过程中，已计算完的层立即开始 AllReduce，不等所有层都算完。(4) <strong>Ring AllReduce</strong>——通信量 2(N-1)/N × data_size，线性扩展。</p></div>
 </div>
-</div>
-
-<h2>故障处理与弹性</h2>
-<div class="card card-r">
+</div></div></article><article class="tab-panel" role="tabpanel" id="cluster-management-tabs-panel-5" aria-labelledby="cluster-management-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>故障与弹性</h2></div><div class="tab-panel-body"><div class="card card-r">
 <h3>GPU 集群常见故障</h3>
 <table>
 <tr><th>故障类型</th><th>频率</th><th>影响</th><th>应对</th></tr>
@@ -143,10 +130,7 @@
 <li><strong>分布式 checkpoint</strong>：每张卡只保存自己的分片，并行写入</li>
 </ul>
 <p>大模型的 checkpoint 可能上百 GB，存储带宽和频率是 trade-off：太频繁影响训练速度，太稀疏丢失进度多。</p>
-</div>
-
-<h2>集群管理面试问答</h2>
-<div class="card card-s">
+</div></div></article><article class="tab-panel" role="tabpanel" id="cluster-management-tabs-panel-6" aria-labelledby="cluster-management-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试问答</h2></div><div class="tab-panel-body"><div class="card card-s">
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: GPU 利用率为什么普遍很低？怎么提升？</div>
 <div class="qa-a">
@@ -179,7 +163,7 @@
 </table>
 </div>
 </div>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

@@ -19,3 +19,9 @@ __pycache__/
 # Local resources / drafts (按需调整)
 resources/private/
 *.tmp
+
+.mcp.json
+
+.claude/
+.ttadk/
+.omc/

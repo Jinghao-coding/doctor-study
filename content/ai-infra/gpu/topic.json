@@ -1,7 +1,33 @@
 {
   "title": "GPU 硬件与资源共享",
   "subtitle": "硬件架构 · A100/H100 对比 · MIG/MPS · CUDA VMM",
+  "kicker": "AI Infra Foundation",
+  "tags": [
+    "gpu",
+    "hardware",
+    "sharing",
+    "interview"
+  ],
   "output": "pages/ai-infra/gpu/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "gpu-tabs",
+      "title": "GPU 内容模块",
+      "items": [
+        {
+          "title": "硬件基础",
+          "description": "架构、A100/H100/H200、显存带宽",
+          "file": "01-hardware.md"
+        },
+        {
+          "title": "共享方式",
+          "description": "MIG、MPS、时间片、CUDA VMM",
+          "file": "02-sharing.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "GPU 硬件基础",

@@ -1,7 +1,47 @@
 {
   "title": "性能预测与建模",
   "subtitle": "树模型选型 · 特征工程 · 评估指标 · 防御机制",
+  "kicker": "ML for Systems",
+  "tags": [
+    "prediction",
+    "ml-for-systems",
+    "tree-models"
+  ],
   "output": "pages/ai-infra/performance-prediction/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "performance-prediction-tabs",
+      "title": "性能预测与建模",
+      "items": [
+        {
+          "title": "预测方法示例",
+          "description": "推理 vs 训练场景的预测方案对比",
+          "file": "01-examples.md"
+        },
+        {
+          "title": "树模型选型",
+          "description": "LightGBM/RF vs 深度学习的选择依据",
+          "file": "02-tree-models.md"
+        },
+        {
+          "title": "特征工程",
+          "description": "结构化特征、语义特征、硬件计数器",
+          "file": "03-features.md"
+        },
+        {
+          "title": "评估指标",
+          "description": "MAE/MAPE/R²、AUC/F1 等回归与分类指标",
+          "file": "04-metrics.md"
+        },
+        {
+          "title": "预测不准怎么办",
+          "description": "安全裕度、在线校准、Concept Drift",
+          "file": "05-robustness.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "调度系统中的预测方法示例",

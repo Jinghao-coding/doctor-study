@@ -1,4 +1,3 @@
-<div class="card card-s">
 <h3>常见优化手段</h3>
 <table>
 <tr><th>技术</th><th>原理</th><th>效果</th></tr>
@@ -19,5 +18,4 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 投机解码为什么能加速？不是算了两次吗？</div>
 <div class="qa-a"><p>关键在于 decode 阶段是内存密集型——GPU 算力大量闲置。小模型（draft model）快速自回归生成 K 个候选 token，大模型（target model）一次性并行验证这 K 个 token（相当于做一次 prefill）。验证比逐个解码快，因为并行利用了算力。如果候选全部接受，等价于一次 forward 生成了 K 个 token。</p></div>
-</div>
 </div>

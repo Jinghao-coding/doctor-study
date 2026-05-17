@@ -20,10 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>性能预测与建模</h1>
-<p class="sub">树模型选型 · 特征工程 · 评估指标 · 防御机制</p>
-<h2>调度系统中的预测方法示例</h2>
-<div class="card card-s">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">ML for Systems</div><h1>性能预测与建模</h1><p class="sub">树模型选型 · 特征工程 · 评估指标 · 防御机制</p><div class="hero-tags"><span>prediction</span><span>ml-for-systems</span><span>tree-models</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="性能预测与建模"><button class="tab-button active" type="button" role="tab" id="performance-prediction-tabs-tab-1" aria-controls="performance-prediction-tabs-panel-1" aria-selected="true"><span class="tab-title">预测方法示例</span><span class="tab-desc">推理 vs 训练场景的预测方案对比</span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-2" aria-controls="performance-prediction-tabs-panel-2" aria-selected="false"><span class="tab-title">树模型选型</span><span class="tab-desc">LightGBM/RF vs 深度学习的选择依据</span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-3" aria-controls="performance-prediction-tabs-panel-3" aria-selected="false"><span class="tab-title">特征工程</span><span class="tab-desc">结构化特征、语义特征、硬件计数器</span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-4" aria-controls="performance-prediction-tabs-panel-4" aria-selected="false"><span class="tab-title">评估指标</span><span class="tab-desc">MAE/MAPE/R²、AUC/F1 等回归与分类指标</span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-5" aria-controls="performance-prediction-tabs-panel-5" aria-selected="false"><span class="tab-title">预测不准怎么办</span><span class="tab-desc">安全裕度、在线校准、Concept Drift</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="performance-prediction-tabs-panel-1" aria-labelledby="performance-prediction-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测方法示例</h2></div><div class="tab-panel-body"><div class="card card-s">
 <table>
 <tr><th>维度</th><th>推理场景</th><th>训练场景</th></tr>
 <tr><td>预测目标</td><td>输出 token 长度</td><td>作业执行时间</td></tr>
@@ -34,10 +33,7 @@
 <tr><td>冷启动</td><td>per-role → 全局 fallback</td><td>≥ 50 历史样本后有效</td></tr>
 <tr><td>更新策略</td><td>post-execution profiling + EWMA</td><td>周期性再训练 + EMA 平滑</td></tr>
 </table>
-</div>
-
-<h2>为什么用树模型</h2>
-<div class="card card-m">
+</div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-2" aria-labelledby="performance-prediction-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>树模型选型</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>树模型 vs 深度学习的选择依据</h3>
 <table>
 <tr><th>考虑因素</th><th>树模型（LightGBM/RF）</th><th>深度学习</th></tr>
@@ -52,10 +48,7 @@
 <li>推理场景：per-role 可能只有几百条训练数据；推理延迟必须 &lt; 15ms（在调度路径上）；需要特征重要性分析证明哪些特征有用</li>
 <li>训练场景：推理 &lt; 1ms 才能不影响调度延迟（总预算 50ms）；硬件计数器是结构化特征，树模型天然擅长</li>
 </ul>
-</div>
-
-<h2>特征工程</h2>
-<div class="card card-w">
+</div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-3" aria-labelledby="performance-prediction-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>特征工程</h2></div><div class="tab-panel-body"><div class="card card-w">
 <h3>推理输出长度预测特征</h3>
 <table>
 <tr><th>类别</th><th>特征</th><th>信号</th></tr>
@@ -77,10 +70,7 @@
 <tr><td>请求资源量（GPU 数、CPU、内存）</td><td>Pod spec</td></tr>
 <tr><td>数据集大小</td><td>作业元数据</td></tr>
 </table>
-</div>
-
-<h2>评估指标</h2>
-<div class="card card-s">
+</div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-4" aria-labelledby="performance-prediction-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>评估指标</h2></div><div class="tab-panel-body"><div class="card card-s">
 <h3>回归评估指标</h3>
 <table>
 <tr><th>指标</th><th>公式/含义</th><th>适用场景</th></tr>
@@ -97,10 +87,7 @@
 <tr><td>Recall</td><td>实际为正的里面被预测为正的比例</td><td>避免假阴性</td></tr>
 <tr><td>F1</td><td>Precision 和 Recall 的调和平均</td><td>不均衡分类</td></tr>
 </table>
-</div>
-
-<h2>预测不准怎么办</h2>
-<div class="card card-r">
+</div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-5" aria-labelledby="performance-prediction-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测不准怎么办</h2></div><div class="tab-panel-body"><div class="card card-r">
 <h3>四层防御机制</h3>
 <table>
 <tr><th>层次</th><th>推理场景</th><th>训练场景</th></tr>
@@ -127,7 +114,7 @@
 <div class="qa-q">Q: 为什么 MAPE ~30% 的预测精度能接受？</div>
 <div class="qa-a"><p>三个原因：(1) 预测用于<strong>排序</strong>而非精确计时——只要排序大致正确，SJF 效果就好。(2) 实际作业运行时间跨度大（分钟到小时），30% 的误差在排序上影响有限。(3) 有退化保护——预测完全不准时退化为 FIFO，不会比基线差。类似的，Backfill scheduling 中 SLURM 的运行时间估计误差常超过 100%，但依然有效。</p></div>
 </div>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

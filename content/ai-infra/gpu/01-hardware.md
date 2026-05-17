@@ -1,4 +1,3 @@
-<div class="card card-s">
 <h3>GPU 架构要点</h3>
 <table>
 <tr><th>概念</th><th>说明</th></tr>
@@ -22,4 +21,3 @@
 <tr><td>带宽</td><td>2.0 TB/s</td><td>3.35 TB/s</td><td>4.8 TB/s</td></tr>
 <tr><td>TDP</td><td>400W</td><td>700W</td><td>700W</td></tr>
 </table>
-</div>

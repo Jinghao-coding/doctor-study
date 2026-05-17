@@ -1,7 +1,53 @@
 {
   "title": "GPU 集群管理",
   "subtitle": "调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错",
+  "kicker": "Cluster Management",
+  "tags": [
+    "cluster",
+    "volcano",
+    "zero",
+    "fault-tolerance"
+  ],
   "output": "pages/ai-infra/cluster-management/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cluster-management-tabs",
+      "title": "GPU 集群管理内容模块",
+      "items": [
+        {
+          "title": "调度框架",
+          "description": "Volcano、YuniKorn、Kueue 与批调度能力",
+          "file": "01-frameworks.md"
+        },
+        {
+          "title": "多租户管理",
+          "description": "配额、隔离、公平性与资源治理",
+          "file": "02-multi-tenancy.md"
+        },
+        {
+          "title": "拓扑与通信",
+          "description": "GPU 拓扑、NCCL 通信与作业放置",
+          "file": "03-topology-communication.md"
+        },
+        {
+          "title": "分布式训练",
+          "description": "数据并行、模型并行、Pipeline 与 ZeRO",
+          "file": "04-distributed-training.md"
+        },
+        {
+          "title": "故障与弹性",
+          "description": "Checkpoint、重试、容错与弹性训练",
+          "file": "05-fault-tolerance.md"
+        },
+        {
+          "title": "面试问答",
+          "description": "集群管理高频问题与回答要点",
+          "file": "06-qa.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "GPU 集群调度框架",

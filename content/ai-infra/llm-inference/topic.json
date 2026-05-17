@@ -1,7 +1,43 @@
 {
   "title": "LLM 推理系统",
   "subtitle": "Prefill/Decode · KV 缓存 · Attention 优化 · 推理引擎",
+  "kicker": "Serving System",
+  "tags": [
+    "llm",
+    "inference",
+    "kv-cache",
+    "serving"
+  ],
   "output": "pages/ai-infra/llm-inference/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "llm-inference-tabs",
+      "title": "LLM 推理内容模块",
+      "items": [
+        {
+          "title": "推理流程",
+          "description": "Prefill、Decode、TTFT、TPOT",
+          "file": "01-prefill-decode.md"
+        },
+        {
+          "title": "KV 与 Attention",
+          "description": "KV cache、PagedAttention、FlashAttention",
+          "file": "02-kv-attention.md"
+        },
+        {
+          "title": "优化技术",
+          "description": "批处理、量化、投机解码、缓存复用",
+          "file": "03-optimization.md"
+        },
+        {
+          "title": "推理引擎",
+          "description": "vLLM、SGLang、TensorRT-LLM 对比",
+          "file": "04-serving-engines.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "LLM 推理流程",

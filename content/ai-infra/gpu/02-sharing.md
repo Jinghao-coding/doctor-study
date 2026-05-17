@@ -1,4 +1,3 @@
-<div class="card card-s">
 <table>
 <tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
 <tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离</td></tr>
@@ -16,5 +15,4 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
 <div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
-</div>
 </div>

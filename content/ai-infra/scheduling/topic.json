@@ -1,7 +1,27 @@
 {
   "title": "任务调度理论",
   "subtitle": "经典算法 · 公平性 · GPU 集群特有策略",
+  "kicker": "Scheduling Theory",
+  "tags": [
+    "scheduling",
+    "theory",
+    "fairness"
+  ],
   "output": "pages/ai-infra/scheduling/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "scheduling-tabs",
+      "title": "任务调度理论",
+      "items": [
+        {
+          "title": "经典调度算法",
+          "description": "FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing",
+          "file": "01-classic-algorithms.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "经典调度算法",

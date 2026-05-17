@@ -1,4 +1,3 @@
-<div class="card card-m">
 <h3>四阶段流程</h3>
 <ol>
 <li><strong>模型加载</strong>：权重从存储（磁盘/网络）加载到 GPU 显存。大模型可能需要几十秒到几分钟</li>
@@ -24,4 +23,3 @@
 <tr><td>GPU 利用率</td><td>高（Tensor Core 饱和）</td><td>低（大量等待显存读取）</td></tr>
 <tr><td>优化方向</td><td>算子融合、FlashAttention</td><td>增大 batch、KV 缓存压缩</td></tr>
 </table>
-</div>

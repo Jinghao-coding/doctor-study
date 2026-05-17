@@ -20,11 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>GPU 硬件与资源共享</h1>
-<p class="sub">硬件架构 · A100/H100 对比 · MIG/MPS · CUDA VMM</p>
-<h2>GPU 硬件基础</h2>
-<div class="card card-s">
-<h3>GPU 架构要点</h3>
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">AI Infra Foundation</div><h1>GPU 硬件与资源共享</h1><p class="sub">硬件架构 · A100/H100 对比 · MIG/MPS · CUDA VMM</p><div class="hero-tags"><span>gpu</span><span>hardware</span><span>sharing</span><span>interview</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="GPU 内容模块"><button class="tab-button active" type="button" role="tab" id="gpu-tabs-tab-1" aria-controls="gpu-tabs-panel-1" aria-selected="true"><span class="tab-title">硬件基础</span><span class="tab-desc">架构、A100/H100/H200、显存带宽</span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-2" aria-controls="gpu-tabs-panel-2" aria-selected="false"><span class="tab-title">共享方式</span><span class="tab-desc">MIG、MPS、时间片、CUDA VMM</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="gpu-tabs-panel-1" aria-labelledby="gpu-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>硬件基础</h2></div><div class="tab-panel-body"><h3>GPU 架构要点</h3>
 <table>
 <tr><th>概念</th><th>说明</th></tr>
 <tr><td>SM（Streaming Multiprocessor）</td><td>GPU 基本计算单元，包含若干 CUDA Core 和 Tensor Core。A100 有 108 个 SM</td></tr>
@@ -45,12 +43,7 @@
 <tr><td>显存</td><td>80GB HBM2e</td><td>80GB HBM3</td><td>141GB HBM3e</td></tr>
 <tr><td>带宽</td><td>2.0 TB/s</td><td>3.35 TB/s</td><td>4.8 TB/s</td></tr>
 <tr><td>TDP</td><td>400W</td><td>700W</td><td>700W</td></tr>
-</table>
-</div>
-
-<h2>GPU 共享方式</h2>
-<div class="card card-s">
-<table>
+</table></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-2" aria-labelledby="gpu-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>共享方式</h2></div><div class="tab-panel-body"><table>
 <tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
 <tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离</td></tr>
 <tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并行执行 kernel</td><td>训练合用、I/O 互补</td></tr>
@@ -65,8 +58,7 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
 <div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
-</div>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

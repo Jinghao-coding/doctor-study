@@ -1,4 +1,3 @@
-<div class="card card-w">
 <h3>KV 缓存机制</h3>
 <p>自回归解码时，每步需要之前所有 token 的 Key 和 Value 向量。如果每步重新计算，代价是 O(n²)。KV 缓存把之前算过的 K/V 存下来，每步只计算新 token 的 K/V 并追加。</p>
 <div class="formula">KV 缓存大小 = 2 × num_layers × num_heads × head_dim × seq_len × dtype_size</div>
@@ -25,4 +24,3 @@
 
 <h3>FlashAttention</h3>
 <p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p>
-</div>

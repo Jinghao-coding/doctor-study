@@ -1,7 +1,42 @@
 {
   "title": "Kubernetes 核心",
   "subtitle": "架构 · Scheduling Framework · 资源模型 · 高频问答",
+  "kicker": "Platform Infrastructure",
+  "tags": [
+    "k8s",
+    "scheduler",
+    "resource-model"
+  ],
   "output": "pages/ai-infra/kubernetes/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "kubernetes-tabs",
+      "title": "Kubernetes 核心",
+      "items": [
+        {
+          "title": "架构概览",
+          "description": "控制面、数据面、etcd、kubelet",
+          "file": "01-architecture.md"
+        },
+        {
+          "title": "Scheduling Framework",
+          "description": "11 个扩展点、三队列、抢占机制",
+          "file": "02-scheduling-framework.md"
+        },
+        {
+          "title": "资源模型",
+          "description": "Requests/Limits、QoS、Extended Resource",
+          "file": "03-resource-model.md"
+        },
+        {
+          "title": "面试高频问答",
+          "description": "Pod 生命周期、Informer、GPU 调度",
+          "file": "04-qa.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "Kubernetes 架构概览",

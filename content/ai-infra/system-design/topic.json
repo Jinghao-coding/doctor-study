@@ -1,7 +1,41 @@
 {
   "title": "系统设计题",
   "subtitle": "多模型推理 · 多租户调度 · 训练平台 · KV 缓存管理",
+  "kicker": "System Design",
+  "tags": [
+    "system-design",
+    "interview"
+  ],
   "output": "pages/ai-infra/system-design/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "system-design-tabs",
+      "title": "系统设计题",
+      "items": [
+        {
+          "title": "多模型 LLM 推理",
+          "description": "模型驻留、内存管理、请求路由、排队策略",
+          "file": "01-multi-model-llm-serving.md"
+        },
+        {
+          "title": "多租户 GPU 调度",
+          "description": "QAD 配额、弹性借用、干扰感知合用",
+          "file": "02-multi-tenant-gpu-scheduler.md"
+        },
+        {
+          "title": "分布式训练平台",
+          "description": "任务抽象、Gang 调度、容错与可观测性",
+          "file": "03-distributed-training-platform.md"
+        },
+        {
+          "title": "KV 缓存管理",
+          "description": "分页管理、前缀共享、层级存储",
+          "file": "04-kv-cache-system.md"
+        }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "设计多模型 LLM 推理系统",

@@ -20,10 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>Kubernetes 核心</h1>
-<p class="sub">架构 · Scheduling Framework · 资源模型 · 高频问答</p>
-<h2>Kubernetes 架构概览</h2>
-<div class="card card-s">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Platform Infrastructure</div><h1>Kubernetes 核心</h1><p class="sub">架构 · Scheduling Framework · 资源模型 · 高频问答</p><div class="hero-tags"><span>k8s</span><span>scheduler</span><span>resource-model</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="Kubernetes 核心"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-title">架构概览</span><span class="tab-desc">控制面、数据面、etcd、kubelet</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-title">Scheduling Framework</span><span class="tab-desc">11 个扩展点、三队列、抢占机制</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-title">资源模型</span><span class="tab-desc">Requests/Limits、QoS、Extended Resource</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-title">面试高频问答</span><span class="tab-desc">Pod 生命周期、Informer、GPU 调度</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构概览</h2></div><div class="tab-panel-body"><div class="card card-s">
 <h3>控制面组件</h3>
 <table>
 <tr><th>组件</th><th>职责</th><th>关键细节</th></tr>
@@ -39,10 +38,7 @@
 <tr><td>kube-proxy</td><td>维护网络规则（iptables/IPVS），实现 Service 负载均衡</td></tr>
 <tr><td>容器运行时</td><td>containerd / CRI-O，负责拉镜像和运行容器</td></tr>
 </table>
-</div>
-
-<h2>Scheduling Framework 详解</h2>
-<div class="card card-m">
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-2" aria-labelledby="kubernetes-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Scheduling Framework</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>核心流程</h3>
 <p>K8s 1.19+ 引入 Scheduling Framework，把调度流程拆成 <strong>11 个扩展点</strong>（extension points），每个扩展点可以挂载多个插件。调度一个 Pod 经过两个阶段：</p>
 <h4>调度周期（Scheduling Cycle）——串行，对一个 Pod</h4>
@@ -93,10 +89,7 @@
 <li><strong>优雅终止</strong>：被驱逐 Pod 收到 SIGTERM，等待 terminationGracePeriodSeconds 后强制终止</li>
 <li><strong>PDB 保护</strong>：PodDisruptionBudget 可以限制同时被驱逐的 Pod 数量，保证服务可用性</li>
 </ol>
-</div>
-
-<h2>资源模型</h2>
-<div class="card card-w">
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-3" aria-labelledby="kubernetes-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>资源模型</h2></div><div class="tab-panel-body"><div class="card card-w">
 <h3>资源类型</h3>
 <table>
 <tr><th>类别</th><th>资源</th><th>特点</th></tr>
@@ -123,10 +116,7 @@
 <h3>InPlacePodVerticalScaling（1.27 alpha）</h3>
 <p>传统修改资源需要重建 Pod。InPlace 允许在不重启容器的情况下动态调整 CPU 和 Memory 的 requests/limits。</p>
 <p><strong>限制</strong>：只支持 CPU 和 Memory，<strong>不支持 GPU</strong>。GPU 是 Extended Resource，admit 后不可修改。GPU 分配必须在调度时确定，运行时只能通过 MPS 等方式做软共享。</p>
-</div>
-
-<h2>K8s 面试高频问答</h2>
-<div class="card card-s">
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-4" aria-labelledby="kubernetes-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频问答</h2></div><div class="tab-panel-body"><div class="card card-s">
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 一个 Pod 从创建到运行经历了什么？</div>
 <div class="qa-a">
@@ -186,7 +176,7 @@
 <div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
 <div class="qa-a"><p>ClusterIP Service 有一个虚拟 IP，kube-proxy 做负载均衡。Headless Service（clusterIP: None）不分配虚拟 IP，DNS 查询直接返回所有后端 Pod 的 IP。<strong>在 AI Infra 中的用途</strong>：分布式训练需要所有 worker 直接通信（NCCL AllReduce），用 Headless Service 让每个 Pod 能解析其他 Pod 的 IP，建立直连。</p></div>
 </div>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

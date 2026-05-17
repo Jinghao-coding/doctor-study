@@ -20,11 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>LLM 推理系统</h1>
-<p class="sub">Prefill/Decode · KV 缓存 · Attention 优化 · 推理引擎</p>
-<h2>LLM 推理流程</h2>
-<div class="card card-m">
-<h3>四阶段流程</h3>
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Serving System</div><h1>LLM 推理系统</h1><p class="sub">Prefill/Decode · KV 缓存 · Attention 优化 · 推理引擎</p><div class="hero-tags"><span>llm</span><span>inference</span><span>kv-cache</span><span>serving</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="LLM 推理内容模块"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-title">推理流程</span><span class="tab-desc">Prefill、Decode、TTFT、TPOT</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-title">KV 与 Attention</span><span class="tab-desc">KV cache、PagedAttention、FlashAttention</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-title">优化技术</span><span class="tab-desc">批处理、量化、投机解码、缓存复用</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-title">推理引擎</span><span class="tab-desc">vLLM、SGLang、TensorRT-LLM 对比</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理流程</h2></div><div class="tab-panel-body"><h3>四阶段流程</h3>
 <ol>
 <li><strong>模型加载</strong>：权重从存储（磁盘/网络）加载到 GPU 显存。大模型可能需要几十秒到几分钟</li>
 <li><strong>Prefill（预填充，计算密集）</strong>：一次性处理整个 prompt，并行计算所有 token 的 attention，生成初始 KV 缓存。延迟主要取决于 prompt 长度和模型大小</li>
@@ -46,12 +44,7 @@
 <tr><td>瓶颈</td><td>计算密集（矩阵乘法）</td><td>内存密集（读 KV 缓存）</td></tr>
 <tr><td>GPU 利用率</td><td>高（Tensor Core 饱和）</td><td>低（大量等待显存读取）</td></tr>
 <tr><td>优化方向</td><td>算子融合、FlashAttention</td><td>增大 batch、KV 缓存压缩</td></tr>
-</table>
-</div>
-
-<h2>KV 缓存与 Attention 优化</h2>
-<div class="card card-w">
-<h3>KV 缓存机制</h3>
+</table></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-2" aria-labelledby="llm-inference-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>KV 与 Attention</h2></div><div class="tab-panel-body"><h3>KV 缓存机制</h3>
 <p>自回归解码时，每步需要之前所有 token 的 Key 和 Value 向量。如果每步重新计算，代价是 O(n²)。KV 缓存把之前算过的 K/V 存下来，每步只计算新 token 的 K/V 并追加。</p>
 <div class="formula">KV 缓存大小 = 2 × num_layers × num_heads × head_dim × seq_len × dtype_size</div>
 <p>以 LLaMA-70B 为例：2 × 80 × 8 × 128 × 4096 × 2（FP16）≈ 10.7GB（单个请求）。</p>
@@ -73,12 +66,7 @@
 </table>
 <p>GQA 是实际部署的主流选择——在质量和效率之间取得平衡。</p>
 <h3>FlashAttention</h3>
-<p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p>
-</div>
-
-<h2>推理优化技术</h2>
-<div class="card card-s">
-<h3>常见优化手段</h3>
+<p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-3" aria-labelledby="llm-inference-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>优化技术</h2></div><div class="tab-panel-body"><h3>常见优化手段</h3>
 <table>
 <tr><th>技术</th><th>原理</th><th>效果</th></tr>
 <tr><td>连续批处理（Continuous Batching）</td><td>请求完成立即释放位置，新请求加入，不等整批结束</td><td>吞吐提升 2-5×</td></tr>
@@ -96,19 +84,13 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 投机解码为什么能加速？不是算了两次吗？</div>
 <div class="qa-a"><p>关键在于 decode 阶段是内存密集型——GPU 算力大量闲置。小模型（draft model）快速自回归生成 K 个候选 token，大模型（target model）一次性并行验证这 K 个 token（相当于做一次 prefill）。验证比逐个解码快，因为并行利用了算力。如果候选全部接受，等价于一次 forward 生成了 K 个 token。</p></div>
-</div>
-</div>
-
-<h2>主流推理引擎</h2>
-<div class="card card-s">
-<table>
+</div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-4" aria-labelledby="llm-inference-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理引擎</h2></div><div class="tab-panel-body"><table>
 <tr><th>引擎</th><th>核心特点</th><th>适用场景</th></tr>
 <tr><td>vLLM</td><td>PagedAttention、连续批处理、开源</td><td>通用 LLM serving</td></tr>
 <tr><td>SGLang</td><td>RadixAttention 前缀树复用、编程接口</td><td>多轮对话、结构化输出</td></tr>
 <tr><td>TensorRT-LLM</td><td>NVIDIA 官方优化、kernel 融合、FP8</td><td>NVIDIA GPU 极致性能</td></tr>
 <tr><td>DeepSpeed-Inference</td><td>模型并行、ZeRO 推理</td><td>超大模型</td></tr>
-</table>
-</div>
+</table></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>

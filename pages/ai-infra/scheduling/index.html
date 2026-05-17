@@ -20,10 +20,9 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<h1>任务调度理论</h1>
-<p class="sub">经典算法 · 公平性 · GPU 集群特有策略</p>
-<h2>经典调度算法</h2>
-<div class="card card-m">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Scheduling Theory</div><h1>任务调度理论</h1><p class="sub">经典算法 · 公平性 · GPU 集群特有策略</p><div class="hero-tags"><span>scheduling</span><span>theory</span><span>fairness</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="任务调度理论"><button class="tab-button active" type="button" role="tab" id="scheduling-tabs-tab-1" aria-controls="scheduling-tabs-panel-1" aria-selected="true"><span class="tab-title">经典调度算法</span><span class="tab-desc">FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="scheduling-tabs-panel-1" aria-labelledby="scheduling-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>经典调度算法</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>基础调度策略</h3>
 <table>
 <tr><th>算法</th><th>原理</th><th>可抢占</th><th>需要预测</th><th>优缺点</th></tr>
@@ -88,7 +87,7 @@
 <div class="qa-q">Q: 调度延迟和调度质量的 trade-off？</div>
 <div class="qa-a"><p>更好的调度决策需要更多信息和更多计算，但用户不想等太久。解决：(1) 两阶段调度——Filter 快速排除明显不行的，Score 只在少量候选中精选；(2) 缓存——Informer 本地缓存避免每次查 API Server；(3) 近似算法——不需要最优解，足够好就行；(4) 异步——Bind 阶段异步执行，不阻塞下一个 Pod 的调度。</p></div>
 </div>
-</div>
+</div></div></article></div></section>
 </div>
 <script src="../../../assets/script.js"></script>
 </body>
