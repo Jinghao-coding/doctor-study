@@ -1,0 +1,790 @@
+AGENTS.md
+  77d034e5011b4929 47-49,51-53,59,62-64,78-511 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[47,49]},{"Range":[51,53]},{"Single":59},{"Range":[62,64]},{"Range":[78,511]}]}]}
+content/ai-infra/cluster-management/topic.json
+  96471e91abeb95b4 4-10 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,10]}]}]}
+  77d034e5011b4929 12-50 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[12,50]}]}]}
+tools/build_site.py
+  77d034e5011b4929 132-324,329-331 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[132,324]},{"Range":[329,331]}]}]}
+assets/script.js
+  77d034e5011b4929 1-8,22-86,91 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[1,8]},{"Range":[22,86]},{"Single":91}]}]}
+content/ai-infra/kubernetes/topic.json
+  77d034e5011b4929 11-13,15-18,20-23,25-28,30-33,35-39 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[11,13]},{"Range":[15,18]},{"Range":[20,23]},{"Range":[25,28]},{"Range":[30,33]},{"Range":[35,39]}]}]}
+  96471e91abeb95b4 4-9,14,19,24,29,34 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,9]},{"Single":14},{"Single":19},{"Single":24},{"Single":29},{"Single":34}]}]}
+content/ai-infra/scheduling/topic.json
+  96471e91abeb95b4 4-9,11-24 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,9]},{"Range":[11,24]}]}]}
+assets/style.css
+  77d034e5011b4929 271 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Single":271}]}]}
+templates/index.html
+  77d034e5011b4929 18-19,33 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[18,19]},{"Single":33}]}]}
+content/ai-infra/system-design/topic.json
+  96471e91abeb95b4 4-8,10-38 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,8]},{"Range":[10,38]}]}]}
+.gitignore
+  d68e3c07eb1ffebe 26
+  d95a000c0dc2cad8 27
+  951d27b77e94cd54 25
+content/ai-infra/papers/topic.json
+  77d034e5011b4929 11-13,15-18,20-23,25-28,30-34 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f225f083af8267cf234e","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[11,13]},{"Range":[15,18]},{"Range":[20,23]},{"Range":[25,28]},{"Range":[30,34]}]}]}
+  96471e91abeb95b4 4-9,14,19,24,29 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,9]},{"Single":14},{"Single":19},{"Single":24},{"Single":29}]}]}
+content/ai-infra/performance-prediction/topic.json
+  96471e91abeb95b4 4-9,11-44 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09f42df083af8267cf23df","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[4,9]},{"Range":[11,44]}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "644eadfd1d65bbf9f7b3bf29390c8b14940217c6",
+  "prompts": {
+    "77d034e5011b4929": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a09e1b1f083af8267cf1f40",
+        "model": "gpt-5.5__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 461,
+      "total_deletions": 19,
+      "accepted_lines": 459,
+      "overriden_lines": 0
+    },
+    "951d27b77e94cd54": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-9f2a0708-56df-424f-90f4-e467fa7083dd",
+        "model": "default"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "96471e91abeb95b4": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a09f278f083af8267cf2372",
+        "model": "glm-5.1__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 122,
+      "total_deletions": 0,
+      "accepted_lines": 122,
+      "overriden_lines": 0
+    },
+    "d68e3c07eb1ffebe": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-2134dc9a-12d3-4b83-9156-2c45c05defa7",
+        "model": "default"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "d95a000c0dc2cad8": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-00ba68b1-a6bd-4435-beae-70abb30633df",
+        "model": "default"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  },
+  "attestation_metadata": {
+    "AGENTS.md": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              47,
+              49
+            ]
+          },
+          {
+            "Range": [
+              51,
+              53
+            ]
+          },
+          {
+            "Single": 59
+          },
+          {
+            "Range": [
+              62,
+              64
+            ]
+          },
+          {
+            "Range": [
+              78,
+              511
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  47,
+                  49
+                ]
+              },
+              {
+                "Range": [
+                  51,
+                  53
+                ]
+              },
+              {
+                "Single": 59
+              },
+              {
+                "Range": [
+                  62,
+                  64
+                ]
+              },
+              {
+                "Range": [
+                  78,
+                  511
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "assets/script.js": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              8
+            ]
+          },
+          {
+            "Range": [
+              22,
+              86
+            ]
+          },
+          {
+            "Single": 91
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  8
+                ]
+              },
+              {
+                "Range": [
+                  22,
+                  86
+                ]
+              },
+              {
+                "Single": 91
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "assets/style.css": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Single": 271
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Single": 271
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/cluster-management/topic.json": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              10
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  10
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              12,
+              50
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  12,
+                  50
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/kubernetes/topic.json": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              11,
+              13
+            ]
+          },
+          {
+            "Range": [
+              15,
+              18
+            ]
+          },
+          {
+            "Range": [
+              20,
+              23
+            ]
+          },
+          {
+            "Range": [
+              25,
+              28
+            ]
+          },
+          {
+            "Range": [
+              30,
+              33
+            ]
+          },
+          {
+            "Range": [
+              35,
+              39
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  11,
+                  13
+                ]
+              },
+              {
+                "Range": [
+                  15,
+                  18
+                ]
+              },
+              {
+                "Range": [
+                  20,
+                  23
+                ]
+              },
+              {
+                "Range": [
+                  25,
+                  28
+                ]
+              },
+              {
+                "Range": [
+                  30,
+                  33
+                ]
+              },
+              {
+                "Range": [
+                  35,
+                  39
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              9
+            ]
+          },
+          {
+            "Single": 14
+          },
+          {
+            "Single": 19
+          },
+          {
+            "Single": 24
+          },
+          {
+            "Single": 29
+          },
+          {
+            "Single": 34
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  9
+                ]
+              },
+              {
+                "Single": 14
+              },
+              {
+                "Single": 19
+              },
+              {
+                "Single": 24
+              },
+              {
+                "Single": 29
+              },
+              {
+                "Single": 34
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/papers/topic.json": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              11,
+              13
+            ]
+          },
+          {
+            "Range": [
+              15,
+              18
+            ]
+          },
+          {
+            "Range": [
+              20,
+              23
+            ]
+          },
+          {
+            "Range": [
+              25,
+              28
+            ]
+          },
+          {
+            "Range": [
+              30,
+              34
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  11,
+                  13
+                ]
+              },
+              {
+                "Range": [
+                  15,
+                  18
+                ]
+              },
+              {
+                "Range": [
+                  20,
+                  23
+                ]
+              },
+              {
+                "Range": [
+                  25,
+                  28
+                ]
+              },
+              {
+                "Range": [
+                  30,
+                  34
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              9
+            ]
+          },
+          {
+            "Single": 14
+          },
+          {
+            "Single": 19
+          },
+          {
+            "Single": 24
+          },
+          {
+            "Single": 29
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  9
+                ]
+              },
+              {
+                "Single": 14
+              },
+              {
+                "Single": 19
+              },
+              {
+                "Single": 24
+              },
+              {
+                "Single": 29
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/performance-prediction/topic.json": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              9
+            ]
+          },
+          {
+            "Range": [
+              11,
+              44
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  9
+                ]
+              },
+              {
+                "Range": [
+                  11,
+                  44
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/scheduling/topic.json": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              9
+            ]
+          },
+          {
+            "Range": [
+              11,
+              24
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  9
+                ]
+              },
+              {
+                "Range": [
+                  11,
+                  24
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/system-design/topic.json": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              4,
+              8
+            ]
+          },
+          {
+            "Range": [
+              10,
+              38
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f42df083af8267cf23df",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  4,
+                  8
+                ]
+              },
+              {
+                "Range": [
+                  10,
+                  38
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "templates/index.html": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              18,
+              19
+            ]
+          },
+          {
+            "Single": 33
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  18,
+                  19
+                ]
+              },
+              {
+                "Single": 33
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tools/build_site.py": [
+      {
+        "hash": "77d034e5011b4929",
+        "line_ranges": [
+          {
+            "Range": [
+              132,
+              324
+            ]
+          },
+          {
+            "Range": [
+              329,
+              331
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09f225f083af8267cf234e",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  132,
+                  324
+                ]
+              },
+              {
+                "Range": [
+                  329,
+                  331
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "77d034e5011b4929": {
+      "tool": "trae",
+      "conversation_id": "6a09e1b1f083af8267cf1f40",
+      "session_id": "6a09e1b1f083af8267cf1f40",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "96471e91abeb95b4": {
+      "tool": "trae",
+      "conversation_id": "6a09f278f083af8267cf2372",
+      "session_id": "6a09f278f083af8267cf2372",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
