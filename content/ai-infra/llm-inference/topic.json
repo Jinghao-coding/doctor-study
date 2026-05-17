@@ -1,0 +1,23 @@
+{
+  "title": "LLM 推理系统",
+  "subtitle": "Prefill/Decode · KV 缓存 · Attention 优化 · 推理引擎",
+  "output": "pages/ai-infra/llm-inference/index.html",
+  "sections": [
+    {
+      "title": "LLM 推理流程",
+      "file": "01-prefill-decode.md"
+    },
+    {
+      "title": "KV 缓存与 Attention 优化",
+      "file": "02-kv-attention.md"
+    },
+    {
+      "title": "推理优化技术",
+      "file": "03-optimization.md"
+    },
+    {
+      "title": "主流推理引擎",
+      "file": "04-serving-engines.md"
+    }
+  ]
+}

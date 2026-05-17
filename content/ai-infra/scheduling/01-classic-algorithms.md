@@ -1,29 +1,3 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>调度理论 · doctor-study</title>
-<link rel="stylesheet" href="../assets/style.css">
-</head>
-<body>
-<nav class="topnav">
-  <a class="home" href="../index.html">← 首页</a>
-  <span class="sep">·</span>
-  <a href="papers.html">论文</a>
-  <a href="gpu-inference.html">GPU &amp; 推理</a>
-  <a href="kubernetes.html">Kubernetes</a>
-  <a href="scheduling.html">调度理论</a>
-  <a href="cluster-management.html">集群管理</a>
-  <a href="performance-prediction.html">性能预测</a>
-  <a href="system-design.html">系统设计</a>
-</nav>
-<div class="wrap">
-<h1>任务调度理论</h1>
-<p class="sub">经典算法 · 公平性 · GPU 集群特有策略</p>
-
-<h2>经典调度算法</h2>
-
 <div class="card card-m">
 <h3>基础调度策略</h3>
 <table>
@@ -105,8 +79,3 @@
 <div class="qa-a"><p>更好的调度决策需要更多信息和更多计算，但用户不想等太久。解决：(1) 两阶段调度——Filter 快速排除明显不行的，Score 只在少量候选中精选；(2) 缓存——Informer 本地缓存避免每次查 API Server；(3) 近似算法——不需要最优解，足够好就行；(4) 异步——Bind 阶段异步执行，不阻塞下一个 Pod 的调度。</p></div>
 </div>
 </div>
-
-</div>
-<script src="../assets/script.js"></script>
-</body>
-</html>

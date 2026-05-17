@@ -1,0 +1,23 @@
+{
+  "title": "Kubernetes 核心",
+  "subtitle": "架构 · Scheduling Framework · 资源模型 · 高频问答",
+  "output": "pages/ai-infra/kubernetes/index.html",
+  "sections": [
+    {
+      "title": "Kubernetes 架构概览",
+      "file": "01-architecture.md"
+    },
+    {
+      "title": "Scheduling Framework 详解",
+      "file": "02-scheduling-framework.md"
+    },
+    {
+      "title": "资源模型",
+      "file": "03-resource-model.md"
+    },
+    {
+      "title": "K8s 面试高频问答",
+      "file": "04-qa.md"
+    }
+  ]
+}

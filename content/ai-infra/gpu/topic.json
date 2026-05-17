@@ -1,0 +1,15 @@
+{
+  "title": "GPU 硬件与资源共享",
+  "subtitle": "硬件架构 · A100/H100 对比 · MIG/MPS · CUDA VMM",
+  "output": "pages/ai-infra/gpu/index.html",
+  "sections": [
+    {
+      "title": "GPU 硬件基础",
+      "file": "01-hardware.md"
+    },
+    {
+      "title": "GPU 共享方式",
+      "file": "02-sharing.md"
+    }
+  ]
+}

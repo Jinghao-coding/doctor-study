@@ -1,0 +1,16 @@
+<div class="card card-m">
+<h3>树模型 vs 深度学习的选择依据</h3>
+<table>
+<tr><th>考虑因素</th><th>树模型（LightGBM/RF）</th><th>深度学习</th></tr>
+<tr><td>训练数据量</td><td>几百到几千条就足够</td><td>需要大量数据</td></tr>
+<tr><td>推理延迟</td><td>微秒到毫秒级</td><td>毫秒到百毫秒</td></tr>
+<tr><td>可解释性</td><td>特征重要性、决策路径清晰</td><td>黑盒</td></tr>
+<tr><td>表格数据</td><td>通常优于 DNN</td><td>需要特殊架构（TabNet）</td></tr>
+<tr><td>特征工程</td><td>需要手工设计</td><td>自动学习表示</td></tr>
+</table>
+<p><strong>调度系统中的具体考量</strong>：</p>
+<ul>
+<li>推理场景：per-role 可能只有几百条训练数据；推理延迟必须 &lt; 15ms（在调度路径上）；需要特征重要性分析证明哪些特征有用</li>
+<li>训练场景：推理 &lt; 1ms 才能不影响调度延迟（总预算 50ms）；硬件计数器是结构化特征，树模型天然擅长</li>
+</ul>
+</div>

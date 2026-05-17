@@ -11,6 +11,11 @@ Thumbs.db
 # Logs
 *.log
 
+# Python
+.venv/
+__pycache__/
+*.pyc
+
 # Local resources / drafts (按需调整)
 resources/private/
 *.tmp

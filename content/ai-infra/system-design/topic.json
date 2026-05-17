@@ -1,0 +1,23 @@
+{
+  "title": "系统设计题",
+  "subtitle": "多模型推理 · 多租户调度 · 训练平台 · KV 缓存管理",
+  "output": "pages/ai-infra/system-design/index.html",
+  "sections": [
+    {
+      "title": "设计多模型 LLM 推理系统",
+      "file": "01-multi-model-llm-serving.md"
+    },
+    {
+      "title": "设计多租户 GPU 集群调度系统",
+      "file": "02-multi-tenant-gpu-scheduler.md"
+    },
+    {
+      "title": "设计分布式训练平台",
+      "file": "03-distributed-training-platform.md"
+    },
+    {
+      "title": "设计 KV 缓存管理系统",
+      "file": "04-kv-cache-system.md"
+    }
+  ]
+}

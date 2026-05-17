@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}} · 学习索引</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+<h1>{{title}}</h1>
+<p class="sub">{{subtitle}}</p>
+
+<div class="card card-s">
+<h3>Agent 使用说明</h3>
+<ul>
+<li><strong>内容源</strong>：所有可持续更新的学习内容放在 <code>content/</code>，按 <code>domain/topic/*.md</code> 拆成小文件。</li>
+<li><strong>生成页面</strong>：运行 <code>python3 tools/build_site.py</code>，自动生成 <code>pages/domain/topic/index.html</code>。</li>
+<li><strong>新增主题</strong>：新增 <code>content/domain/topic/topic.json</code> 和章节 Markdown，再把主题注册到 <code>content/site.json</code>。</li>
+<li><strong>导航目录</strong>：长页面右下角提供可隐藏目录按钮；按 <code>Alt + E</code> 展开 / 折叠当前页所有问答。</li>
+</ul>
+</div>
+
+<h2>AI Infra 面试准备</h2>
+<div class="idx-grid">
+{{topic_cards}}
+</div>
+
+<h2>后续扩展位</h2>
+<div class="card card-w">
+<p>新增内容优先按 <code>content/domain/topic/*.md</code> 维护，不要直接手写大体量 HTML。生成后的 <code>pages/</code> 是可浏览产物，源内容以 <code>content/</code> 为准。</p>
+</div>
+
+</div>
+<script src="assets/script.js"></script>
+</body>
+</html>

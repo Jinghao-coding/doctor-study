@@ -12,64 +12,77 @@
 <p class="sub">毕业准备 · 面试 / 项目 / 简历 / 学习笔记总入口</p>
 
 <div class="card card-s">
-<h3>使用说明</h3>
+<h3>Agent 使用说明</h3>
 <ul>
-<li><strong>结构</strong>：每个主题一个独立页面，放在 <code>pages/</code> 目录；公共样式 / 脚本在 <code>assets/</code>；附加资料（PDF、图片等）放在 <code>resources/</code>。</li>
-<li><strong>新增主题</strong>：把新的 <code>xxx.html</code> 放到 <code>pages/</code>，引用 <code>../assets/style.css</code> 与 <code>../assets/script.js</code>，再在下方导航卡片中加入入口即可。</li>
-<li><strong>快捷键</strong>：在任意页面按 <code>Alt + E</code> 展开 / 折叠当前页所有问答。</li>
+<li><strong>内容源</strong>：所有可持续更新的学习内容放在 <code>content/</code>，按 <code>domain/topic/*.md</code> 拆成小文件。</li>
+<li><strong>生成页面</strong>：运行 <code>python3 tools/build_site.py</code>，自动生成 <code>pages/domain/topic/index.html</code>。</li>
+<li><strong>新增主题</strong>：新增 <code>content/domain/topic/topic.json</code> 和章节 Markdown，再把主题注册到 <code>content/site.json</code>。</li>
+<li><strong>导航目录</strong>：长页面右下角提供可隐藏目录按钮；按 <code>Alt + E</code> 展开 / 折叠当前页所有问答。</li>
 </ul>
 </div>
 
 <h2>AI Infra 面试准备</h2>
 <div class="idx-grid">
+<a class="idx-card c1" href="pages/ai-infra/papers/index.html">
+  <div class="idx-title">论文工作</div>
+  <div class="idx-desc">Maestro 与 DeepShare 两篇论文工作的背景、系统设计、实验结果和高频问答。</div>
+  <div class="idx-tags" aria-label="标签"><span>papers</span><span>maestro</span><span>deepshare</span></div>
+</a>
 
-  <a class="idx-card c1" href="pages/papers.html">
-    <div class="idx-title">论文工作</div>
-    <div class="idx-desc">Maestro（ICDCS 2026）多 agent 推理调度 · DeepShare（IEEE Cluster 2026）多租户 GPU 集群调度，含问题背景、设计、结果与高频问答。</div>
-    <div class="idx-meta">tag: papers · maestro · deepshare</div>
-  </a>
 
-  <a class="idx-card c2" href="pages/gpu-inference.html">
-    <div class="idx-title">GPU 与 LLM 推理</div>
-    <div class="idx-desc">GPU 架构、A100/H100 对比、Prefill/Decode、KV 缓存、PagedAttention、FlashAttention、GPU 共享方式与推理引擎。</div>
-    <div class="idx-meta">tag: gpu · inference · vllm</div>
-  </a>
+<a class="idx-card c2" href="pages/ai-infra/gpu/index.html">
+  <div class="idx-title">GPU 硬件与资源共享</div>
+  <div class="idx-desc">GPU 架构、A100/H100/H200 对比、HBM/NVLink、MIG、MPS、时间片、CUDA VMM 等硬件与资源复用基础。</div>
+  <div class="idx-tags" aria-label="标签"><span>gpu</span><span>hardware</span><span>sharing</span></div>
+</a>
 
-  <a class="idx-card c3" href="pages/kubernetes.html">
-    <div class="idx-title">Kubernetes 核心</div>
-    <div class="idx-desc">控制面 / 数据面、Scheduling Framework 11 个扩展点、三个队列、抢占机制、QoS、Device Plugin、Informer。</div>
-    <div class="idx-meta">tag: k8s · scheduler</div>
-  </a>
 
-  <a class="idx-card c4" href="pages/scheduling.html">
-    <div class="idx-title">任务调度理论</div>
-    <div class="idx-desc">FIFO/SJF/SRTF/EDF、DRF / Max-Min Fairness、Gang scheduling、Bin Packing、Backfill、弹性训练、抢占代价。</div>
-    <div class="idx-meta">tag: scheduling · theory</div>
-  </a>
+<a class="idx-card c1" href="pages/ai-infra/llm-inference/index.html">
+  <div class="idx-title">LLM 推理系统</div>
+  <div class="idx-desc">Prefill/Decode、TTFT/TPOT、KV 缓存、PagedAttention、FlashAttention、连续批处理、投机解码与推理引擎。</div>
+  <div class="idx-tags" aria-label="标签"><span>llm</span><span>inference</span><span>kv-cache</span></div>
+</a>
 
-  <a class="idx-card c5" href="pages/cluster-management.html">
-    <div class="idx-title">GPU 集群管理</div>
-    <div class="idx-desc">Volcano / Yunikorn / Kueue 对比、多租户配额、拓扑与 NCCL、3D 并行、ZeRO、故障与 Checkpoint。</div>
-    <div class="idx-meta">tag: cluster · volcano · zero</div>
-  </a>
 
-  <a class="idx-card c1" href="pages/performance-prediction.html">
-    <div class="idx-title">性能预测与建模</div>
-    <div class="idx-desc">树模型 vs DL、特征工程、回归 / 分类指标、安全裕度与在线校准、Concept Drift、预测精度容忍度。</div>
-    <div class="idx-meta">tag: prediction · ml-for-systems</div>
-  </a>
+<a class="idx-card c3" href="pages/ai-infra/kubernetes/index.html">
+  <div class="idx-title">Kubernetes 核心</div>
+  <div class="idx-desc">控制面、数据面、Scheduling Framework、调度队列、抢占、QoS、Device Plugin 与 Informer。</div>
+  <div class="idx-tags" aria-label="标签"><span>k8s</span><span>scheduler</span></div>
+</a>
 
-  <a class="idx-card c2" href="pages/system-design.html">
-    <div class="idx-title">系统设计题</div>
-    <div class="idx-desc">多模型 LLM 推理系统、多租户 GPU 调度、分布式训练平台、KV 缓存管理系统等综合设计。</div>
-    <div class="idx-meta">tag: system-design</div>
-  </a>
+
+<a class="idx-card c4" href="pages/ai-infra/scheduling/index.html">
+  <div class="idx-title">任务调度理论</div>
+  <div class="idx-desc">FIFO/SJF/SRTF/EDF、DRF、Max-Min Fairness、Gang scheduling、Bin Packing、Backfill 与抢占代价。</div>
+  <div class="idx-tags" aria-label="标签"><span>scheduling</span><span>theory</span></div>
+</a>
+
+
+<a class="idx-card c5" href="pages/ai-infra/cluster-management/index.html">
+  <div class="idx-title">GPU 集群管理</div>
+  <div class="idx-desc">Volcano、Yunikorn、Kueue、多租户配额、拓扑与 NCCL、3D 并行、ZeRO、故障与 Checkpoint。</div>
+  <div class="idx-tags" aria-label="标签"><span>cluster</span><span>volcano</span><span>zero</span></div>
+</a>
+
+
+<a class="idx-card c2" href="pages/ai-infra/performance-prediction/index.html">
+  <div class="idx-title">性能预测与建模</div>
+  <div class="idx-desc">树模型 vs 深度学习、特征工程、回归/分类指标、安全裕度、在线校准和 Concept Drift。</div>
+  <div class="idx-tags" aria-label="标签"><span>prediction</span><span>ml-for-systems</span></div>
+</a>
+
+
+<a class="idx-card c3" href="pages/ai-infra/system-design/index.html">
+  <div class="idx-title">系统设计题</div>
+  <div class="idx-desc">多模型 LLM 推理系统、多租户 GPU 调度、分布式训练平台、KV 缓存管理系统等综合设计。</div>
+  <div class="idx-tags" aria-label="标签"><span>system-design</span></div>
+</a>
 
 </div>
 
-<h2>后续扩展位（占位）</h2>
+<h2>后续扩展位</h2>
 <div class="card card-w">
-<p>新内容（如简历版本、项目深挖、操作系统 / 计算机网络复习、行为面 STAR 案例等）后续按主题加到 <code>pages/</code> 并补到上方导航即可，单页文件大小可控。</p>
+<p>新增内容优先按 <code>content/domain/topic/*.md</code> 维护，不要直接手写大体量 HTML。生成后的 <code>pages/</code> 是可浏览产物，源内容以 <code>content/</code> 为准。</p>
 </div>
 
 </div>

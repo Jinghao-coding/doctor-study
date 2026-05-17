@@ -1,0 +1,143 @@
+{
+  "title": "doctor-study",
+  "subtitle": "毕业准备 · 面试 / 项目 / 简历 / 学习笔记总入口",
+  "nav": [
+    {
+      "title": "首页",
+      "href": "index.html"
+    },
+    {
+      "title": "论文工作",
+      "href": "pages/ai-infra/papers/index.html"
+    },
+    {
+      "title": "GPU",
+      "href": "pages/ai-infra/gpu/index.html"
+    },
+    {
+      "title": "LLM 推理系统",
+      "href": "pages/ai-infra/llm-inference/index.html"
+    },
+    {
+      "title": "Kubernetes 核心",
+      "href": "pages/ai-infra/kubernetes/index.html"
+    },
+    {
+      "title": "任务调度理论",
+      "href": "pages/ai-infra/scheduling/index.html"
+    },
+    {
+      "title": "GPU 集群管理",
+      "href": "pages/ai-infra/cluster-management/index.html"
+    },
+    {
+      "title": "性能预测与建模",
+      "href": "pages/ai-infra/performance-prediction/index.html"
+    },
+    {
+      "title": "系统设计题",
+      "href": "pages/ai-infra/system-design/index.html"
+    }
+  ],
+  "topics": [
+    {
+      "title": "论文工作",
+      "slug": "ai-infra/papers",
+      "source": "content/ai-infra/papers/topic.json",
+      "output": "pages/ai-infra/papers/index.html",
+      "description": "Maestro 与 DeepShare 两篇论文工作的背景、系统设计、实验结果和高频问答。",
+      "tags": [
+        "papers",
+        "maestro",
+        "deepshare"
+      ],
+      "color": "c1"
+    },
+    {
+      "title": "GPU 硬件与资源共享",
+      "slug": "ai-infra/gpu",
+      "source": "content/ai-infra/gpu/topic.json",
+      "output": "pages/ai-infra/gpu/index.html",
+      "description": "GPU 架构、A100/H100/H200 对比、HBM/NVLink、MIG、MPS、时间片、CUDA VMM 等硬件与资源复用基础。",
+      "tags": [
+        "gpu",
+        "hardware",
+        "sharing"
+      ],
+      "color": "c2"
+    },
+    {
+      "title": "LLM 推理系统",
+      "slug": "ai-infra/llm-inference",
+      "source": "content/ai-infra/llm-inference/topic.json",
+      "output": "pages/ai-infra/llm-inference/index.html",
+      "description": "Prefill/Decode、TTFT/TPOT、KV 缓存、PagedAttention、FlashAttention、连续批处理、投机解码与推理引擎。",
+      "tags": [
+        "llm",
+        "inference",
+        "kv-cache"
+      ],
+      "color": "c1"
+    },
+    {
+      "title": "Kubernetes 核心",
+      "slug": "ai-infra/kubernetes",
+      "source": "content/ai-infra/kubernetes/topic.json",
+      "output": "pages/ai-infra/kubernetes/index.html",
+      "description": "控制面、数据面、Scheduling Framework、调度队列、抢占、QoS、Device Plugin 与 Informer。",
+      "tags": [
+        "k8s",
+        "scheduler"
+      ],
+      "color": "c3"
+    },
+    {
+      "title": "任务调度理论",
+      "slug": "ai-infra/scheduling",
+      "source": "content/ai-infra/scheduling/topic.json",
+      "output": "pages/ai-infra/scheduling/index.html",
+      "description": "FIFO/SJF/SRTF/EDF、DRF、Max-Min Fairness、Gang scheduling、Bin Packing、Backfill 与抢占代价。",
+      "tags": [
+        "scheduling",
+        "theory"
+      ],
+      "color": "c4"
+    },
+    {
+      "title": "GPU 集群管理",
+      "slug": "ai-infra/cluster-management",
+      "source": "content/ai-infra/cluster-management/topic.json",
+      "output": "pages/ai-infra/cluster-management/index.html",
+      "description": "Volcano、Yunikorn、Kueue、多租户配额、拓扑与 NCCL、3D 并行、ZeRO、故障与 Checkpoint。",
+      "tags": [
+        "cluster",
+        "volcano",
+        "zero"
+      ],
+      "color": "c5"
+    },
+    {
+      "title": "性能预测与建模",
+      "slug": "ai-infra/performance-prediction",
+      "source": "content/ai-infra/performance-prediction/topic.json",
+      "output": "pages/ai-infra/performance-prediction/index.html",
+      "description": "树模型 vs 深度学习、特征工程、回归/分类指标、安全裕度、在线校准和 Concept Drift。",
+      "tags": [
+        "prediction",
+        "ml-for-systems"
+      ],
+      "color": "c2"
+    },
+    {
+      "title": "系统设计题",
+      "slug": "ai-infra/system-design",
+      "source": "content/ai-infra/system-design/topic.json",
+      "output": "pages/ai-infra/system-design/index.html",
+      "description": "多模型 LLM 推理系统、多租户 GPU 调度、分布式训练平台、KV 缓存管理系统等综合设计。",
+      "tags": [
+        "system-design"
+      ],
+      "color": "c3"
+    }
+  ]
+}

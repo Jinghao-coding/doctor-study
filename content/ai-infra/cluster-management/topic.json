@@ -1,0 +1,31 @@
+{
+  "title": "GPU 集群管理",
+  "subtitle": "调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错",
+  "output": "pages/ai-infra/cluster-management/index.html",
+  "sections": [
+    {
+      "title": "GPU 集群调度框架",
+      "file": "01-frameworks.md"
+    },
+    {
+      "title": "多租户管理",
+      "file": "02-multi-tenancy.md"
+    },
+    {
+      "title": "GPU 拓扑与通信",
+      "file": "03-topology-communication.md"
+    },
+    {
+      "title": "分布式训练",
+      "file": "04-distributed-training.md"
+    },
+    {
+      "title": "故障处理与弹性",
+      "file": "05-fault-tolerance.md"
+    },
+    {
+      "title": "集群管理面试问答",
+      "file": "06-qa.md"
+    }
+  ]
+}

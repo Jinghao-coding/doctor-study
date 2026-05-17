@@ -1,0 +1,19 @@
+{
+  "title": "论文工作",
+  "subtitle": "Maestro · DeepShare · 互补关系与面试叙事",
+  "output": "pages/ai-infra/papers/index.html",
+  "sections": [
+    {
+      "title": "ICDCS 2026 Maestro — LLM 多智能体系统的工作负载感知调度",
+      "file": "01-icdcs-2026-maestro-llm.md"
+    },
+    {
+      "title": "IEEE Cluster 2026 DeepShare — 多租户 GPU 集群的保障驱动调度",
+      "file": "02-ieee-cluster-2026-deepshare-gpu.md"
+    },
+    {
+      "title": "共通 两篇论文的关系与面试叙事",
+      "file": "03-section-03.md"
+    }
+  ]
+}

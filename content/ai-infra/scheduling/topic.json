@@ -1,0 +1,11 @@
+{
+  "title": "任务调度理论",
+  "subtitle": "经典算法 · 公平性 · GPU 集群特有策略",
+  "output": "pages/ai-infra/scheduling/index.html",
+  "sections": [
+    {
+      "title": "经典调度算法",
+      "file": "01-classic-algorithms.md"
+    }
+  ]
+}

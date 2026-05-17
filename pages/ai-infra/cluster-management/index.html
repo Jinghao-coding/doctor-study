@@ -4,26 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GPU 集群管理 · doctor-study</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../../../assets/style.css">
 </head>
 <body>
 <nav class="topnav">
-  <a class="home" href="../index.html">← 首页</a>
+  <a class="home" href="../../../index.html">← 首页</a>
   <span class="sep">·</span>
-  <a href="papers.html">论文</a>
-  <a href="gpu-inference.html">GPU &amp; 推理</a>
-  <a href="kubernetes.html">Kubernetes</a>
-  <a href="scheduling.html">调度理论</a>
-  <a href="cluster-management.html">集群管理</a>
-  <a href="performance-prediction.html">性能预测</a>
-  <a href="system-design.html">系统设计</a>
+  <a href="../../../pages/ai-infra/papers/index.html">论文工作</a>
+  <a href="../../../pages/ai-infra/gpu/index.html">GPU</a>
+  <a href="../../../pages/ai-infra/llm-inference/index.html">LLM 推理系统</a>
+  <a href="../../../pages/ai-infra/kubernetes/index.html">Kubernetes 核心</a>
+  <a href="../../../pages/ai-infra/scheduling/index.html">任务调度理论</a>
+  <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
+  <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
+  <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
 <h1>GPU 集群管理</h1>
 <p class="sub">调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错</p>
-
 <h2>GPU 集群调度框架</h2>
-
 <div class="card card-d">
 <h3>主流框架对比</h3>
 <table>
@@ -33,7 +32,6 @@
 <tr><td>Kueue</td><td>作业排队管理</td><td>ResourceFlavor、ClusterQueue、Workload 抽象</td><td>较新，生态还在发展</td></tr>
 <tr><td>Run:ai</td><td>GPU 虚拟化平台</td><td>GPU 分时/共享、配额管理、可视化</td><td>商业产品，闭源</td></tr>
 </table>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 的核心设计？它的局限性？</div>
 <div class="qa-a">
@@ -41,7 +39,6 @@
 <p>Volcano 的局限性：(1) 配额是静态的（min/max），不支持连续保障度信号；(2) 没有干扰感知合用能力；(3) 不做运行时间预测；(4) 抢占是简单的优先级抢占，不考虑沉没成本。在需要弹性配额、干扰感知等能力时，需从 Scheduling Framework 原生构建，获得更大的灵活性。</p>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Kueue 的 ResourceFlavor 是什么概念？</div>
 <div class="qa-a"><p>ResourceFlavor 抽象了不同类型的资源——比如 A100 GPU 是一种 Flavor，H100 GPU 是另一种。ClusterQueue 可以关联多个 Flavor，每个 Flavor 有独立的配额。Workload 提交时可以指定 Flavor 偏好，Kueue 根据配额和排队情况分配。这对异构 GPU 集群很有用。</p></div>
@@ -49,7 +46,6 @@
 </div>
 
 <h2>多租户管理</h2>
-
 <div class="card card-w">
 <h3>配额管理方案对比</h3>
 <table>
@@ -59,7 +55,6 @@
 <tr><td>弹性保障（DRA 类）</td><td>QAD ≥ 0.95</td><td>无上限（借用）</td><td>QAD 驱动回收</td><td>QAD</td></tr>
 <tr><td>DRF</td><td>弱</td><td>按比例</td><td>—</td><td>Dominant Share</td></tr>
 </table>
-
 <h3>多租户隔离层次</h3>
 <ol>
 <li><strong>Namespace 级别</strong>：ResourceQuota 限制总量，LimitRange 限制单个 Pod。最基本的隔离</li>
@@ -70,7 +65,6 @@
 </div>
 
 <h2>GPU 拓扑与通信</h2>
-
 <div class="card card-s">
 <h3>集群拓扑层次</h3>
 <table>
@@ -82,7 +76,6 @@
 <tr><td>机柜间</td><td>交换机</td><td>几百 Gbps</td><td>几十 μs</td></tr>
 </table>
 <p><strong>调度意义</strong>：分布式训练的通信模式（AllReduce）对带宽敏感。拓扑感知调度把同一任务的 worker 放在 NVLink 可达的 GPU 上，或者至少同一个机柜内，显著减少通信时间。</p>
-
 <h3>集合通信原语</h3>
 <table>
 <tr><th>原语</th><th>操作</th><th>训练中的用途</th></tr>
@@ -96,7 +89,6 @@
 </div>
 
 <h2>分布式训练</h2>
-
 <div class="card card-m">
 <h3>并行策略</h3>
 <table>
@@ -107,7 +99,6 @@
 <tr><td>专家并行（EP）</td><td>MoE 专家</td><td>All-to-All</td><td>MoE 模型（Mixtral）</td></tr>
 <tr><td>ZeRO（1/2/3）</td><td>优化器状态/梯度/参数</td><td>AllGather + ReduceScatter</td><td>减少显存占用</td></tr>
 </table>
-
 <h3>3D 并行</h3>
 <p>大模型训练通常组合使用 DP + TP + PP。典型配置（8 节点 × 8 GPU = 64 GPU 训练 175B 模型）：</p>
 <ul>
@@ -115,7 +106,6 @@
 <li>PP = 4（跨 4 个节点做流水线，通信量小，可以走 InfiniBand）</li>
 <li>DP = 2（两组流水线做数据并行，每个 micro-batch 结束同步梯度）</li>
 </ul>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: ZeRO 三个阶段分别做了什么？</div>
 <div class="qa-a">
@@ -128,7 +118,6 @@
 <p>ZeRO-3 + 64 卡可以训练 1T 参数的模型（每卡只存 1/64 参数）。</p>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 数据并行的梯度同步有什么优化？</div>
 <div class="qa-a"><p>(1) <strong>梯度压缩</strong>——只传 top-k 梯度或用低精度传输。(2) <strong>梯度累积</strong>——多个 micro-batch 的梯度在本地累积后再同步，减少通信次数。(3) <strong>通信-计算重叠</strong>——反向传播过程中，已计算完的层立即开始 AllReduce，不等所有层都算完。(4) <strong>Ring AllReduce</strong>——通信量 2(N-1)/N × data_size，线性扩展。</p></div>
@@ -136,7 +125,6 @@
 </div>
 
 <h2>故障处理与弹性</h2>
-
 <div class="card card-r">
 <h3>GPU 集群常见故障</h3>
 <table>
@@ -147,7 +135,6 @@
 <tr><td>网络分区</td><td>偶发</td><td>NCCL 超时</td><td>超时检测 + 重连</td></tr>
 <tr><td>显存泄漏</td><td>常见</td><td>OOM Kill</td><td>监控 + 自动重启</td></tr>
 </table>
-
 <h3>Checkpoint 策略</h3>
 <ul>
 <li><strong>周期性 checkpoint</strong>：每 N 步保存一次完整状态（模型 + 优化器 + 数据迭代器位置）</li>
@@ -159,7 +146,6 @@
 </div>
 
 <h2>集群管理面试问答</h2>
-
 <div class="card card-s">
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: GPU 利用率为什么普遍很低？怎么提升？</div>
@@ -168,7 +154,6 @@
 <p>提升方法：(1) Bin Packing 减少碎片；(2) 弹性配额借用（DRA）解决配额闲置；(3) MPS 合用解决 I/O 阶段空闲；(4) 通信-计算重叠。</p>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何监控 GPU 集群？</div>
 <div class="qa-a">
@@ -181,7 +166,6 @@
 <p>通常 DCGM → Prometheus → Grafana 的技术栈。</p>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 训练任务和推理任务的调度有什么区别？</div>
 <div class="qa-a">
@@ -196,8 +180,7 @@
 </div>
 </div>
 </div>
-
 </div>
-<script src="../assets/script.js"></script>
+<script src="../../../assets/script.js"></script>
 </body>
 </html>

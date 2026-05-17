@@ -4,26 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kubernetes 核心 · doctor-study</title>
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../../../assets/style.css">
 </head>
 <body>
 <nav class="topnav">
-  <a class="home" href="../index.html">← 首页</a>
+  <a class="home" href="../../../index.html">← 首页</a>
   <span class="sep">·</span>
-  <a href="papers.html">论文</a>
-  <a href="gpu-inference.html">GPU &amp; 推理</a>
-  <a href="kubernetes.html">Kubernetes</a>
-  <a href="scheduling.html">调度理论</a>
-  <a href="cluster-management.html">集群管理</a>
-  <a href="performance-prediction.html">性能预测</a>
-  <a href="system-design.html">系统设计</a>
+  <a href="../../../pages/ai-infra/papers/index.html">论文工作</a>
+  <a href="../../../pages/ai-infra/gpu/index.html">GPU</a>
+  <a href="../../../pages/ai-infra/llm-inference/index.html">LLM 推理系统</a>
+  <a href="../../../pages/ai-infra/kubernetes/index.html">Kubernetes 核心</a>
+  <a href="../../../pages/ai-infra/scheduling/index.html">任务调度理论</a>
+  <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
+  <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
+  <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
 <h1>Kubernetes 核心</h1>
 <p class="sub">架构 · Scheduling Framework · 资源模型 · 高频问答</p>
-
 <h2>Kubernetes 架构概览</h2>
-
 <div class="card card-s">
 <h3>控制面组件</h3>
 <table>
@@ -33,7 +32,6 @@
 <tr><td>kube-scheduler</td><td>为未绑定的 Pod 选择合适节点</td><td>可插件化扩展（Scheduling Framework）</td></tr>
 <tr><td>kube-controller-manager</td><td>运行控制循环：Deployment、ReplicaSet、Node 等</td><td>声明式 API 的执行者，负责将实际状态收敛到期望状态</td></tr>
 </table>
-
 <h3>数据面组件</h3>
 <table>
 <tr><th>组件</th><th>职责</th></tr>
@@ -44,11 +42,9 @@
 </div>
 
 <h2>Scheduling Framework 详解</h2>
-
 <div class="card card-m">
 <h3>核心流程</h3>
 <p>K8s 1.19+ 引入 Scheduling Framework，把调度流程拆成 <strong>11 个扩展点</strong>（extension points），每个扩展点可以挂载多个插件。调度一个 Pod 经过两个阶段：</p>
-
 <h4>调度周期（Scheduling Cycle）——串行，对一个 Pod</h4>
 <ol>
 <li><strong>QueueSort</strong>：决定待调度队列中 Pod 的排序。默认按优先级降序 + 时间戳升序</li>
@@ -60,7 +56,6 @@
 <li><strong>NormalizeScore</strong>：将各 Score 插件的分数归一化到 [0, 100]，然后加权求和</li>
 <li><strong>Reserve</strong>：预占资源——在调度器缓存中扣减节点资源，防止后续 Pod 重复分配同一资源。这是乐观并发控制：先占再绑定</li>
 </ol>
-
 <h4>绑定周期（Binding Cycle）——可并行，多个 Pod 同时绑定</h4>
 <ol start="9">
 <li><strong>Permit</strong>：最终准入控制。三种决定：Approve（放行）、Deny（拒绝，回退 Reserve）、Wait（挂起，等条件满足后放行）</li>
@@ -69,7 +64,6 @@
 <li><strong>PostBind</strong>：清理和通知，如更新指标、发事件</li>
 </ol>
 </div>
-
 <div class="card card-m">
 <h3>三个队列</h3>
 <table>
@@ -78,7 +72,6 @@
 <tr><td>BackoffQ（退避队列）</td><td>调度失败但可以重试的 Pod</td><td>等待指数退避时间（1s, 2s, 4s...最大 10s）后移入 ActiveQ</td></tr>
 <tr><td>UnschedulableQ（不可调度队列）</td><td>当前集群状态下无法调度的 Pod</td><td>等待集群事件（节点加入、Pod 删除等）后移入 BackoffQ 或 ActiveQ</td></tr>
 </table>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Pod 调度失败后的完整流转过程？</div>
 <div class="qa-a">
@@ -91,7 +84,6 @@
 </div>
 </div>
 </div>
-
 <div class="card card-m">
 <h3>抢占机制详解</h3>
 <p>当一个高优先级 Pod 无法调度时，调度器尝试找到一个节点，驱逐上面优先级更低的 Pod 以释放资源：</p>
@@ -104,7 +96,6 @@
 </div>
 
 <h2>资源模型</h2>
-
 <div class="card card-w">
 <h3>资源类型</h3>
 <table>
@@ -113,7 +104,6 @@
 <tr><td>扩展资源（Extended Resource）</td><td>nvidia.com/gpu</td><td>整数分配，<strong>admit 后不可修改</strong></td></tr>
 <tr><td>临时存储</td><td>ephemeral-storage</td><td>节点本地磁盘</td></tr>
 </table>
-
 <h3>Requests vs Limits</h3>
 <table>
 <tr><th>维度</th><th>Requests</th><th>Limits</th></tr>
@@ -121,7 +111,6 @@
 <tr><td>运行时行为</td><td>保障最低资源</td><td>限制最大使用量</td></tr>
 <tr><td>超出时</td><td>—</td><td>CPU 被 throttle，内存被 OOM Kill</td></tr>
 </table>
-
 <h3>QoS 等级</h3>
 <table>
 <tr><th>QoS</th><th>条件</th><th>驱逐优先级</th></tr>
@@ -130,7 +119,6 @@
 <tr><td>BestEffort</td><td>没有设任何 requests 和 limits</td><td>最先被驱逐</td></tr>
 </table>
 </div>
-
 <div class="card card-w">
 <h3>InPlacePodVerticalScaling（1.27 alpha）</h3>
 <p>传统修改资源需要重建 Pod。InPlace 允许在不重启容器的情况下动态调整 CPU 和 Memory 的 requests/limits。</p>
@@ -138,7 +126,6 @@
 </div>
 
 <h2>K8s 面试高频问答</h2>
-
 <div class="card card-s">
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 一个 Pod 从创建到运行经历了什么？</div>
@@ -155,17 +142,14 @@
 </ol>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Informer 机制是什么？为什么不直接轮询 API Server？</div>
 <div class="qa-a"><p><strong>Informer</strong> 是 client-go 提供的本地缓存 + Watch 机制。首次 List 获取全量数据存入本地缓存（Store），之后通过 Watch 接收增量事件（Added/Modified/Deleted）。相比轮询：(1) 实时性——事件驱动而非定期拉取；(2) 性能——减少 API Server 负载；(3) 可靠性——Watch 断线后通过 ResourceVersion 续接。Informer 还包含 Indexer（高效查询）和 WorkQueue（去重合并）。</p></div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: etcd 为什么是性能瓶颈？怎么优化？</div>
 <div class="qa-a"><p>etcd 是集群唯一的持久化存储，所有写操作都要经过 Raft 共识（至少过半节点确认）。大集群下 event、configmap、secret 的频繁写入导致延迟上升。优化方法：(1) SSD 磁盘降低 fsync 延迟；(2) 分离 event 到独立 etcd 集群；(3) API Server 启用 watch cache；(4) 合理设置 compaction 周期减小数据库体积。</p></div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何实现自定义调度器？有几种方案？</div>
 <div class="qa-a">
@@ -177,7 +161,6 @@
 </ol>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: K8s GPU 调度的挑战和解决方案？</div>
 <div class="qa-a">
@@ -195,19 +178,16 @@
 </ol>
 </div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Device Plugin 怎么工作？</div>
 <div class="qa-a"><p>Device Plugin 是 kubelet 的扩展机制，用于管理非标准硬件资源。工作流程：(1) Device Plugin 启动后通过 gRPC 向 kubelet 注册资源名称（如 nvidia.com/gpu）；(2) kubelet 向 API Server 上报节点有多少该资源；(3) 调度器基于这些资源做 Filter/Score；(4) Pod 调度到节点后，kubelet 调用 Device Plugin 的 Allocate 方法获取设备信息（如 /dev/nvidia0）；(5) 设备信息注入容器环境。NVIDIA 的 k8s-device-plugin 就是这样实现 GPU 调度的。</p></div>
 </div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
 <div class="qa-a"><p>ClusterIP Service 有一个虚拟 IP，kube-proxy 做负载均衡。Headless Service（clusterIP: None）不分配虚拟 IP，DNS 查询直接返回所有后端 Pod 的 IP。<strong>在 AI Infra 中的用途</strong>：分布式训练需要所有 worker 直接通信（NCCL AllReduce），用 Headless Service 让每个 Pod 能解析其他 Pod 的 IP，建立直连。</p></div>
 </div>
 </div>
-
 </div>
-<script src="../assets/script.js"></script>
+<script src="../../../assets/script.js"></script>
 </body>
 </html>
