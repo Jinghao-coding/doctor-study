@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function(){
         panel.classList.toggle('active', active);
         panel.hidden = !active;
       });
+      document.dispatchEvent(new CustomEvent('tab:activated', {detail: {group: group}}));
     }
 
     buttons.forEach(function(button, index){
@@ -84,35 +85,43 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
-// Long pages get a hidden drawer table of contents from h2/h3.
+// Long pages get a hidden drawer table of contents. Tab pages rebuild it per active tab.
 document.addEventListener('DOMContentLoaded', function(){
   var wrap = document.querySelector('.wrap');
   if(!wrap || !document.querySelector('.topnav')) return;
-  if(document.querySelector('[data-tabs]')) return;
 
-  var allHeadings = Array.from(wrap.querySelectorAll('h2, h3')).filter(function(heading){
-    return heading.textContent.trim().length > 0;
-  });
-  var h2Headings = allHeadings.filter(function(heading){
-    return heading.tagName.toLowerCase() === 'h2';
-  });
-  var headings = h2Headings.length >= 2 ? h2Headings : allHeadings;
-  if(headings.length < 3) return;
-
+  var observer = null;
   var usedIds = {};
-  headings.forEach(function(heading, index){
-    if(!heading.id){
-      var base = 'section-' + (index + 1);
-      var id = base;
-      var suffix = 2;
-      while(usedIds[id] || document.getElementById(id)){
-        id = base + '-' + suffix;
-        suffix += 1;
+
+  function collectHeadings(){
+    var activePanel = wrap.querySelector('.tab-panel.active');
+    var scope = activePanel || wrap;
+    var selector = activePanel ? '.tab-panel-body h3, .tab-panel-body h4' : 'h2, h3';
+    var allHeadings = Array.from(scope.querySelectorAll(selector)).filter(function(heading){
+      return heading.textContent.trim().length > 0;
+    });
+    if(activePanel) return allHeadings;
+    var h2Headings = allHeadings.filter(function(heading){
+      return heading.tagName.toLowerCase() === 'h2';
+    });
+    return h2Headings.length >= 2 ? h2Headings : allHeadings;
+  }
+
+  function ensureHeadingIds(headings){
+    headings.forEach(function(heading){
+      if(!heading.id){
+        var base = 'section-' + Object.keys(usedIds).length + '-' + heading.textContent.trim().replace(/\s+/g, '-').slice(0, 18);
+        var id = base;
+        var suffix = 2;
+        while(usedIds[id] || document.getElementById(id)){
+          id = base + '-' + suffix;
+          suffix += 1;
+        }
+        heading.id = id;
       }
-      heading.id = id;
-    }
-    usedIds[heading.id] = true;
-  });
+      usedIds[heading.id] = true;
+    });
+  }
 
   var toc = document.createElement('nav');
   toc.className = 'page-toc';
@@ -129,13 +138,41 @@ document.addEventListener('DOMContentLoaded', function(){
   backdrop.className = 'toc-backdrop';
 
   var links = toc.querySelector('.toc-links');
-  headings.forEach(function(heading){
-    var link = document.createElement('a');
-    link.href = '#' + heading.id;
-    link.className = heading.tagName.toLowerCase() === 'h3' ? 'toc-h3' : 'toc-h2';
-    link.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
-    links.appendChild(link);
-  });
+
+  function rebuildToc(){
+    var headings = collectHeadings();
+    ensureHeadingIds(headings);
+    links.innerHTML = '';
+    if(headings.length < 3){
+      toc.hidden = true;
+      toggle.hidden = true;
+      setTocOpen(false);
+      return;
+    }
+    toc.hidden = false;
+    toggle.hidden = false;
+    headings.forEach(function(heading){
+      var link = document.createElement('a');
+      link.href = '#' + heading.id;
+      var tag = heading.tagName.toLowerCase();
+      link.className = tag === 'h4' ? 'toc-h3' : (tag === 'h3' ? 'toc-h2' : 'toc-h2');
+      link.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
+      links.appendChild(link);
+    });
+    if(observer) observer.disconnect();
+    if('IntersectionObserver' in window){
+      var tocLinks = Array.from(links.querySelectorAll('a'));
+      observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(!entry.isIntersecting) return;
+          tocLinks.forEach(function(link){ link.classList.remove('active'); });
+          var active = links.querySelector('a[href="#' + entry.target.id + '"]');
+          if(active) active.classList.add('active');
+        });
+      }, {rootMargin: '-30% 0px -60% 0px', threshold: 0});
+      headings.forEach(function(heading){ observer.observe(heading); });
+    }
+  }
 
   var insertAfter = wrap.querySelector('.sub') || wrap.querySelector('h1');
   insertAfter.insertAdjacentElement('afterend', toc);
@@ -159,17 +196,6 @@ document.addEventListener('DOMContentLoaded', function(){
     if(e.key === 'Escape') setTocOpen(false);
   });
 
-  if('IntersectionObserver' in window){
-    var tocLinks = Array.from(links.querySelectorAll('a'));
-    var observer = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(!entry.isIntersecting) return;
-        tocLinks.forEach(function(link){ link.classList.remove('active'); });
-        var active = links.querySelector('a[href="#' + entry.target.id + '"]');
-        if(active) active.classList.add('active');
-      });
-    }, {rootMargin: '-30% 0px -60% 0px', threshold: 0});
-
-    headings.forEach(function(heading){ observer.observe(heading); });
-  }
+  rebuildToc();
+  document.addEventListener('tab:activated', function(){ rebuildToc(); });
 });

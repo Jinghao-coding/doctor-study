@@ -20,75 +20,397 @@
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
 </nav>
 <div class="wrap">
-<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Platform Infrastructure</div><h1>Kubernetes 核心</h1><p class="sub">架构 · Scheduling Framework · 资源模型 · 高频问答</p><div class="hero-tags"><span>k8s</span><span>scheduler</span><span>resource-model</span></div></div></section>
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Platform Infrastructure</div><h1>Kubernetes 核心</h1><p class="sub">架构 · 调度 · 资源 · Workload · 网络 · 存储 · 排障 · 安全 · AI Infra</p><div class="hero-tags"><span>k8s</span><span>scheduler</span><span>workload</span><span>networking</span><span>storage</span><span>gpu</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="Kubernetes 核心"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-title">架构概览</span><span class="tab-desc">控制面、数据面、etcd、kubelet</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-title">Scheduling Framework</span><span class="tab-desc">11 个扩展点、三队列、抢占机制</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-title">资源模型</span><span class="tab-desc">Requests/Limits、QoS、Extended Resource</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-title">面试高频问答</span><span class="tab-desc">Pod 生命周期、Informer、GPU 调度</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构概览</h2></div><div class="tab-panel-body"><div class="card card-s">
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="Kubernetes 核心"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-title">架构概览</span><span class="tab-desc">控制面、数据面、etcd、kubelet</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-title">调度体系</span><span class="tab-desc">Scheduling Framework、Profile、插件、队列、抢占</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-title">资源模型</span><span class="tab-desc">Requests/Limits、QoS、Extended Resource</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-title">Pod 与 Workload</span><span class="tab-desc">生命周期、探针、Deployment、StatefulSet、Job</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-5" aria-controls="kubernetes-tabs-panel-5" aria-selected="false"><span class="tab-title">Service 与网络</span><span class="tab-desc">CNI、Service、kube-proxy、DNS、NetworkPolicy</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-6" aria-controls="kubernetes-tabs-panel-6" aria-selected="false"><span class="tab-title">存储与 CSI</span><span class="tab-desc">PV/PVC、StorageClass、CSI、StatefulSet 存储</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-7" aria-controls="kubernetes-tabs-panel-7" aria-selected="false"><span class="tab-title">故障排查</span><span class="tab-desc">Pending、CrashLoop、镜像、Service、Node NotReady</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-8" aria-controls="kubernetes-tabs-panel-8" aria-selected="false"><span class="tab-title">安全与准入</span><span class="tab-desc">RBAC、ServiceAccount、Admission、Quota、Operator</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-9" aria-controls="kubernetes-tabs-panel-9" aria-selected="false"><span class="tab-title">AI Infra 专项</span><span class="tab-desc">GPU、MIG/MPS、Topology、Gang、Kueue、Volcano</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-10" aria-controls="kubernetes-tabs-panel-10" aria-selected="false"><span class="tab-title">面试高频问答</span><span class="tab-desc">Pod 生命周期、Informer、GPU 调度</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构概览</h2></div><div class="tab-panel-body"><div class="k8s-arch">
+<svg viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;border-radius:16px;background:var(--card-solid);border:1px solid var(--border)">
+<defs>
+<linearGradient id="cpGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--pri-l)"/><stop offset="100%" stop-color="rgba(37,99,235,.08)"/></linearGradient>
+<linearGradient id="dpGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--sec-l)"/><stop offset="100%" stop-color="rgba(5,150,105,.08)"/></linearGradient>
+<filter id="shadow"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity=".12"/></filter>
+</defs>
+<marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="var(--border)"/></marker>
+<rect x="20" y="20" width="680" height="210" rx="18" fill="url(#cpGrad)" stroke="var(--pri)" stroke-opacity=".35" class="k8s-box"/>
+<text x="40" y="50" class="k8s-subtitle">Control Plane（控制面）</text>
+<rect x="45" y="70" width="145" height="75" rx="10" fill="var(--card-solid)" stroke="var(--pri)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="117" y="98" text-anchor="middle" class="k8s-label">kube-apiserver</text>
+<text x="117" y="116" text-anchor="middle" class="k8s-desc">API 网关 · 所有操作入口</text>
+<text x="117" y="132" text-anchor="middle" class="k8s-desc">无状态，可水平扩展</text>
+<rect x="205" y="70" width="130" height="75" rx="10" fill="var(--card-solid)" stroke="var(--pri)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="270" y="98" text-anchor="middle" class="k8s-label">etcd</text>
+<text x="270" y="116" text-anchor="middle" class="k8s-desc">分布式 KV 存储</text>
+<text x="270" y="132" text-anchor="middle" class="k8s-desc">Raft 共识 · 唯一持久化</text>
+<rect x="350" y="70" width="145" height="75" rx="10" fill="var(--card-solid)" stroke="var(--pri)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="422" y="98" text-anchor="middle" class="k8s-label">kube-scheduler</text>
+<text x="422" y="116" text-anchor="middle" class="k8s-desc">Pod → 节点绑定</text>
+<text x="422" y="132" text-anchor="middle" class="k8s-desc">Scheduling Framework</text>
+<rect x="510" y="70" width="170" height="75" rx="10" fill="var(--card-solid)" stroke="var(--pri)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="595" y="98" text-anchor="middle" class="k8s-label">controller-manager</text>
+<text x="595" y="116" text-anchor="middle" class="k8s-desc">控制循环执行者</text>
+<text x="595" y="132" text-anchor="middle" class="k8s-desc">Deployment / ReplicaSet / Node</text>
+<path d="M190 107 L200 107" class="k8s-arrow"/><path d="M335 107 L345 107" class="k8s-arrow"/><path d="M495 107 L505 107" class="k8s-arrow"/>
+<rect x="205" y="160" width="310" height="52" rx="10" fill="var(--soft)" stroke="var(--border)" stroke-dasharray="4,3" opacity=".7" class="k8s-comp"/>
+<text x="360" y="182" text-anchor="middle" class="k8s-desc">所有组件通过 API Server 通信（Watch / List）</text>
+<text x="360" y="198" text-anchor="middle" class="k8s-desc">Informer 本地缓存 + 增量事件驱动</text>
+<rect x="20" y="250" width="680" height="210" rx="18" fill="url(#dpGrad)" stroke="var(--sec)" stroke-opacity=".35" class="k8s-box"/>
+<text x="40" y="280" class="k8s-subtitle">Data Plane / Worker Node（数据面）</text>
+<rect x="45" y="300" width="195" height="90" rx="10" fill="var(--card-solid)" stroke="var(--sec)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="142" y="328" text-anchor="middle" class="k8s-label">kubelet</text>
+<text x="142" y="346" text-anchor="middle" class="k8s-desc">节点代理 · 管理 Pod 生命周期</text>
+<text x="142" y="362" text-anchor="middle" class="k8s-desc">CRI 调用容器运行时</text>
+<text x="142" y="378" text-anchor="middle" class="k8s-desc">上报节点状态到 API Server</text>
+<rect x="260" y="300" width="175" height="90" rx="10" fill="var(--card-solid)" stroke="var(--sec)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="347" y="328" text-anchor="middle" class="k8s-label">kube-proxy</text>
+<text x="347" y="346" text-anchor="middle" class="k8s-desc">维护网络规则</text>
+<text x="347" y="362" text-anchor="middle" class="k8s-desc">iptables / IPVS 转发</text>
+<text x="347" y="378" text-anchor="middle" class="k8s-desc">Service 负载均衡实现</text>
+<rect x="450" y="300" width="230" height="90" rx="10" fill="var(--card-solid)" stroke="var(--sec)" stroke-opacity=".5" filter="url(#shadow)" class="k8s-comp"/>
+<text x="565" y="328" text-anchor="middle" class="k8s-label">容器运行时 (Container Runtime)</text>
+<text x="565" y="346" text-anchor="middle" class="k8s-desc">containerd / CRI-O</text>
+<text x="565" y="362" text-anchor="middle" class="k8s-desc">拉取镜像 · 创建/销毁容器</text>
+<text x="565" y="378" text-anchor="middle" class="k8s-desc">CNI 配置网络 · CSI 挂载存储</text>
+<path d="M117 230 L117 245 L360 245 L360 255" class="k8s-arrow" stroke-dasharray="4,3"/>
+<text x="240" y="238" text-anchor="middle" font-size="9" fill="var(--muted)">watch Pod spec 变化</text>
+<rect x="260" y="410" width="195" height="38" rx="10" fill="var(--warn-l)" stroke="var(--warn)" stroke-opacity=".4" opacity=".8" class="k8s-comp"/>
+<text x="357" y="433" text-anchor="middle" class="k8s-desc">用户 kubectl ↔ API Server ↔ 各组件</text>
+</svg>
+</div>
 <h3>控制面组件</h3>
-<table>
-<tr><th>组件</th><th>职责</th><th>关键细节</th></tr>
-<tr><td>kube-apiserver</td><td>集群 API 入口，所有操作的网关</td><td>无状态，支持水平扩展。所有组件通过它通信</td></tr>
-<tr><td>etcd</td><td>分布式键值存储，集群唯一的持久化状态</td><td>Raft 共识，建议 3 或 5 节点。性能瓶颈往往在 etcd</td></tr>
-<tr><td>kube-scheduler</td><td>为未绑定的 Pod 选择合适节点</td><td>可插件化扩展（Scheduling Framework）</td></tr>
-<tr><td>kube-controller-manager</td><td>运行控制循环：Deployment、ReplicaSet、Node 等</td><td>声明式 API 的执行者，负责将实际状态收敛到期望状态</td></tr>
-</table>
+<div class="comp-grid">
+<div class="comp-item">
+<div class="comp-name">kube-apiserver</div>
+<div class="comp-role">集群 API 入口，所有操作的网关。所有组件通过它通信。</div>
+<div class="comp-detail">无状态服务，支持水平扩展。性能瓶颈往往在 etcd 的读写上。</div>
+</div>
+<div class="comp-item">
+<div class="comp-name">etcd</div>
+<div class="comp-role">分布式键值存储，集群唯一的持久化状态源。</div>
+<div class="comp-detail">Raft 共识协议，建议 3 或 5 节点部署。存储所有对象状态。</div>
+</div>
+<div class="comp-item">
+<div class="comp-name">kube-scheduler</div>
+<div class="comp-role">为未绑定的 Pod 选择最合适的运行节点。</div>
+<div class="comp-detail">可插件化扩展（Scheduling Framework），支持自定义 Filter / Score 插件。</div>
+</div>
+<div class="comp-item">
+<div class="comp-name">kube-controller-manager</div>
+<div class="comp-role">运行各类控制循环：Deployment、ReplicaSet、Node、Service 等。</div>
+<div class="comp-detail">声明式 API 执行者——将实际状态不断收敛到期望状态。</div>
+</div>
+</div>
 <h3>数据面组件</h3>
+<div class="comp-grid">
+<div class="comp-item">
+<div class="comp-name">kubelet</div>
+<div class="comp-role">节点代理，管理 Pod 生命周期。</div>
+<div class="comp-detail">通过 CRI（Container Runtime Interface）调用容器运行时创建和管理容器。</div>
+</div>
+<div class="comp-item">
+<div class="comp-name">kube-proxy</div>
+<div class="comp-role">维护网络规则，实现 Service 的负载均衡。</div>
+<div class="comp-detail">底层使用 iptables 或 IPVS 模式转发流量到后端 Pod。</div>
+</div>
+<div class="comp-item">
+<div class="comp-name">容器运行时</div>
+<div class="comp-role">containerd / CRI-O，负责镜像管理和容器运行。</div>
+<div class="comp-detail">同时调用 CNI（网络）和 CSI（存储）插件完成网络和挂载配置。</div>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-2" aria-labelledby="kubernetes-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>调度体系</h2></div><div class="tab-panel-body"><div class="card card-s">
+<h3>Kubernetes 调度体系全景</h3>
+<p><strong>Scheduling Framework 只是 kube-scheduler 的插件化内核</strong>，不是 Kubernetes 调度体系的全部。完整调度体系还包括：调度器进程、调度队列、调度缓存、Pod 约束语义、优先级与抢占、调度配置/Profile、默认插件、扩展调度器，以及批调度/重调度生态。</p>
+<div class="comp-grid">
+<div class="comp-item"><div class="comp-name">调度器本体</div><div class="comp-role">kube-scheduler 监听未绑定 Pod，为其选择 Node，并把绑定结果写回 API Server。</div><div class="comp-detail">核心问题是“哪个 Pod 先调度、哪些节点可行、哪个节点最好、失败后怎么处理”。</div></div>
+<div class="comp-item"><div class="comp-name">调度输入语义</div><div class="comp-role">PodSpec 中的 requests、nodeSelector、affinity、tolerations、topologySpreadConstraints、priorityClassName 等。</div><div class="comp-detail">这些字段决定 Filter/Score 的约束和偏好，是面试排查 Pending 的重点。</div></div>
+<div class="comp-item"><div class="comp-name">Scheduling Framework</div><div class="comp-role">把调度流程拆成 QueueSort、PreFilter、Filter、Score、Reserve、Permit、Bind 等扩展点。</div><div class="comp-detail">它解决“如何扩展调度决策”，但不等于全部调度能力。</div></div>
+<div class="comp-item"><div class="comp-name">配置与 Profile</div><div class="comp-role">通过 KubeSchedulerConfiguration 配置 plugins、pluginConfig、profiles、percentageOfNodesToScore 等。</div><div class="comp-detail">多 Profile 可以让不同 Pod 使用不同 schedulerName 和插件组合。</div></div>
+<div class="comp-item"><div class="comp-name">失败与抢占</div><div class="comp-role">调度失败后进入队列重试；高优先级 Pod 可触发 PostFilter 抢占。</div><div class="comp-detail">涉及 UnschedulableQ、BackoffQ、nominatedNodeName、PDB、优雅终止。</div></div>
+<div class="comp-item"><div class="comp-name">扩展生态</div><div class="comp-role">多调度器、Scheduler Plugins、Descheduler、Kueue、Volcano、Cluster Autoscaler 等。</div><div class="comp-detail">AI Infra 面试通常会追问 GPU 拓扑、Gang Scheduling、多租户队列和资源回收。</div></div>
+</div>
+</div>
+<div class="card card-w">
+<h3>面试学习地图：不要只背扩展点</h3>
 <table>
-<tr><th>组件</th><th>职责</th></tr>
-<tr><td>kubelet</td><td>节点代理，管理 Pod 生命周期。通过 CRI 调用容器运行时</td></tr>
-<tr><td>kube-proxy</td><td>维护网络规则（iptables/IPVS），实现 Service 负载均衡</td></tr>
-<tr><td>容器运行时</td><td>containerd / CRI-O，负责拉镜像和运行容器</td></tr>
+<tr><th>层次</th><th>要掌握什么</th><th>典型问题</th><th>推荐入口</th></tr>
+<tr><td>基础链路</td><td>kube-scheduler 如何 watch Pod、选 Node、写绑定结果</td><td>Pod 创建后怎么被调度到节点？</td><td><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">kube-scheduler</a></td></tr>
+<tr><td>约束语义</td><td>requests、亲和性、污点容忍、拓扑分布、优先级</td><td>为什么资源够但 Pod 仍然 Pending？</td><td><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/">Assigning Pods to Nodes</a></td></tr>
+<tr><td>插件框架</td><td>扩展点、默认插件、Filter/Score/Reserve/Permit/Bind</td><td>自定义 GPU 调度插件挂在哪个扩展点？</td><td><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/">Scheduling Framework</a></td></tr>
+<tr><td>调度配置</td><td>KubeSchedulerConfiguration、profiles、插件权重、调度器参数</td><td>如何让不同 Pod 使用不同调度策略？</td><td><a href="https://kubernetes.io/docs/reference/scheduling/config/">Scheduler Configuration</a></td></tr>
+<tr><td>高级场景</td><td>抢占、Gang Scheduling、重调度、队列、多租户、公平性</td><td>为什么训练任务要 Volcano/Kueue？</td><td><a href="https://kueue.sigs.k8s.io/docs/overview/">Kueue</a> / <a href="https://volcano.sh/en/docs/">Volcano</a></td></tr>
 </table>
-</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-2" aria-labelledby="kubernetes-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Scheduling Framework</h2></div><div class="tab-panel-body"><div class="card card-m">
-<h3>核心流程</h3>
-<p>K8s 1.19+ 引入 Scheduling Framework，把调度流程拆成 <strong>11 个扩展点</strong>（extension points），每个扩展点可以挂载多个插件。调度一个 Pod 经过两个阶段：</p>
-<h4>调度周期（Scheduling Cycle）——串行，对一个 Pod</h4>
-<ol>
-<li><strong>QueueSort</strong>：决定待调度队列中 Pod 的排序。默认按优先级降序 + 时间戳升序</li>
-<li><strong>PreFilter</strong>：预处理和检查，计算 Pod 需要的资源汇总。如果检查失败直接拒绝，不进入后续流程</li>
-<li><strong>Filter（预选）</strong>：遍历所有节点，排除不满足硬约束的。常见过滤条件：资源不足、NodeSelector 不匹配、Taint/Toleration 不满足、亲和性冲突。并行执行，默认取 min(numNodes, 100) 个可行节点后停止（percentageOfNodesToScore）</li>
-<li><strong>PostFilter</strong>：当 Filter 没有找到任何可行节点时触发。默认行为是尝试抢占——找到优先级更低的 Pod 驱逐后能释放出足够资源的节点</li>
-<li><strong>PreScore</strong>：Score 的预处理，可以共享计算结果给多个 Score 插件</li>
-<li><strong>Score（优选）</strong>：对 Filter 通过的候选节点打分（0-100）。常见策略：LeastRequestedPriority（资源剩余最多）、BalancedResourceAllocation（CPU/内存比例均衡）、NodeAffinityPriority</li>
-<li><strong>NormalizeScore</strong>：将各 Score 插件的分数归一化到 [0, 100]，然后加权求和</li>
-<li><strong>Reserve</strong>：预占资源——在调度器缓存中扣减节点资源，防止后续 Pod 重复分配同一资源。这是乐观并发控制：先占再绑定</li>
-</ol>
-<h4>绑定周期（Binding Cycle）——可并行，多个 Pod 同时绑定</h4>
-<ol start="9">
-<li><strong>Permit</strong>：最终准入控制。三种决定：Approve（放行）、Deny（拒绝，回退 Reserve）、Wait（挂起，等条件满足后放行）</li>
-<li><strong>PreBind</strong>：绑定前的准备工作，如挂载 PV</li>
-<li><strong>Bind</strong>：写入 API Server，告诉 kubelet 在该节点启动 Pod</li>
-<li><strong>PostBind</strong>：清理和通知，如更新指标、发事件</li>
-</ol>
 </div>
 <div class="card card-m">
-<h3>三个队列</h3>
+<h3>一图看懂调度链路</h3>
+<p>Scheduling Framework 的核心价值，是把“给 Pod 选节点”拆成可插拔的多个扩展点。面试时不要只背扩展点名称，更重要的是能说清楚：Pod 如何入队、如何过滤节点、如何打分、如何预占、如何绑定，以及失败后如何重试。</p>
+<div class="sched-flow">
+<svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="schedArrow" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="var(--border)"/></marker>
+</defs>
+<rect x="24" y="38" width="132" height="62" rx="14" class="sched-node sched-api"/>
+<text x="90" y="64" text-anchor="middle" class="sched-label">API Server</text>
+<text x="90" y="83" text-anchor="middle" class="sched-desc">Pod 写入集群状态</text>
+<rect x="194" y="38" width="140" height="62" rx="14" class="sched-node sched-cache"/>
+<text x="264" y="64" text-anchor="middle" class="sched-label">Informer / Cache</text>
+<text x="264" y="83" text-anchor="middle" class="sched-desc">watch Pod 和 Node</text>
+<rect x="372" y="38" width="132" height="62" rx="14" class="sched-node sched-queue"/>
+<text x="438" y="64" text-anchor="middle" class="sched-label">ActiveQ</text>
+<text x="438" y="83" text-anchor="middle" class="sched-desc">按 QueueSort 出队</text>
+<path d="M156 69 L194 69" class="sched-arrow"/>
+<path d="M334 69 L372 69" class="sched-arrow"/>
+<rect x="54" y="148" width="120" height="58" rx="14" class="sched-node"/>
+<text x="114" y="172" text-anchor="middle" class="sched-label">PreFilter</text>
+<text x="114" y="190" text-anchor="middle" class="sched-desc">预计算 / 早拒绝</text>
+<rect x="210" y="148" width="120" height="58" rx="14" class="sched-node"/>
+<text x="270" y="172" text-anchor="middle" class="sched-label">Filter</text>
+<text x="270" y="190" text-anchor="middle" class="sched-desc">硬约束预选</text>
+<rect x="366" y="148" width="120" height="58" rx="14" class="sched-node"/>
+<text x="426" y="172" text-anchor="middle" class="sched-label">Score</text>
+<text x="426" y="190" text-anchor="middle" class="sched-desc">软偏好打分</text>
+<rect x="522" y="148" width="120" height="58" rx="14" class="sched-node"/>
+<text x="582" y="172" text-anchor="middle" class="sched-label">Reserve</text>
+<text x="582" y="190" text-anchor="middle" class="sched-desc">缓存中预占资源</text>
+<rect x="678" y="148" width="120" height="58" rx="14" class="sched-node"/>
+<text x="738" y="172" text-anchor="middle" class="sched-label">Permit</text>
+<text x="738" y="190" text-anchor="middle" class="sched-desc">Approve / Wait / Deny</text>
+<path d="M438 100 C438 124 114 120 114 148" class="sched-arrow"/>
+<path d="M174 177 L210 177" class="sched-arrow"/>
+<path d="M330 177 L366 177" class="sched-arrow"/>
+<path d="M486 177 L522 177" class="sched-arrow"/>
+<path d="M642 177 L678 177" class="sched-arrow"/>
+<rect x="210" y="256" width="120" height="58" rx="14" class="sched-node sched-bind"/>
+<text x="270" y="280" text-anchor="middle" class="sched-label">PreBind</text>
+<text x="270" y="298" text-anchor="middle" class="sched-desc">绑定前准备</text>
+<rect x="366" y="256" width="120" height="58" rx="14" class="sched-node sched-bind"/>
+<text x="426" y="280" text-anchor="middle" class="sched-label">Bind</text>
+<text x="426" y="298" text-anchor="middle" class="sched-desc">写 API Server</text>
+<rect x="522" y="256" width="120" height="58" rx="14" class="sched-node sched-bind"/>
+<text x="582" y="280" text-anchor="middle" class="sched-label">PostBind</text>
+<text x="582" y="298" text-anchor="middle" class="sched-desc">事件 / 指标 / 清理</text>
+<rect x="690" y="256" width="140" height="58" rx="14" class="sched-node sched-kubelet"/>
+<text x="760" y="280" text-anchor="middle" class="sched-label">kubelet</text>
+<text x="760" y="298" text-anchor="middle" class="sched-desc">watch 后启动 Pod</text>
+<path d="M738 206 C738 235 270 228 270 256" class="sched-arrow"/>
+<path d="M330 285 L366 285" class="sched-arrow"/>
+<path d="M486 285 L522 285" class="sched-arrow"/>
+<path d="M642 285 L690 285" class="sched-arrow"/>
+<rect x="628" y="36" width="238" height="68" rx="14" class="sched-note"/>
+<text x="747" y="61" text-anchor="middle" class="sched-label">失败路径</text>
+<text x="747" y="80" text-anchor="middle" class="sched-desc">Filter 失败 → PostFilter 抢占</text>
+<text x="747" y="96" text-anchor="middle" class="sched-desc">仍失败 → UnschedulableQ / BackoffQ</text>
+<path d="M270 148 C354 108 620 100 668 104" class="sched-arrow sched-dashed"/>
+</svg>
+</div>
+</div>
+<div class="card card-m">
+<h3>核心概念：两个周期</h3>
 <table>
-<tr><th>队列</th><th>用途</th><th>流转条件</th></tr>
-<tr><td>ActiveQ（活跃队列）</td><td>待调度的 Pod，按 QueueSort 排序</td><td>新 Pod 加入 / BackoffQ 到期 / 集群事件触发重试</td></tr>
-<tr><td>BackoffQ（退避队列）</td><td>调度失败但可以重试的 Pod</td><td>等待指数退避时间（1s, 2s, 4s...最大 10s）后移入 ActiveQ</td></tr>
-<tr><td>UnschedulableQ（不可调度队列）</td><td>当前集群状态下无法调度的 Pod</td><td>等待集群事件（节点加入、Pod 删除等）后移入 BackoffQ 或 ActiveQ</td></tr>
+<tr><th>阶段</th><th>包含步骤</th><th>并发特点</th><th>面试要点</th></tr>
+<tr><td>Scheduling Cycle</td><td>QueueSort、PreFilter、Filter、PostFilter、PreScore、Score、Reserve</td><td>对一个 Pod 的调度决策通常串行执行</td><td>负责“选哪个节点”，需要保证调度器缓存中的资源预占一致性</td></tr>
+<tr><td>Binding Cycle</td><td>Permit、PreBind、Bind、PostBind</td><td>不同 Pod 的绑定可以并行</td><td>负责“把选择写回 API Server”，绑定慢不应阻塞后续调度决策</td></tr>
 </table>
+<p><strong>一句话回答</strong>：Scheduling Cycle 做决策，Binding Cycle 做落盘；前者要谨慎维护调度器内部状态，后者可以并行提高吞吐。</p>
+</div>
+<div class="card card-m">
+<h3>扩展点与插件应该怎么记</h3>
+<p>K8s 官方常说 Scheduling Framework 有 11 个主要扩展点。实际学习时可以按“排序、预处理、过滤、失败补救、打分、预占、准入、绑定”来记。<strong>NormalizeScore</strong> 是 Score 插件可实现的归一化接口，常和 Score 放在一起讲，不必单独当作主扩展点背。</p>
+<table>
+<tr><th>扩展点</th><th>作用</th><th>典型插件/场景</th><th>面试记忆点</th></tr>
+<tr><td>QueueSort</td><td>决定 ActiveQ 中 Pod 的出队顺序</td><td>PrioritySort</td><td>通常按优先级和时间排序，一个调度 profile 只能有一个 QueueSort 插件</td></tr>
+<tr><td>PreFilter</td><td>提前计算 Pod 资源需求或校验硬条件</td><td>NodeResourcesFit、InterPodAffinity</td><td>减少后续每个节点重复计算，失败可直接拒绝</td></tr>
+<tr><td>Filter</td><td>筛掉不满足硬约束的节点</td><td>资源不足、NodeAffinity、Taint/Toleration、VolumeBinding</td><td>硬约束，不满足就是不能调度</td></tr>
+<tr><td>PostFilter</td><td>Filter 找不到节点时的补救</td><td>DefaultPreemption</td><td>最重要场景是抢占，但抢占也可能失败</td></tr>
+<tr><td>PreScore / Score</td><td>对可行节点按软偏好打分</td><td>NodeResourcesBalancedAllocation、ImageLocality、NodeAffinity</td><td>软偏好，分数会归一化并加权求和</td></tr>
+<tr><td>Reserve / Unreserve</td><td>在调度器缓存中预占资源，失败时回滚</td><td>资源预留、Gang 调度辅助状态</td><td>不是写 API Server，而是保护调度器内部一致性</td></tr>
+<tr><td>Permit</td><td>最终准入，可批准、拒绝或等待</td><td>Gang Scheduling、容量门控</td><td>Wait 适合等一组 Pod 凑齐后一起放行</td></tr>
+<tr><td>PreBind / Bind / PostBind</td><td>绑定前准备、写 API Server、绑定后清理</td><td>VolumeBinding、自定义 Binder、指标事件</td><td>Bind 之后 kubelet 才会 watch 到已绑定 Pod 并启动</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>三个队列：调度失败后 Pod 去哪里</h3>
+<div class="queue-grid">
+<div class="queue-item"><div class="queue-name">ActiveQ</div><div class="queue-desc">活跃队列。新 Pod、退避结束的 Pod、被事件激活的 Pod 会进入这里，按 QueueSort 排序后等待调度。</div></div>
+<div class="queue-item"><div class="queue-name">BackoffQ</div><div class="queue-desc">退避队列。调度失败但可重试的 Pod 会先等待指数退避，避免反复占用调度器 CPU。</div></div>
+<div class="queue-item"><div class="queue-name">UnschedulableQ</div><div class="queue-desc">不可调度队列。当前集群状态下无解的 Pod 会在这里等待集群事件，例如节点加入、Pod 删除、PV 变化。</div></div>
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Pod 调度失败后的完整流转过程？</div>
 <div class="qa-a">
-<p>1. Pod 在 ActiveQ 中被取出调度</p>
-<p>2. Filter 阶段找不到可行节点</p>
-<p>3. PostFilter 尝试抢占，如果成功→标记 nominatedNode，Pod 回 ActiveQ 等待被抢占 Pod 终止</p>
-<p>4. 如果抢占也失败→Pod 进入 UnschedulableQ</p>
-<p>5. 集群发生变化（节点资源释放、新节点加入）→触发 Pod 移到 BackoffQ</p>
-<p>6. 退避时间到期→Pod 移回 ActiveQ 重新调度</p>
+<div class="qa-section"><div class="qa-section-title">正常尝试</div><p>Pod 从 ActiveQ 出队后进入调度流程，依次经过 Filter、Score、Reserve、Bind 等阶段。</p></div>
+<div class="qa-section"><div class="qa-section-title">失败处理</div><ol><li>如果 Filter 找不到可行节点，进入 PostFilter。</li><li>PostFilter 默认尝试抢占低优先级 Pod。</li><li>抢占成功时设置 nominatedNodeName，并等待被抢占 Pod 终止。</li><li>抢占失败或没有合适牺牲者时，Pod 进入 UnschedulableQ。</li></ol></div>
+<div class="qa-section"><div class="qa-section-title">重新入队</div><p>节点新增、Pod 删除、PV 绑定变化等事件会重新激活 Pod，使其进入 BackoffQ 或 ActiveQ，再次尝试调度。</p></div>
+<div class="qa-summary">面试记忆：ActiveQ 出队调度，失败先抢占，仍失败进不可调度队列，等集群事件触发重试。</div>
 </div>
 </div>
+</div>
+<div class="card card-w">
+<h3>抢占机制：高优先级 Pod 为什么也可能 Pending</h3>
+<ol>
+<li><strong>触发条件</strong>：高优先级 Pod 无法通过 Filter 找到可行节点，PostFilter 尝试抢占低优先级 Pod。</li>
+<li><strong>候选节点模拟</strong>：调度器在缓存中模拟移除低优先级 Pod，看该节点是否能满足高优先级 Pod 的资源和约束。</li>
+<li><strong>牺牲者选择</strong>：优先选择违反 PDB 更少、驱逐 Pod 更少、牺牲者优先级更低的方案。</li>
+<li><strong>nominatedNodeName</strong>：抢占成功后先标记候选节点，但不会立即绑定，因为被抢占 Pod 还要优雅终止。</li>
+<li><strong>不保证成功</strong>：等待过程中节点状态可能变化，或者 PDB/亲和性/新 Pod 干扰导致最终仍然调度失败。</li>
+</ol>
 </div>
 <div class="card card-m">
-<h3>抢占机制详解</h3>
-<p>当一个高优先级 Pod 无法调度时，调度器尝试找到一个节点，驱逐上面优先级更低的 Pod 以释放资源：</p>
+<h3>实际场景：实现 GPU 拓扑感知调度插件</h3>
+<p>假设我们有一个 AI 训练集群，节点上有不同 GPU 拓扑：有些节点 8 张 GPU 之间有 NVLink，有些节点只有 PCIe；多卡训练任务更希望调度到 NVLink 更好的节点，否则 AllReduce 通信会慢。这个场景很适合用 Scheduling Framework 说明“插件应该放在哪里”。</p>
+<h4>1. 场景输入</h4>
+<table>
+<tr><th>输入</th><th>示例</th><th>作用</th></tr>
+<tr><td>Pod 资源请求</td><td>requests: nvidia.com/gpu: 4</td><td>判断是不是多 GPU 任务，以及需要几张 GPU</td></tr>
+<tr><td>节点标签</td><td>gpu.topology/nvlink: "true"</td><td>快速区分 NVLink 节点和普通 PCIe 节点</td></tr>
+<tr><td>节点扩展资源</td><td>nvidia.com/gpu allocatable</td><td>由 device plugin 上报，调度器按 requests 做资源判断</td></tr>
+<tr><td>拓扑元数据</td><td>GPU 卡组、NUMA、NVLink fabric</td><td>生产中可由节点 agent 写入 CRD、annotation 或 scheduler cache</td></tr>
+</table>
+<h4>2. 扩展点选择</h4>
+<table>
+<tr><th>扩展点</th><th>做什么</th><th>为什么</th></tr>
+<tr><td>PreFilter</td><td>解析 Pod 是否请求 GPU、请求几张 GPU，并写入 CycleState</td><td>避免每个节点重复解析 Pod 资源请求</td></tr>
+<tr><td>Filter</td><td>过滤没有足够 GPU、没有目标 GPU 型号、没有可用卡组的节点</td><td>硬约束必须放 Filter，不满足就不能调度</td></tr>
+<tr><td>Score</td><td>给 NVLink 更完整、跨 NUMA 更少、模型缓存更近的节点更高分</td><td>拓扑好坏通常是软偏好，适合 Score</td></tr>
+<tr><td>Reserve / Unreserve</td><td>在调度器缓存里预占具体 GPU 卡组，后续失败则回滚</td><td>防止两个 Pod 同时选中同一组 GPU</td></tr>
+<tr><td>Permit</td><td>如果是一组训练 Worker，可等待全部 Worker 都可调度后再放行</td><td>Gang Scheduling 场景需要整体准入</td></tr>
+</table>
+<h4>3. 最小可行实现思路</h4>
 <ol>
-<li><strong>候选筛选</strong>：遍历节点，模拟驱逐低优先级 Pod 后是否满足需求</li>
-<li><strong>牺牲者选择</strong>：选择需要驱逐最少 Pod 的节点；同等条件下选择驱逐优先级最低 Pod 的方案</li>
-<li><strong>优雅终止</strong>：被驱逐 Pod 收到 SIGTERM，等待 terminationGracePeriodSeconds 后强制终止</li>
-<li><strong>PDB 保护</strong>：PodDisruptionBudget 可以限制同时被驱逐的 Pod 数量，保证服务可用性</li>
+<li><strong>先做 Filter</strong>：没有 GPU、GPU 数量不足、节点标签不满足的节点直接排除。</li>
+<li><strong>再做 Score</strong>：对所有可行节点打分，NVLink 节点高分，PCIe 节点低分。</li>
+<li><strong>最后加 Reserve</strong>：如果需要选择具体 GPU 卡组，就在 Reserve 阶段预占，失败时 Unreserve 回滚。</li>
+<li><strong>不要一开始就做复杂 Gang Scheduling</strong>：如果只是单个多卡 Pod，Filter + Score 通常已经能解释清楚。</li>
 </ol>
+<h4>4. 伪代码</h4>
+<pre><code>// PreFilter: 解析 Pod 的 GPU 请求，并写入 CycleState。
+func PreFilter(ctx context.Context, state *framework.CycleState, pod *v1.Pod) *framework.Status {
+    gpuCount := getGPURequest(pod)
+    state.Write(&quot;gpuRequest&quot;, gpuCount)
+    return framework.NewStatus(framework.Success)
+}
+
+// Filter: 硬约束，不满足就不能调度。
+func Filter(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeInfo *framework.NodeInfo) *framework.Status {
+    gpuCount := state.Read(&quot;gpuRequest&quot;)
+    if nodeFreeGPU(nodeInfo) &lt; gpuCount {
+        return framework.NewStatus(framework.Unschedulable, &quot;insufficient gpu&quot;)
+    }
+    if gpuCount &gt;= 4 &amp;&amp; nodeInfo.Node().Labels[&quot;gpu.topology/nvlink&quot;] != &quot;true&quot; {
+        return framework.NewStatus(framework.Unschedulable, &quot;large gpu job requires nvlink&quot;)
+    }
+    return framework.NewStatus(framework.Success)
+}
+
+// Score: 软偏好，节点仍然可用，只是优先级不同。
+func Score(ctx context.Context, state *framework.CycleState, pod *v1.Pod, nodeName string) (int64, *framework.Status) {
+    node := getNode(nodeName)
+    if node.Labels[&quot;gpu.topology/nvlink&quot;] == &quot;true&quot; {
+        return 100, framework.NewStatus(framework.Success)
+    }
+    return 30, framework.NewStatus(framework.Success)
+}</code></pre>
+<h4>5. 调度器配置示例</h4>
+<pre><code>apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+  - schedulerName: gpu-aware-scheduler
+    plugins:
+      preFilter:
+        enabled:
+          - name: GPUTopology
+      filter:
+        enabled:
+          - name: GPUTopology
+      score:
+        enabled:
+          - name: GPUTopology
+            weight: 50
+      reserve:
+        enabled:
+          - name: GPUTopology</code></pre>
+<h4>6. Pod 使用示例</h4>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: train-4gpu
+spec:
+  schedulerName: gpu-aware-scheduler
+  containers:
+    - name: trainer
+      image: pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+      resources:
+        requests:
+          nvidia.com/gpu: &quot;4&quot;
+        limits:
+          nvidia.com/gpu: &quot;4&quot;</code></pre>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 面试中怎么讲这个案例？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">业务目标</div><p>多 GPU 训练任务希望优先使用 NVLink 拓扑更好的节点，减少 AllReduce 通信开销。</p></div>
+<div class="qa-grid"><div class="qa-mini"><strong>Filter</strong>GPU 数量、型号、租户隔离是硬约束，不满足直接排除。</div><div class="qa-mini"><strong>Score</strong>NVLink 更优、跨 NUMA 更少、模型缓存更近是软偏好，用分数表达。</div><div class="qa-mini"><strong>Reserve</strong>需要绑定具体 GPU 卡组时，在调度器缓存中预占并支持回滚。</div><div class="qa-mini"><strong>Permit</strong>一组分布式训练 Worker 需要整体准入时使用，或直接选 Volcano/Kueue。</div></div>
+<div class="qa-summary">面试总结：先讲业务目标，再讲硬约束放 Filter、软偏好放 Score、具体卡组放 Reserve、分布式训练考虑 Gang Scheduling。</div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>面试高频追问</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Filter 和 Score 的区别是什么？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>Filter</strong>硬约束，决定节点能不能用。典型例子：资源不足、NodeSelector 不匹配、Taint 不能容忍。</div><div class="qa-mini"><strong>Score</strong>软偏好，决定可行节点中哪个更好。典型例子：资源更均衡、镜像已存在、亲和性更高。</div></div>
+<div class="qa-summary">关键点：Filter 不通过的节点不会进入 Score；Filter 是可行性，Score 是优先级。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么调度器只看 requests，不看实时利用率？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">为什么看 requests</div><p>requests 是 Kubernetes 的资源承诺和调度依据，稳定、可预测，并能和 ResourceQuota、QoS、驱逐机制对齐。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么不直接看实时利用率</div><p>实时利用率波动很大，直接用于调度容易导致抖动、迁移冲动和决策不稳定。</p></div>
+<div class="qa-section"><div class="qa-section-title">生产增强方式</div><p>如果要引入实时负载，通常通过自定义 Score 插件、Descheduler、离线画像或预测模型增强，而不是替代 requests。</p></div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU 拓扑感知调度应该放在哪些扩展点？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>Filter</strong>节点是否有足够 GPU、是否满足 MIG/整卡需求、是否满足同机硬约束。</div><div class="qa-mini"><strong>Score</strong>优先选择 NVLink 拓扑更好、跨 NUMA 更少、模型缓存更近的节点。</div><div class="qa-mini"><strong>Reserve</strong>需要预占具体 GPU 组合时维护调度器侧状态。</div><div class="qa-mini"><strong>Unreserve</strong>后续阶段失败时回滚预占，避免缓存状态泄漏。</div></div>
+<div class="qa-summary">判断方式：不能违反的是 Filter；更好但不是必须的是 Score；涉及具体卡组并发冲突的是 Reserve。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Gang Scheduling 为什么常用 Volcano/Kueue，而不是只靠原生调度器？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">原生调度器局限</div><p>默认 kube-scheduler 更擅长逐 Pod 做调度决策，缺少“这一组 Pod 必须一起满足”的队列语义。</p></div>
+<div class="qa-section"><div class="qa-section-title">训练任务需求</div><p>分布式训练要求一组 Worker 同时达到最小可运行规模，否则部分 Pod 先启动也无法有效训练。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么用 Volcano/Kueue</div><p>Gang Scheduling 需要 PodGroup、最小成员数、队列、公平性、整体准入和资源回收等能力，Volcano/Kueue 已经提供成熟抽象。</p></div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 一个 Pod 一直 Pending，怎么排查？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">第一步：看直接原因</div><p>先看 Pod Events 和 scheduler 日志，确认 Pending 是资源不足、亲和性/反亲和性、taint/toleration、PVC 未绑定、配额限制还是调度器异常。</p></div>
+<div class="qa-section"><div class="qa-section-title">第二步：看集群状态</div><p>检查节点 allocatable、已有 Pod requests 占用、Pod priority、PDB、namespace quota、节点污点和标签。</p></div>
+<div class="qa-section"><div class="qa-section-title">GPU 专项</div><p>检查 device plugin 是否运行、nvidia.com/gpu 是否上报、MIG 配置是否正确、扩展资源是否已被占满。</p></div>
+<div class="qa-summary">排查顺序：Events → scheduler 日志 → 节点资源/约束 → 配额/PDB → GPU device plugin。</div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>官方资料与扩展链接</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/"><div class="resource-type">official</div><div class="resource-title">kube-scheduler</div><div class="resource-desc">官方对 kube-scheduler 职责、调度过程和基本机制的说明。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/"><div class="resource-type">official</div><div class="resource-title">Scheduling Framework</div><div class="resource-desc">插件扩展点、调度周期、绑定周期、Reserve/Permit/Bind 等核心概念。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/reference/scheduling/config/"><div class="resource-type">official</div><div class="resource-title">Scheduler Configuration</div><div class="resource-desc">KubeSchedulerConfiguration、Profiles、插件启停、插件权重等配置入口。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/reference/config-api/kube-scheduler-config.v1/"><div class="resource-type">api</div><div class="resource-title">kube-scheduler config API</div><div class="resource-desc">调度器配置 API 字段定义，适合查 profiles、plugins、pluginConfig。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"><div class="resource-type">official</div><div class="resource-title">Assigning Pods to Nodes</div><div class="resource-desc">nodeSelector、nodeAffinity、pod affinity/anti-affinity 等节点选择语义。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"><div class="resource-type">official</div><div class="resource-title">Taints and Tolerations</div><div class="resource-desc">污点和容忍机制，常用于专用节点、GPU 节点和隔离场景。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"><div class="resource-type">official</div><div class="resource-title">Pod Topology Spread Constraints</div><div class="resource-desc">跨 zone、node、rack 等拓扑域均匀分布 Pod 的官方机制。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"><div class="resource-type">official</div><div class="resource-title">Pod Priority and Preemption</div><div class="resource-desc">PriorityClass、抢占、nominatedNodeName、PDB 影响等高频面试点。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-scheduling-readiness/"><div class="resource-type">official</div><div class="resource-title">Pod Scheduling Readiness</div><div class="resource-desc">Scheduling Gates：让 Pod 在满足外部条件前不进入调度。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/"><div class="resource-type">official</div><div class="resource-title">Device Plugins</div><div class="resource-desc">GPU 等扩展资源如何上报到 kubelet，并被调度器按 extended resource 使用。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/"><div class="resource-type">official</div><div class="resource-title">Configure Multiple Schedulers</div><div class="resource-desc">多个调度器并存和 Pod 使用 schedulerName 指定调度器。</div></a>
+<a class="resource-card" href="https://github.com/kubernetes-sigs/scheduler-plugins"><div class="resource-type">sig</div><div class="resource-title">kubernetes-sigs/scheduler-plugins</div><div class="resource-desc">社区维护的调度插件集合，适合理解高级插件与示例实现。</div></a>
+<a class="resource-card" href="https://github.com/kubernetes-sigs/descheduler"><div class="resource-type">sig</div><div class="resource-title">Descheduler</div><div class="resource-desc">重调度/再平衡工具，解决集群状态长期漂移后的优化问题。</div></a>
+<a class="resource-card" href="https://kueue.sigs.k8s.io/docs/overview/"><div class="resource-type">batch</div><div class="resource-title">Kueue</div><div class="resource-desc">Kubernetes 原生队列管理，适合 batch、ML training、多租户 quota 场景。</div></a>
+<a class="resource-card" href="https://volcano.sh/en/docs/"><div class="resource-type">batch</div><div class="resource-title">Volcano</div><div class="resource-desc">批调度系统，提供 PodGroup、Gang Scheduling、队列、公平性等能力。</div></a>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-3" aria-labelledby="kubernetes-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>资源模型</h2></div><div class="tab-panel-body"><div class="card card-w">
 <h3>资源类型</h3>
 <table>
@@ -116,7 +438,671 @@
 <h3>InPlacePodVerticalScaling（1.27 alpha）</h3>
 <p>传统修改资源需要重建 Pod。InPlace 允许在不重启容器的情况下动态调整 CPU 和 Memory 的 requests/limits。</p>
 <p><strong>限制</strong>：只支持 CPU 和 Memory，<strong>不支持 GPU</strong>。GPU 是 Extended Resource，admit 后不可修改。GPU 分配必须在调度时确定，运行时只能通过 MPS 等方式做软共享。</p>
-</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-4" aria-labelledby="kubernetes-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频问答</h2></div><div class="tab-panel-body"><div class="card card-s">
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-4" aria-labelledby="kubernetes-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Pod 与 Workload</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>Pod 生命周期：从提交到退出</h3>
+<p>Pod 是 Kubernetes 最小调度单元，但真正运行的是 Pod 内的容器。面试里不要只说“Pod 被调度到节点”，而要把 API Server、Scheduler、kubelet、CRI、CNI、CSI 串起来。</p>
+<table>
+<tr><th>阶段</th><th>关键动作</th><th>常见状态/现象</th><th>面试要点</th></tr>
+<tr><td>提交</td><td>用户通过 kubectl、控制器或 API 创建 Pod 对象</td><td>对象进入 API Server，写入 etcd</td><td>API Server 做认证、鉴权、准入、默认值填充和资源校验</td></tr>
+<tr><td>调度</td><td>Scheduler 监听未绑定 Pod，执行 Filter/Score/Bind</td><td>Pending</td><td>Pending 可能是还没调度，也可能是调度失败或镜像还没拉取，要结合 Events 判断</td></tr>
+<tr><td>节点接管</td><td>目标节点 kubelet watch 到 spec.nodeName 指向自己的 Pod</td><td>ContainerCreating</td><td>kubelet 不是被 scheduler 直接调用，而是 watch API Server</td></tr>
+<tr><td>准备运行</td><td>拉镜像、挂载 volume、配置网络、调用 CRI 创建容器</td><td>ContainerCreating / ImagePullBackOff</td><td>网络由 CNI 负责，存储由 CSI 或内置 volume plugin 负责</td></tr>
+<tr><td>运行</td><td>容器进程启动，探针开始工作，kubelet 持续上报状态</td><td>Running / Ready</td><td>Running 不等于可接流量，Ready 才会进入 Service endpoints</td></tr>
+<tr><td>终止</td><td>删除 Pod 后进入优雅终止：PreStop、SIGTERM、terminationGracePeriodSeconds、SIGKILL</td><td>Terminating</td><td>优雅终止影响滚动发布、抢占、drain 和服务无损下线</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>Pod Phase 与 Container State</h3>
+<p>Pod 的状态经常被混淆。Pod phase 是 Pod 级别的粗粒度状态，Container state 是容器级别的状态。排查问题时要结合 <code>kubectl describe pod</code>、Events、containerStatuses、日志一起看。</p>
+<table>
+<tr><th>概念</th><th>典型取值</th><th>解释</th><th>排查意义</th></tr>
+<tr><td>Pod Phase</td><td>Pending、Running、Succeeded、Failed、Unknown</td><td>Pod 生命周期的高层状态</td><td>只能粗略判断阶段，不能直接定位根因</td></tr>
+<tr><td>Container State</td><td>Waiting、Running、Terminated</td><td>单个容器当前状态</td><td>Waiting reason 常见为 ImagePullBackOff、CrashLoopBackOff、CreateContainerConfigError</td></tr>
+<tr><td>Pod Conditions</td><td>PodScheduled、Initialized、ContainersReady、Ready</td><td>由 kubelet 和控制面维护的条件集合</td><td>Ready 决定是否进入 Service endpoints</td></tr>
+<tr><td>Events</td><td>FailedScheduling、Pulled、Created、Started、BackOff</td><td>关键事件流水</td><td>面试和生产排查中最先看的信息之一</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>探针：liveness / readiness / startup</h3>
+<p>探针是 Pod 稳定性面试最高频内容之一。核心是区分“进程是否活着”和“是否可以接流量”。错误配置探针会导致服务抖动、滚动发布卡住或流量打到未初始化实例。</p>
+<table>
+<tr><th>探针</th><th>判断什么</th><th>失败后行为</th><th>适用场景</th></tr>
+<tr><td>livenessProbe</td><td>容器是否还活着</td><td>kubelet 重启容器</td><td>死锁、进程假死、主循环卡住</td></tr>
+<tr><td>readinessProbe</td><td>容器是否可以接流量</td><td>从 Service endpoints 移除，不重启容器</td><td>依赖未就绪、模型未加载、缓存预热中</td></tr>
+<tr><td>startupProbe</td><td>慢启动应用是否完成启动</td><td>失败超过阈值后重启容器；成功前抑制 liveness/readiness</td><td>Java 大应用、模型服务加载权重、初始化时间长</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: readinessProbe 和 livenessProbe 配错会怎样？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">readiness 配得太严</div><p>实例会长期不进入 endpoints，Deployment 可能滚动发布卡住，Service 没有足够后端。</p></div>
+<div class="qa-section"><div class="qa-section-title">liveness 配得太严</div><p>应用初始化或短暂抖动时被 kubelet 频繁重启，形成 CrashLoopBackOff。</p></div>
+<div class="qa-summary">面试记忆：readiness 控流量，liveness 控重启，startup 保护慢启动。</div>
+</div>
+</div>
+</div>
+<div class="card card-m">
+<h3>Workload 控制器对比</h3>
+<p>控制器的本质是 Reconcile loop：不断比较期望状态和实际状态，并把实际状态收敛到期望状态。面试中经常要求解释不同 Workload 为什么存在，以及如何选择。</p>
+<table>
+<tr><th>控制器</th><th>核心语义</th><th>典型场景</th><th>面试重点</th></tr>
+<tr><td>ReplicaSet</td><td>保证指定数量 Pod 副本</td><td>通常由 Deployment 管理，不直接手写</td><td>Deployment 通过 ReplicaSet 实现版本切换</td></tr>
+<tr><td>Deployment</td><td>无状态服务滚动发布、回滚、扩缩容</td><td>Web 服务、API 服务、无状态模型服务</td><td>maxSurge、maxUnavailable、rollout、rollback</td></tr>
+<tr><td>StatefulSet</td><td>稳定网络标识、稳定存储、有序部署和删除</td><td>数据库、ZooKeeper、分布式训练 worker 固定身份</td><td>Pod 名称有序，配合 Headless Service 和 PVC template</td></tr>
+<tr><td>DaemonSet</td><td>每个或部分节点运行一个 Pod</td><td>日志采集、监控 agent、CNI、CSI、GPU device plugin</td><td>适合节点级守护进程，新增节点自动部署</td></tr>
+<tr><td>Job</td><td>运行到完成的一次性任务</td><td>离线处理、数据迁移、一次性训练任务</td><td>completions、parallelism、backoffLimit</td></tr>
+<tr><td>CronJob</td><td>按时间周期创建 Job</td><td>定时清理、周期报表、定时数据任务</td><td>concurrencyPolicy、startingDeadlineSeconds</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>滚动发布、回滚与无损下线</h3>
+<p>Deployment 发布机制是基础设施面试常问的工程题。要说明流量如何从旧版本迁到新版本，以及如何避免把流量打到未就绪或正在退出的 Pod。</p>
+<div class="comp-grid">
+<div class="comp-item"><div class="comp-name">maxSurge</div><div class="comp-role">滚动发布时允许额外创建的新 Pod 数量或比例。</div><div class="comp-detail">提高 maxSurge 可以加快发布，但会临时占用更多资源。</div></div>
+<div class="comp-item"><div class="comp-name">maxUnavailable</div><div class="comp-role">发布过程中允许不可用的 Pod 数量或比例。</div><div class="comp-detail">设置过高会影响可用性，设置为 0 通常要求先拉起新实例再下线旧实例。</div></div>
+<div class="comp-item"><div class="comp-name">readinessProbe</div><div class="comp-role">新 Pod Ready 后才进入 Service endpoints。</div><div class="comp-detail">模型服务常用 readiness 等待模型权重加载完成。</div></div>
+<div class="comp-item"><div class="comp-name">preStop + SIGTERM</div><div class="comp-role">删除旧 Pod 前先执行钩子并发送终止信号。</div><div class="comp-detail">应用应停止接新请求、等待存量请求完成，再退出。</div></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何解释一次 Deployment 滚动发布？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">版本控制</div><p>Deployment 创建新的 ReplicaSet，并逐步增加新 ReplicaSet 的副本数，同时减少旧 ReplicaSet 的副本数。</p></div>
+<div class="qa-section"><div class="qa-section-title">可用性控制</div><p>maxSurge 控制可额外创建多少新 Pod，maxUnavailable 控制最多允许多少 Pod 不可用。</p></div>
+<div class="qa-section"><div class="qa-section-title">流量控制</div><p>只有 readinessProbe 成功的 Pod 才会进入 Service endpoints；删除旧 Pod 时依赖 PreStop 和 terminationGracePeriodSeconds 做无损下线。</p></div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>StatefulSet 与 AI 训练</h3>
+<p>StatefulSet 不只用于数据库，也常用于需要稳定身份的分布式训练和参数服务器架构。它保证 Pod 名称稳定，例如 <code>trainer-0</code>、<code>trainer-1</code>，配合 Headless Service 可以让 worker 之间互相发现。</p>
+<table>
+<tr><th>能力</th><th>StatefulSet 表现</th><th>为什么重要</th></tr>
+<tr><td>稳定 Pod 名称</td><td>按 ordinal 命名：name-0、name-1、name-2</td><td>训练任务可用 ordinal 推导 rank</td></tr>
+<tr><td>稳定网络身份</td><td>配合 Headless Service 得到稳定 DNS</td><td>worker 可通过 DNS 互相发现</td></tr>
+<tr><td>稳定存储</td><td>volumeClaimTemplates 为每个 Pod 创建独立 PVC</td><td>有状态服务重启后仍挂回自己的存储</td></tr>
+<tr><td>有序启动/删除</td><td>默认按 ordinal 顺序处理</td><td>适合需要主从顺序或成员发现的系统</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>官方参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/"><div class="resource-type">official</div><div class="resource-title">Pod Lifecycle</div><div class="resource-desc">Pod phase、conditions、container states、restart policy 等生命周期基础。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/"><div class="resource-type">official</div><div class="resource-title">Liveness / Readiness / Startup Probes</div><div class="resource-desc">三类探针配置、行为差异和常见使用方式。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"><div class="resource-type">official</div><div class="resource-title">Deployment</div><div class="resource-desc">滚动发布、回滚、扩缩容、ReplicaSet 关系。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/"><div class="resource-type">official</div><div class="resource-title">StatefulSet</div><div class="resource-desc">稳定身份、稳定存储、有序部署删除。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/"><div class="resource-type">official</div><div class="resource-title">DaemonSet</div><div class="resource-desc">节点级守护进程，常见于 CNI、CSI、日志采集、device plugin。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-5" aria-labelledby="kubernetes-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Service 与网络</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>Kubernetes 网络模型</h3>
+<p>Kubernetes 网络面试的核心不是背 CNI 名字，而是讲清楚三个基本要求：Pod 之间可以直接通信、Node 可以和 Pod 通信、Service 为动态 Pod 集合提供稳定访问入口。</p>
+<table>
+<tr><th>对象</th><th>网络语义</th><th>实现依赖</th><th>面试重点</th></tr>
+<tr><td>Pod IP</td><td>每个 Pod 有独立 IP，Pod 内容器共享网络命名空间</td><td>CNI 插件分配 IP、配置路由和 veth</td><td>同 Pod 内容器通过 localhost 通信，不同 Pod 通过 Pod IP 通信</td></tr>
+<tr><td>Node 网络</td><td>节点之间可路由，承载跨节点 Pod 通信</td><td>Overlay、BGP、云厂商 VPC 或 underlay</td><td>跨节点通信是否封装取决于 CNI 实现</td></tr>
+<tr><td>Service IP</td><td>为一组 Pod 提供稳定虚拟入口</td><td>kube-proxy 或 eBPF 数据面</td><td>Service 不等于反向代理进程，通常是节点上的转发规则</td></tr>
+<tr><td>DNS</td><td>把 service name 解析为 ClusterIP 或 Pod IP</td><td>CoreDNS + kube-dns service</td><td>DNS 故障会表现为服务名不通但 IP 直连可能正常</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>Pod 跨节点通信链路</h3>
+<p>一个 Pod 访问另一个节点上的 Pod 时，流量通常从容器网络命名空间出发，经 veth 到宿主机，再由 CNI 配置的路由、隧道或 eBPF 程序转发到目标节点，最后进入目标 Pod。</p>
+<ol>
+<li>源容器发包到目标 Pod IP。</li>
+<li>数据包从容器 eth0 进入 veth pair 的宿主机端。</li>
+<li>宿主机根据 CNI 配置的路由或 eBPF 逻辑决定下一跳。</li>
+<li>如果是 overlay CNI，可能封装 VXLAN/Geneve 后跨节点传输。</li>
+<li>目标节点解封装或路由转发到目标 Pod 的 veth。</li>
+<li>目标容器收到数据包。</li>
+</ol>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CNI 到底负责什么？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">创建时</div><p>kubelet 创建 Pod sandbox 后调用 CNI 插件，为 Pod 分配 IP、创建 veth、配置路由、配置网络命名空间。</p></div>
+<div class="qa-section"><div class="qa-section-title">删除时</div><p>Pod 删除时 kubelet 调用 CNI DEL，释放 IP、清理网络设备和相关规则。</p></div>
+<div class="qa-summary">CNI 解决 Pod 网络接入问题，Service 转发通常由 kube-proxy 或 eBPF 数据面解决。</div>
+</div>
+</div>
+</div>
+<div class="card card-m">
+<h3>Service 类型对比</h3>
+<table>
+<tr><th>Service 类型</th><th>作用</th><th>访问范围</th><th>典型场景</th></tr>
+<tr><td>ClusterIP</td><td>集群内部虚拟 IP</td><td>集群内</td><td>微服务内部访问，默认类型</td></tr>
+<tr><td>NodePort</td><td>每个节点开放固定端口，转发到 Service</td><td>集群外可通过任意节点 IP + 端口访问</td><td>简单暴露、测试环境，不适合复杂生产入口</td></tr>
+<tr><td>LoadBalancer</td><td>创建云厂商负载均衡器并转发到 Service</td><td>集群外</td><td>云上生产入口</td></tr>
+<tr><td>ExternalName</td><td>把 Service 名称映射到外部 DNS 名称</td><td>依赖外部 DNS</td><td>集群内用统一 service name 访问外部服务</td></tr>
+<tr><td>Headless Service</td><td>clusterIP: None，不分配虚拟 IP</td><td>DNS 直接返回后端 Pod IP</td><td>StatefulSet、数据库、分布式训练 worker 直连</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>kube-proxy：iptables、IPVS 与 eBPF</h3>
+<p>Service 的转发能力传统上由 kube-proxy 维护节点规则实现。面试中经常问 iptables 和 IPVS 的区别，近年来也会追问 eBPF 数据面。</p>
+<table>
+<tr><th>模式</th><th>实现方式</th><th>优点</th><th>不足</th></tr>
+<tr><td>iptables</td><td>生成大量 iptables 规则，用随机概率做负载均衡</td><td>成熟、依赖少、兼容性强</td><td>规则多时更新和匹配成本高，可观测性一般</td></tr>
+<tr><td>IPVS</td><td>利用 Linux IPVS 内核负载均衡能力</td><td>性能更好，支持更多调度算法</td><td>依赖 IPVS 模块，问题排查需要理解 ipvsadm</td></tr>
+<tr><td>eBPF</td><td>在内核 hook 点运行 eBPF 程序转发</td><td>性能高、可观测性强、可绕过部分 iptables 路径</td><td>依赖 CNI/内核能力，排查方式不同</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Service 是不是一个真正的代理进程？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">传统实现</div><p>不是。ClusterIP 通常不是某个进程监听的真实 IP，而是 kube-proxy 在每个节点维护的转发规则。</p></div>
+<div class="qa-section"><div class="qa-section-title">流量路径</div><p>访问 ClusterIP 时，内核网络栈命中 iptables/IPVS/eBPF 规则，把流量转发到某个 Endpoint Pod。</p></div>
+<div class="qa-summary">Service 是抽象，kube-proxy/eBPF 是数据面实现。</div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>CoreDNS 与服务发现</h3>
+<p>Kubernetes 中服务名解析通常由 CoreDNS 提供。Pod 的 DNS 配置会指向 kube-dns Service，CoreDNS 根据 Service、EndpointSlice、Pod 等对象生成解析结果。</p>
+<table>
+<tr><th>查询形式</th><th>含义</th><th>返回结果</th></tr>
+<tr><td>svc-name</td><td>同 namespace 下服务</td><td>ClusterIP 或 headless 后端 Pod IP</td></tr>
+<tr><td>svc-name.namespace</td><td>指定 namespace 下服务</td><td>对应 Service 解析结果</td></tr>
+<tr><td>svc-name.namespace.svc.cluster.local</td><td>完整集群域名</td><td>最明确，排查 DNS 时常用</td></tr>
+<tr><td>headless service</td><td>clusterIP: None</td><td>直接返回后端 Pod IP 列表</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Service 不通怎么区分 DNS 问题和网络问题？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>先测 DNS</strong>nslookup service-name，确认是否能解析。</div><div class="qa-mini"><strong>再测 ClusterIP</strong>直接 curl ClusterIP:port，绕过服务名。</div><div class="qa-mini"><strong>再测 Endpoint</strong>直接访问 Pod IP:containerPort，绕过 Service 转发。</div><div class="qa-mini"><strong>最后看规则</strong>检查 endpoints、EndpointSlice、kube-proxy、NetworkPolicy。</div></div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>NetworkPolicy</h3>
+<p>NetworkPolicy 用于限制 Pod 间东西向流量。它本身只是 Kubernetes API 对象，是否真正生效取决于 CNI 是否支持 NetworkPolicy。</p>
+<table>
+<tr><th>概念</th><th>说明</th><th>高频误区</th></tr>
+<tr><td>默认允许</td><td>没有 NetworkPolicy 时，Pod 通信默认全允许</td><td>创建一个 policy 后，被选中的 Pod 会进入默认拒绝模型</td></tr>
+<tr><td>podSelector</td><td>选择被保护的 Pod</td><td>不是选择访问来源，而是选择策略作用对象</td></tr>
+<tr><td>ingress / egress</td><td>分别控制入站和出站</td><td>只写 ingress 不会自动限制 egress</td></tr>
+<tr><td>CNI 支持</td><td>Calico、Cilium 等支持策略</td><td>如果 CNI 不支持，创建 policy 也不生效</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>官方参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/services-networking/"><div class="resource-type">official</div><div class="resource-title">Services, Load Balancing, and Networking</div><div class="resource-desc">Kubernetes 网络与 Service 总入口。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/services-networking/service/"><div class="resource-type">official</div><div class="resource-title">Service</div><div class="resource-desc">ClusterIP、NodePort、LoadBalancer、Headless Service 等。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"><div class="resource-type">official</div><div class="resource-title">DNS for Services and Pods</div><div class="resource-desc">服务发现、DNS 名称规则、Headless Service 解析。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/"><div class="resource-type">official</div><div class="resource-title">Network Plugins</div><div class="resource-desc">CNI 网络插件与 Pod 网络接入机制。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/"><div class="resource-type">official</div><div class="resource-title">Network Policies</div><div class="resource-desc">Pod 间访问控制和网络隔离。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-6" aria-labelledby="kubernetes-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>存储与 CSI</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>Kubernetes 存储体系总览</h3>
+<p>Kubernetes 把“应用如何声明存储需求”和“底层如何创建/挂载具体存储”拆开。面试时要围绕 PV、PVC、StorageClass、CSI 之间的关系来讲。</p>
+<table>
+<tr><th>对象</th><th>角色</th><th>谁创建</th><th>面试重点</th></tr>
+<tr><td>Volume</td><td>Pod spec 中声明的挂载来源</td><td>用户或控制器</td><td>生命周期通常跟 Pod 绑定，类型很多</td></tr>
+<tr><td>PersistentVolumeClaim (PVC)</td><td>用户对存储的申请</td><td>用户或 StatefulSet volumeClaimTemplates</td><td>声明容量、访问模式、StorageClass</td></tr>
+<tr><td>PersistentVolume (PV)</td><td>集群中的真实存储资源抽象</td><td>管理员静态创建或 provisioner 动态创建</td><td>PV 与 PVC 绑定后供 Pod 挂载</td></tr>
+<tr><td>StorageClass</td><td>动态供给模板</td><td>管理员</td><td>定义 provisioner、参数、reclaimPolicy、volumeBindingMode</td></tr>
+<tr><td>CSI Driver</td><td>存储厂商插件</td><td>平台管理员部署</td><td>负责创建、挂载、扩容、快照等存储操作</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>PV/PVC 绑定流程</h3>
+<ol>
+<li>用户创建 PVC，声明所需容量、访问模式和 StorageClass。</li>
+<li>如果存在匹配 PV，控制器将 PVC 与 PV 绑定。</li>
+<li>如果没有现成 PV，且 StorageClass 支持动态供给，external-provisioner 调用 CSI 创建真实存储并生成 PV。</li>
+<li>Pod 引用 PVC 后，调度器需要考虑 volume 约束，例如 zone、node affinity。</li>
+<li>Pod 调度到节点后，kubelet 通过 CSI node plugin 挂载 volume 到容器。</li>
+</ol>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: PVC Pending 常见原因有哪些？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>没有匹配 PV</strong>静态 PV 容量、accessMode、storageClassName 不匹配。</div><div class="qa-mini"><strong>动态供给失败</strong>CSI provisioner 异常、权限不足、云盘配额不足。</div><div class="qa-mini"><strong>WaitForFirstConsumer</strong>StorageClass 等待 Pod 调度后再创建 PV，PVC 可能暂时 Pending。</div><div class="qa-mini"><strong>拓扑限制</strong>存储所在 zone 与 Pod 可调度节点不一致。</div></div>
+</div>
+</div>
+</div>
+<div class="card card-w">
+<h3>访问模式与回收策略</h3>
+<table>
+<tr><th>字段</th><th>常见取值</th><th>解释</th><th>注意事项</th></tr>
+<tr><td>accessModes</td><td>ReadWriteOnce</td><td>单个节点读写挂载</td><td>云盘最常见；不是单个 Pod，而是单个节点</td></tr>
+<tr><td>accessModes</td><td>ReadOnlyMany</td><td>多个节点只读挂载</td><td>适合共享只读数据</td></tr>
+<tr><td>accessModes</td><td>ReadWriteMany</td><td>多个节点读写挂载</td><td>需要 NFS、CephFS、NAS 等支持</td></tr>
+<tr><td>reclaimPolicy</td><td>Delete</td><td>PVC 删除后底层存储也删除</td><td>动态供给常用，危险点是误删数据</td></tr>
+<tr><td>reclaimPolicy</td><td>Retain</td><td>PVC 删除后保留 PV 和底层数据</td><td>适合重要数据，但需要人工回收</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>StorageClass 关键字段</h3>
+<table>
+<tr><th>字段</th><th>作用</th><th>面试解释</th></tr>
+<tr><td>provisioner</td><td>指定由哪个 CSI 或内置 provisioner 创建存储</td><td>例如云厂商块存储、Ceph、NFS 等</td></tr>
+<tr><td>parameters</td><td>传给 provisioner 的参数</td><td>磁盘类型、IOPS、文件系统类型、加密等</td></tr>
+<tr><td>reclaimPolicy</td><td>PV 回收策略</td><td>Delete 自动删除底层资源，Retain 保留数据</td></tr>
+<tr><td>allowVolumeExpansion</td><td>是否允许 PVC 扩容</td><td>扩容还需要底层 CSI 支持</td></tr>
+<tr><td>volumeBindingMode</td><td>Immediate 或 WaitForFirstConsumer</td><td>后者能结合 Pod 调度选择合适 zone，避免存储和计算不在同一可用区</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: WaitForFirstConsumer 为什么重要？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">Immediate 的问题</div><p>Immediate 会在 PVC 创建时立刻创建 PV。如果云盘先被创建在 zone-a，而 Pod 后续只能调到 zone-b，就会出现存储和计算拓扑冲突。</p></div>
+<div class="qa-section"><div class="qa-section-title">WaitForFirstConsumer 的价值</div><p>等到 Pod 参与调度时，调度器结合节点拓扑和存储拓扑决定 PV 创建在哪个 zone，减少调度失败。</p></div>
+<div class="qa-summary">一句话：延迟绑定让存储创建跟 Pod 调度一起考虑，避免跨可用区挂载失败。</div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>CSI 工作机制</h3>
+<p>CSI 把 Kubernetes 与存储厂商解耦。它通常由 Controller 插件和 Node 插件组成，配合 external-provisioner、external-attacher、external-resizer、external-snapshotter 等 sidecar 工作。</p>
+<table>
+<tr><th>组件</th><th>位置</th><th>职责</th><th>典型操作</th></tr>
+<tr><td>CSI Controller Plugin</td><td>控制面部署，通常是 Deployment</td><td>管理存储卷生命周期</td><td>CreateVolume、DeleteVolume、ControllerPublishVolume</td></tr>
+<tr><td>CSI Node Plugin</td><td>每个节点部署，通常是 DaemonSet</td><td>负责节点本地挂载和卸载</td><td>NodeStageVolume、NodePublishVolume、NodeUnpublishVolume</td></tr>
+<tr><td>external-provisioner</td><td>sidecar</td><td>监听 PVC 并创建 PV</td><td>动态供给</td></tr>
+<tr><td>external-attacher</td><td>sidecar</td><td>处理云盘 attach/detach</td><td>把云盘挂到节点</td></tr>
+<tr><td>external-resizer</td><td>sidecar</td><td>处理 PVC 扩容</td><td>扩容底层卷和文件系统</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>常见 Volume 类型</h3>
+<table>
+<tr><th>类型</th><th>生命周期</th><th>用途</th><th>风险</th></tr>
+<tr><td>emptyDir</td><td>随 Pod 创建和删除</td><td>临时缓存、容器间共享临时文件</td><td>Pod 删除后数据消失</td></tr>
+<tr><td>hostPath</td><td>绑定节点本地路径</td><td>系统组件访问宿主机文件，如日志、device plugin</td><td>强节点耦合，有安全风险，不适合普通业务随意使用</td></tr>
+<tr><td>configMap volume</td><td>来自 ConfigMap</td><td>挂载配置文件</td><td>配置更新到容器内有延迟；subPath 挂载不会自动更新</td></tr>
+<tr><td>secret volume</td><td>来自 Secret</td><td>挂载证书、token、密码</td><td>要注意权限、最小化暴露和审计</td></tr>
+<tr><td>PVC volume</td><td>跟 PVC/PV 生命周期相关</td><td>持久化数据</td><td>需要考虑绑定、拓扑、扩容、回收策略</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>StatefulSet 存储模式</h3>
+<p>StatefulSet 的 <code>volumeClaimTemplates</code> 会为每个 Pod 创建独立 PVC。例如 <code>mysql-0</code> 对应自己的 PVC，Pod 重建后仍然挂回自己的存储。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: StatefulSet 删除后 PVC 会不会自动删除？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">传统行为</div><p>StatefulSet 删除时，PVC 通常不会自动删除，以避免误删有状态数据。</p></div>
+<div class="qa-section"><div class="qa-section-title">新能力</div><p>较新版本 Kubernetes 支持 persistentVolumeClaimRetentionPolicy，可以控制 StatefulSet 删除或缩容时 PVC 的保留策略。</p></div>
+<div class="qa-summary">面试记忆：Pod 可重建，PVC 要谨慎保留；有状态数据默认不应因为控制器删除而丢失。</div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>官方参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/"><div class="resource-type">official</div><div class="resource-title">Persistent Volumes</div><div class="resource-desc">PV、PVC、StorageClass、访问模式、回收策略。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/storage/storage-classes/"><div class="resource-type">official</div><div class="resource-title">Storage Classes</div><div class="resource-desc">动态供给、volumeBindingMode、reclaimPolicy。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/storage/volumes/"><div class="resource-type">official</div><div class="resource-title">Volumes</div><div class="resource-desc">emptyDir、hostPath、configMap、secret、PVC 等 volume 类型。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/storage/volumes/#csi"><div class="resource-type">official</div><div class="resource-title">CSI Volumes</div><div class="resource-desc">CSI volume 机制和 Kubernetes 存储插件模型。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-7" aria-labelledby="kubernetes-tabs-tab-7" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>故障排查</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>排查总方法：先分层，再定位</h3>
+<p>Kubernetes 故障排查不要一上来就猜。面试中推荐按对象状态、事件、日志、资源、网络、存储、节点这几层递进。</p>
+<table>
+<tr><th>层次</th><th>常用命令</th><th>看什么</th><th>常见结论</th></tr>
+<tr><td>对象状态</td><td>kubectl get pod -o wide</td><td>phase、node、restart、age、IP</td><td>确认是 Pending、Running 但不 Ready、CrashLoop 还是 Terminating</td></tr>
+<tr><td>事件</td><td>kubectl describe pod</td><td>Events、conditions、container state reason</td><td>FailedScheduling、FailedMount、ImagePullBackOff、BackOff</td></tr>
+<tr><td>日志</td><td>kubectl logs / logs --previous</td><td>应用启动日志、退出前日志</td><td>应用崩溃、配置错误、依赖不可达</td></tr>
+<tr><td>资源</td><td>kubectl top、describe node、quota</td><td>requests、limits、allocatable、quota</td><td>资源不足、namespace 配额不足、OOM</td></tr>
+<tr><td>网络</td><td>nslookup、curl、tcpdump、endpoints</td><td>DNS、Service、Pod IP、NetworkPolicy</td><td>DNS 不通、Service 没 endpoints、策略阻断</td></tr>
+<tr><td>存储</td><td>get pvc/pv、describe pvc、CSI logs</td><td>绑定、attach、mount</td><td>PVC Pending、FailedMount、zone 冲突</td></tr>
+<tr><td>节点</td><td>describe node、kubelet logs、runtime logs</td><td>NodeReady、DiskPressure、MemoryPressure</td><td>节点不可用、磁盘压力、kubelet 异常</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>Pod Pending 排查</h3>
+<p>Pending 不是单一问题，它可能发生在调度前、调度失败、PVC 未绑定、镜像拉取前等待等多个阶段。最可靠入口是 <code>kubectl describe pod</code> 里的 Events。</p>
+<div class="comp-grid">
+<div class="comp-item"><div class="comp-name">FailedScheduling</div><div class="comp-role">调度器无法找到合适节点。</div><div class="comp-detail">检查 CPU/Memory/GPU requests、nodeSelector、affinity、taints、topology spread、quota。</div></div>
+<div class="comp-item"><div class="comp-name">PVC Pending</div><div class="comp-role">Pod 引用的 PVC 尚未绑定。</div><div class="comp-detail">检查 StorageClass、PV 绑定、CSI provisioner、WaitForFirstConsumer、zone。</div></div>
+<div class="comp-item"><div class="comp-name">Unschedulable</div><div class="comp-role">调度硬约束无法满足。</div><div class="comp-detail">重点看 Events 中 scheduler 给出的节点过滤原因。</div></div>
+<div class="comp-item"><div class="comp-name">GPU Pending</div><div class="comp-role">GPU 扩展资源不足或未上报。</div><div class="comp-detail">检查 nvidia-device-plugin、node allocatable、MIG 配置、资源名是否一致。</div></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod 一直 Pending，你怎么回答排查流程？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">先看事件</div><p>先 describe pod，看 Events 是否是 FailedScheduling、FailedMount、PVC Pending 或 quota 限制。</p></div>
+<div class="qa-section"><div class="qa-section-title">再看资源和约束</div><p>如果是调度失败，检查 requests、节点 allocatable、taints/tolerations、nodeSelector、affinity、topologySpreadConstraints。</p></div>
+<div class="qa-section"><div class="qa-section-title">专项检查</div><p>如果是 GPU Pod，检查 device plugin 和 nvidia.com/gpu 上报；如果是有状态 Pod，检查 PVC/PV/StorageClass。</p></div>
+<div class="qa-summary">面试顺序：Events → 资源 → 调度约束 → PVC/存储 → GPU/device plugin → scheduler 日志。</div>
+</div>
+</div>
+</div>
+<div class="card card-r">
+<h3>CrashLoopBackOff 排查</h3>
+<p>CrashLoopBackOff 表示容器启动后不断退出，kubelet 按退避策略重启容器。不要只看当前日志，还要看上一次崩溃前的日志。</p>
+<table>
+<tr><th>方向</th><th>命令/信息</th><th>可能原因</th><th>处理思路</th></tr>
+<tr><td>退出码</td><td>containerStatuses.lastState.terminated.exitCode</td><td>非 0 退出、信号终止</td><td>结合应用日志定位异常</td></tr>
+<tr><td>上次日志</td><td>kubectl logs pod -c container --previous</td><td>当前容器已重启，当前日志不完整</td><td>查看崩溃前堆栈和错误</td></tr>
+<tr><td>配置错误</td><td>env、configMap、secret、command、args</td><td>缺少配置、参数错误、启动命令错误</td><td>核对 Deployment spec 和配置版本</td></tr>
+<tr><td>探针误杀</td><td>describe pod events</td><td>livenessProbe 过早或过严</td><td>增加 startupProbe，调大 initialDelay/failureThreshold</td></tr>
+<tr><td>OOMKilled</td><td>reason=OOMKilled</td><td>内存 limit 太小或内存泄漏</td><td>调高 limit、分析内存、检查 QoS</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>ImagePullBackOff / ErrImagePull</h3>
+<p>镜像拉取失败通常与镜像名、tag、仓库权限、网络、镜像架构有关。BackOff 表示 kubelet 已经失败过并进入退避重试。</p>
+<table>
+<tr><th>原因</th><th>表现</th><th>排查</th></tr>
+<tr><td>镜像名或 tag 错误</td><td>manifest not found</td><td>核对 image 字段和镜像仓库 tag</td></tr>
+<tr><td>私有仓库无权限</td><td>unauthorized / denied</td><td>检查 imagePullSecrets、ServiceAccount、仓库权限</td></tr>
+<tr><td>节点网络不通</td><td>timeout / connection refused</td><td>在节点侧检查 DNS、代理、仓库连通性</td></tr>
+<tr><td>架构不匹配</td><td>exec format error 或拉取失败</td><td>检查 amd64/arm64 镜像 manifest</td></tr>
+<tr><td>拉取策略</td><td>使用旧镜像或每次都拉</td><td>理解 imagePullPolicy: Always / IfNotPresent / Never</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>Service 不通排查</h3>
+<p>Service 不通要拆成 DNS、Service 抽象、Endpoint、Pod 本身、NetworkPolicy、节点转发规则几层。</p>
+<ol>
+<li>确认 Service 存在：<code>kubectl get svc</code>。</li>
+<li>确认 Service selector 能选中 Pod：检查 label 和 selector 是否匹配。</li>
+<li>确认 EndpointSlice 有后端：<code>kubectl get endpointslice</code>。</li>
+<li>确认 Pod Ready：未 Ready 的 Pod 不会进入 endpoints。</li>
+<li>在同 namespace 内用 service name 测试 DNS。</li>
+<li>绕过 DNS 直接访问 ClusterIP。</li>
+<li>绕过 Service 直接访问 Pod IP 和 containerPort。</li>
+<li>检查 NetworkPolicy、kube-proxy、CNI 和节点防火墙。</li>
+</ol>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Service 有 ClusterIP 但没有流量，最常见是什么？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>selector 不匹配</strong>Service 没有选中任何 Pod，EndpointSlice 为空。</div><div class="qa-mini"><strong>Pod 未 Ready</strong>Pod Running 但 readiness 失败，不进入 endpoints。</div><div class="qa-mini"><strong>targetPort 错误</strong>Service 转发到错误端口。</div><div class="qa-mini"><strong>网络策略阻断</strong>NetworkPolicy 或 CNI 策略拒绝访问。</div></div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>Node NotReady 排查</h3>
+<table>
+<tr><th>方向</th><th>看什么</th><th>典型原因</th></tr>
+<tr><td>Node Conditions</td><td>Ready、MemoryPressure、DiskPressure、PIDPressure、NetworkUnavailable</td><td>节点资源压力、网络不可用</td></tr>
+<tr><td>kubelet</td><td>kubelet 进程和日志</td><td>kubelet crash、证书过期、无法访问 API Server</td></tr>
+<tr><td>容器运行时</td><td>containerd/docker 状态</td><td>runtime 挂死、镜像存储异常</td></tr>
+<tr><td>CNI</td><td>CNI DaemonSet、节点网络</td><td>CNI 插件异常导致 NetworkUnavailable</td></tr>
+<tr><td>磁盘</td><td>imagefs/nodefs 使用率</td><td>镜像太多、日志太多、磁盘压力触发驱逐</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>HPA / VPA / PDB / drain 排查点</h3>
+<table>
+<tr><th>对象</th><th>常见问题</th><th>排查要点</th></tr>
+<tr><td>HPA</td><td>不扩容或扩容异常</td><td>metrics-server 是否正常、目标指标是否存在、requests 是否设置、冷却窗口</td></tr>
+<tr><td>VPA</td><td>推荐值不符合预期或驱逐重建</td><td>推荐模式、updateMode、历史样本、和 HPA 是否冲突</td></tr>
+<tr><td>PDB</td><td>节点 drain 卡住</td><td>minAvailable/maxUnavailable 是否过严，当前可用副本是否不足</td></tr>
+<tr><td>drain</td><td>Pod 无法驱逐</td><td>DaemonSet、local storage、PDB、静态 Pod、有状态服务</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>官方参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/debug/"><div class="resource-type">official</div><div class="resource-title">Debug Applications</div><div class="resource-desc">Kubernetes 官方调试任务入口。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"><div class="resource-type">official</div><div class="resource-title">Debug Pods</div><div class="resource-desc">Pod 状态、日志、事件、exec 调试。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/debug/debug-cluster/"><div class="resource-type">official</div><div class="resource-title">Debug Clusters</div><div class="resource-desc">集群和节点级排查。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/"><div class="resource-type">official</div><div class="resource-title">Disruptions</div><div class="resource-desc">自愿/非自愿中断、PDB 和 drain 相关概念。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-8" aria-labelledby="kubernetes-tabs-tab-8" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>安全与准入</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>API Server 请求链路：认证、鉴权、准入</h3>
+<p>Kubernetes 安全治理的核心入口是 API Server。所有写操作都要经过认证、鉴权、准入控制，再持久化到 etcd。面试中要能把这条链路讲清楚。</p>
+<table>
+<tr><th>阶段</th><th>问题</th><th>典型机制</th><th>面试要点</th></tr>
+<tr><td>Authentication</td><td>你是谁？</td><td>证书、Bearer token、ServiceAccount token、OIDC</td><td>认证只确认身份，不决定能做什么</td></tr>
+<tr><td>Authorization</td><td>你能做什么？</td><td>RBAC、Node、Webhook、ABAC</td><td>最常见是 RBAC，按 verb/resource/namespace 授权</td></tr>
+<tr><td>Admission</td><td>这个请求是否允许或需要修改？</td><td>内置 admission、MutatingWebhook、ValidatingWebhook、ValidatingAdmissionPolicy</td><td>准入发生在鉴权之后、写入 etcd 之前</td></tr>
+<tr><td>Persistence</td><td>状态如何保存？</td><td>etcd</td><td>最终状态写入 etcd 后，控制器通过 watch 感知变化</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>RBAC：Role、ClusterRole、Binding</h3>
+<p>RBAC 是 Kubernetes 权限面试最高频部分。关键是区分“权限集合”和“把权限绑定给谁”。</p>
+<table>
+<tr><th>对象</th><th>作用域</th><th>作用</th><th>示例</th></tr>
+<tr><td>Role</td><td>namespace 内</td><td>定义一组权限规则</td><td>允许读取 default namespace 下的 pods</td></tr>
+<tr><td>ClusterRole</td><td>集群级</td><td>定义集群级或可复用权限规则</td><td>允许读取 nodes，或作为多个 namespace 的通用权限模板</td></tr>
+<tr><td>RoleBinding</td><td>namespace 内</td><td>把 Role 或 ClusterRole 绑定给用户、组、ServiceAccount</td><td>把 read-pods 权限给某个 SA</td></tr>
+<tr><td>ClusterRoleBinding</td><td>集群级</td><td>把 ClusterRole 绑定到集群范围</td><td>给集群管理员权限</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Role 和 ClusterRole 的区别是什么？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>Role</strong>只能定义 namespace 作用域内的资源权限。</div><div class="qa-mini"><strong>ClusterRole</strong>可以定义集群级资源权限，也可以作为跨 namespace 复用模板。</div><div class="qa-mini"><strong>RoleBinding</strong>可以绑定 Role，也可以绑定 ClusterRole，但权限只在该 namespace 生效。</div><div class="qa-mini"><strong>ClusterRoleBinding</strong>绑定后在集群范围生效，要谨慎使用。</div></div>
+</div>
+</div>
+</div>
+<div class="card card-w">
+<h3>ServiceAccount 与 Pod 身份</h3>
+<p>Pod 访问 API Server 时通常使用 ServiceAccount 身份。ServiceAccount token 会以投射卷形式挂载到 Pod 中，应用可以用它调用 Kubernetes API。</p>
+<table>
+<tr><th>概念</th><th>说明</th><th>高频点</th></tr>
+<tr><td>ServiceAccount</td><td>面向 workload 的身份</td><td>不同于用户账号，常用于 Pod 内访问 API Server</td></tr>
+<tr><td>automountServiceAccountToken</td><td>是否自动挂载 token</td><td>不需要访问 API 的 Pod 可关闭，降低凭证泄漏风险</td></tr>
+<tr><td>TokenRequest</td><td>按需颁发短期 token</td><td>新版本推荐短期、可轮转 token，而非长期 secret token</td></tr>
+<tr><td>RBAC Binding</td><td>给 ServiceAccount 授权</td><td>最小权限原则，只授予必要 verb/resource</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>Admission Controller</h3>
+<p>Admission Controller 可以在对象写入 etcd 前对请求进行默认值注入、校验、拒绝或变更。它是平台治理的重要抓手。</p>
+<table>
+<tr><th>类型</th><th>作用</th><th>典型场景</th></tr>
+<tr><td>Mutating Admission</td><td>修改请求对象</td><td>自动注入 sidecar、默认资源 requests/limits、补充 labels/annotations</td></tr>
+<tr><td>Validating Admission</td><td>校验请求对象</td><td>禁止 privileged、限制镜像仓库、要求必须设置 requests</td></tr>
+<tr><td>ValidatingAdmissionPolicy</td><td>基于 CEL 的内置校验策略</td><td>不用部署 webhook 即可做部分策略校验</td></tr>
+<tr><td>Webhook</td><td>调用外部服务做变更或校验</td><td>灵活强，但要注意可用性、超时和失败策略</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Admission Webhook 有什么生产风险？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">可用性风险</div><p>Webhook 服务不可用时，API 写请求可能被阻塞或失败，取决于 failurePolicy。</p></div>
+<div class="qa-section"><div class="qa-section-title">性能风险</div><p>Webhook 增加 API Server 请求延迟，高并发集群下要控制超时和处理耗时。</p></div>
+<div class="qa-section"><div class="qa-section-title">治理建议</div><p>设置合理 timeoutSeconds、namespaceSelector/objectSelector、failurePolicy，并监控 webhook 错误率和延迟。</p></div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>ResourceQuota 与 LimitRange</h3>
+<p>多租户集群必须做资源治理，否则单个团队或任务可能耗尽整个集群资源。ResourceQuota 管 namespace 总量，LimitRange 管单个对象的默认值和上下限。</p>
+<table>
+<tr><th>对象</th><th>控制粒度</th><th>能限制什么</th><th>常见用途</th></tr>
+<tr><td>ResourceQuota</td><td>namespace 总量</td><td>CPU/Memory requests 和 limits、PVC 数量、Service 数量、Pod 数量、GPU 扩展资源</td><td>限制租户总资源消耗</td></tr>
+<tr><td>LimitRange</td><td>单个 Pod/Container/PVC</td><td>默认 requests/limits、最小/最大资源、limit/request ratio</td><td>防止用户不设置 requests 或设置过大/过小</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ResourceQuota 和 LimitRange 怎么配合？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">LimitRange</div><p>给单个容器设置默认 requests/limits 和上下限，避免用户漏填或填得不合理。</p></div>
+<div class="qa-section"><div class="qa-section-title">ResourceQuota</div><p>限制 namespace 总资源使用量，确保一个租户不能无限创建 Pod 或 PVC。</p></div>
+<div class="qa-summary">一句话：LimitRange 管单个对象，ResourceQuota 管整个 namespace。</div>
+</div>
+</div>
+</div>
+<div class="card card-w">
+<h3>Pod Security 与运行时安全</h3>
+<p>安全面试常问 privileged、hostPath、hostNetwork、capabilities、runAsNonRoot 等字段。重点是能解释风险，而不是只背字段名。</p>
+<table>
+<tr><th>字段/能力</th><th>风险</th><th>治理建议</th></tr>
+<tr><td>privileged</td><td>容器获得接近宿主机 root 的能力</td><td>普通业务禁止，系统组件严格审批</td></tr>
+<tr><td>hostPath</td><td>访问宿主机文件，可能读写敏感路径</td><td>限制路径白名单，尽量用 PVC 替代</td></tr>
+<tr><td>hostNetwork</td><td>共享宿主机网络命名空间</td><td>端口冲突、网络隔离减弱，谨慎使用</td></tr>
+<tr><td>capabilities</td><td>额外 Linux capabilities 扩大权限</td><td>默认 drop ALL，只按需添加</td></tr>
+<tr><td>runAsNonRoot</td><td>root 运行增加逃逸风险</td><td>要求非 root 用户运行</td></tr>
+<tr><td>readOnlyRootFilesystem</td><td>根文件系统可写增加篡改风险</td><td>尽可能只读，临时写入使用 emptyDir</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>CRD 与 Operator</h3>
+<p>CRD 和 Operator 是 Kubernetes 扩展能力的核心。CRD 只是扩展 API 类型；Operator 是围绕 CRD 实现自动化运维逻辑的控制器。</p>
+<table>
+<tr><th>概念</th><th>作用</th><th>面试解释</th></tr>
+<tr><td>CRD</td><td>注册自定义资源类型</td><td>让 API Server 能存储和校验新的对象，例如 TrainingJob、ModelService</td></tr>
+<tr><td>Custom Resource</td><td>CRD 的实例</td><td>用户声明期望状态，例如副本数、模型路径、资源需求</td></tr>
+<tr><td>Controller</td><td>监听资源变化并执行 reconcile</td><td>把实际状态收敛到期望状态</td></tr>
+<tr><td>Operator</td><td>领域化控制器</td><td>把复杂系统的部署、升级、扩缩容、故障恢复自动化</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 Operator 适合复杂有状态服务？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">复杂流程</div><p>数据库、训练平台、模型服务往往有备份、扩容、主从切换、版本升级等领域流程，单靠 Deployment 难以表达。</p></div>
+<div class="qa-section"><div class="qa-section-title">Reconcile</div><p>Operator 通过 Informer watch 资源变化，持续执行 reconcile，把实际状态修正到用户声明的期望状态。</p></div>
+<div class="qa-summary">CRD 定义 API，Operator 实现自动化运维。</div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>官方参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/"><div class="resource-type">official</div><div class="resource-title">RBAC Authorization</div><div class="resource-desc">Role、ClusterRole、RoleBinding、ClusterRoleBinding。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/security/service-accounts/"><div class="resource-type">official</div><div class="resource-title">Service Accounts</div><div class="resource-desc">Pod 身份、ServiceAccount token 和访问 API Server。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/"><div class="resource-type">official</div><div class="resource-title">Admission Controllers</div><div class="resource-desc">准入控制器与请求处理链路。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/policy/resource-quotas/"><div class="resource-type">official</div><div class="resource-title">Resource Quotas</div><div class="resource-desc">namespace 级资源配额治理。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/"><div class="resource-type">official</div><div class="resource-title">Custom Resources</div><div class="resource-desc">CRD、自定义资源和 Kubernetes API 扩展。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-9" aria-labelledby="kubernetes-tabs-tab-9" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>AI Infra 专项</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>AI Infra 视角下的 K8s 高频问题</h3>
+<p>AI Infra 面试不会只问 Kubernetes 基础，还会把 K8s 和 GPU、训练任务、推理服务、多租户资源治理结合起来。下面这些内容需要和前面的调度、资源模型、网络、存储一起理解。</p>
+<table>
+<tr><th>方向</th><th>核心问题</th><th>为什么高频</th></tr>
+<tr><td>GPU Device Plugin</td><td>K8s 如何识别和分配 GPU</td><td>原生 K8s 不知道 GPU 细节，需要 device plugin 上报扩展资源</td></tr>
+<tr><td>GPU 共享</td><td>MIG、MPS、time-slicing 的差异</td><td>推理和训练资源利用率优化的基础</td></tr>
+<tr><td>Topology</td><td>CPU、NUMA、GPU、NIC 拓扑如何影响性能</td><td>大模型训练通信和数据加载对拓扑敏感</td></tr>
+<tr><td>Gang Scheduling</td><td>分布式训练为什么要整体调度</td><td>单个 worker 先启动没有意义，还会占资源</td></tr>
+<tr><td>Kueue / Volcano</td><td>队列、配额、公平性、PodGroup</td><td>原生 scheduler 更偏逐 Pod 调度，批任务需要更强队列语义</td></tr>
+<tr><td>多租户治理</td><td>资源配额、优先级、抢占、借用和回收</td><td>平台要在利用率、公平性、稳定性之间平衡</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>GPU Device Plugin</h3>
+<p>Device Plugin 是 kubelet 的插件机制，用于把 GPU 这种非标准资源接入 Kubernetes。NVIDIA GPU 通常通过 NVIDIA device plugin 上报为 <code>nvidia.com/gpu</code> 扩展资源。</p>
+<ol>
+<li>NVIDIA device plugin 以 DaemonSet 形式运行在 GPU 节点上。</li>
+<li>插件发现本机 GPU 设备，并通过 gRPC 向 kubelet 注册资源名，例如 <code>nvidia.com/gpu</code>。</li>
+<li>kubelet 把 GPU 数量写入 Node 的 allocatable/capacity。</li>
+<li>用户在 Pod requests/limits 中声明 <code>nvidia.com/gpu: 1</code>。</li>
+<li>scheduler 根据节点 allocatable 和已分配 requests 选择节点。</li>
+<li>Pod 落到节点后，kubelet 调用 device plugin Allocate，拿到设备路径、环境变量、mount 信息。</li>
+<li>容器运行时把对应 GPU 注入容器。</li>
+</ol>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 nvidia.com/gpu 通常只能整数分配？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">Extended Resource 语义</div><p>Kubernetes 扩展资源按离散资源计数，调度器只做 requests 级别的整数扣减。</p></div>
+<div class="qa-section"><div class="qa-section-title">设备隔离语义</div><p>一张物理 GPU 作为一个设备分配给容器时，默认是整卡语义；调度器并不知道卡内显存、SM、带宽如何切分。</p></div>
+<div class="qa-section"><div class="qa-section-title">共享方案</div><p>如果要细粒度共享，需要 MIG、MPS、time-slicing 或厂商/平台自定义方案把资源抽象成新的可调度单元。</p></div>
+</div>
+</div>
+</div>
+<div class="card card-w">
+<h3>MIG、MPS、time-slicing 对比</h3>
+<table>
+<tr><th>方案</th><th>隔离粒度</th><th>适合场景</th><th>优点</th><th>不足</th></tr>
+<tr><td>MIG</td><td>硬件级切分 GPU 实例</td><td>A100/H100 等支持 MIG 的推理、多租户隔离</td><td>隔离更强，资源边界清晰，可作为离散设备上报</td><td>切分规格固定，重配置成本高，不适合所有训练场景</td></tr>
+<tr><td>MPS</td><td>多个进程共享同一 GPU 上下文</td><td>小模型推理、提高并发利用率</td><td>减少上下文切换，提高小任务吞吐</td><td>隔离弱，显存和错误隔离需要额外治理</td></tr>
+<tr><td>time-slicing</td><td>时间片共享 GPU</td><td>低优先级任务、开发测试、小推理任务</td><td>接入简单，提高卡利用率</td><td>性能抖动明显，不是强隔离，显存仍可能互相影响</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 面试中如何比较 MIG、MPS、time-slicing？</div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>MIG</strong>硬件隔离更强，适合多租户推理和明确规格切分。</div><div class="qa-mini"><strong>MPS</strong>偏运行时共享，提高小 kernel 或小推理任务并发。</div><div class="qa-mini"><strong>time-slicing</strong>偏调度共享，简单但抖动更大。</div><div class="qa-mini"><strong>选择原则</strong>强隔离选 MIG，吞吐共享看 MPS，开发测试可用 time-slicing。</div></div>
+</div>
+</div>
+</div>
+<div class="card card-m">
+<h3>Topology Manager 与拓扑感知调度</h3>
+<p>AI 训练对拓扑敏感：GPU 与 GPU 之间是否有 NVLink，GPU 与 NIC 是否同 NUMA，CPU 与 GPU 是否跨 socket，都会影响数据加载和通信效率。</p>
+<table>
+<tr><th>机制</th><th>工作位置</th><th>解决什么</th><th>局限</th></tr>
+<tr><td>Topology Manager</td><td>kubelet 节点侧</td><td>协调 CPU Manager、Device Manager、Memory Manager 的 NUMA 对齐</td><td>发生在节点内资源分配阶段，不负责跨节点选择</td></tr>
+<tr><td>CPU Manager</td><td>kubelet 节点侧</td><td>为 Guaranteed Pod 分配独占 CPU core</td><td>主要解决 CPU 绑定，不理解 GPU 通信拓扑</td></tr>
+<tr><td>Device Manager</td><td>kubelet 节点侧</td><td>管理 device plugin 上报设备并调用 Allocate</td><td>默认调度器只看到资源数量，不知道具体 GPU 拓扑</td></tr>
+<tr><td>自定义调度插件</td><td>scheduler 控制面</td><td>跨节点选择拓扑更优的节点</td><td>需要维护拓扑元数据和调度器缓存一致性</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Topology Manager 和自定义调度插件分别解决什么？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">Topology Manager</div><p>节点内做资源对齐，例如 CPU、内存、设备尽量在同一个 NUMA node，避免 kubelet 分配阶段产生差拓扑。</p></div>
+<div class="qa-section"><div class="qa-section-title">自定义调度插件</div><p>调度阶段选择哪个节点更好，例如优先选择 NVLink 完整、GPU/NIC 拓扑更适合训练任务的节点。</p></div>
+<div class="qa-summary">一句话：调度插件选节点，Topology Manager 在节点内分配资源。</div>
+</div>
+</div>
+</div>
+<div class="card card-s">
+<h3>Gang Scheduling 与分布式训练</h3>
+<p>分布式训练通常需要一组 Pod 同时运行。例如 8 个 worker 中只有 2 个启动，训练无法有效开始，却已经占用了 GPU。Gang Scheduling 的目标是“要么一起运行，要么都不占资源”。</p>
+<table>
+<tr><th>概念</th><th>含义</th><th>为什么重要</th></tr>
+<tr><td>PodGroup</td><td>一组需要整体调度的 Pod</td><td>表达分布式任务的整体性</td></tr>
+<tr><td>minAvailable</td><td>最小可运行 Pod 数</td><td>不足则不放行，避免部分 worker 空占资源</td></tr>
+<tr><td>Queue</td><td>任务队列</td><td>支持租户、公平性和资源配额管理</td></tr>
+<tr><td>Preemption / Reclaim</td><td>抢占或回收资源</td><td>高优先级训练任务或配额回收需要</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 原生 kube-scheduler 能不能做 Gang Scheduling？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">理论上</div><p>可以通过 Permit、Reserve 等插件实现部分整体准入逻辑。</p></div>
+<div class="qa-section"><div class="qa-section-title">生产上</div><p>Gang Scheduling 还需要 PodGroup、队列、公平性、配额、资源回收、任务生命周期等能力，因此通常使用 Volcano、Kueue 或平台自研调度系统。</p></div>
+<div class="qa-summary">面试回答：原生框架能扩展，但完整批调度语义通常交给 Volcano/Kueue。</div>
+</div>
+</div>
+</div>
+<div class="card card-m">
+<h3>Kueue 与 Volcano</h3>
+<table>
+<tr><th>系统</th><th>定位</th><th>核心能力</th><th>适用场景</th></tr>
+<tr><td>Kueue</td><td>Kubernetes 原生批任务队列管理</td><td>ClusterQueue、LocalQueue、ResourceFlavor、admission、quota borrowing</td><td>批任务准入控制、配额、公平共享，与 Job、RayJob、MPIJob 等集成</td></tr>
+<tr><td>Volcano</td><td>批计算调度系统</td><td>PodGroup、Queue、Gang、Fair Share、Preemption、多种调度插件</td><td>AI、大数据、HPC 等批任务调度</td></tr>
+<tr><td>原生 scheduler</td><td>通用 Pod 调度器</td><td>Filter、Score、Bind、Preemption、插件框架</td><td>在线服务、通用 workload、基础调度</td></tr>
+</table>
+<p>面试时不要简单说“Volcano 更强”。更准确的表述是：原生 scheduler 是逐 Pod 通用调度器，Kueue/Volcano 提供批任务层面的队列、准入和整体调度语义。</p>
+</div>
+<div class="card card-w">
+<h3>分布式训练部署模式</h3>
+<table>
+<tr><th>模式</th><th>K8s 对象</th><th>关键点</th><th>风险</th></tr>
+<tr><td>StatefulSet + Headless Service</td><td>StatefulSet、Headless Service</td><td>稳定 DNS，Pod ordinal 可推导 rank</td><td>弹性和失败恢复需要额外逻辑</td></tr>
+<tr><td>Job + 自定义启动脚本</td><td>Job、ConfigMap、Service</td><td>适合一次性训练，脚本生成 master addr、rank、world size</td><td>原生 Job 不提供强 Gang Scheduling</td></tr>
+<tr><td>Kubeflow Training Operator</td><td>PyTorchJob、MPIJob、TFJob</td><td>领域化 CRD，封装训练角色</td><td>需要理解 operator 和底层 Pod/Service 的映射</td></tr>
+<tr><td>Ray on K8s</td><td>RayCluster、RayJob</td><td>适合 Ray 分布式训练和推理</td><td>资源调度有 K8s 和 Ray 双层调度</td></tr>
+</table>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Headless Service 为什么适合分布式训练？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">直连需求</div><p>NCCL、Parameter Server、MPI 等训练通信需要 worker 之间直接连接，而不是通过 Service 负载均衡随机转发。</p></div>
+<div class="qa-section"><div class="qa-section-title">稳定发现</div><p>Headless Service 配合 StatefulSet 会返回每个 Pod 的稳定 DNS，worker 可以解析其他 worker 地址。</p></div>
+<div class="qa-summary">一句话：Headless Service 用于成员发现，不用于负载均衡。</div>
+</div>
+</div>
+</div>
+<div class="card card-d">
+<h3>多租户 GPU 资源治理</h3>
+<p>AI 平台要同时考虑资源利用率、公平性、隔离性和任务优先级。单纯 ResourceQuota 只能限制上限，不足以表达队列、公平共享、借用、抢占和回收。</p>
+<table>
+<tr><th>机制</th><th>解决什么</th><th>局限/注意</th></tr>
+<tr><td>Namespace ResourceQuota</td><td>限制租户最大资源占用</td><td>静态，不擅长表达资源借用和队列公平性</td></tr>
+<tr><td>PriorityClass + Preemption</td><td>高优先级任务抢占低优先级任务</td><td>会造成被抢占任务中断，训练场景要结合 checkpoint</td></tr>
+<tr><td>Queue</td><td>按团队或业务线排队</td><td>需要调度系统支持公平性和准入控制</td></tr>
+<tr><td>Quota borrowing</td><td>空闲资源可被其他队列临时借用</td><td>需要资源回收策略，避免被借用方回来后无资源</td></tr>
+<tr><td>Preemption/Reclaim</td><td>回收被借用资源或保障高优任务</td><td>要平衡效率和稳定性</td></tr>
+<tr><td>Checkpoint</td><td>降低抢占损失</td><td>训练框架和平台需要支持保存/恢复</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>大规模集群稳定性</h3>
+<p>大规模 AI 集群中，瓶颈不只在 GPU。API Server、etcd、scheduler、controller、kubelet、日志和监控都会成为稳定性风险。</p>
+<table>
+<tr><th>组件</th><th>风险</th><th>优化方向</th></tr>
+<tr><td>etcd</td><td>写入延迟、数据库膨胀、watch 压力</td><td>SSD、compaction、defrag、event 分离、控制对象 churn</td></tr>
+<tr><td>API Server</td><td>QPS 高、LIST/WATCH 压力、Webhook 延迟</td><td>watch cache、APF、限流、减少全量 list、优化 webhook</td></tr>
+<tr><td>scheduler</td><td>调度吞吐不足、Filter/Score 插件耗时</td><td>减少候选节点、优化插件、缓存预计算、profile 拆分</td></tr>
+<tr><td>controller</td><td>reconcile 风暴、队列积压</td><td>限速队列、指数退避、减少无意义更新</td></tr>
+<tr><td>kubelet</td><td>节点上 Pod 过多、镜像/日志/磁盘压力</td><td>控制节点密度、镜像 GC、日志轮转、资源预留</td></tr>
+<tr><td>监控日志</td><td>高基数指标和日志风暴</td><td>控制 label cardinality、采样、分级采集</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>官方与扩展参考</h3>
+<div class="resource-grid">
+<a class="resource-card" href="https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/"><div class="resource-type">official</div><div class="resource-title">Device Plugins</div><div class="resource-desc">GPU 等硬件资源接入 Kubernetes 的官方机制。</div></a>
+<a class="resource-card" href="https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/"><div class="resource-type">official</div><div class="resource-title">Topology Manager</div><div class="resource-desc">节点侧 CPU、内存、设备 NUMA 对齐策略。</div></a>
+<a class="resource-card" href="https://github.com/NVIDIA/k8s-device-plugin"><div class="resource-type">github</div><div class="resource-title">NVIDIA k8s-device-plugin</div><div class="resource-desc">NVIDIA GPU device plugin 官方实现。</div></a>
+<a class="resource-card" href="https://kueue.sigs.k8s.io/"><div class="resource-type">project</div><div class="resource-title">Kueue</div><div class="resource-desc">Kubernetes 原生批任务队列、配额和准入控制。</div></a>
+<a class="resource-card" href="https://volcano.sh/"><div class="resource-type">project</div><div class="resource-title">Volcano</div><div class="resource-desc">批计算、AI、HPC 场景的调度系统。</div></a>
+<a class="resource-card" href="https://www.kubeflow.org/docs/components/training/"><div class="resource-type">project</div><div class="resource-title">Kubeflow Training Operator</div><div class="resource-desc">PyTorchJob、MPIJob、TFJob 等训练任务 CRD。</div></a>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-10" aria-labelledby="kubernetes-tabs-tab-10" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频问答</h2></div><div class="tab-panel-body"><div class="card card-s">
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 一个 Pod 从创建到运行经历了什么？</div>
 <div class="qa-a">
@@ -134,11 +1120,19 @@
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Informer 机制是什么？为什么不直接轮询 API Server？</div>
-<div class="qa-a"><p><strong>Informer</strong> 是 client-go 提供的本地缓存 + Watch 机制。首次 List 获取全量数据存入本地缓存（Store），之后通过 Watch 接收增量事件（Added/Modified/Deleted）。相比轮询：(1) 实时性——事件驱动而非定期拉取；(2) 性能——减少 API Server 负载；(3) 可靠性——Watch 断线后通过 ResourceVersion 续接。Informer 还包含 Indexer（高效查询）和 WorkQueue（去重合并）。</p></div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">机制</div><p>Informer 是 client-go 提供的本地缓存 + Watch 机制。首次 List 获取全量数据存入本地 Store，之后通过 Watch 接收 Added/Modified/Deleted 增量事件。</p></div>
+<div class="qa-grid"><div class="qa-mini"><strong>实时性</strong>事件驱动，而不是定期轮询。</div><div class="qa-mini"><strong>性能</strong>减少 API Server 压力，避免大量重复查询。</div><div class="qa-mini"><strong>可靠性</strong>Watch 断线后可以通过 ResourceVersion 续接。</div></div>
+<div class="qa-summary">Informer = List/Watch + 本地缓存 + 事件回调 + WorkQueue。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: etcd 为什么是性能瓶颈？怎么优化？</div>
-<div class="qa-a"><p>etcd 是集群唯一的持久化存储，所有写操作都要经过 Raft 共识（至少过半节点确认）。大集群下 event、configmap、secret 的频繁写入导致延迟上升。优化方法：(1) SSD 磁盘降低 fsync 延迟；(2) 分离 event 到独立 etcd 集群；(3) API Server 启用 watch cache；(4) 合理设置 compaction 周期减小数据库体积。</p></div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">为什么是瓶颈</div><p>etcd 是集群唯一的持久化存储，写操作需要经过 Raft 共识，至少过半节点确认后才算成功。</p></div>
+<div class="qa-section"><div class="qa-section-title">大集群压力来源</div><p>event、configmap、secret、Pod 状态等频繁写入会增加 fsync 和共识延迟。</p></div>
+<div class="qa-grid"><div class="qa-mini"><strong>磁盘</strong>使用 SSD 降低 fsync 延迟。</div><div class="qa-mini"><strong>隔离</strong>将 event 分离到独立 etcd 集群。</div><div class="qa-mini"><strong>缓存</strong>API Server 启用 watch cache。</div><div class="qa-mini"><strong>维护</strong>合理设置 compaction，控制数据库体积。</div></div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何实现自定义调度器？有几种方案？</div>
@@ -170,11 +1164,18 @@
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Device Plugin 怎么工作？</div>
-<div class="qa-a"><p>Device Plugin 是 kubelet 的扩展机制，用于管理非标准硬件资源。工作流程：(1) Device Plugin 启动后通过 gRPC 向 kubelet 注册资源名称（如 nvidia.com/gpu）；(2) kubelet 向 API Server 上报节点有多少该资源；(3) 调度器基于这些资源做 Filter/Score；(4) Pod 调度到节点后，kubelet 调用 Device Plugin 的 Allocate 方法获取设备信息（如 /dev/nvidia0）；(5) 设备信息注入容器环境。NVIDIA 的 k8s-device-plugin 就是这样实现 GPU 调度的。</p></div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">定位</div><p>Device Plugin 是 kubelet 的扩展机制，用于管理 GPU、FPGA、RDMA 等非标准硬件资源。</p></div>
+<ol><li>Device Plugin 启动后通过 gRPC 向 kubelet 注册资源名称，例如 nvidia.com/gpu。</li><li>kubelet 向 API Server 上报节点 allocatable 中的扩展资源数量。</li><li>调度器基于 Pod requests 和节点 allocatable 做过滤和打分。</li><li>Pod 调度到节点后，kubelet 调用 Device Plugin 的 Allocate 方法获取设备信息。</li><li>设备路径、环境变量等信息被注入容器。</li></ol>
+<div class="qa-summary">NVIDIA k8s-device-plugin 就是典型实现：上报 GPU 资源，并在容器启动前分配具体设备。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
-<div class="qa-a"><p>ClusterIP Service 有一个虚拟 IP，kube-proxy 做负载均衡。Headless Service（clusterIP: None）不分配虚拟 IP，DNS 查询直接返回所有后端 Pod 的 IP。<strong>在 AI Infra 中的用途</strong>：分布式训练需要所有 worker 直接通信（NCCL AllReduce），用 Headless Service 让每个 Pod 能解析其他 Pod 的 IP，建立直连。</p></div>
+<div class="qa-a">
+<div class="qa-grid"><div class="qa-mini"><strong>ClusterIP</strong>有虚拟 IP，由 kube-proxy 做服务转发和负载均衡。</div><div class="qa-mini"><strong>Headless</strong>clusterIP: None，不分配虚拟 IP，DNS 直接返回后端 Pod IP。</div></div>
+<div class="qa-section"><div class="qa-section-title">AI Infra 用途</div><p>分布式训练需要 worker 之间直接通信，例如 NCCL AllReduce。Headless Service 可以让每个 Pod 解析其他 Pod 的 IP，建立点对点连接。</p></div>
+</div>
 </div>
 </div></div></article></div></section>
 </div>

@@ -1,11 +1,14 @@
 {
   "title": "Kubernetes 核心",
-  "subtitle": "架构 · Scheduling Framework · 资源模型 · 高频问答",
+  "subtitle": "架构 · 调度 · 资源 · Workload · 网络 · 存储 · 排障 · 安全 · AI Infra",
   "kicker": "Platform Infrastructure",
   "tags": [
     "k8s",
     "scheduler",
-    "resource-model"
+    "workload",
+    "networking",
+    "storage",
+    "gpu"
   ],
   "output": "pages/ai-infra/kubernetes/index.html",
   "layout": [
@@ -20,14 +23,44 @@
           "file": "01-architecture.md"
         },
         {
-          "title": "Scheduling Framework",
-          "description": "11 个扩展点、三队列、抢占机制",
+          "title": "调度体系",
+          "description": "Scheduling Framework、Profile、插件、队列、抢占",
           "file": "02-scheduling-framework.md"
         },
         {
           "title": "资源模型",
           "description": "Requests/Limits、QoS、Extended Resource",
           "file": "03-resource-model.md"
+        },
+        {
+          "title": "Pod 与 Workload",
+          "description": "生命周期、探针、Deployment、StatefulSet、Job",
+          "file": "05-pod-workloads.md"
+        },
+        {
+          "title": "Service 与网络",
+          "description": "CNI、Service、kube-proxy、DNS、NetworkPolicy",
+          "file": "06-networking-service.md"
+        },
+        {
+          "title": "存储与 CSI",
+          "description": "PV/PVC、StorageClass、CSI、StatefulSet 存储",
+          "file": "07-storage-csi.md"
+        },
+        {
+          "title": "故障排查",
+          "description": "Pending、CrashLoop、镜像、Service、Node NotReady",
+          "file": "08-troubleshooting.md"
+        },
+        {
+          "title": "安全与准入",
+          "description": "RBAC、ServiceAccount、Admission、Quota、Operator",
+          "file": "09-security-admission.md"
+        },
+        {
+          "title": "AI Infra 专项",
+          "description": "GPU、MIG/MPS、Topology、Gang、Kueue、Volcano",
+          "file": "10-ai-infra-k8s.md"
         },
         {
           "title": "面试高频问答",
@@ -39,11 +72,11 @@
   ],
   "sections": [
     {
-      "title": "Kubernetes 架构概览",
+      "title": "架构概览",
       "file": "01-architecture.md"
     },
     {
-      "title": "Scheduling Framework 详解",
+      "title": "调度体系",
       "file": "02-scheduling-framework.md"
     },
     {
@@ -51,7 +84,31 @@
       "file": "03-resource-model.md"
     },
     {
-      "title": "K8s 面试高频问答",
+      "title": "Pod 与 Workload",
+      "file": "05-pod-workloads.md"
+    },
+    {
+      "title": "Service 与网络",
+      "file": "06-networking-service.md"
+    },
+    {
+      "title": "存储与 CSI",
+      "file": "07-storage-csi.md"
+    },
+    {
+      "title": "故障排查",
+      "file": "08-troubleshooting.md"
+    },
+    {
+      "title": "安全与准入",
+      "file": "09-security-admission.md"
+    },
+    {
+      "title": "AI Infra 专项",
+      "file": "10-ai-infra-k8s.md"
+    },
+    {
+      "title": "面试高频问答",
       "file": "04-qa.md"
     }
   ]
