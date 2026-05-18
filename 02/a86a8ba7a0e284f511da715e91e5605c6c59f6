@@ -1,0 +1,280 @@
+content/ai-infra/kubernetes/topic.json
+  96471e91abeb95b4 27 gitai:{"mixed_line_ranges":[{"Single":27}],"operations":[{"operation_id":"6a09fd3ef083af8267cf25e9","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Single":27}]}]}
+assets/style.css
+  96471e91abeb95b4 256,280,317-318,328,338-339,348-356,359 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09fd3ef083af8267cf25e9","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Single":256},{"Single":280},{"Range":[317,318]},{"Single":328},{"Range":[338,339]},{"Range":[348,356]},{"Single":359}]}]}
+content/ai-infra/kubernetes/01-architecture.md
+  96471e91abeb95b4 1-68,70-91,94-109 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09fd3ef083af8267cf25e9","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Range":[1,68]},{"Range":[70,91]},{"Range":[94,109]}]}]}
+assets/script.js
+  96471e91abeb95b4 70,88,93,95-120,122-124,141-175,199-200 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a09fd3ef083af8267cf25e9","tool_type":"agent","tool_id":"apply_patch","line_ranges":[{"Single":70},{"Single":88},{"Single":93},{"Range":[95,120]},{"Range":[122,124]},{"Range":[141,175]},{"Range":[199,200]}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "02a86a8ba7a0e284f511da715e91e5605c6c59f6",
+  "prompts": {
+    "96471e91abeb95b4": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a09f278f083af8267cf2372",
+        "model": "gpt-5.5__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>",
+      "messages": [],
+      "total_additions": 201,
+      "total_deletions": 74,
+      "accepted_lines": 192,
+      "overriden_lines": 1
+    }
+  },
+  "attestation_metadata": {
+    "assets/script.js": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Single": 70
+          },
+          {
+            "Single": 88
+          },
+          {
+            "Single": 93
+          },
+          {
+            "Range": [
+              95,
+              120
+            ]
+          },
+          {
+            "Range": [
+              122,
+              124
+            ]
+          },
+          {
+            "Range": [
+              141,
+              175
+            ]
+          },
+          {
+            "Range": [
+              199,
+              200
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09fd3ef083af8267cf25e9",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Single": 70
+              },
+              {
+                "Single": 88
+              },
+              {
+                "Single": 93
+              },
+              {
+                "Range": [
+                  95,
+                  120
+                ]
+              },
+              {
+                "Range": [
+                  122,
+                  124
+                ]
+              },
+              {
+                "Range": [
+                  141,
+                  175
+                ]
+              },
+              {
+                "Range": [
+                  199,
+                  200
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "assets/style.css": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Single": 256
+          },
+          {
+            "Single": 280
+          },
+          {
+            "Range": [
+              317,
+              318
+            ]
+          },
+          {
+            "Single": 328
+          },
+          {
+            "Range": [
+              338,
+              339
+            ]
+          },
+          {
+            "Range": [
+              348,
+              356
+            ]
+          },
+          {
+            "Single": 359
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09fd3ef083af8267cf25e9",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Single": 256
+              },
+              {
+                "Single": 280
+              },
+              {
+                "Range": [
+                  317,
+                  318
+                ]
+              },
+              {
+                "Single": 328
+              },
+              {
+                "Range": [
+                  338,
+                  339
+                ]
+              },
+              {
+                "Range": [
+                  348,
+                  356
+                ]
+              },
+              {
+                "Single": 359
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/kubernetes/01-architecture.md": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              68
+            ]
+          },
+          {
+            "Range": [
+              70,
+              91
+            ]
+          },
+          {
+            "Range": [
+              94,
+              109
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a09fd3ef083af8267cf25e9",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  68
+                ]
+              },
+              {
+                "Range": [
+                  70,
+                  91
+                ]
+              },
+              {
+                "Range": [
+                  94,
+                  109
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/kubernetes/topic.json": [
+      {
+        "hash": "96471e91abeb95b4",
+        "line_ranges": [
+          {
+            "Single": 27
+          }
+        ],
+        "mixed_line_ranges": [
+          {
+            "Single": 27
+          }
+        ],
+        "operations": [
+          {
+            "operation_id": "6a09fd3ef083af8267cf25e9",
+            "tool_type": "agent",
+            "tool_id": "apply_patch",
+            "line_ranges": [
+              {
+                "Single": 27
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "96471e91abeb95b4": {
+      "tool": "trae",
+      "conversation_id": "6a09f278f083af8267cf2372",
+      "session_id": "6a09f278f083af8267cf2372",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
