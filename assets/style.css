@@ -194,6 +194,7 @@ h1::after{
   inset:0 auto 0 0;
   width:5px;
   background:var(--pri);
+  pointer-events:none;
 }
 .idx-card::after{
   content:'';
@@ -205,6 +206,7 @@ h1::after{
   border-radius:999px;
   background:var(--pri-l);
   opacity:.72;
+  pointer-events:none;
 }
 .idx-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:rgba(37,99,235,.38)}
 .idx-card.c1::before{background:var(--pri)}.idx-card.c1::after{background:var(--pri-l)}
