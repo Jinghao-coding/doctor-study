@@ -1,243 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPU 硬件与资源共享 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css">
-</head>
-<body>
-<nav class="topnav">
-  <a class="home" href="../../../index.html">← 首页</a>
-  <span class="sep">·</span>
-  <a href="../../../pages/ai-infra/papers/index.html">论文工作</a>
-  <a href="../../../pages/ai-infra/gpu/index.html">GPU</a>
-  <a href="../../../pages/ai-infra/llm-inference/index.html">LLM 推理系统</a>
-  <a href="../../../pages/ai-infra/kubernetes/index.html">Kubernetes 核心</a>
-  <a href="../../../pages/ai-infra/scheduling/index.html">任务调度理论</a>
-  <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
-  <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
-  <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
-</nav>
-<div class="wrap">
-<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">AI Infra Foundation</div><h1>GPU 硬件与资源共享</h1><p class="sub">硬件架构 · 性能指标 · 性能预测 · MIG/MPS · CUDA VMM</p><div class="hero-tags"><span>gpu</span><span>hardware</span><span>sharing</span><span>performance</span><span>prediction</span><span>interview</span></div></div></section>
-
-<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="GPU 内容模块"><button class="tab-button active" type="button" role="tab" id="gpu-tabs-tab-1" aria-controls="gpu-tabs-panel-1" aria-selected="true"><span class="tab-title">硬件基础</span><span class="tab-desc">架构、A100/H100/H200、显存带宽</span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-2" aria-controls="gpu-tabs-panel-2" aria-selected="false"><span class="tab-title">共享方式</span><span class="tab-desc">MIG、MPS、时间片、CUDA VMM</span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-3" aria-controls="gpu-tabs-panel-3" aria-selected="false"><span class="tab-title">性能指标</span><span class="tab-desc">TFLOPS、显存带宽、Roofline、利用率、互联带宽</span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-4" aria-controls="gpu-tabs-panel-4" aria-selected="false"><span class="tab-title">性能预测指标</span><span class="tab-desc">MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="gpu-tabs-panel-1" aria-labelledby="gpu-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>硬件基础</h2></div><div class="tab-panel-body"><div class="card card-m">
-<h3>GPU 架构要点</h3>
-<table>
-<tr><th>概念</th><th>说明</th></tr>
-<tr><td>SM（Streaming Multiprocessor）</td><td>GPU 基本计算单元，包含若干 CUDA Core 和 Tensor Core。A100 有 108 个 SM</td></tr>
-<tr><td>Tensor Core</td><td>矩阵乘加专用硬件。A100 第三代支持 TF32/FP16/BF16/INT8，H100 第四代新增 FP8</td></tr>
-<tr><td>HBM（High Bandwidth Memory）</td><td>高带宽显存。A100 80GB 版带宽 2TB/s，H100 80GB 版 3.35TB/s</td></tr>
-<tr><td>NVLink</td><td>GPU 间高速互联。A100 NVLink 3.0 单向 300GB/s（6 条），H100 NVLink 4.0 单向 450GB/s</td></tr>
-<tr><td>NVSwitch</td><td>多 GPU 全互联交换芯片。DGX A100 用 6 个 NVSwitch 连 8 块 GPU</td></tr>
-<tr><td>PCIe</td><td>CPU-GPU 互联。Gen4 x16 单向 32GB/s，Gen5 翻倍到 64GB/s</td></tr>
-</table>
-</div>
-<div class="card card-s">
-<h3>主流 GPU 对比</h3>
-<table>
-<tr><th>指标</th><th>A100 (80GB)</th><th>H100 (80GB)</th><th>H200 (141GB)</th></tr>
-<tr><td>架构</td><td>Ampere</td><td>Hopper</td><td>Hopper</td></tr>
-<tr><td>SM 数</td><td>108</td><td>132</td><td>132</td></tr>
-<tr><td>FP16 算力</td><td>312 TFLOPS</td><td>989 TFLOPS</td><td>989 TFLOPS</td></tr>
-<tr><td>显存</td><td>80GB HBM2e</td><td>80GB HBM3</td><td>141GB HBM3e</td></tr>
-<tr><td>带宽</td><td>2.0 TB/s</td><td>3.35 TB/s</td><td>4.8 TB/s</td></tr>
-<tr><td>TDP</td><td>400W</td><td>700W</td><td>700W</td></tr>
-</table>
-</div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-2" aria-labelledby="gpu-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>共享方式</h2></div><div class="tab-panel-body"><table>
-<tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
-<tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离</td></tr>
-<tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并行执行 kernel</td><td>训练合用、I/O 互补</td></tr>
-<tr><td>时间片</td><td>时间级复用</td><td>CUDA 调度器轮换上下文</td><td>轻量共享、交互式</td></tr>
-<tr><td>CUDA VMM</td><td>虚拟内存</td><td>虚拟地址空间超配，物理页按需映射</td><td>KV 缓存弹性管理</td></tr>
-<tr><td>vGPU</td><td>虚拟化</td><td>Hypervisor 层虚拟化 GPU</td><td>云服务多租户</td></tr>
-</table>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: MIG 和 MPS 的本质区别？</div>
-<div class="qa-a"><p><strong>MIG</strong> 是硬件级切分——GPU 被物理切成若干独立实例，每个实例有自己的 SM、显存控制器和缓存，互相完全隔离，类似物理分区。<strong>MPS</strong> 是软件级复用——多个进程共享同一个 GPU 上下文，kernel 可以并行执行在不同 SM 上，但共享显存和缓存，有干扰风险。MIG 安全但粒度粗（A100 最多 7 个实例），MPS 灵活但需要干扰控制。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
-<div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
-</div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-3" aria-labelledby="gpu-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标</h2></div><div class="tab-panel-body"><div class="card card-m">
-<h3>GPU 性能指标全景</h3>
-<p>GPU 性能优化和面试中，必须掌握核心性能指标的定义、计算方式和实际意义。这些指标决定了模型训练/推理的效率和成本。</p>
-<table>
-<tr><th>指标类别</th><th>具体指标</th><th>定义</th><th>面试重点</th></tr>
-<tr><td>计算性能</td><td>TFLOPS / GFLOPS</td><td>每秒浮点运算次数</td><td>理论峰值 vs 实际利用率，A100 FP16 312 TFLOPS 是理论值</td></tr>
-<tr><td>显存带宽</td><td>GB/s</td><td>GPU 与 HBM 之间的数据传输速率</td><td>带宽瓶颈 vs 计算瓶颈，内存密集型算子受带宽限制</td></tr>
-<tr><td>显存容量</td><td>GB</td><td>HBM 可存储的数据总量</td><td>模型参数 + 优化器状态 + 激活值，决定最大可训练模型</td></tr>
-<tr><td>利用率</td><td>GPU Util / Tensor Core Util</td><td>GPU 活跃时间占比 / Tensor Core 活跃占比</td><td>高 GPU Util 不代表高效率，可能是内存拷贝等待</td></tr>
-<tr><td>功耗</td><td>TDP / 实际功耗</td><td>热设计功耗 / 实际运行功耗</td><td>H100 TDP 700W，实际功耗影响数据中心供电和散热</td></tr>
-<tr><td>互联带宽</td><td>NVLink / PCIe GB/s</td><td>GPU 间 / CPU-GPU 数据传输速率</td><td>多卡并行时互联带宽决定通信效率</td></tr>
-</table>
-</div>
-<div class="card card-s">
-<h3>计算性能指标详解</h3>
-<p>TFLOPS 是面试中最常问的计算性能指标，但要区分理论峰值和实际利用率。</p>
-<div class="qa-section"><div class="qa-section-title">理论峰值计算</div>
-<p>TFLOPS = SM 数量 × 每个 SM 的 FMA 单元数 × 时钟频率 × 2（FMA 算两次运算）。<br>
-<p>A100 FP16 Tensor Core：108 SM × 256 ops/clock × 1.41 GHz × 2 = ~312 TFLOPS。&lt;/p&gt;&lt;/div&gt;</p>
-<div class="qa-section"><div class="qa-section-title">实际利用率</div>
-<p>实际 TFLOPS 通常只有理论值的 30%-60%。原因包括：内存带宽瓶颈、数据依赖、kernel launch 开销、通信等待、负载不均衡等。面试中要说明"高 GPU Util 不等于高计算效率"。</p></div>
-<div class="qa-section"><div class="qa-section-title">精度对比</div>
-<table>
-<tr><th>精度</th><th>A100</th><th>H100</th><th>适用场景</th></tr>
-<tr><td>FP64</td><td>9.7 TFLOPS</td><td>34 TFLOPS</td><td>科学计算，AI 很少用</td></tr>
-<tr><td>FP32</td><td>19.5 TFLOPS</td><td>67 TFLOPS</td><td>通用计算，训练推理</td></tr>
-<tr><td>TF32</td><td>156 TFLOPS</td><td>494 TFLOPS</td><td>Tensor Core 加速的 FP32，训练常用</td></tr>
-<tr><td>FP16/BF16</td><td>312 TFLOPS</td><td>989 TFLOPS</td><td>混合精度训练，最常用</td></tr>
-<tr><td>FP8</td><td>不支持</td><td>1979 TFLOPS</td><td>H100 新增，推理和某些训练场景</td></tr>
-<tr><td>INT8</td><td>624 TOPS</td><td>3958 TOPS</td><td>量化推理，吞吐量优先</td></tr>
-</table>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么 H100 FP8 算力是 FP16 的两倍？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">数据位宽减半</div><p>FP8 每个数占 8 bit，FP16 占 16 bit。同样的寄存器和带宽可以处理两倍数量的数据。</p></div>
-<div class="qa-section"><div class="qa-section-title">Tensor Core 支持</div><p>H100 第四代 Tensor Core 原生支持 FP8 矩阵运算，硬件层面做了优化。</p></div>
-<div class="qa-section"><div class="qa-section-title">精度权衡</div><p>FP8 精度较低，需要配合精度缩放（scaling）和损失回传稳定技术。不是所有模型都能直接用 FP8。</p></div>
-<div class="qa-summary">FP8 = 精度换速度，适合对精度不敏感的推理场景，或配合 Transformer Engine 的训练场景。</div>
-</div>
-</div>
-</div>
-<div class="card card-s">
-<h3>显存带宽与 Roofline 模型</h3>
-<p>显存带宽是 GPU 性能的关键瓶颈之一。Roofline 模型帮助判断算子是计算瓶颈还是带宽瓶颈。</p>
-<div class="qa-section"><div class="qa-section-title">带宽定义</div>
-<p>显存带宽 = 显存位宽 × 显存频率 ÷ 8。A100 80GB 使用 HBM2e，位宽 5120-bit，频率 3.2 Gbps，带宽 = 5120 × 3.2 ÷ 8 = 2048 GB/s ≈ 2 TB/s。</p></div>
-<div class="qa-section"><div class="qa-section-title">Roofline 模型</div>
-<p>Roofline 模型描述算子的性能上限：</p>
-<ul>
-<li>计算强度（Arithmetic Intensity）= 计算量 FLOPs / 访存量 Bytes</li>
-<li>如果计算强度 > 峰值 TFLOPS / 带宽 GB/s，算子是计算瓶颈（Compute Bound）</li>
-<li>如果计算强度 < 峰值 TFLOPS / 带宽 GB/s，算子是带宽瓶颈（Memory Bound）</li>
-</ul>
-<p>A100 的"脊点"（Ridge Point）= 312 TFLOPS / 2 TB/s = 156 FLOPs/Byte。计算强度低于 156 的算子受带宽限制。</p>
-</div>
-<div class="qa-section"><div class="qa-section-title">常见算子类型</div>
-<table>
-<tr><th>算子</th><th>计算强度</th><th>瓶颈类型</th><th>优化方向</th></tr>
-<tr><td>矩阵乘法 (GEMM)</td><td>高</td><td>Compute Bound</td><td>Tensor Core、分块、流水线</td></tr>
-<tr><td>Softmax</td><td>低</td><td>Memory Bound</td><td>融合 kernel、减少访存</td></tr>
-<tr><td>LayerNorm</td><td>低</td><td>Memory Bound</td><td>融合到前后算子中</td></tr>
-<tr><td>Attention</td><td>中等</td><td>混合</td><td>FlashAttention、分页 KV Cache</td></tr>
-<tr><td>Embedding Lookup</td><td>低</td><td>Memory Bound</td><td>量化、压缩</td></tr>
-</table>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么 Transformer 的 Attention 是瓶颈？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">计算复杂度</div><p>Self-Attention 的 QK^T 计算量是 O(n²×d)，序列长度 n 增加时平方增长。长序列时计算量巨大。</p></div>
-<div class="qa-section"><div class="qa-section-title">内存访问模式</div><p>Attention 需要频繁读写巨大的 Q、K、V 矩阵和 Attention Score 矩阵，访存量大且不规则，难以利用缓存。</p></div>
-<div class="qa-section"><div class="qa-section-title">优化方案</div><p>FlashAttention 通过分块和重计算减少 HBM 访存；Sparse Attention 减少计算量；MQA/GQA 减少 KV Cache 存储。</p></div>
-<div class="qa-summary">Attention 瓶颈 = 计算量 O(n²) + 访存量大 + 内存访问不规则。FlashAttention 是核心优化手段。</div>
-</div>
-</div>
-</div>
-<div class="card card-w">
-<h3>GPU 利用率指标解读</h3>
-<p>nvidia-smi 显示的 GPU 利用率不等于计算效率。面试中要区分不同利用率指标的含义。</p>
-<table>
-<tr><th>指标</th><th>来源</th><th>含义</th><th>面试陷阱</th></tr>
-<tr><td>GPU Utilization</td><td>nvidia-smi</td><td>GPU 活跃时间占比（采样周期内至少有一个 kernel 在执行的时间比例）</td><td>100% Util 可能是小 kernel 频繁启动，实际吞吐量很低</td></tr>
-<tr><td>Tensor Core Util</td><td>ncu / nsys</td><td>Tensor Core 实际活跃时间占比</td><td>FP32 运算不会用到 Tensor Core，此指标为 0 不代表有问题</td></tr>
-<tr><td>Memory Utilization</td><td>nvidia-smi</td><td>显存带宽使用比例</td><td>高内存利用率说明带宽瓶颈，不一定是好事</td></tr>
-<tr><td>SM Efficiency</td><td>ncu</td><td>SIMD 指令执行效率</td><td>低效率可能是 warp divergence 或资源竞争</td></tr>
-<tr><td>Occupancy</td><td>ncu</td><td>每个 SM 上活跃的 warp 比例</td><td>高 Occupancy 不代表高性能，但低 Occupancy 通常有问题</td></tr>
-</table>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: nvidia-smi 显示 GPU Util 100%，但模型训练很慢，为什么？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">小 kernel 频繁启动</div><p>大量 tiny kernel 导致 GPU 一直在跑，但每个 kernel 只做很少计算。启动开销占主导，有效计算比例低。</p></div>
-<div class="qa-section"><div class="qa-section-title">内存拷贝等待</div><p>CPU-GPU 数据传输（H2D/D2H）期间 GPU 可能在等待，但 nvidia-smi 的采样方式可能显示为活跃。</p></div>
-<div class="qa-section"><div class="qa-section-title">通信瓶颈</div><p>多卡训练时，GPU 可能在等待 NCCL 通信完成，但采样时刚好有通信 kernel 在跑，显示 100% Util。</p></div>
-<div class="qa-section"><div class="qa-section-title">Tensor Core 未使用</div><p>如果代码没有使用混合精度或 Tensor Core，虽然 CUDA Core 在跑，但峰值算力远低于 Tensor Core。</p></div>
-<div class="qa-summary">GPU Util 是时间占比，不是效率指标。需要用 nsys/ncu 分析实际 TFLOPS、内存带宽、Tensor Core 利用率。</div>
-</div>
-</div>
-</div>
-<div class="card card-d">
-<h3>多卡互联性能指标</h3>
-<p>多 GPU 训练/推理时，卡间互联带宽是决定扩展效率的关键。面试中经常问到 NVLink、PCIe、InfiniBand 的对比。</p>
-<table>
-<tr><th>互联方式</th><th>带宽（单向）</th><th>拓扑</th><th>典型场景</th></tr>
-<tr><td>NVLink 3.0</td><td>300 GB/s（A100）</td><td>点对点或经 NVSwitch 全互联</td><td>单节点内 4/8 卡全互联</td></tr>
-<tr><td>NVLink 4.0</td><td>450 GB/s（H100）</td><td>同上</td><td>单节点内 4/8 卡全互联</td></tr>
-<tr><td>NVSwitch</td><td>聚合 4.8 TB/s（A100）</td><td>全互联交换</td><td>DGX 系列 8 卡全互联</td></tr>
-<tr><td>PCIe 4.0 x16</td><td>32 GB/s</td><td>树形，经 CPU 或 PCIe Switch</td><td>CPU-GPU 通信、低速卡间通信</td></tr>
-<tr><td>PCIe 5.0 x16</td><td>64 GB/s</td><td>同上</td><td>新一代 CPU-GPU 互联</td></tr>
-<tr><td>InfiniBand NDR</td><td>400 Gbps = 50 GB/s</td><td>网络交换</td><td>多节点 GPU 集群互联</td></tr>
-<tr><td>InfiniBand XDR</td><td>800 Gbps = 100 GB/s</td><td>网络交换</td><td>下一代多节点互联</td></tr>
-</table>
-<div class="qa-section"><div class="qa-section-title">扩展效率计算</div>
-<p>线性扩展效率 = 多卡实际吞吐量 /（单卡吞吐量 × 卡数）。<br>
-<p>影响扩展效率的因素：通信量（模型并行 vs 数据并行）、通信带宽、通信频率、负载均衡。&lt;/p&gt;&lt;/div&gt;</p>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么多节点训练的扩展效率通常低于单节点？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">带宽差距</div><p>单节点 NVLink 300-450 GB/s，多节点 InfiniBand 通常 50-100 GB/s，差距 3-8 倍。通信成为瓶颈。</p></div>
-<div class="qa-section"><div class="qa-section-title">通信频率</div><p>数据并行每次迭代都要 AllReduce 梯度。节点间通信延迟高，导致 GPU 等待时间增加。</p></div>
-<div class="qa-section"><div class="qa-section-title">优化手段</div><p>梯度压缩、通信重叠（overlap computation and communication）、增大 batch size 减少通信频率、使用 NVLink + InfiniBand 混合拓扑。</p></div>
-<div class="qa-summary">节点间带宽远低于节点内，是多节点扩展效率下降的主因。优化方向：减少通信量、重叠通信计算、提升有效带宽。</div>
-</div>
-</div>
-</div>
-<div class="card card-r">
-<h3>GPU 性能面试高频题</h3>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 如何计算一个模型训练需要多少显存？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">显存占用组成</div>
-<p>模型参数 + 优化器状态（Adam 需要 2 倍参数）+ 梯度（1 倍参数）+ 激活值（与 batch size、序列长度相关）。</p></div>
-<div class="qa-section"><div class="qa-section-title">估算公式</div>
-<p>以 FP16 混合精度为例：显存 ≈ 参数 × (2 + 2 + 2) + 激活值。Adam 优化器需要保存一阶和二阶动量，各占 4 字节（FP32）。</p></div>
-<div class="qa-section"><div class="qa-section-title">示例</div>
-<p>7B 参数模型，FP16：参数 14 GB，Adam 状态 28 GB，梯度 14 GB，激活值假设 10 GB，总计约 66 GB。单卡 80GB A100 可以放下，但 40GB 不够。</p></div>
-<div class="qa-summary">显存 = 参数 × (精度字节 + 优化器倍数 + 梯度精度) + 激活值。ZeRO、Offloading、Activation Checkpointing 可以大幅减少。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: A100 和 H100 的主要区别是什么？</div>
-<div class="qa-a">
-<div class="qa-grid"><div class="qa-mini"><strong>架构</strong>A100 Ampere，H100 Hopper。Hopper 新增 Transformer Engine、FP8 支持。</div><div class="qa-mini"><strong>算力</strong>H100 FP16 989 TFLOPS vs A100 312 TFLOPS，提升约 3 倍。</div><div class="qa-mini"><strong>显存</strong>H100 80GB HBM3 带宽 3.35 TB/s vs A100 2 TB/s，提升约 1.7 倍。</div><div class="qa-mini"><strong>互联</strong>H100 NVLink 4.0 450 GB/s vs A100 300 GB/s，提升 1.5 倍。</div><div class="qa-mini"><strong>功耗</strong>H100 TDP 700W vs A100 400W，功耗大幅提升，散热要求更高。</div><div class="qa-mini"><strong>专用单元</strong>H100 新增 Transformer Engine（动态精度管理）、DPX 指令（动态规划加速）。</div></div>
-<div class="qa-summary">H100 = 更高算力 + 更高带宽 + FP8 + Transformer Engine + 更高功耗。不是简单的倍数提升，架构有本质变化。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 什么是 Tensor Core？为什么比普通 CUDA Core 快？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">专用矩阵运算单元</div><p>Tensor Core 是专门做矩阵乘加（D = A × B + C）的硬件单元，每个周期可以完成一个 4×4×4 FP16 矩阵运算。</p></div>
-<div class="qa-section"><div class="qa-section-title">为什么更快</div>
-<p>普通 CUDA Core 每次只做 1 个 FMA（乘加），Tensor Core 一次做 64 个 FMA（4×4×4）。同样的时钟周期，吞吐量高几十倍。</p></div>
-<div class="qa-section"><div class="qa-section-title">使用条件</div><p>需要满足：数据是 FP16/BF16/TF32/FP8 格式、矩阵维度对齐（如 8 的倍数）、使用 cuBLAS/cuDNN 等库自动调用。</p></div>
-<div class="qa-summary">Tensor Core = 矩阵运算专用硬件，一次处理整个矩阵块，而不是单个元素。是深度学习加速的核心。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: GPU 的 Memory Coalescing 是什么？为什么重要？</div>
-<div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">定义</div><p>当一个 warp（32 个线程）访问的内存地址是连续的，GPU 可以把多次访问合并成一次内存事务，减少访存次数。</p></div>
-<div class="qa-section"><div class="qa-section-title">为什么重要</div><p>GPU 显存带宽有限，但计算单元很多。如果访存不合并，大量带宽浪费在传输不必要的数据上，计算单元等待数据，整体效率下降。</p></div>
-<div class="qa-section"><div class="qa-section-title">实际影响</div><p>矩阵运算中，行优先存储的矩阵按列访问会导致 stride 访问，不合并；转置后按行访问可以合并。这也是 FlashAttention 做分块的原因之一。</p></div>
-<div class="qa-summary">Memory Coalescing = 合并内存访问，减少事务数。是 GPU 内存带宽优化的基础。</div>
-</div>
-</div>
-</div>
-<div class="card card-d">
-<h3>官方参考</h3>
-<div class="resource-grid">
-<a class="resource-card" href="https://developer.nvidia.com/blog/nvidia-ampere-architecture-in-depth/"><div class="resource-type">official</div><div class="resource-title">NVIDIA Ampere Architecture</div><div class="resource-desc">A100 架构深度解析，SM、Tensor Core、HBM 详解。</div></a>
-<a class="resource-card" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/"><div class="resource-type">official</div><div class="resource-title">NVIDIA Hopper Architecture</div><div class="resource-desc">H100 架构深度解析，Transformer Engine、FP8、DPX。</div></a>
-<a class="resource-card" href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html"><div class="resource-type">official</div><div class="resource-title">Nsight Compute Profiling Guide</div><div class="resource-desc">GPU 性能分析指标详解，Roofline、Occupancy、Memory 分析。</div></a>
-<a class="resource-card" href="https://arxiv.org/abs/2205.05937"><div class="resource-type">paper</div><div class="resource-title">FlashAttention</div><div class="resource-desc">内存高效 Attention 算法，IO-Aware 优化经典论文。</div></a>
-</div>
-</div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-4" aria-labelledby="gpu-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能预测指标</h2></div><div class="tab-panel-body"><div class="card card-m">
+<div class="card card-m">
 <h3>性能预测视角：特征与标签映射</h3>
 <p>在 MLSys 性能预测研究中，GPU 指标不是孤立的数字，而是构建预测模型的核心素材。整个指标体系可以按"输入特征维（静态属性）"和"输出标签维（动态运行时表现）"划分，形成完整的预测闭环。</p>
+
 <div class="qa-section"><div class="qa-section-title">预测模型架构</div>
 <p>输入特征库 (X) 包含算法特征（FLOPs、Shape）、硬件特征（峰值算力、带宽）、部署特征（3D 并行策略）；经过预测器模型（解析方程 / ML / GNN）；输出标签库 (Y) 包含时间指标（Step Time）、空间指标（Peak Active Memory）、效率指标（MFU、Occupancy）。</p></div>
+
 <table>
 <tr><th>维度</th><th>指标</th><th>角色</th><th>物理含义</th></tr>
 <tr><td rowspan="3">算力与效率</td><td>Peak FLOPS</td><td>输入特征 X</td><td>硬件理论峰值算力，跨显卡预测的核心特征</td></tr>
@@ -251,23 +18,28 @@
 <tr><td>Peak Active Memory</td><td>输出标签 Y</td><td>峰值活跃显存，防 OOM 核心预测目标</td></tr>
 </table>
 </div>
+
 <div class="card card-s">
 <h3>算力与效率维度指标</h3>
 <p>这一维度关注"模型理论上需要干多少活"与"硬件实际上转化了多少有效功"。</p>
+
 <div class="qa-section"><div class="qa-section-title">Peak FLOPS（硬件理论峰值算力）—— 输入特征 X</div>
 <p><strong>规范定义</strong>：GPU 在单位时间（每秒）内理论上能执行的最大浮点运算次数，通常以 TFLOPS 为单位。<br>
 <strong>物理含义</strong>：硬件计算能力的绝对物理极限。不同精度（FP32、TF32、BF16、FP8）下的峰值完全不同。例如 H100 SXM 的 BF16 Tensor Core 峰值为 989 TFLOPS。<br>
 <strong>科研应用</strong>：支持跨显卡预测的核心特征。若不输入具体的算力数值，预测模型将无法理解硬件升级带来的算力红利，无法实现跨平台泛化。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">FLOPs（算法理论计算量）—— 输入特征 X</div>
 <p><strong>规范定义</strong>：执行某次特定计算任务（如一个 Batch 的前向传播）理论上最少需要消耗的浮点运算总次数（与硬件无关）。<br>
 <strong>物理含义</strong>：任务的"绝对工作量"。例如矩阵乘法 C = A × B（A 维 M×K，B 维 K×N），理论 FLOPs = 2 × M × N × K（系数 2 源于每个位置需一次乘法和一次加法）。<br>
 <strong>科研应用</strong>：评估算法复杂度的基石。预测模型不能简单用 时间 = 理论 FLOPs / 硬件峰值，因为该公式假设硬件效率为 100%。预测器的核心任务就是预测那损失掉的效率去了哪里。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">MFU（Model FLOPs Utilization，模型算力利用率）—— 输出标签 Y</div>
 <p><strong>规范定义</strong>：在实际训练中，GPU 每秒实际输出的有效模型算力占其硬件理论峰值算力的比例。</p>
 <p><strong>数学公式</strong>：</p>
 <div class="formula">MFU = (模型单步理论计算量 FLOPs × 每秒实际吞吐量 Samples/s) / GPU 硬件理论峰值算力 FLOPS</div>
 <p><strong>物理含义</strong>：大模型时代衡量分布式训练效率的黄金标准。它最硬核的地方在于：彻底剔除了为了省显存而进行的"激活值重计算（Recomputation）"带来的虚假硬件繁忙（HFU）。只承认最终盖在大楼里的砖，不承认建了拆、拆了建的返工。<br>
 <strong>科研应用</strong>：分布式策略搜索（Auto-Parallelism）的最佳预测目标。预测出 MFU 随 3D 并行拓扑变化的曲线，能直接指导系统挑选出最优的部署方案。</p></div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: MFU 和 HFU 有什么区别？</div>
 <div class="qa-a">
@@ -277,6 +49,7 @@
 <div class="qa-summary">MFU = 净效率（不含返工），HFU = 毛效率（含返工）。论文和面试中应优先使用 MFU。</div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 大模型训练的 MFU 通常是多少？</div>
 <div class="qa-a">
@@ -287,22 +60,27 @@
 </div>
 </div>
 </div>
+
 <div class="card card-s">
 <h3>时间与空间利用率指标</h3>
 <p>这一维度关注"硬件资源在时间上被占用了多久，在空间上被铺得有多满"。</p>
+
 <div class="qa-section"><div class="qa-section-title">GPU Utilization（GPU 计算利用率）—— 辅助特征 X / 标签 Y</div>
 <p><strong>规范定义</strong>：在给定采样周期内（如 1 秒），GPU 的内核引擎至少有一个活动内核在执行的时间比例。</p>
 <div class="formula">GPU_Util = T(any_kernel_active) / T(sample) × 100%</div>
 <p><strong>物理含义</strong>：时间维度的"有无"占空比，不代表并发度。哪怕 120 个 SM 中只有 1 个 SM 在跑一个微小的算子，其余 119 个全在闲置，GPU-Util 依然是 100%。<br>
 <strong>科研应用</strong>：单独预测 GPU-Util 缺乏物理和数学单调性（学术价值低）。但可作为集群调度中预测进程是否死锁（Util 100% 但功耗极低）的特征。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">SM Active（SM 活跃度）—— 输出标签 Y</div>
 <p><strong>规范定义</strong>：在给定采样周期内，至少有一个线程束（Warp，32 个线程）在 SM 上执行的时间比例（各 SM 的平均值）。<br>
 <strong>物理含义</strong>：空间分布的防欺骗指标。它解决了 GPU-Util 空间粒度过粗的问题。若 120 个 SM 只有 1 个在干活，GPU-Util 是 100%，但 SM Active 只有约 0.83%。它能真正反映任务是否均匀、充分地平铺到了整个芯片上。<br>
 <strong>科研应用</strong>：多流并发（CUDA Streams）、多租户混部（Colocation）或 MPS 调度预测的核心标签。用来预测空间填补带来的吞吐量收益。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">SM Occupancy（SM 占有率）—— 特征 X / 标签 Y</div>
 <p><strong>规范定义</strong>：在 SM 处于活跃状态时，该 SM 中实际并发运行的 Warp 数量，占该 SM 硬件设计最大能支持的 Warp 数量的比例。<br>
 <strong>物理含义</strong>：硬件"延迟隐藏（Latency Hiding）"能力的温度计。GPU 靠超大规模并发来掩盖访存延迟（当一个 Warp 读显存阻塞时，SM 立刻切换到另一个就绪的 Warp）。Occupancy 越高，手里的"替补队员"越多，硬件越不容易因为延迟而彻底空转。<br>
 <strong>科研应用</strong>：作为输入特征 X：通过静态分析 CUDA 代码（寄存器用量、共享内存大小、Block Size），算出理论上限 Occupancy。作为输出标签 Y：在编译器调优（Auto-tuning）研究中，预测 Achieved Occupancy，用以评估算子修改后隐藏延迟的能力。</p></div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: SM Active 和 SM Occupancy 有什么区别？</div>
 <div class="qa-a">
@@ -312,6 +90,7 @@
 <div class="qa-summary">SM Active = 芯片空间覆盖度（横向），SM Occupancy = 单 SM 内部填充度（纵向）。两者组合才能完整描述 GPU 空间利用率。</div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Occupancy 越高越好吗？</div>
 <div class="qa-a">
@@ -322,22 +101,27 @@
 </div>
 </div>
 </div>
+
 <div class="card card-w">
 <h3>显存与数据流维度指标</h3>
 <p>深度学习不仅卡在计算上，更多时候卡在数据搬运上。</p>
+
 <div class="qa-section"><div class="qa-section-title">Arithmetic Intensity（计算密度 / 算力强度）—— 输入特征 X</div>
 <p><strong>规范定义</strong>：在一个计算任务中，每从显存中读取/写入 1 个字节的数据，需要消耗多少次浮点运算。单位是 FLOPs/Byte。<br>
 <strong>物理含义</strong>：划分算子类型的物理量。基于 Roofline 模型：Compute-Bound（计算受限）= 计算密度高于硬件瓶颈线，执行时间由硬件峰值算力决定；Memory-Bound（访存受限）= 计算密度低于硬件瓶颈线，执行时间由显存带宽决定。<br>
 <strong>科研应用</strong>：指导预测模型进行"分流预测"。预测器能自动学会：对计算密集型算子用算力特征去预测时间，对访存密集型算子用带宽特征去预测时间。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">Memory Utilization（显存控制器利用率）—— 输出标签 Y</div>
 <p><strong>严禁概念混淆</strong>：它不是显存容量占用率（VRAM Allocated），而是显存带宽的时间利用率。<br>
 <strong>规范定义</strong>：在采样周期内，GPU 的显存控制器处于读取或写入活动状态的时间比例。<br>
 <strong>物理含义</strong>：数据搬运总线的繁忙度。若该指标逼近 100%，说明系统瓶颈完全卡在显存吞吐（I/O 阻塞）上。<br>
 <strong>科研应用</strong>：用于预测和判定 Memory-Bound 算子的加速空间。</p></div>
+
 <div class="qa-section"><div class="qa-section-title">Peak Active Memory（峰值活跃显存占用）—— 输出标签 Y</div>
 <p><strong>规范定义</strong>：在深度学习单步训练中（通常在前向传播与反向传播的交界处），真正被模型参数、梯度、激活值硬性占用的显存最大值。<br>
 <strong>物理含义</strong>：模型运行的刚性空间需求（不含 PyTorch Caching Allocator 提前圈地预留的 Reserved Memory）。<br>
 <strong>科研应用</strong>：防 OOM 调度器与显存编排系统的核心预测目标。精准预测该值可以实现最大化的显存填充率（Memory Colocation）。</p></div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Peak Active Memory 和 Reserved Memory 有什么区别？</div>
 <div class="qa-a">
@@ -348,9 +132,11 @@
 </div>
 </div>
 </div>
+
 <div class="card card-r">
 <h3>核心指标联动诊断矩阵</h3>
 <p>在预测模型或论文的 Motivation 部分，核心指标可以通过以下经典场景组合形成闭环诊断逻辑：</p>
+
 <table>
 <tr><th>场景</th><th>GPU-Util</th><th>SM Active</th><th>SM Occupancy</th><th>实际功耗</th><th>瓶颈诊断与预测方向</th></tr>
 <tr><td><strong>A：网格太小</strong></td><td>高 (95%)</td><td>低 (5%)</td><td>高 (80%)</td><td>极低</td><td>Grid Under-population：任务划分的 Block 数量太少，根本没分够 SM。预测器应提示：增加 Batch Size 或调整 Grid 划分。</td></tr>
@@ -358,21 +144,26 @@
 <tr><td><strong>C：完美计算</strong></td><td>高 (95%)</td><td>高 (95%)</td><td>高 (85%)</td><td>极高 (近TDP)</td><td>Compute-Bound：空间填满了，内部替补也充足。此时执行时间主要由理论 FLOPs / 硬件峰值算力决定。预测精度极高。</td></tr>
 <tr><td><strong>D：未用 Tensor Core</strong></td><td>高 (95%)</td><td>高 (90%)</td><td>高 (80%)</td><td>中低</td><td>Non-Tensor Core Active：GPU 极忙，但功耗上不去。说明没有调用 Tensor Core，全在做低效的普通 CUDA 标量计算。预测器应提示优化算子或开启混合精度。</td></tr>
 </table>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何用这些指标组合诊断 GPU 性能瓶颈？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">诊断流程</div>
 <p>1) 看 GPU-Util：低说明 GPU 闲置（CPU 瓶颈或数据加载瓶颈）；高则继续。<br>
-<p>2) 看 SM Active：低说明任务没铺满芯片（Grid 太小或并发不够）；高则继续。&lt;br&gt; 3) 看 SM Occupancy：低说明每个 SM 内部替补不够（寄存器/共享内存压力）；高则继续。&lt;br&gt; 4) 看功耗：低功耗 + 高活跃 = 没用 Tensor Core 或在做轻量标量运算；高功耗 = 真正的 Compute-Bound。&lt;/p&gt;&lt;/div&gt;</p>
+2) 看 SM Active：低说明任务没铺满芯片（Grid 太小或并发不够）；高则继续。<br>
+3) 看 SM Occupancy：低说明每个 SM 内部替补不够（寄存器/共享内存压力）；高则继续。<br>
+4) 看功耗：低功耗 + 高活跃 = 没用 Tensor Core 或在做轻量标量运算；高功耗 = 真正的 Compute-Bound。</p></div>
 <div class="qa-section"><div class="qa-section-title">工具链</div>
 <p>nvidia-smi 看 GPU-Util 和 Memory Util；DCGM 看 SM Active；ncu（Nsight Compute）看 Occupancy 和 Tensor Core 利用率；nsys（Nsight Systems）看时间线和通信重叠。</p></div>
 <div class="qa-summary">GPU-Util → SM Active → SM Occupancy → 功耗，逐层下钻，从粗到细定位瓶颈。</div>
 </div>
 </div>
 </div>
+
 <div class="card card-m">
 <h3>性能预测特征工程实战</h3>
 <p>构建 GPU 性能预测模型时，特征的选择和构造直接决定预测精度。以下是面向科研和工程的特征工程指南。</p>
+
 <div class="qa-section"><div class="qa-section-title">输入特征库 (X) 设计</div>
 <table>
 <tr><th>类别</th><th>特征</th><th>来源</th><th>预测价值</th></tr>
@@ -388,6 +179,7 @@
 <tr><td>Gradient Accumulation Steps</td><td>用户配置</td><td>影响有效 Batch Size 和通信频率</td></tr>
 </table>
 </div>
+
 <div class="qa-section"><div class="qa-section-title">输出标签库 (Y) 设计</div>
 <table>
 <tr><th>类别</th><th>标签</th><th>预测意义</th><th>典型精度目标</th></tr>
@@ -398,6 +190,7 @@
 <tr><td>通信</td><td>Communication Time</td><td>多卡扩展效率</td><td>±15% 以内</td></tr>
 </table>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么预测 Step Time 比 MFU 更难？</div>
 <div class="qa-a">
@@ -408,9 +201,11 @@
 </div>
 </div>
 </div>
+
 <div class="card card-d">
 <h3>DCGM 指标采集与实战</h3>
 <p>NVIDIA DCGM（Data Center GPU Manager）是生产环境 GPU 指标采集的标准工具。了解它提供的指标对性能预测和集群调度至关重要。</p>
+
 <table>
 <tr><th>DCGM 指标</th><th>含义</th><th>对应概念</th><th>采集方式</th></tr>
 <tr><td>DCGM_FI_DEV_GPU_UTIL</td><td>GPU 计算利用率</td><td>GPU-Util</td><td>dcgmi dmon -e 100</td></tr>
@@ -422,6 +217,7 @@
 <tr><td>DCGM_FI_DEV_PCIE_TX_THRU</td><td>PCIe 发送吞吐</td><td>PCIe Bandwidth</td><td>dcgmi dmon -e 17</td></tr>
 <tr><td>DCGM_FI_DEV_NVLINK_THRU</td><td>NVLink 吞吐</td><td>NVLink Bandwidth</td><td>dcgmi dmon -e 220</td></tr>
 </table>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: DCGM 和 nvidia-smi 有什么区别？</div>
 <div class="qa-a">
@@ -432,6 +228,7 @@
 </div>
 </div>
 </div>
+
 <div class="card card-d">
 <h3>官方参考</h3>
 <div class="resource-grid">
@@ -441,8 +238,4 @@
 <a class="resource-card" href="https://arxiv.org/abs/2104.04473"><div class="resource-type">paper</div><div class="resource-title">Megatron-LM v3</div><div class="resource-desc">3D 并行策略、MFU 定义和测量方法。</div></a>
 <a class="resource-card" href="https://developer.nvidia.com/blog/understanding-the-nvidia-ampere-architecture/"><div class="resource-type">official</div><div class="resource-title">Understanding Ampere Architecture</div><div class="resource-desc">SM、Warp、Tensor Core 的硬件原理。</div></a>
 </div>
-</div></div></article></div></section>
 </div>
-<script src="../../../assets/script.js"></script>
-</body>
-</html>

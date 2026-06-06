@@ -1,11 +1,13 @@
 {
   "title": "GPU 硬件与资源共享",
-  "subtitle": "硬件架构 · A100/H100 对比 · MIG/MPS · CUDA VMM",
+  "subtitle": "硬件架构 · 性能指标 · 性能预测 · MIG/MPS · CUDA VMM",
   "kicker": "AI Infra Foundation",
   "tags": [
     "gpu",
     "hardware",
     "sharing",
+    "performance",
+    "prediction",
     "interview"
   ],
   "output": "pages/ai-infra/gpu/index.html",
@@ -24,6 +26,16 @@
           "title": "共享方式",
           "description": "MIG、MPS、时间片、CUDA VMM",
           "file": "02-sharing.md"
+        },
+        {
+          "title": "性能指标",
+          "description": "TFLOPS、显存带宽、Roofline、利用率、互联带宽",
+          "file": "03-performance-metrics.md"
+        },
+        {
+          "title": "性能预测指标",
+          "description": "MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵",
+          "file": "04-prediction-metrics.md"
         }
       ]
     }
@@ -36,6 +48,14 @@
     {
       "title": "GPU 共享方式",
       "file": "02-sharing.md"
+    },
+    {
+      "title": "GPU 性能指标",
+      "file": "03-performance-metrics.md"
+    },
+    {
+      "title": "GPU 性能预测指标",
+      "file": "04-prediction-metrics.md"
     }
   ]
 }

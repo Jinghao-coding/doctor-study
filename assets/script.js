@@ -108,9 +108,9 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   function ensureHeadingIds(headings){
-    headings.forEach(function(heading){
+    headings.forEach(function(heading, index){
       if(!heading.id){
-        var base = 'section-' + Object.keys(usedIds).length + '-' + heading.textContent.trim().replace(/\s+/g, '-').slice(0, 18);
+        var base = 'section-' + Object.keys(usedIds).length + '-' + index;
         var id = base;
         var suffix = 2;
         while(usedIds[id] || document.getElementById(id)){
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var toc = document.createElement('nav');
   toc.className = 'page-toc';
   toc.setAttribute('aria-label', '本页目录');
-  toc.innerHTML = '<div class="toc-head"><div><div class="toc-title">本页目录</div><div class="toc-tip">Alt + E 展开问答</div></div><button class="toc-close" type="button" aria-label="关闭目录">×</button></div><div class="toc-links"></div>';
+  toc.innerHTML = '<div class="toc-head"><div><div class="toc-title">本页目录</div><div class="toc-tip">Alt + E 展开问答</div></div><button class="toc-close" type="button" aria-label="关闭目录">\u00d7</button></div><div class="toc-links"></div>';
 
   var toggle = document.createElement('button');
   toggle.className = 'toc-toggle';
@@ -138,6 +138,11 @@ document.addEventListener('DOMContentLoaded', function(){
   backdrop.className = 'toc-backdrop';
 
   var links = toc.querySelector('.toc-links');
+
+  function setTocOpen(open){
+    document.body.classList.toggle('toc-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
 
   function rebuildToc(){
     var headings = collectHeadings();
@@ -152,46 +157,45 @@ document.addEventListener('DOMContentLoaded', function(){
     toc.hidden = false;
     toggle.hidden = false;
     headings.forEach(function(heading){
-      var link = document.createElement('a');
-      link.href = '#' + heading.id;
+      var btn = document.createElement('button');
+      btn.type = 'button';
       var tag = heading.tagName.toLowerCase();
-      link.className = tag === 'h4' ? 'toc-h3' : (tag === 'h3' ? 'toc-h2' : 'toc-h2');
-      link.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
-      links.appendChild(link);
+      btn.className = tag === 'h4' ? 'toc-h3' : (tag === 'h3' ? 'toc-h2' : 'toc-h2');
+      btn.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
+      btn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        heading.scrollIntoView({behavior: 'smooth', block: 'start'});
+        if(heading.id) history.replaceState(null, '', '#' + heading.id);
+        setTimeout(function(){ setTocOpen(false); }, 150);
+      });
+      links.appendChild(btn);
     });
     if(observer) observer.disconnect();
     if('IntersectionObserver' in window){
-      var tocLinks = Array.from(links.querySelectorAll('a'));
+      var tocBtns = Array.from(links.querySelectorAll('button'));
       observer = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if(!entry.isIntersecting) return;
-          tocLinks.forEach(function(link){ link.classList.remove('active'); });
-          var active = links.querySelector('a[href="#' + entry.target.id + '"]');
-          if(active) active.classList.add('active');
+          var idx = headings.indexOf(entry.target);
+          if(idx < 0) return;
+          tocBtns.forEach(function(b){ b.classList.remove('active'); });
+          if(tocBtns[idx]) tocBtns[idx].classList.add('active');
         });
       }, {rootMargin: '-30% 0px -60% 0px', threshold: 0});
-      headings.forEach(function(heading){ observer.observe(heading); });
+      headings.forEach(function(h){ observer.observe(h); });
     }
   }
 
-  var insertAfter = wrap.querySelector('.sub') || wrap.querySelector('h1');
-  insertAfter.insertAdjacentElement('afterend', toc);
+  document.body.appendChild(toc);
   document.body.appendChild(toggle);
   document.body.appendChild(backdrop);
-
-  function setTocOpen(open){
-    document.body.classList.toggle('toc-open', open);
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
 
   toggle.addEventListener('click', function(){
     setTocOpen(!document.body.classList.contains('toc-open'));
   });
   backdrop.addEventListener('click', function(){ setTocOpen(false); });
   toc.querySelector('.toc-close').addEventListener('click', function(){ setTocOpen(false); });
-  links.addEventListener('click', function(e){
-    if(e.target.tagName.toLowerCase() === 'a') setTocOpen(false);
-  });
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape') setTocOpen(false);
   });

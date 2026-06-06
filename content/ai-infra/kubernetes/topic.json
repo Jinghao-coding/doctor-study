@@ -1,6 +1,6 @@
 {
-  "title": "Kubernetes 核心",
-  "subtitle": "架构 · 调度 · 资源 · Workload · 网络 · 存储 · 排障 · 安全 · AI Infra",
+  "title": "Kubernetes 面试学习",
+  "subtitle": "架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA",
   "kicker": "Platform Infrastructure",
   "tags": [
     "k8s",
@@ -8,108 +8,102 @@
     "workload",
     "networking",
     "storage",
-    "gpu"
+    "operator",
+    "gpu",
+    "dra",
+    "interview"
   ],
   "output": "pages/ai-infra/kubernetes/index.html",
   "layout": [
     {
       "type": "tabs",
       "id": "kubernetes-tabs",
-      "title": "Kubernetes 核心",
+      "title": "Kubernetes 面试学习",
       "items": [
         {
-          "title": "架构概览",
-          "description": "控制面、数据面、etcd、kubelet",
-          "file": "01-architecture.md"
+          "title": "架构与 Pod 主链路",
+          "description": "控制面、数据面、API Server、etcd、scheduler、kubelet、Pod 启动全链路",
+          "file": "01-architecture-pod-flow.md"
         },
         {
-          "title": "调度体系",
-          "description": "Scheduling Framework、Profile、插件、队列、抢占",
-          "file": "02-scheduling-framework.md"
+          "title": "调度与资源模型",
+          "description": "Scheduling Framework、requests/limits、QoS、抢占、Extended Resource",
+          "file": "02-scheduling-resource-model.md"
         },
         {
-          "title": "资源模型",
-          "description": "Requests/Limits、QoS、Extended Resource",
-          "file": "03-resource-model.md"
+          "title": "Scheduler 内部机制",
+          "description": "调度队列、scheduler cache、assumed pod、binding cycle、preemption、plugin 落点",
+          "file": "09-scheduler-internals.md"
         },
         {
-          "title": "Pod 与 Workload",
-          "description": "生命周期、探针、Deployment、StatefulSet、Job",
-          "file": "05-pod-workloads.md"
+          "title": "Workload 与 Controller",
+          "description": "Pod 生命周期、Deployment、StatefulSet、Job、Informer、Reconcile、Operator",
+          "file": "03-workload-controller.md"
         },
         {
-          "title": "Service 与网络",
-          "description": "CNI、Service、kube-proxy、DNS、NetworkPolicy",
-          "file": "06-networking-service.md"
+          "title": "网络与存储",
+          "description": "CNI、Service、DNS、Headless、PV/PVC、StorageClass、CSI",
+          "file": "04-networking-storage.md"
         },
         {
-          "title": "存储与 CSI",
-          "description": "PV/PVC、StorageClass、CSI、StatefulSet 存储",
-          "file": "07-storage-csi.md"
+          "title": "安全、准入与多租户",
+          "description": "RBAC、ServiceAccount、Admission、Webhook、Quota、Pod Security",
+          "file": "05-security-admission-multitenancy.md"
         },
         {
-          "title": "故障排查",
-          "description": "Pending、CrashLoop、镜像、Service、Node NotReady",
-          "file": "08-troubleshooting.md"
+          "title": "故障排查与稳定性",
+          "description": "Pending、CrashLoop、ImagePull、Service 不通、Node NotReady、大规模稳定性",
+          "file": "06-troubleshooting-stability.md"
         },
         {
-          "title": "安全与准入",
-          "description": "RBAC、ServiceAccount、Admission、Quota、Operator",
-          "file": "09-security-admission.md"
-        },
-        {
-          "title": "AI Infra 专项",
-          "description": "GPU、MIG/MPS、Topology、Gang、Kueue、Volcano",
-          "file": "10-ai-infra-k8s.md"
+          "title": "AI Infra：GPU / 批调度 / DRA",
+          "description": "Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA",
+          "file": "07-ai-infra-gpu-dra.md"
         },
         {
           "title": "面试高频问答",
-          "description": "Pod 生命周期、Informer、GPU 调度",
-          "file": "04-qa.md"
+          "description": "跨专题高频追问、回答模板、排查套路",
+          "file": "08-interview-qa.md"
         }
       ]
     }
   ],
   "sections": [
     {
-      "title": "架构概览",
-      "file": "01-architecture.md"
+      "title": "架构与 Pod 主链路",
+      "file": "01-architecture-pod-flow.md"
     },
     {
-      "title": "调度体系",
-      "file": "02-scheduling-framework.md"
+      "title": "调度与资源模型",
+      "file": "02-scheduling-resource-model.md"
     },
     {
-      "title": "资源模型",
-      "file": "03-resource-model.md"
+      "title": "Scheduler 内部机制",
+      "file": "09-scheduler-internals.md"
     },
     {
-      "title": "Pod 与 Workload",
-      "file": "05-pod-workloads.md"
+      "title": "Workload 与 Controller",
+      "file": "03-workload-controller.md"
     },
     {
-      "title": "Service 与网络",
-      "file": "06-networking-service.md"
+      "title": "网络与存储",
+      "file": "04-networking-storage.md"
     },
     {
-      "title": "存储与 CSI",
-      "file": "07-storage-csi.md"
+      "title": "安全、准入与多租户",
+      "file": "05-security-admission-multitenancy.md"
     },
     {
-      "title": "故障排查",
-      "file": "08-troubleshooting.md"
+      "title": "故障排查与稳定性",
+      "file": "06-troubleshooting-stability.md"
     },
     {
-      "title": "安全与准入",
-      "file": "09-security-admission.md"
-    },
-    {
-      "title": "AI Infra 专项",
-      "file": "10-ai-infra-k8s.md"
+      "title": "AI Infra：GPU / 批调度 / DRA",
+      "file": "07-ai-infra-gpu-dra.md"
     },
     {
       "title": "面试高频问答",
-      "file": "04-qa.md"
+      "file": "08-interview-qa.md"
     }
   ]
 }

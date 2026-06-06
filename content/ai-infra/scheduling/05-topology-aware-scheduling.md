@@ -1,0 +1,143 @@
+<div class="card card-m">
+<h3>拓扑感知调度：GPU 集群调度的核心差异点</h3>
+<p>普通 CPU 调度通常只关心资源数量是否足够，而 GPU 训练调度必须关心"资源之间的连接关系"。同样是 8 张 GPU，同机 NVSwitch、同机 PCIe、跨机 RDMA、跨机柜网络，对训练吞吐的影响完全不同。</p>
+<p>为什么拓扑这么重要？因为大模型训练的通信时间可能占到总训练时间的 30-50%。如果 8 张 GPU 在同一节点用 NVLink 互联，AllReduce 一个 1GB 的梯度张量可能只需要 0.5ms；但如果 8 张 GPU 分散在 4 个节点走 InfiniBand，同样的操作可能需要 5ms。10 倍的差距，乘以每步训练都要做一次，最终训练速度可能差 2 倍以上。</p>
+</div>
+
+<div class="card card-s">
+<h3>拓扑层次：从芯片到机房</h3>
+<p>理解拓扑感知调度，必须先理解 GPU 集群的物理拓扑层次。每一层有不同的带宽、延迟和调度含义。</p>
+
+<table>
+<tr><th>层次</th><th>典型连接</th><th>带宽</th><th>延迟</th><th>调度含义</th></tr>
+<tr><td>GPU 内部</td><td>SM、HBM、L2</td><td>2-4.8 TB/s</td><td>ns 级</td><td>影响单卡性能，不由调度器直接控制</td></tr>
+<tr><td>节点内 GPU 间</td><td>NVLink / NVSwitch</td><td>300-900 GB/s</td><td>μs 级</td><td>张量并行必须放这里，通信密集型任务的最高优先级放置</td></tr>
+<tr><td>CPU-GPU</td><td>PCIe Gen4/5</td><td>32-64 GB/s</td><td>μs 级</td><td>数据加载和 host-device copy 需要 NUMA 亲和</td></tr>
+<tr><td>节点间</td><td>InfiniBand / RoCE</td><td>200-400 Gbps</td><td>几 μs</td><td>数据并行和流水线并行的跨节点通信</td></tr>
+<tr><td>机架/机柜</td><td>ToR 交换机</td><td>几百 Gbps</td><td>几十 μs</td><td>大规模训练要减少跨机柜通信，避免拥塞</td></tr>
+</table>
+
+<h4>怎么理解这些数字</h4>
+<p>关键不是记住具体数字，而是理解<strong>量级差异</strong>：</p>
+<ul>
+<li>NVLink 比 InfiniBand 快 <strong>10-50 倍</strong>（900 GB/s vs 50 GB/s）</li>
+<li>InfiniBand 比以太网快 <strong>5-10 倍</strong>（400 Gbps vs 40-100 Gbps）</li>
+<li>同节点 vs 跨节点的延迟差 <strong>1-2 个数量级</strong></li>
+</ul>
+<p>这些量级差异决定了：如果你把需要频繁通信的 worker 放错了位置，性能可能直接腰斩。</p>
+</div>
+
+<div class="card card-d">
+<h3>不同并行策略的拓扑偏好</h3>
+<p>这是拓扑感知调度最核心的知识点。面试中经常问"为什么张量并行要放在同节点"。下面的表格解释了每种并行策略为什么有特定的拓扑偏好。</p>
+
+<table>
+<tr><th>并行策略</th><th>通信模式</th><th>通信频率</th><th>通信量/步</th><th>放置偏好</th><th>为什么</th></tr>
+<tr><td>数据并行</td><td>AllReduce 梯度同步</td><td>每步一次</td><td>模型参数量 × 2/N（Ring AllReduce）</td><td>跨节点可行，但需要高带宽低延迟网络</td><td>通信量与参数量成正比，但 Ring AllReduce 均摊到 N 个节点，单个节点负载不高</td></tr>
+<tr><td>张量并行</td><td>层内 AllReduce/AllGather</td><td>每层前向+反向各一次</td><td>激活值大小 × 层数 × 2</td><td>强依赖节点内 NVLink/NVSwitch</td><td>通信频率极高（每层都通信），如果走网络会严重拖慢训练</td></tr>
+<tr><td>流水线并行</td><td>相邻 stage P2P 通信</td><td>每个 micro-batch</td><td>激活值大小</td><td>相邻 stage 靠近，跨节点也可接受</td><td>通信量小（只传激活值），P2P 不需要全局同步，网络能承受</td></tr>
+<tr><td>专家并行</td><td>All-to-All</td><td>每层 MoE</td><td>专家路由的 token 分布</td><td>需要避免跨拥塞域</td><td>All-to-All 是最重的通信模式，每个 GPU 都要和所有其他 GPU 通信</td></tr>
+<tr><td>ZeRO-3</td><td>AllGather + ReduceScatter</td><td>前向+反向各 N 次</td><td>参数/梯度分片大小</td><td>通信量大，需要高带宽网络</td><td>虽然省显存，但通信开销比普通数据并行大 1.5-3 倍</td></tr>
+</table>
+
+<h4>3D 并行的典型拓扑布局</h4>
+<p>大模型训练通常组合使用 DP + TP + PP。以 64 GPU（8 节点 × 8 卡）训练 175B 模型为例：</p>
+<ul>
+<li><strong>TP = 8</strong>：同一节点的 8 卡做张量并行，利用 NVLink 的高带宽处理频繁的层内通信</li>
+<li><strong>PP = 4</strong>：跨 4 个节点做流水线，P2P 通信量小，走 InfiniBand 即可</li>
+<li><strong>DP = 2</strong>：2 组流水线做数据并行，每个 micro-batch 结束同步梯度</li>
+</ul>
+<p><strong>调度含义</strong>：调度器需要知道这个任务需要 4 个"完整节点"（每个节点 8 GPU 全用），而不是 32 个散落的 GPU。如果只给 4 张 GPU 在同一节点、28 张分散在其他节点，TP=8 就做不了。</p>
+</div>
+
+<div class="card card-w">
+<h3>拓扑感知调度的实现路径</h3>
+<p>面试中经常问"怎么在 K8S 里实现拓扑感知调度"。答案不是唯一的，要看你的集群规模和精度需求。</p>
+
+<h4>5 种实现方式对比</h4>
+<table>
+<tr><th>方式</th><th>做法</th><th>精度</th><th>适用场景</th><th>局限</th></tr>
+<tr><td>Node Label</td><td>把 GPU 型号、机架位置标为 label</td><td>粗粒度（节点级）</td><td>简单场景，只要区分 GPU 型号</td><td>表达不了设备级拓扑（如哪几张 GPU 之间有 NVLink）</td></tr>
+<tr><td>NodeFeatureDiscovery</td><td>自动发现节点硬件信息并发布为 label/extended resource</td><td>粗粒度（节点级）</td><td>不想手动维护 label</td><td>和 Node Label 一样，只到节点级</td></tr>
+<tr><td>Device Plugin + Topology Manager</td><td>节点侧在设备分配时考虑 NUMA 亲和</td><td>中粒度（NUMA/PCIe 拓扑）</td><td>单节点内资源对齐</td><td>只管单节点，不管跨节点拓扑</td></tr>
+<tr><td>Scheduler Plugin</td><td>在 Filter/Score 阶段读取拓扑信息，对节点或设备组合打分</td><td>细粒度（可到设备级）</td><td>需要跨节点拓扑感知</td><td>开发成本高，需要维护拓扑数据</td></tr>
+<tr><td>DRA / ResourceSlice</td><td>把设备属性、容量和拓扑结构化发布，调度器基于设备级信息匹配</td><td>最细粒度</td><td>未来方向，结构化表达</td><td>K8S 1.26+ 才支持，生态尚不成熟</td></tr>
+</table>
+
+<h4>推荐方案</h4>
+<p><strong>短期</strong>：Node Label（区分 GPU 型号和机架）+ Scheduler Plugin（Filter/Score 中加拓扑打分）</p>
+<p><strong>长期</strong>：DRA + ResourceSlice（结构化表达设备拓扑，调度器原生支持）</p>
+</div>
+
+<div class="card card-m">
+<h3>拓扑调度的目标函数</h3>
+<p>拓扑感知调度不是"让所有任务都拿到最优拓扑"——那会导致大量 GPU 在等完美组合。而是要找到一个<strong>可接受的拓扑质量</strong>，在等待时间和训练性能之间权衡。</p>
+
+<h4>五种目标</h4>
+<table>
+<tr><th>目标</th><th>含义</th><th>什么时候用</th><th>风险</th></tr>
+<tr><td>最小通信代价</td><td>把通信频繁的 rank 放最近</td><td>张量并行、MoE</td><td>可能增加排队时间</td></tr>
+<tr><td>最大局部性</td><td>优先同节点/同机柜</td><td>3D 并行</td><td>可能造成资源碎片</td></tr>
+<tr><td>最小碎片</td><td>保留完整 GPU 组给大任务</td><td>多租户集群</td><td>可能牺牲当前任务的最优拓扑</td></tr>
+<tr><td>故障域分散</td><td>避免所有副本在同一故障域</td><td>在线推理、高可用训练</td><td>增加通信开销</td></tr>
+<tr><td>性能预测最优</td><td>根据模型预测不同放置的训练吞吐</td><td>有性能预测模型时</td><td>依赖预测准确性</td></tr>
+</table>
+
+<h4>怎么理解这些目标的冲突</h4>
+<p>最小通信代价和最小碎片是矛盾的：把通信密集的 worker 都放在一起（最小通信代价），可能导致大块 GPU 组被拆散（碎片化增加）。实际中通常的做法是：设定一个拓扑质量阈值（如"至少 70% 的 worker 在同节点或同机柜"），超过阈值就不等了。</p>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么不能只用 node label 表达 GPU 拓扑？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>Node Label 只能表达节点级静态属性（如 GPU 型号、机架位置），但表达不了三类关键的设备级关系：</p>
+<ol>
+<li><strong>GPU 之间的互联关系</strong>："GPU 0 和 GPU 1 之间有 NVLink，但 GPU 0 和 GPU 2 之间走 PCIe"。这决定了哪些 GPU 组合更适合张量并行。</li>
+<li><strong>GPU 与 NUMA 节点的亲和性</strong>："GPU 0 离 NUMA 节点 0 更近，数据加载应该用 NUMA 0 的 CPU"。这影响 host-device copy 的延迟。</li>
+<li><strong>MIG slice 的归属</strong>："MIG slice 1c.0 和 1c.1 属于同一张物理 GPU，不能同时分配给不同任务"。这是资源互斥约束。</li>
+</ol></div>
+<div class="qa-section"><div class="qa-section-title">怎么解决</div><p>用 Scheduler Plugin 在 Filter/Score 阶段读取拓扑数据（如 DCGM 导出的 NVLink 拓扑），或用 DRA 的 ResourceSlice 结构化表达。</p></div>
+<div class="qa-summary">面试要点：Label 是节点级的，GPU 拓扑是设备级的。级别不同，Label 做不了。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如果集群资源不够让所有任务都拿到最优拓扑，怎么权衡？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>设拓扑质量阈值，而不是追求全局最优。</p></div>
+<div class="qa-section"><div class="qa-section-title">具体做法</div><p>(1) <strong>定义拓扑质量分数</strong>：如"同节点 GPU 占比 × 1.0 + 同机柜 GPU 占比 × 0.5 + 跨机柜 GPU 占比 × 0.1"。(2) <strong>设可接受阈值</strong>：如"拓扑分数 ≥ 0.7 就不等了，直接调度"。(3) <strong>超时降级</strong>：等待最优拓扑超过 30 分钟，自动降级到次优拓扑。(4) <strong>按并行策略区分</strong>：TP 任务要求高拓扑质量（阈值 0.9），DP 任务可以低一些（阈值 0.5）。</p></div>
+<div class="qa-summary">面试要点：不是"最优或不变"，而是"设定可接受的质量阈值，超阈值就调"。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 怎么衡量拓扑感知调度的效果？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">指标</div><p>三个维度：</p>
+<ol>
+<li><strong>训练性能提升</strong>：对比有/无拓扑感知时的 throughput（samples/s 或 tokens/s）。通常能提升 20-50%。</li>
+<li><strong>JCT 改善</strong>：训练性能提升 → execution time 降低 → JCT 降低。但注意，等最优拓扑可能增加 waiting time。</li>
+<li><strong>等待时间增加</strong>：拓扑感知调度可能让任务多等 5-30 分钟来凑更好的拓扑。需要看 JCT 的净改善是否为正。</li>
+</ol></div>
+<div class="qa-section"><div class="qa-section-title">怎么设计消融实验</div><p>(1) 去掉拓扑感知（只看资源数量，不看位置）→ 看 JCT 和 throughput 变化。(2) 只对 TP 任务做拓扑感知，DP 任务不做 → 看不同并行策略的收益。(3) 调整拓扑质量阈值 → 看等待时间和训练性能的权衡曲线。</p></div>
+<div class="qa-summary">面试要点：拓扑感知的收益看训练性能，代价看等待时间。消融实验要分别衡量两者。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 面试官问"为什么张量并行必须放在同节点"，怎么回答？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>因为张量并行每一层的前向和反向都要做 AllReduce/AllGather，通信频率远高于其他并行策略。一个 70 层的 Transformer，每步训练要做 70 × 2 = 140 次集合通信。如果走 InfiniBand（延迟 ~5μs），每次通信的延迟累积到 0.7ms/步。如果走 NVLink（延迟 ~0.5μs），只有 0.07ms/步。乘以数万步训练，差距巨大。</p></div>
+<div class="qa-section"><div class="qa-section-title">补充</div><p>不只是延迟，带宽也是问题。NVLink 带宽 900 GB/s，InfiniBand 只有 ~50 GB/s。张量并行每次通信的激活值可能达到 GB 级别，带宽不够会严重拖慢训练。</p></div>
+<div class="qa-summary">面试金句："张量并行的通信频率是'每层每步'，不是'每步一次'。这个量级的通信只有 NVLink 承受得起。"</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: DRA 怎么解决拓扑表达问题？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>DRA 引入了 ResourceSlice，可以结构化地描述每个设备的属性和设备间的关系。一个 ResourceSlice 可以说"这个节点有 8 张 GPU，其中 GPU 0-3 通过 NVLink 互联，GPU 4-7 通过 NVLink 互联，但两组之间走 PCIe"。调度器可以根据这些信息做设备级的拓扑匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">和 Device Plugin 的区别</div><p>Device Plugin 只能报告设备列表（如 nvidia.com/gpu: 8），不能表达设备之间的关系。DRA 的 ResourceSlice 可以报告结构化的设备拓扑。这是从"资源计数"到"资源关系"的进化。</p></div>
+<div class="qa-summary">面试要点：Device Plugin 是"我有 8 张 GPU"，DRA 是"我有 8 张 GPU，它们之间是这样连接的"。</div>
+</div>
+</div>

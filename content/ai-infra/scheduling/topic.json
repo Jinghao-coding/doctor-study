@@ -1,11 +1,13 @@
 {
   "title": "任务调度理论",
-  "subtitle": "经典算法 · 公平性 · GPU 集群特有策略",
+  "subtitle": "目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 研究路线",
   "kicker": "Scheduling Theory",
   "tags": [
     "scheduling",
     "theory",
-    "fairness"
+    "fairness",
+    "batch",
+    "topology"
   ],
   "output": "pages/ai-infra/scheduling/index.html",
   "layout": [
@@ -18,6 +20,31 @@
           "title": "经典调度算法",
           "description": "FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing",
           "file": "01-classic-algorithms.md"
+        },
+        {
+          "title": "目标函数与评价指标",
+          "description": "JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价",
+          "file": "02-objectives-metrics.md"
+        },
+        {
+          "title": "多资源公平调度",
+          "description": "Max-Min、DRF、Elastic Quota、借用、回收与队列治理",
+          "file": "03-fairness-multiresource.md"
+        },
+        {
+          "title": "批调度、Gang 与 Backfill",
+          "description": "Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练",
+          "file": "04-batch-gang-backfill.md"
+        },
+        {
+          "title": "拓扑感知调度",
+          "description": "NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置",
+          "file": "05-topology-aware-scheduling.md"
+        },
+        {
+          "title": "调度研究路线图",
+          "description": "理论层、K8S 机制层、AI 集群层、系统设计层的学习边界",
+          "file": "06-scheduler-research-roadmap.md"
         }
       ]
     }
@@ -26,6 +53,26 @@
     {
       "title": "经典调度算法",
       "file": "01-classic-algorithms.md"
+    },
+    {
+      "title": "目标函数与评价指标",
+      "file": "02-objectives-metrics.md"
+    },
+    {
+      "title": "多资源公平调度",
+      "file": "03-fairness-multiresource.md"
+    },
+    {
+      "title": "批调度、Gang 与 Backfill",
+      "file": "04-batch-gang-backfill.md"
+    },
+    {
+      "title": "拓扑感知调度",
+      "file": "05-topology-aware-scheduling.md"
+    },
+    {
+      "title": "调度研究路线图",
+      "file": "06-scheduler-research-roadmap.md"
     }
   ]
 }
