@@ -158,7 +158,106 @@ kubectl get pods -A | grep -i dra
 </table>
 </div>
 
+<div class="card card-m">
+
+<h3>AI Infra GPU / DRA 高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU Device Plugin 和普通调度有什么关系？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. Device Plugin 的概念</div><p>Device Plugin 是节点侧插件，负责发现 GPU/NPU 等设备，并通过 gRPC 向 kubelet 注册扩展资源。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 对 scheduler 的作用</div><p>kubelet 会把扩展资源数量写入 Node capacity/allocatable，scheduler 根据 Pod limits 和 Node allocatable 做过滤。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 对 kubelet 的作用</div><p>Pod 绑定到节点后，kubelet 调用 Device Plugin Allocate，拿到 device id、环境变量、mount、CDI 等设备交付信息。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 边界</div><p>Device Plugin 让 K8s 能看到和交付设备，但默认调度器主要看到资源名和数量，不理解完整显存、拓扑和共享关系。</p></div>
+<div class="qa-summary">面试口径：Device Plugin 负责设备发现和节点侧交付，scheduler 只基于 kubelet 上报的扩展资源数量做普通调度。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: <code>nvidia.com/a100</code>、<code>nvidia.com/v100</code> 不也是 Device Plugin 实现的吗？那 DRA 价值在哪里？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 它确实可以做到</div><p>Device Plugin 可以把不同卡型编码成不同扩展资源名，例如 <code>nvidia.com/a100</code>、<code>nvidia.com/v100</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 资源名编码的问题</div><p>当还要表达显存大小、MIG profile、NUMA、NVLink、PCIe/SXM、健康状态、共享关系时，资源名和 label 会组合爆炸。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. DRA 的价值</div><p>DRA 用 ResourceSlice 发布结构化设备属性，用 ResourceClaim 和 CEL 表达需求，让 scheduler 做设备级匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 适用边界</div><p>简单同质整卡分配继续用 Device Plugin 就够；复杂异构、共享、拓扑感知场景更适合 DRA。</p></div>
+<div class="qa-summary">面试口径：Device Plugin 能表达简单卡型，DRA 的价值是结构化表达设备属性、容量、拓扑和共享关系。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ResourceSlice 是谁创建的？大集群会不会很多？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 谁创建</div><p>ResourceSlice 通常由 DRA driver 的 controller 或节点组件自动创建和维护，用户一般不手写。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 表达什么</div><p>它表达设备库存分片，包括 driver、pool、可访问节点、设备列表、attributes、capacity 等结构化信息。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 大集群数量</div><p>大集群会有很多 ResourceSlice，这是设计预期，用来避免把大量设备细节塞进 Node status。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 治理点</div><p>需要控制分片粒度、更新频率、对象大小和 watch 压力，否则会给 API Server 和 scheduler 带来额外负担。</p></div>
+<div class="qa-summary">面试口径：ResourceSlice 由 DRA driver 维护，大集群很多是正常的，关键是控制分片和更新频率。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CEL 表达式在 DRA 中怎么理解？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. CEL 是什么</div><p>CEL 是 Common Expression Language，一种安全可嵌入的表达式语言，适合在 Kubernetes API 中做轻量条件判断。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 在 DRA 中的作用</div><p>DRA 可以用 CEL 基于设备属性过滤候选设备，例如型号、显存、NUMA、NVLink fabric、厂商等。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 和资源名的区别</div><p>传统方式是“申请某个资源名”，CEL 是“查询满足结构化条件的设备”，表达能力更强。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 注意点</div><p>表达式过复杂或条件过严会导致匹配失败，生产上要配合 DeviceClass、ResourceSlice 和调度日志排查。</p></div>
+<div class="qa-summary">面试口径：CEL 让 DRA 从申请固定资源名升级为按结构化设备属性做筛选。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: DRA 和 Device Plugin 能不能同时使用？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 集群层面</div><p>可以共存，例如一批节点继续使用 Device Plugin，另一批节点灰度 DRA。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 设备层面</div><p>同一块物理设备不建议同时由 DP 和 DRA 暴露，否则可能出现双重分配和状态不一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 推荐方式</div><p>按 node pool、设备类型、业务队列或灰度资源池隔离，逐步验证 DRA 的调度、prepare、回收和监控。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 迁移策略</div><p>先低风险业务灰度，再迁移复杂异构设备；保留回滚路径和资源命名隔离。</p></div>
+<div class="qa-summary">面试口径：DP 和 DRA 可以共存，但同一物理设备不能双重暴露，推荐按节点池或设备类型隔离迁移。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: DRA driver 是什么？如何获取？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 概念</div><p>DRA driver 是 Kubernetes 侧设备资源驱动，不是 Linux kernel driver，也不是 CUDA/NPU runtime。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 作用</div><p>它负责发现设备、发布 ResourceSlice、协助 ResourceClaim 分配，并在 Pod 落到节点后 prepare/unprepare 设备。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 组成</div><p>通常包含 controller、node plugin、CRD/Helm chart/Operator 等组件，具体形态由厂商或社区实现。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 获取方式</div><p>一般来自硬件厂商、云平台或社区项目；是否成熟要看它是否支持 resource.k8s.io API、ResourceSlice、DeviceClass、ResourceClaim 和 kubelet prepare/unprepare。</p></div>
+<div class="qa-summary">面试口径：DRA driver 把真实硬件翻译成 Kubernetes DRA 资源，来源通常是厂商或社区组件。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 国产 GPU/NPU 厂商有没有 DRA driver，面试怎么回答？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 谨慎态度</div><p>不要武断说都有或都没有，DRA 生态仍在演进，公开成熟度需要看具体厂商、版本和项目。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 常见现状</div><p>很多国产 GPU/NPU 生态更常见的是 Device Plugin、Operator、vGPU、HAMi 或厂商自定义调度方案。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 判断标准</div><p>看是否使用 <code>resource.k8s.io</code> API，是否发布 ResourceSlice、DeviceClass、ResourceClaim，是否支持 kubelet prepare/unprepare。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 面试补充</div><p>可以说“如果没有成熟 DRA driver，生产上通常先用 Device Plugin/Operator 接入，再通过 scheduler plugin、label、拓扑信息做增强”。</p></div>
+<div class="qa-summary">面试口径：国产 GPU/NPU 是否有成熟 DRA driver 要按公开实现判断，不能泛化；判断标准是是否完整使用 DRA API 和设备交付链路。</div>
+</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何从 Device Plugin 平滑迁移到 DRA？</div>
-<div class="qa-a"><p>不要在同一批物理设备上同时开放 DP 和 DRA。推荐先建设独立 node pool，部署 DRA driver，发布 DeviceClass 和 ResourceSlice；再让少量训练任务通过 ResourceClaim 灰度接入，验证调度、prepare、监控和回收；最后按设备类型或业务队列逐步迁移。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先隔离资源池</div><p>不要在同一批物理设备上同时开放 DP 和 DRA，先建设独立 node pool 或灰度队列。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 部署 DRA 组件</div><p>部署 DRA driver，确认 DeviceClass、ResourceSlice、ResourceClaim 等 API 对象正常生成和更新。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 灰度业务</div><p>选择少量训练任务通过 ResourceClaim 接入，验证调度、prepare、容器注入、监控、回收和失败恢复。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 逐步迁移</div><p>按设备类型、业务队列或团队逐步迁移，保留 DP 回滚路径，并防止双重分配。</p></div>
+<div class="qa-summary">面试口径：迁移 DRA 要隔离节点池、灰度验证资源申请和设备交付链路，不能一上来混用同一批设备。</div>
+</div>
 </div>

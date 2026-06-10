@@ -59,11 +59,6 @@
           "title": "AI Infra：GPU / 批调度 / DRA",
           "description": "Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA",
           "file": "07-ai-infra-gpu-dra.md"
-        },
-        {
-          "title": "面试高频问答",
-          "description": "跨专题高频追问、回答模板、排查套路",
-          "file": "08-interview-qa.md"
         }
       ]
     }
@@ -100,10 +95,6 @@
     {
       "title": "AI Infra：GPU / 批调度 / DRA",
       "file": "07-ai-infra-gpu-dra.md"
-    },
-    {
-      "title": "面试高频问答",
-      "file": "08-interview-qa.md"
     }
   ]
 }

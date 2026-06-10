@@ -18,6 +18,13 @@ def rel_link(output: Path, target: str) -> str:
     return Path("." if output.parent == ROOT else Path(*([".."] * len(output.parent.relative_to(ROOT).parts)))).joinpath(target_path.relative_to(ROOT)).as_posix()
 
 
+def asset_link(output: Path, target: str) -> str:
+    """Append a mtime version so browsers do not keep stale CSS/JS."""
+    target_path = ROOT / target
+    version = int(target_path.stat().st_mtime)
+    return f"{rel_link(output, target)}?v={version}"
+
+
 def apply_inline(text: str) -> str:
     text = html.escape(text)
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
@@ -48,6 +55,9 @@ def markdown_to_html(markdown: str) -> str:
     table_lines: list[str] = []
     code_lines: list[str] = []
     in_code = False
+    raw_html_lines: list[str] = []
+    raw_html_tag: str | None = None
+    raw_html_depth = 0
 
     def flush_para() -> None:
         nonlocal para
@@ -71,6 +81,17 @@ def markdown_to_html(markdown: str) -> str:
 
     for raw in markdown.splitlines():
         line = raw.rstrip()
+        if raw_html_tag:
+            raw_html_lines.append(line)
+            lower = line.lower()
+            raw_html_depth += len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", lower))
+            raw_html_depth -= len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", lower))
+            if raw_html_depth <= 0:
+                out.append("\n".join(raw_html_lines))
+                raw_html_lines = []
+                raw_html_tag = None
+                raw_html_depth = 0
+            continue
         if line.startswith("```"):
             flush_para(); flush_list(); flush_table()
             if in_code:
@@ -85,6 +106,20 @@ def markdown_to_html(markdown: str) -> str:
             continue
         if not line.strip():
             flush_para(); flush_list(); flush_table()
+            continue
+        stripped_lower = line.lstrip().lower()
+        m_html_block = re.match(r"<\s*(div|section|article|table|pre|script|style|svg)(?:\s|>|/)", stripped_lower)
+        if m_html_block:
+            flush_para(); flush_list(); flush_table()
+            raw_html_tag = m_html_block.group(1)
+            raw_html_lines = [line]
+            raw_html_depth = len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", stripped_lower))
+            raw_html_depth -= len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", stripped_lower))
+            if raw_html_depth <= 0:
+                out.append("\n".join(raw_html_lines))
+                raw_html_lines = []
+                raw_html_tag = None
+                raw_html_depth = 0
             continue
         if line.lstrip().startswith("<"):
             flush_para(); flush_list(); flush_table()
@@ -119,6 +154,8 @@ def markdown_to_html(markdown: str) -> str:
         para.append(line.strip())
 
     flush_para(); flush_list(); flush_table()
+    if raw_html_lines:
+        out.append("\n".join(raw_html_lines))
     return "\n".join(out)
 
 
@@ -335,8 +372,8 @@ def render_topic(topic_path: Path) -> Path:
     page = page.replace("{{content}}", "\n\n".join(blocks))
     page = page.replace("{{nav_links}}", render_nav(output))
     page = page.replace("{{home_path}}", rel_link(output, "index.html"))
-    page = page.replace("{{css_path}}", rel_link(output, "assets/style.css"))
-    page = page.replace("{{script_path}}", rel_link(output, "assets/script.js"))
+    page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))
+    page = page.replace("{{script_path}}", asset_link(output, "assets/script.js"))
     output.write_text(page, encoding="utf-8")
     return output
 
@@ -357,6 +394,8 @@ def render_index() -> Path:
     page = template.replace("{{title}}", html.escape(SITE["title"]))
     page = page.replace("{{subtitle}}", html.escape(SITE.get("subtitle", "")))
     page = page.replace("{{topic_cards}}", "\n\n".join(cards))
+    page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))
+    page = page.replace("{{script_path}}", asset_link(output, "assets/script.js"))
     output.write_text(page, encoding="utf-8")
     return output
 

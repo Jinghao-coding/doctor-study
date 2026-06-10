@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kubernetes 面试学习 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css">
+<link rel="stylesheet" href="../../../assets/style.css?v=1780747627">
 </head>
 <body>
 <nav class="topnav">
@@ -18,59 +18,82 @@
   <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
   <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
+  <a href="../../../pages/cs-basics/foundation-qa/index.html">计算机基础</a>
 </nav>
 <div class="wrap">
 <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Platform Infrastructure</div><h1>Kubernetes 面试学习</h1><p class="sub">架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA</p><div class="hero-tags"><span>k8s</span><span>scheduler</span><span>workload</span><span>networking</span><span>storage</span><span>operator</span><span>gpu</span><span>dra</span><span>interview</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="Kubernetes 面试学习"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-title">架构与 Pod 主链路</span><span class="tab-desc">控制面、数据面、API Server、etcd、scheduler、kubelet、Pod 启动全链路</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-title">调度与资源模型</span><span class="tab-desc">Scheduling Framework、requests/limits、QoS、抢占、Extended Resource</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-title">Scheduler 内部机制</span><span class="tab-desc">调度队列、scheduler cache、assumed pod、binding cycle、preemption、plugin 落点</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-title">Workload 与 Controller</span><span class="tab-desc">Pod 生命周期、Deployment、StatefulSet、Job、Informer、Reconcile、Operator</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-5" aria-controls="kubernetes-tabs-panel-5" aria-selected="false"><span class="tab-title">网络与存储</span><span class="tab-desc">CNI、Service、DNS、Headless、PV/PVC、StorageClass、CSI</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-6" aria-controls="kubernetes-tabs-panel-6" aria-selected="false"><span class="tab-title">安全、准入与多租户</span><span class="tab-desc">RBAC、ServiceAccount、Admission、Webhook、Quota、Pod Security</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-7" aria-controls="kubernetes-tabs-panel-7" aria-selected="false"><span class="tab-title">故障排查与稳定性</span><span class="tab-desc">Pending、CrashLoop、ImagePull、Service 不通、Node NotReady、大规模稳定性</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-8" aria-controls="kubernetes-tabs-panel-8" aria-selected="false"><span class="tab-title">AI Infra：GPU / 批调度 / DRA</span><span class="tab-desc">Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-9" aria-controls="kubernetes-tabs-panel-9" aria-selected="false"><span class="tab-title">面试高频问答</span><span class="tab-desc">跨专题高频追问、回答模板、排查套路</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构与 Pod 主链路</h2></div><div class="tab-panel-body"><div class="card card-m">
-<h3>K8s 面试学习的总框架：先抓 Pod 主链路</h3>
-<p>Kubernetes 面试不要按 API 对象百科式背诵，而要先建立一条主线：<strong>一个 Pod 从提交到运行，中间经过 API Server、etcd、scheduler、controller、kubelet、CRI、CNI、CSI 和容器运行时。</strong>后续所有问题，例如 Pending、Service 不通、PVC Pending、GPU 调度失败、Admission 拒绝，本质上都是这条链路上的某个阶段出了问题。</p>
-<table>
-<tr><th>学习模块</th><th>解决的核心问题</th><th>面试展开方式</th></tr>
-<tr><td>架构与 Pod 主链路</td><td>Pod 如何从 YAML 变成节点上的容器</td><td>按请求链路讲 API Server、etcd、scheduler、kubelet</td></tr>
-<tr><td>调度与资源模型</td><td>Pod 为什么能调度或不能调度</td><td>讲 requests/limits、QoS、Filter/Score、抢占、扩展资源</td></tr>
-<tr><td>Workload 与 Controller</td><td>声明式系统如何持续逼近期望状态</td><td>讲 Deployment、StatefulSet、Job、Informer、Reconcile</td></tr>
-<tr><td>网络与存储</td><td>Pod 如何通信、服务发现、挂载数据</td><td>讲 CNI、Service、DNS、PV/PVC、StorageClass、CSI</td></tr>
-<tr><td>安全、准入与多租户</td><td>谁能做什么、请求能否进入集群、资源如何隔离</td><td>讲 AuthN/AuthZ/Admission、RBAC、Quota、Pod Security</td></tr>
-<tr><td>故障排查与稳定性</td><td>线上异常如何定位和治理</td><td>按症状反推控制面、节点、网络、存储、资源</td></tr>
-<tr><td>AI Infra：GPU / 批调度 / DRA</td><td>GPU、训练任务和异构资源如何接入 K8s</td><td>讲 Device Plugin、Gang、Kueue/Volcano、DRA</td></tr>
-<tr><td>面试高频问答</td><td>把知识点转成回答模板</td><td>用“结论 → 原理 → 排查 → 权衡”回答</td></tr>
-</table>
-</div>
-<div class="card card-s">
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="Kubernetes 面试学习"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-title">架构与 Pod 主链路</span><span class="tab-desc">控制面、数据面、API Server、etcd、scheduler、kubelet、Pod 启动全链路</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-title">调度与资源模型</span><span class="tab-desc">Scheduling Framework、requests/limits、QoS、抢占、Extended Resource</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-title">Scheduler 内部机制</span><span class="tab-desc">调度队列、scheduler cache、assumed pod、binding cycle、preemption、plugin 落点</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-title">Workload 与 Controller</span><span class="tab-desc">Pod 生命周期、Deployment、StatefulSet、Job、Informer、Reconcile、Operator</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-5" aria-controls="kubernetes-tabs-panel-5" aria-selected="false"><span class="tab-title">网络与存储</span><span class="tab-desc">CNI、Service、DNS、Headless、PV/PVC、StorageClass、CSI</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-6" aria-controls="kubernetes-tabs-panel-6" aria-selected="false"><span class="tab-title">安全、准入与多租户</span><span class="tab-desc">RBAC、ServiceAccount、Admission、Webhook、Quota、Pod Security</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-7" aria-controls="kubernetes-tabs-panel-7" aria-selected="false"><span class="tab-title">故障排查与稳定性</span><span class="tab-desc">Pending、CrashLoop、ImagePull、Service 不通、Node NotReady、大规模稳定性</span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-8" aria-controls="kubernetes-tabs-panel-8" aria-selected="false"><span class="tab-title">AI Infra：GPU / 批调度 / DRA</span><span class="tab-desc">Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构与 Pod 主链路</h2></div><div class="tab-panel-body"><div class="card card-s">
 <h3>Kubernetes 架构图</h3>
-<svg viewBox="0 0 920 420" role="img" aria-label="Kubernetes 架构图">
-  <rect x="30" y="30" width="860" height="150" rx="18" fill="#eef6ff" stroke="#8bbcf6" />
+<svg viewBox="0 0 920 520" role="img" aria-label="Kubernetes 架构图">
+  <defs>
+    <marker id="k8sArchArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="30" y="30" width="860" height="190" rx="18" fill="#eef6ff" stroke="#8bbcf6" />
   <text x="60" y="65" font-size="18" font-weight="700" fill="#1d4ed8">Control Plane</text>
-  <rect x="70" y="90" width="150" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="95" y="123" font-size="14" fill="#1e3a8a">API Server</text>
-  <rect x="260" y="90" width="130" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="294" y="123" font-size="14" fill="#1e3a8a">etcd</text>
-  <rect x="430" y="90" width="150" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="456" y="123" font-size="14" fill="#1e3a8a">Scheduler</text>
-  <rect x="620" y="90" width="190" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="647" y="123" font-size="14" fill="#1e3a8a">Controller Manager</text>
-  <rect x="30" y="230" width="395" height="145" rx="18" fill="#f0fdf4" stroke="#86efac" />
-  <text x="60" y="265" font-size="18" font-weight="700" fill="#15803d">Worker Node A</text>
-  <rect x="70" y="290" width="95" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="94" y="318" font-size="13" fill="#166534">kubelet</text>
-  <rect x="185" y="290" width="85" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="208" y="318" font-size="13" fill="#166534">CRI</text>
-  <rect x="290" y="290" width="95" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="313" y="318" font-size="13" fill="#166534">Pod</text>
-  <rect x="495" y="230" width="395" height="145" rx="18" fill="#f5f3ff" stroke="#c4b5fd" />
-  <text x="525" y="265" font-size="18" font-weight="700" fill="#6d28d9">Worker Node B</text>
-  <rect x="535" y="290" width="95" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="559" y="318" font-size="13" fill="#5b21b6">kubelet</text>
-  <rect x="650" y="290" width="85" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="673" y="318" font-size="13" fill="#5b21b6">CNI</text>
-  <rect x="755" y="290" width="95" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="778" y="318" font-size="13" fill="#5b21b6">Pod</text>
-  <path d="M220 116 L260 116" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
-  <path d="M390 116 L430 116" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
-  <path d="M505 145 C505 205 120 205 120 290" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
-  <path d="M715 145 C715 205 585 205 585 290" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
-  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b" /></marker></defs>
+
+  <rect x="365" y="82" width="190" height="62" rx="12" fill="#ffffff" stroke="#3b82f6" stroke-width="1.6" />
+  <text x="420" y="108" font-size="14" font-weight="700" fill="#1e3a8a">API Server</text>
+  <text x="390" y="130" font-size="11" fill="#475569">唯一直接读写 etcd 的入口</text>
+
+  <rect x="80" y="95" width="150" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
+  <text x="135" y="127" font-size="14" fill="#1e3a8a">etcd</text>
+
+  <rect x="305" y="165" width="150" height="42" rx="10" fill="#ffffff" stroke="#93c5fd" />
+  <text x="332" y="191" font-size="13" fill="#1e3a8a">Scheduler</text>
+
+  <rect x="495" y="165" width="190" height="42" rx="10" fill="#ffffff" stroke="#93c5fd" />
+  <text x="528" y="191" font-size="13" fill="#1e3a8a">Controller Manager</text>
+
+  <rect x="700" y="95" width="145" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
+  <text x="725" y="119" font-size="13" fill="#1e3a8a">kubectl /</text>
+  <text x="725" y="138" font-size="13" fill="#1e3a8a">clients</text>
+
+  <path d="M230 122 L365 113" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M365 119 L230 130" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M772 122 L555 113" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M390 165 L425 144" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M530 165 L500 144" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+
+  <rect x="30" y="285" width="395" height="185" rx="18" fill="#f0fdf4" stroke="#86efac" />
+  <text x="60" y="320" font-size="18" font-weight="700" fill="#15803d">Worker Node A</text>
+  <rect x="70" y="342" width="115" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
+  <text x="103" y="370" font-size="13" fill="#166534">kubelet</text>
+  <rect x="210" y="342" width="150" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
+  <text x="232" y="370" font-size="13" fill="#166534">containerd / CRI</text>
+  <rect x="70" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
+  <text x="101" y="429" font-size="12" fill="#166534">CNI</text>
+  <rect x="174" y="405" width="105" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
+  <text x="195" y="429" font-size="12" fill="#166534">kube-proxy</text>
+  <rect x="295" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
+  <text x="328" y="429" font-size="12" fill="#166534">Pods</text>
+
+  <rect x="495" y="285" width="395" height="185" rx="18" fill="#f5f3ff" stroke="#c4b5fd" />
+  <text x="525" y="320" font-size="18" font-weight="700" fill="#6d28d9">Worker Node B</text>
+  <rect x="535" y="342" width="115" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
+  <text x="568" y="370" font-size="13" fill="#5b21b6">kubelet</text>
+  <rect x="675" y="342" width="150" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
+  <text x="697" y="370" font-size="13" fill="#5b21b6">containerd / CRI</text>
+  <rect x="535" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
+  <text x="566" y="429" font-size="12" fill="#5b21b6">CNI</text>
+  <rect x="639" y="405" width="105" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
+  <text x="660" y="429" font-size="12" fill="#5b21b6">kube-proxy</text>
+  <rect x="760" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
+  <text x="793" y="429" font-size="12" fill="#5b21b6">Pods</text>
+
+  <path d="M420 144 C360 235 130 245 128 342" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M500 144 C560 235 592 245 592 342" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M185 364 L210 364" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M285 387 L340 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M128 387 L115 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M650 364 L675 364" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M750 387 L805 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+  <path d="M592 387 L580 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
+
+  <text x="65" y="500" font-size="12" fill="#64748b">关键点：Scheduler、Controller Manager、kubelet 都通过 API Server 协作；etcd 只保存状态，不直接驱动节点。</text>
 </svg>
 </div>
 <div class="card card-m">
@@ -88,14 +111,15 @@
 </div>
 <div class="card card-w">
 <h3>面试回答模板：Pod 是怎么跑起来的？</h3>
-<p>可以按“四段式”回答：</p>
+<p>可以按“四段式”回答，主线是：<strong>所有控制面和节点组件都围绕 API Server 协作，etcd 只负责保存状态，真正执行发生在目标节点的 kubelet 上。</strong></p>
 <ol>
-<li><strong>入口：</strong>用户把 YAML 提交到 API Server，经过认证、鉴权、准入后写入 etcd。</li>
-<li><strong>控制：</strong>如果是 Deployment，controller 会创建 ReplicaSet，再由 ReplicaSet 创建 Pod。</li>
-<li><strong>调度：</strong>scheduler 监听没有 <code>nodeName</code> 的 Pod，经过过滤、打分、抢占等流程绑定到某个 Node。</li>
-<li><strong>执行：</strong>节点 kubelet 看到绑定到本节点的 Pod 后，调用 CSI 准备存储、CNI 准备网络、CRI 创建容器，并把状态回写到 API Server。</li>
+<li><strong>入口：</strong>用户通过 <code>kubectl</code> 或 <code>client-go</code> 把 YAML 提交到 API Server。API Server 负责认证、鉴权、准入控制、对象校验和默认值填充；合法对象会<strong>通过 API Server</strong> 持久化到 etcd。这里要强调：通常只有 API Server 直接读写 etcd，其他组件通过 API Server watch 和更新对象。</li>
+<li><strong>控制：</strong>如果提交的是 Deployment，Deployment Controller 会 watch API Server 中的对象变化，创建或维护 ReplicaSet；ReplicaSet Controller 再根据期望副本数创建、删除或修复 Pod。这个阶段体现的是 Kubernetes 的声明式 reconcile：用户写期望状态，controller 持续把实际状态逼近期望状态。</li>
+<li><strong>调度：</strong>scheduler watch 到未调度、未绑定节点的 Pod 后，经过 Filter、Score、Reserve、Permit、Bind 等流程选择合适 Node。调度器不会直接通知 kubelet，而是把绑定结果写回 API Server，例如设置 Pod 的 <code>spec.nodeName</code> 或创建 Binding。后续 kubelet 是通过 watch API Server 才知道这个 Pod 归自己执行。</li>
+<li><strong>执行：</strong>目标节点上的 kubelet watch 到绑定到本节点的 Pod 后，进入 Pod 生命周期执行流程：先准备 volume（CSI）、创建 Pod sandbox，再由网络插件（CNI）配置 Pod 网络，随后通过 CRI 调用 containerd / CRI-O 拉镜像、创建并启动业务容器。容器启动后，kubelet 继续执行探针、重启策略、资源状态采集，并把 Pod phase、container status、Node status 等状态回写到 API Server。</li>
 </ol>
-<p>追问时再展开 etcd 一致性、Informer watch、scheduler 插件、kubelet Pod Worker、探针和容器运行时。</p>
+<div class="qa-summary">一句话总结：用户提交期望状态到 API Server，controller 负责创建和维护 Pod，scheduler 负责选 Node 并写回绑定结果，kubelet 在目标节点通过 CSI/CNI/CRI 把 Pod 真正跑起来，并持续向 API Server 上报状态。</div>
+<p>追问时可以展开：etcd 一致性与 watch、Informer 缓存机制、scheduler 插件链路、绑定与抢占、kubelet Pod Worker、CSI/CNI/CRI 边界、探针和容器运行时。</p>
 </div>
 <div class="card card-d">
 <h3>控制面与数据面组件速记</h3>
@@ -110,13 +134,34 @@
 <tr><td>Container Runtime</td><td>真正创建和管理容器</td><td>CRI、containerd、pause 容器、镜像拉取</td></tr>
 </table>
 </div>
+<div class="card card-m">
+
+<h3>架构与 Pod 主链路高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么说 Kubernetes 是声明式系统？</div>
-<div class="qa-a"><p>用户提交的是期望状态，例如“我要 3 个副本”，控制器持续 watch 实际状态并通过 reconcile 把实际状态逼近期望状态。它不是一次性命令式脚本，而是由 API 对象、控制循环和最终一致性共同组成的系统。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 概念</div><p>声明式系统的核心是用户提交“期望状态”，例如 Deployment 期望 3 个副本，而不是一步步命令系统创建哪几个容器。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 作用</div><p>声明式 API 让系统可以容错和自愈：Pod 被删、节点故障、实际副本数不匹配时，controller 会重新 reconcile。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 实现方式</div><p>API Server 保存 spec，controller 通过 Informer watch 对象变化，比较期望状态和实际状态，再创建、更新或删除相关对象。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 面试边界</div><p>etcd 保存状态，API Server 提供读写入口，controller 负责逼近期望状态；不要把 Kubernetes 理解成一次性脚本执行器。</p></div>
+<div class="qa-summary">面试口径：Kubernetes 的声明式体现在“用户写 spec，controller 持续 reconcile，最终让实际状态逼近期望状态”。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: API Server、Controller、Scheduler、kubelet 都在 watch 什么？</div>
-<div class="qa-a"><p>Controller watch 自己关心的资源并维护派生对象，scheduler watch 未调度 Pod 和节点/资源变化，kubelet watch 绑定到本节点的 Pod。watch 机制减少轮询压力，也让各组件围绕 API Server 解耦。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. API Server 的位置</div><p>API Server 不只是被 watch 的对象入口，也是认证、鉴权、准入、版本转换和 watch 分发中心，其他组件基本都围绕它协作。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Controller watch 什么</div><p>Controller watch 自己关心的资源，例如 Deployment、ReplicaSet、Pod、Node，并根据 spec/status 差异执行 reconcile。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Scheduler watch 什么</div><p>Scheduler 主要 watch 未绑定节点的 Pod，以及 Node、PVC、ResourceClaim 等会影响调度结果的对象。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. kubelet watch 什么</div><p>kubelet watch 绑定到本节点的 Pod，然后在节点侧准备 volume、网络和容器，并持续回写 Pod/Node 状态。</p></div>
+<div class="qa-summary">面试口径：watch 机制让组件通过 API Server 解耦协作，Controller 管期望状态，Scheduler 管放置决策，kubelet 管节点执行。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-2" aria-labelledby="kubernetes-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>调度与资源模型</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>调度与资源模型：回答“为什么 Pending”的核心模块</h3>
 <p>调度和资源模型要一起学。<strong>资源模型定义 Pod 要什么、Node 有什么；调度器决定这个 Pod 放到哪里。</strong>面试中最常见的追问是：Pod 为什么 Pending、requests/limits 如何影响调度、QoS 如何影响驱逐、GPU 这类扩展资源如何被调度。</p>
@@ -183,13 +228,45 @@
 <tr><td>复杂度</td><td>简单成熟，生态广</td><td>能力强，但依赖 API 版本和 DRA driver 生态</td></tr>
 </table>
 </div>
+<div class="card card-m">
+
+<h3>调度与资源模型高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Pod Pending 时，调度侧怎么排查？</div>
-<div class="qa-a"><p>先看 <code>kubectl describe pod</code> 的 Events，确认是资源不足、污点不容忍、nodeSelector/affinity 不匹配、PVC 未绑定，还是抢占也无法解决。再看节点 allocatable、Pod requests、PriorityClass、scheduler 日志和相关调度插件。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先看事件</div><p>先用 <code>kubectl describe pod</code> 看 Events，确认是否是 <code>FailedScheduling</code>，不要一上来就猜 kubelet 或 CNI。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 资源类原因</div><p>对比 Pod requests 和 Node allocatable，关注 CPU、内存、GPU 扩展资源、DaemonSet 占用、系统预留和资源碎片。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 约束类原因</div><p>检查 nodeSelector、nodeAffinity、podAffinity/anti-affinity、topologySpreadConstraints、taints/tolerations 是否让可选节点变少。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 外部依赖原因</div><p>如果事件提到 PVC、ResourceClaim、Quota 或队列准入，就分别转到存储、DRA、ResourceQuota、Kueue/Volcano 链路排查。</p></div>
+<div class="qa-summary">面试口径：Pending 先看 Events，再按资源、约束、存储、配额、GPU/DRA、调度器插件逐层排查。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: requests 和 limits 有什么区别？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. requests 的概念</div><p><code>requests</code> 是 Pod 对资源的最低需求和调度依据，scheduler 用它判断节点是否放得下。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. limits 的概念</div><p><code>limits</code> 是运行时上限，CPU 超过 limit 通常被 throttling，内存超过 limit 通常触发 OOMKilled。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 对 QoS 的作用</div><p>CPU/Memory 的 requests 和 limits 组合决定 QoS：Guaranteed、Burstable、BestEffort，进而影响节点压力下的驱逐顺序。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 常见误区</div><p>调度器默认不看实时使用量，而是看 requests；limits 不是资源预留，设置过低会影响稳定性。</p></div>
+<div class="qa-summary">面试口径：requests 主要管调度和预留，limits 主要管运行时限制，QoS 决定资源压力下谁更容易被驱逐。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 GPU requests 和 limits 通常要相等？</div>
-<div class="qa-a"><p>GPU 属于离散扩展资源，Kubernetes 默认无法像 CPU 那样按时间片细粒度超卖，因此通常只在 limits 中声明，requests 会被视为等于 limits。这样 scheduler 和 kubelet 能按整数设备做一致的分配。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. GPU 的资源属性</div><p>GPU 是离散扩展资源，默认按整数设备分配，不像 CPU 那样天然支持细粒度超卖。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 调度一致性</div><p>scheduler 根据 Pod 申请的扩展资源数量过滤节点，kubelet 也按同样数量调用 Device Plugin Allocate，二者需要一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Kubernetes 约定</div><p>扩展资源通常只允许设置 limits，requests 会被视为等于 limits，避免“调度申请少、运行占用多”的不一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 例外场景</div><p>MIG、MPS、time-slicing、vGPU 或 DRA 可以表达更复杂共享，但那是额外机制，不是普通 GPU limit 的默认语义。</p></div>
+<div class="qa-summary">面试口径：普通 GPU 扩展资源按整数设备调度和分配，所以 requests/limits 通常保持一致，保证 scheduler 与 kubelet 看到同一个资源需求。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-3" aria-labelledby="kubernetes-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Scheduler 内部机制</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
@@ -197,24 +274,111 @@
 <div class="card card-s">
 <h3>一次调度的内部路径</h3>
 <ol>
-<li><strong>入队：</strong>未绑定 Pod 进入 scheduling queue，根据优先级、退避状态和事件提示在不同队列之间流转。</li>
-<li><strong>取快照：</strong>scheduler 从 cache 生成当前调度周期使用的 NodeInfo snapshot，避免调度过程中反复访问 API Server。</li>
-<li><strong>Scheduling Cycle：</strong>依次执行 QueueSort、PreFilter、Filter、PostFilter、PreScore、Score、NormalizeScore，选出目标节点。</li>
+<li><strong>入队：</strong>未绑定 Pod 先进入 scheduling queue。它能不能立刻被调度，取决于优先级、退避状态、历史失败原因和集群事件。</li>
+<li><strong>取快照：</strong>scheduler 从 cache 生成本轮调度使用的 NodeInfo snapshot，避免调度过程中反复访问 API Server。</li>
+<li><strong>Scheduling Cycle：</strong>执行 QueueSort、PreFilter、Filter、PostFilter、PreScore、Score、NormalizeScore，选出目标节点。</li>
 <li><strong>Assume：</strong>在 scheduler cache 中假定 Pod 已经占用目标节点资源，防止后续 Pod 看到过时资源。</li>
-<li><strong>Binding Cycle：</strong>执行 Reserve、Permit、PreBind、Bind、PostBind，其中绑定阶段可以与后续调度周期并行。</li>
-<li><strong>状态回滚：</strong>如果 Reserve 或 Bind 后续失败，需要通过 Unreserve 或 cache 回滚释放临时占用。</li>
+<li><strong>Binding Cycle：</strong>执行 Reserve、Permit、PreBind、Bind、PostBind。绑定阶段可以与后续调度周期并行。</li>
+<li><strong>状态回滚：</strong>Reserve、Permit 或 Bind 后续失败时，需要通过 Unreserve 或 cache 过期释放临时占用。</li>
 </ol>
 </div>
 <div class="card card-d">
-<h3>调度队列</h3>
+<h3>调度队列总览图</h3>
+<p>这张图要抓住一个核心：<strong>队列系统决定“下一个被尝试调度的是谁”，Filter/Score 才决定“它放到哪里”。</strong>因此队列策略会直接影响等待时间、公平性、吞吐和重试风暴。</p>
+<div class="sched-flow queue-flow">
+<svg viewBox="0 0 1120 610" role="img" aria-label="kube-scheduler scheduling queue flow">
+<defs>
+<marker id="queueArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+<path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+</marker>
+</defs>
+<text x="34" y="42" class="k8s-title">kube-scheduler 队列流转</text>
+<text x="34" y="64" class="k8s-subtitle">activeQ / backoffQ / unschedulablePods / move request</text>
+
+<rect x="40" y="105" width="180" height="86" class="sched-node sched-api"></rect>
+<text x="64" y="137" class="sched-label">New / Updated Pod</text>
+<text x="64" y="159" class="sched-desc">未绑定 Pod 进入调度器</text>
+<text x="64" y="177" class="sched-desc">带 priority / affinity / PVC</text>
+
+<rect x="310" y="90" width="230" height="112" class="sched-node sched-queue"></rect>
+<text x="335" y="125" class="sched-label">ActiveQ</text>
+<text x="335" y="150" class="sched-desc">当前可以立即尝试调度</text>
+<text x="335" y="169" class="sched-desc">内部按 QueueSort 排序</text>
+<text x="335" y="188" class="sched-desc">priority、timestamp、plugin 共同影响顺序</text>
+
+<rect x="645" y="90" width="210" height="112" class="sched-node sched-cache"></rect>
+<text x="670" y="125" class="sched-label">Scheduling Cycle</text>
+<text x="670" y="150" class="sched-desc">PreFilter / Filter / Score</text>
+<text x="670" y="169" class="sched-desc">用 snapshot 判断目标节点</text>
+<text x="670" y="188" class="sched-desc">成功后进入 assume / bind</text>
+
+<rect x="930" y="105" width="150" height="86" class="sched-node sched-bind"></rect>
+<text x="956" y="137" class="sched-label">Bind</text>
+<text x="956" y="159" class="sched-desc">写 API Server</text>
+<text x="956" y="177" class="sched-desc">Pod 获得 nodeName</text>
+
+<rect x="310" y="295" width="230" height="112" class="sched-node sched-note"></rect>
+<text x="335" y="330" class="sched-label">BackoffQ</text>
+<text x="335" y="355" class="sched-desc">刚调度失败，进入指数退避</text>
+<text x="335" y="374" class="sched-desc">避免 CPU tight loop</text>
+<text x="335" y="393" class="sched-desc">到期后回到 ActiveQ</text>
+
+<rect x="645" y="295" width="250" height="112" class="sched-node sched-queue"></rect>
+<text x="670" y="330" class="sched-label">UnschedulableQ</text>
+<text x="670" y="355" class="sched-desc">当前没有任何可行节点</text>
+<text x="670" y="374" class="sched-desc">等待事件提示重新入队</text>
+<text x="670" y="393" class="sched-desc">不是按时间轮询为主</text>
+
+<rect x="645" y="485" width="250" height="78" class="sched-node sched-api"></rect>
+<text x="670" y="518" class="sched-label">Move request</text>
+<text x="670" y="542" class="sched-desc">Node / Pod / PVC / ResourceClaim 等事件触发</text>
+
+<path d="M220 148 C255 148 275 146 310 146" class="sched-arrow"></path>
+<path d="M540 146 C585 146 600 146 645 146" class="sched-arrow"></path>
+<path d="M855 146 C890 146 900 148 930 148" class="sched-arrow"></path>
+<path d="M760 202 C760 235 720 250 700 295" class="sched-arrow sched-dashed"></path>
+<path d="M640 202 C600 245 505 250 470 295" class="sched-arrow sched-dashed"></path>
+<path d="M425 295 C425 250 425 238 425 202" class="sched-arrow sched-dashed"></path>
+<path d="M770 485 C770 448 770 430 770 407" class="sched-arrow sched-dashed"></path>
+<path d="M645 525 C540 525 425 470 425 407" class="sched-arrow sched-dashed"></path>
+
+<rect x="40" y="485" width="500" height="78" class="sched-node sched-cache"></rect>
+<text x="64" y="518" class="sched-label">面试抓手</text>
+<text x="64" y="542" class="sched-desc">ActiveQ 控制机会分配；BackoffQ 控制失败重试节奏；UnschedulableQ 控制事件驱动唤醒；Move request 控制无效重试比例。</text>
+</svg>
+</div>
+</div>
+<div class="card card-d">
+<h3>三个队列分别解决什么问题</h3>
+<div class="queue-detail-grid">
+<div class="queue-detail active"><h4>ActiveQ：谁先获得调度机会</h4><p>ActiveQ 是调度器真正取 Pod 的地方。Pod 进入 ActiveQ 后，会经过 QueueSort 插件排序，默认主要受 priority 和入队时间影响。</p><ul><li><strong>研究重点：</strong>短作业优先、SLA 优先、队头阻塞、饥饿避免、公平性。</li><li><strong>面试表达：</strong>Filter/Score 再聪明，也只能处理已经出队的 Pod；如果队列排序不合理，高价值任务可能长期拿不到尝试机会。</li><li><strong>AI 场景：</strong>小推理任务、交互式 Notebook、训练恢复任务是否能插队，主要是队列策略问题。</li></ul></div>
+<div class="queue-detail backoff"><h4>BackoffQ：失败后别立刻自旋</h4><p>BackoffQ 保存刚失败但还没到重试时间的 Pod。它的目标是避免调度器对同一个明显失败的 Pod 反复 Filter，造成 CPU tight loop。</p><ul><li><strong>研究重点：</strong>退避时间过短会浪费调度吞吐，过长会增加排队等待。</li><li><strong>面试表达：</strong>BackoffQ 是调度器的“冷静期”，把失败重试从忙等变成有节奏地再尝试。</li><li><strong>AI 场景：</strong>GPU 大作业如果资源暂时不够，频繁重试会扫描大量节点，影响整个调度器吞吐。</li></ul></div>
+<div class="queue-detail unsched"><h4>UnschedulableQ：等事件，而不是盲目轮询</h4><p>UnschedulableQ 保存当前没有任何节点可满足的 Pod。它不是简单睡眠队列，而是等待可能改变可调度性的集群事件。</p><ul><li><strong>研究重点：</strong>事件提示是否精准，决定无效唤醒比例。</li><li><strong>面试表达：</strong>UnschedulableQ 是“条件未满足”的等待区；只有节点、Pod、PVC、ResourceClaim 等事件可能改变结论时，才应该被移动回来。</li><li><strong>AI 场景：</strong>等待 GPU 释放、等待 RDMA 节点加入、等待 PVC 绑定、等待 gang 资源凑齐。</li></ul></div>
+</div>
+</div>
+<div class="card card-w">
+<h3>Move request：为什么事件提示很关键</h3>
+<p>Move request 可以理解为“某个集群事件可能让一批不可调度 Pod 重新有机会”。调度器会根据失败原因和事件类型，决定是否把 Pod 从 UnschedulableQ 或 BackoffQ 移回 ActiveQ。</p>
 <table>
-<tr><th>队列</th><th>作用</th><th>研究/面试关注点</th></tr>
-<tr><td>ActiveQ</td><td>当前可立即尝试调度的 Pod</td><td>优先级排序、队头阻塞、短作业插队</td></tr>
-<tr><td>BackoffQ</td><td>刚失败、需要退避后再试的 Pod</td><td>避免 tight loop；退避过长会增加等待时间</td></tr>
-<tr><td>UnschedulableQ</td><td>当前没有可行节点的 Pod</td><td>等待资源、节点、Pod 删除、PVC 绑定等事件重新激活</td></tr>
-<tr><td>Move request</td><td>集群事件触发 Pod 重新入队</td><td>事件提示是否精准，决定调度器吞吐和无效重试比例</td></tr>
+<tr><th>事件</th><th>可能唤醒哪些 Pod</th><th>为什么</th><th>无效唤醒风险</th></tr>
+<tr><td>Node 新增或 Node label 变化</td><td>nodeSelector、nodeAffinity、拓扑约束失败的 Pod</td><td>节点集合或标签变了，Filter 结果可能改变</td><td>如果所有 Pod 都唤醒，会造成全量重试</td></tr>
+<tr><td>Pod 删除或完成</td><td>资源不足、端口冲突、反亲和失败的 Pod</td><td>CPU/GPU/内存/端口/拓扑位置被释放</td><td>只释放 CPU 却唤醒 GPU 不足的 Pod，收益很低</td></tr>
+<tr><td>PVC 绑定完成</td><td>之前因 volume binding 失败的 Pod</td><td>存储条件满足后才可能通过 Filter</td><td>和存储无关的 Pod 不应被大量唤醒</td></tr>
+<tr><td>ResourceSlice / ResourceClaim 变化</td><td>DRA 设备匹配失败的 Pod</td><td>设备库存、属性或 claim 状态变化</td><td>设备事件过粗会导致大量 GPU Pod 重试</td></tr>
+<tr><td>PodGroup / quota 变化</td><td>Gang、队列配额、批任务准入失败的 Pod</td><td>组资源或配额条件变化</td><td>准入条件未变化时重试只会消耗调度周期</td></tr>
 </table>
-<p>调度方向要特别关注：<strong>队列策略决定谁先被调度，Filter/Score 只决定它被放到哪里。</strong></p>
+<div class="qa-summary">队列性能优化不是“多重试几次”，而是“在正确事件发生后，只唤醒可能变得可调度的 Pod”。</div>
+</div>
+<div class="card card-s">
+<h3>队列策略与 Filter/Score 的边界</h3>
+<table>
+<tr><th>问题</th><th>应该主要改哪里</th><th>原因</th></tr>
+<tr><td>高优先级 Pod 等太久</td><td>QueueSort / Priority / Preemption</td><td>这是“谁先获得机会”的问题，不是节点打分问题</td></tr>
+<tr><td>Pod 总是扫描大量节点但失败</td><td>UnschedulableQ 事件提示 / PreFilter</td><td>应该减少无效调度周期，而不是继续扩大扫描</td></tr>
+<tr><td>短作业被大作业队头阻塞</td><td>QueueSort / 多队列 / backfill</td><td>需要改变出队顺序或允许小作业利用碎片</td></tr>
+<tr><td>GPU 拓扑放置不合理</td><td>Filter / Score / Reserve</td><td>Pod 已经获得调度机会，问题是放到哪个节点和设备组合</td></tr>
+<tr><td>Gang 任务部分 Pod 占住资源</td><td>Permit / Reserve / Unreserve</td><td>需要同组准入和失败回滚，而不是单 Pod 独立调度</td></tr>
+</table>
 </div>
 <div class="card card-w">
 <h3>Scheduler Cache 与 Assume 机制</h3>
@@ -307,36 +471,256 @@
 </table>
 </div>
 <div class="card card-w">
-<h3>CRD / Operator 面试重点</h3>
-<p><strong>Operator = CRD + Controller + 领域运维逻辑。</strong>CRD 扩展 Kubernetes API，Controller 监听这些自定义资源并执行 reconcile，Operator 则把数据库、训练任务、推理服务等领域知识编码进控制循环。</p>
+<h3>CRD / Operator：先把三个层次讲清楚</h3>
+<p><strong>Operator = CRD + Controller + 领域运维逻辑。</strong>面试时不要只说“Operator 是自定义控制器”，而要把三层拆开：CRD 让 Kubernetes 认识一种新的资源类型；Controller 负责 watch 这种资源并不断 reconcile；Operator 在 reconcile 里放入某个领域的生命周期管理经验，例如训练任务启动、失败恢复、扩缩容、checkpoint 清理和状态回写。</p>
 <table>
-<tr><th>概念</th><th>含义</th><th>追问点</th></tr>
-<tr><td>spec</td><td>用户声明的期望状态</td><td>不要在控制器里随意改用户 spec</td></tr>
-<tr><td>status</td><td>系统观测到的实际状态</td><td>通常由 controller 写入</td></tr>
-<tr><td>conditions</td><td>结构化状态条件</td><td>Ready、Progressing、Failed 等</td></tr>
-<tr><td>OwnerReference</td><td>表达对象归属关系</td><td>用于级联删除和垃圾回收</td></tr>
-<tr><td>Finalizer</td><td>删除前的清理钩子</td><td>清理外部资源，处理卡删除问题</td></tr>
-<tr><td>Leader Election</td><td>多副本控制器只让一个活跃</td><td>保证 HA 与避免重复执行</td></tr>
+<tr><th>层次</th><th>解决的问题</th><th>面试中要讲清楚</th></tr>
+<tr><td>CRD</td><td>把领域对象注册成 Kubernetes API 资源</td><td>例如 <code>TrainingJob</code>、<code>RayCluster</code>、<code>InferenceService</code>，用户可以像操作 Pod 一样 <code>kubectl apply/get/describe</code></td></tr>
+<tr><td>Controller</td><td>持续把实际状态修正到期望状态</td><td>通过 Informer 监听事件，放入 WorkQueue，由 Reconcile 创建/更新/删除下游资源</td></tr>
+<tr><td>Operator</td><td>把领域运维知识自动化</td><td>不仅创建 Pod，还要处理启动顺序、故障恢复、状态机、外部资源清理、升级和多租户策略</td></tr>
 </table>
+<div class="qa-section"><div class="qa-section-title">一句话理解</div><p>CRD 是“用户提交的订单格式”，Controller 是“订单处理流水线”，Operator 是“懂这个业务的自动运维机器人”。如果只是创建几个 Pod，那只是 Controller；如果它还理解训练任务什么时候算成功、失败后怎么重试、checkpoint 怎么清理、队列资源怎么释放，才更接近 Operator。</p></div>
+</div>
+<div class="card card-s">
+<h3>CRD 对象应该怎么设计：spec、status、conditions</h3>
+<p>CRD 设计的核心是把“用户想要什么”和“系统观察到什么”分开。<code>spec</code> 是用户声明的期望状态，<code>status</code> 是控制器观察和计算出的实际状态，<code>conditions</code> 是结构化阶段信息。这个边界如果混乱，Operator 很容易变成不可维护的脚本。</p>
+<table>
+<tr><th>字段</th><th>应该放什么</th><th>不应该放什么</th><th>训练任务例子</th></tr>
+<tr><td><code>spec</code></td><td>用户声明的期望状态</td><td>运行时变化、错误原因、Pod 实际 IP</td><td>镜像、启动命令、worker 数、GPU 数、队列、优先级、容错策略</td></tr>
+<tr><td><code>status</code></td><td>系统观测到的实际状态</td><td>用户配置项</td><td>当前 phase、已创建 Pod 数、ready worker 数、最近一次失败原因、checkpoint 路径</td></tr>
+<tr><td><code>conditions</code></td><td>可机器读取的状态条件</td><td>大段非结构化日志</td><td><code>Admitted</code>、<code>PodsCreated</code>、<code>WorkersReady</code>、<code>Running</code>、<code>Failed</code></td></tr>
+<tr><td><code>metadata.ownerReferences</code></td><td>表达父子资源归属</td><td>跨 namespace 乱指向</td><td>Worker Pod、Service、ConfigMap 归属于 TrainingJob，TrainingJob 删除后级联回收</td></tr>
+<tr><td><code>metadata.finalizers</code></td><td>删除前必须完成的外部清理</td><td>永远不移除的阻塞标记</td><td>释放队列占用、删除外部 checkpoint 临时目录、清理临时 Service/DNS 记录</td></tr>
+</table>
+<div class="qa-section"><div class="qa-section-title">面试高频追问</div><p><strong>为什么 Controller 不应该随意改 spec？</strong>因为 spec 是用户意图，Controller 如果偷偷修改 spec，就会破坏声明式系统的可预测性。正确做法是：默认值通过 admission/defaulting 处理，运行时状态写入 status，异常原因写入 status.conditions。</p></div>
 </div>
 <div class="card card-d">
-<h3>AI 训练任务 Operator 如何设计</h3>
-<ol>
-<li>定义 TrainingJob CRD：包含镜像、worker 数、资源、队列、容错策略。</li>
-<li>Controller watch TrainingJob，创建 worker Pod、Service、ConfigMap、Secret。</li>
-<li>用 status.conditions 暴露 Pending、Running、Succeeded、Failed。</li>
-<li>结合 Gang Scheduling 或 Kueue 控制整体入队和资源准入。</li>
-<li>用 Finalizer 清理外部 checkpoint、临时 Service 或队列占用。</li>
-</ol>
-<p>边界要说清楚：Operator 管生命周期和业务编排，Scheduler Plugin 管 Pod/任务放到哪里，Device Plugin/DRA 管设备发现与交付。</p>
+<h3>Reconcile 到底在做什么：从“事件驱动”到“状态驱动”</h3>
+<p>Operator 不是收到一个事件就执行一次脚本，而是每次 reconcile 都重新读取当前世界，计算期望状态和实际状态的差异，然后执行最小修正动作。这样即使事件丢失、Controller 重启、Pod 被人工删除，也能最终恢复一致。</p>
+<div class="sched-flow">
+<svg viewBox="0 0 980 250" role="img" aria-label="Operator reconcile flow">
+<defs>
+<marker id="operatorArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+<path d="M0,0 L0,6 L9,3 z" fill="currentColor"></path>
+</marker>
+</defs>
+<rect x="35" y="80" width="135" height="70" class="sched-node sched-api"></rect>
+<text x="58" y="112" class="sched-label">TrainingJob</text>
+<text x="58" y="134" class="sched-desc">用户声明 spec</text>
+<path d="M170 115 C205 115 215 115 250 115" class="sched-arrow" style="marker-end:url(#operatorArrow)"></path>
+<rect x="250" y="80" width="135" height="70" class="sched-node sched-cache"></rect>
+<text x="282" y="112" class="sched-label">Informer</text>
+<text x="282" y="134" class="sched-desc">List / Watch</text>
+<path d="M385 115 C420 115 430 115 465 115" class="sched-arrow" style="marker-end:url(#operatorArrow)"></path>
+<rect x="465" y="80" width="135" height="70" class="sched-node sched-queue"></rect>
+<text x="492" y="112" class="sched-label">WorkQueue</text>
+<text x="492" y="134" class="sched-desc">去重 / 限速 / 重试</text>
+<path d="M600 115 C635 115 645 115 680 115" class="sched-arrow" style="marker-end:url(#operatorArrow)"></path>
+<rect x="680" y="80" width="135" height="70" class="sched-node sched-bind"></rect>
+<text x="710" y="112" class="sched-label">Reconcile</text>
+<text x="710" y="134" class="sched-desc">计算差异并修正</text>
+<path d="M748 150 C748 198 128 198 102 150" class="sched-arrow sched-dashed" style="marker-end:url(#operatorArrow)"></path>
+<text x="280" y="224" class="sched-desc">循环：创建/更新 Pod、Service、ConfigMap；写 status；失败后重新入队</text>
+</svg>
+</div>
+<table>
+<tr><th>Reconcile 步骤</th><th>要做什么</th><th>TrainingJob 例子</th></tr>
+<tr><td>1. 读取对象</td><td>从缓存/API Server 获取 CR 当前状态</td><td>读 TrainingJob 的 spec、status、deletionTimestamp</td></tr>
+<tr><td>2. 处理删除</td><td>如果对象正在删除，执行 finalizer 清理</td><td>释放队列 quota、删除临时 checkpoint、移除 finalizer</td></tr>
+<tr><td>3. 计算期望状态</td><td>根据 spec 推导应存在的下游资源</td><td>应该有 1 个 master Pod、N 个 worker Pod、Service、ConfigMap</td></tr>
+<tr><td>4. 对比实际状态</td><td>检查下游资源是否缺失、过期、异常</td><td>发现 worker-3 被删了，或者镜像版本与 spec 不一致</td></tr>
+<tr><td>5. 执行动作</td><td>只做必要的 create/update/delete</td><td>补 Pod、更新 ConfigMap、触发重试、暂停任务</td></tr>
+<tr><td>6. 更新 status</td><td>把结果以结构化方式反馈给用户</td><td>写入 Running、Ready workers=7/8、LastError=NCCL timeout</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>AI 训练任务 Operator 如何设计：从 CRD 到训练状态机</h3>
+<p>训练任务 Operator 的关键不是“创建一堆 Pod”，而是把训练任务抽象成一个可恢复、可观测、可排队、可清理的状态机。它要同时理解 Kubernetes 资源、训练框架语义和调度系统边界。</p>
+<div class="queue-detail-grid">
+<div class="queue-detail"><h4>1. TrainingJob spec</h4><p>描述用户想要的训练任务：镜像、启动命令、worker 数、每个 worker 的 GPU/CPU/内存、数据路径、checkpoint 策略、队列、优先级、容错策略。</p></div>
+<div class="queue-detail active"><h4>2. 下游 Kubernetes 资源</h4><p>Operator 根据 spec 创建 Pod/StatefulSet、Service、ConfigMap、Secret、PVC，并通过 OwnerReference 建立归属关系。</p></div>
+<div class="queue-detail backoff"><h4>3. 调度与准入</h4><p>大规模训练不能直接创建一堆 Pod 抢资源。Operator 通常要和 Kueue、Volcano 或自研队列系统配合，等资源整体准入后再启动。</p></div>
+<div class="queue-detail unsched"><h4>4. 状态与容错</h4><p>Operator 通过 status.conditions 暴露 Pending、Admitted、PodsCreated、WorkersReady、Running、Restarting、Succeeded、Failed 等阶段。</p></div>
+</div>
+<table>
+<tr><th>状态</th><th>含义</th><th>Operator 动作</th><th>用户能看到什么</th></tr>
+<tr><td>Pending</td><td>TrainingJob 已提交，但还没获得资源</td><td>创建队列对象或等待 quota/Gang 准入</td><td>等待原因、队列位置、资源缺口</td></tr>
+<tr><td>Admitted</td><td>资源准入通过，可以创建训练资源</td><td>创建 Pod、Service、ConfigMap、Secret</td><td>已准入、开始拉起 worker</td></tr>
+<tr><td>WorkersReady</td><td>训练所需 worker 已 ready</td><td>确认 rendezvous endpoint、写入启动配置</td><td>ready worker 数、master endpoint</td></tr>
+<tr><td>Running</td><td>训练进程正在运行</td><td>持续观察 Pod、日志、退出码、checkpoint 心跳</td><td>训练运行时长、重启次数、最近 checkpoint</td></tr>
+<tr><td>Restarting</td><td>部分 worker 失败，正在恢复</td><td>按策略重建 Pod、触发从 checkpoint 恢复或弹性缩容</td><td>失败原因、恢复进度、retry count</td></tr>
+<tr><td>Succeeded / Failed</td><td>训练成功完成或不可恢复失败</td><td>写最终状态，按策略保留或清理资源</td><td>完成时间、失败原因、输出路径</td></tr>
+</table>
+</div>
+<div class="card card-r">
+<h3>AI 训练 Operator 的边界：不要和 Scheduler / Device Plugin 混在一起</h3>
+<p>这部分是面试官最常追问的地方。Operator、Scheduler Plugin、Device Plugin/DRA 都和 GPU 训练有关，但它们管的层次完全不同。答清楚边界，说明你真的理解 Kubernetes 扩展体系。</p>
+<table>
+<tr><th>组件</th><th>它负责什么</th><th>不负责什么</th><th>训练场景例子</th></tr>
+<tr><td>TrainingJob Operator</td><td>任务生命周期和业务编排</td><td>不决定具体 Pod 放到哪台机器</td><td>创建 worker Pod、写 status、失败恢复、清理 checkpoint 临时资源</td></tr>
+<tr><td>Queue / Admission</td><td>任务是否允许进入集群消费资源</td><td>不负责单个 Pod 的节点打分</td><td>Kueue 判断队列 quota 是否足够，Volcano 判断 PodGroup 是否满足 minMember</td></tr>
+<tr><td>Scheduler / Scheduler Plugin</td><td>Pod/PodGroup 放到哪些节点</td><td>不理解完整训练业务生命周期</td><td>Gang、拓扑感知、优先级、抢占、GPU/NVLink 亲和</td></tr>
+<tr><td>Device Plugin / DRA</td><td>设备发现、上报和容器内设备交付</td><td>不决定训练任务状态机</td><td>把 GPU、MIG、RDMA 网卡暴露给 kubelet，并把设备挂进容器</td></tr>
+</table>
+<div class="qa-summary">面试口径：Operator 管“这个训练任务应该经历什么生命周期”，Scheduler 管“Pod 应该放在哪里”，Device Plugin/DRA 管“设备如何被发现并交付给容器”。</div>
+</div>
+<div class="card card-w">
+<h3>Kubebuilder 实战：从脚手架到第一个 Operator</h3>
+<p>前面的内容解决“Operator 是什么”，Kubebuilder 解决“怎么把它写出来”。Kubebuilder 的价值不是替你写业务逻辑，而是把项目骨架、CRD 生成、RBAC、Webhook、部署 YAML、测试目录这些重复工程化工作标准化。参考文章把完整流程拆成：初始化项目、创建 API、完善 CRD、实现 Controller、可选 Webhook、本地调试、构建镜像和部署清单。</p>
+<table>
+<tr><th>步骤</th><th>命令 / 产物</th><th>你要真正理解什么</th></tr>
+<tr><td>初始化项目</td><td><code>kubebuilder init --domain example.com --repo github.com/xxx/operator</code></td><td><code>domain</code> 会参与 CRD group，例如 <code>training.ai.example.com</code>；<code>repo</code> 是 Go module 路径</td></tr>
+<tr><td>创建 API</td><td><code>kubebuilder create api --group core --version v1 --kind Application --namespaced=true</code></td><td>这里本质是在定义一个 GVK：Group、Version、Kind；同时生成 API 类型、CRD 样例、Controller 骨架</td></tr>
+<tr><td>完善类型</td><td><code>api/v1/*_types.go</code></td><td>在 Go struct 中定义 <code>Spec</code> 和 <code>Status</code>，再由 controller-gen 生成 CRD schema 和 deepcopy 代码</td></tr>
+<tr><td>实现控制器</td><td><code>internal/controller/*_controller.go</code></td><td>核心不是写事件回调，而是在 <code>Reconcile</code> 中反复读取对象、处理删除、创建/更新下游资源、回写 status</td></tr>
+<tr><td>生成清单</td><td><code>make manifests</code>、<code>make install</code></td><td>生成 CRD、RBAC、Webhook 等 YAML，并把 CRD 安装到集群</td></tr>
+<tr><td>本地运行</td><td><code>make run</code></td><td>Controller 可在本地连远程 kubeconfig 调试，但 Webhook 调试通常需要额外处理证书和访问路径</td></tr>
+<tr><td>部署上线</td><td><code>IMG=xxx make docker-buildx</code>、<code>make build-installer</code></td><td>把 Controller 打成镜像，并生成包含 CRD、RBAC、Deployment 的安装包</td></tr>
+</table>
+<div class="qa-section"><div class="qa-section-title">我的理解</div><p>Kubebuilder 不是一个“魔法框架”，它只是把 Kubernetes controller 的标准套路固化下来：API 类型放在 <code>api/</code>，控制循环放在 <code>internal/controller/</code>，部署资源放在 <code>config/</code>。真正体现能力的地方仍然是：你能否把业务对象建模成清晰的 spec/status，并写出幂等、可重试、可观测的 reconcile。</p></div>
+<div class="qa-section"><div class="qa-section-title">参考来源</div><p>本节实战流程参考了 <a href="https://www.lixueduan.com/posts/kubernetes/35-build-operator-by-kubebuilder/" target="_blank" rel="noopener">K8s Operator 开发 Part1：快速上手 Kubebuilder，构建你的第一个 K8s Operator</a>，并结合 AI 训练任务 Operator 场景做了重新组织和补充。</p></div>
+</div>
+<div class="card card-s">
+<h3>GVK / GVR：写 Operator 前必须分清的两个标识</h3>
+<p>CRD 注册进 API Server 之后，会同时涉及“这个对象是什么”和“我通过 REST 路径怎么访问它”。这就是 GVK 和 GVR 的区别。面试时如果能讲清这个点，说明你不是只会套 Kubebuilder 命令。</p>
+<table>
+<tr><th>概念</th><th>组成</th><th>更常出现在哪里</th><th>例子</th></tr>
+<tr><td>GVK</td><td>Group / Version / Kind</td><td>对象类型识别、Scheme 注册、Controller 处理对象</td><td><code>training.ai.example.com / v1 / TrainingJob</code></td></tr>
+<tr><td>GVR</td><td>Group / Version / Resource</td><td>REST 访问、dynamic client、kubectl 资源路径</td><td><code>training.ai.example.com / v1 / trainingjobs</code></td></tr>
+<tr><td>核心区别</td><td>Kind 是单数类型名，Resource 通常是复数资源名</td><td>GVK 偏“类型系统”，GVR 偏“API 访问路径”</td><td><code>Kind=Pod</code>，<code>Resource=pods</code></td></tr>
+</table>
+<div class="qa-summary">面试口径：GVK 用来说明“这是什么类型的对象”，GVR 用来说明“通过哪个 API 资源路径操作它”。Controller 代码里经常关心 GVK/Scheme，动态客户端和 RESTMapper 经常关心 GVR。</div>
+</div>
+<div class="card card-d">
+<h3>Reconcile 代码骨架：Application Demo 到 TrainingJob 的迁移</h3>
+<p>参考文章中的 Application Demo 很适合入门：用户提交一个 Application CR，里面包含 <code>spec.image</code> 和 <code>spec.enabled</code>；Controller 根据它创建、更新或删除 Deployment，并把 Deployment 是否 ready 写回 <code>status.ready</code>。把这个例子迁移到 AI 训练场景，就是把 Deployment 换成一组 role 化的 worker/master Pod、Service、ConfigMap、PVC、队列对象和状态机。</p>
+<pre><code>// 典型 Reconcile 思路，不是完整可运行代码
+func Reconcile(ctx, req) {
+  // 1. 根据 namespace/name 获取 CR；NotFound 通常说明对象已删除，直接返回
+  job := getTrainingJob(req.NamespacedName)
+
+  // 2. 处理 deletionTimestamp：如果正在删除，先跑 finalizer 清理外部资源
+  if job.IsDeleting() {
+    cleanupQueueQuota(job)
+    cleanupTemporaryCheckpoint(job)
+    removeFinalizer(job)
+    return
+  }
+
+  // 3. 确保 finalizer 存在，保证后续删除前有机会清理外部资源
+  ensureFinalizer(job)
+
+  // 4. 根据 spec 计算期望资源：Pod/Service/ConfigMap/PVC/PodGroup 或 Workload
+  desired := buildDesiredTrainingResources(job.Spec)
+
+  // 5. 对比实际状态，只做必要的 create/update/delete
+  syncOwnedResources(desired)
+
+  // 6. 观察下游资源状态，回写 status.conditions
+  updateTrainingJobStatus(job)
+}</code></pre>
+<table>
+<tr><th>Application Demo</th><th>TrainingJob Operator</th><th>设计变化</th></tr>
+<tr><td><code>spec.image</code></td><td>镜像、启动命令、role、GPU 数、数据路径</td><td>从单应用部署变成分布式训练拓扑</td></tr>
+<tr><td><code>spec.enabled</code></td><td>队列准入、暂停/恢复、重试策略</td><td>是否运行不只是布尔值，还要受 quota、Gang、优先级影响</td></tr>
+<tr><td>Deployment ready</td><td>Master/Worker ready、Rendezvous、Checkpoint 心跳</td><td>训练任务 ready 需要结合框架语义</td></tr>
+<tr><td><code>status.ready</code></td><td><code>status.phase</code> + <code>conditions</code> + replica 统计 + last error</td><td>状态要能支持排障，而不是只有 true/false</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>Webhook：把默认值和校验前移到 Admission 阶段</h3>
+<p>Operator 里经常有两类逻辑不要放到 Reconcile 里硬兜底：一类是默认值，一类是非法输入校验。Kubebuilder 可以生成 Webhook 骨架，常见命令是 <code>kubebuilder create webhook --group core --version v1 --kind Application --defaulting --programmatic-validation</code>。</p>
+<table>
+<tr><th>Webhook 类型</th><th>作用</th><th>Application 例子</th><th>TrainingJob 例子</th></tr>
+<tr><td>Mutating Admission Webhook</td><td>给对象补默认值或注入字段</td><td>没有写 <code>enabled</code> 时默认设为 true</td><td>默认 restartPolicy、backoffLimit、checkpoint interval、priorityClass</td></tr>
+<tr><td>Validating Admission Webhook</td><td>拒绝非法对象</td><td>校验 <code>spec.image</code> 格式</td><td>校验 GPU 数必须大于 0，worker 数和并行策略匹配，队列名合法</td></tr>
+<tr><td>Reconcile</td><td>处理运行时状态收敛</td><td>创建或删除 Deployment</td><td>创建训练资源、等待准入、失败恢复、写 status</td></tr>
+</table>
+<div class="qa-section"><div class="qa-section-title">我的思考</div><p>Webhook 和 Reconcile 的边界要清楚：Webhook 负责“对象能不能进入系统、进入前补什么默认值”，Reconcile 负责“对象已经进入系统后，如何让实际状态收敛”。不要依赖 Reconcile 才发现明显非法的 spec，否则用户会看到对象创建成功但长期失败；也不要在 Webhook 里做耗时外部调用，否则会拖慢 API Server 的写路径。</p></div>
+</div>
+<div class="card card-w">
+<h3>从 Kubebuilder 到生产级 Operator：面试应该主动补充什么</h3>
+<p>文章中的流程能帮助你快速跑通第一个 Operator，但面试官通常会继续问“生产环境怎么做”。你需要主动补上工程化、稳定性和可观测性维度。</p>
+<table>
+<tr><th>维度</th><th>入门 Demo 常见做法</th><th>生产级思考</th></tr>
+<tr><td>幂等性</td><td>看到事件就创建资源</td><td>每次 reconcile 都先读实际状态，已存在则比较差异，避免重复创建和重复副作用</td></tr>
+<tr><td>OwnerReference</td><td>只创建子资源</td><td>给 Pod/Service/ConfigMap 设置 owner，利用 Kubernetes GC 自动清理内部资源</td></tr>
+<tr><td>Finalizer</td><td>可能不处理删除</td><td>清理外部队列占用、对象存储临时目录、实验追踪记录；清理逻辑必须可重试、可超时</td></tr>
+<tr><td>Status Conflict</td><td>直接 update status</td><td>处理 resourceVersion 冲突，必要时重试；用 <code>observedGeneration</code> 表示 status 对应哪一版 spec</td></tr>
+<tr><td>权限</td><td>给较大的 RBAC</td><td>按最小权限生成和审查 RBAC，避免 Controller 具备不必要的集群级权限</td></tr>
+<tr><td>可观测性</td><td>只看日志</td><td>补充 events、conditions、metrics、trace id、reconcile latency、queue depth、error rate</td></tr>
+<tr><td>升级兼容</td><td>只有一个版本</td><td>考虑 CRD versioning、conversion webhook、字段废弃策略和向后兼容</td></tr>
+</table>
+<div class="qa-summary">面试口径：Kubebuilder 帮你生成 Operator 的工程骨架，生产级 Operator 的关键是 API 设计、幂等 Reconcile、删除清理、状态可观测、权限最小化和版本演进。</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如果让你现场设计一个 TrainingJob CRD，你会包含哪些字段？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心 spec</div><p>至少包括：镜像、启动命令、replica/role 定义、每个 role 的资源请求、队列名、优先级、重试次数、checkpoint 配置、数据输入输出路径、环境变量和 Secret 引用。</p></div>
+<div class="qa-section"><div class="qa-section-title">核心 status</div><p>至少包括：phase、conditions、readyReplicas、activeReplicas、failedReplicas、startTime、completionTime、lastCheckpoint、lastFailureReason、observedGeneration。</p></div>
+<div class="qa-section"><div class="qa-section-title">设计原则</div><p>spec 表达用户意图，status 表达系统事实；不要把运行时状态塞回 spec，也不要让用户通过改 status 控制系统。</p></div>
+<div class="qa-summary">面试口径：TrainingJob CRD 的设计重点是 role 化资源声明、队列准入、容错恢复和可观测状态，而不是简单包一层 PodTemplate。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: TrainingJob Operator 如何处理删除？为什么需要 Finalizer？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">为什么需要</div><p>OwnerReference 只能清理 Kubernetes 内部子资源，但训练任务可能还占着外部系统资源，例如队列占用、临时 checkpoint、对象存储目录、外部 DNS/Service 注册、实验追踪记录。</p></div>
+<div class="qa-section"><div class="qa-section-title">删除流程</div><p>用户删除 TrainingJob 后，对象先进入 deletionTimestamp 状态；Operator 看到后执行外部清理；清理成功后移除 finalizer；API Server 最终真正删除对象。</p></div>
+<div class="qa-section"><div class="qa-section-title">常见坑</div><p>如果清理逻辑失败但 finalizer 不移除，对象会一直 Terminating；所以 finalizer 逻辑必须幂等、可重试、可超时，并能把失败原因写入 status/events。</p></div>
+<div class="qa-summary">面试口径：Finalizer 是删除前的外部资源清理协议，关键是幂等、可重试和失败可观测。</div>
+</div>
+</div>
+<div class="card card-m">
+
+<h3>Workload 与 Controller 高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Deployment 和 StatefulSet 有什么区别？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. Deployment 的定位</div><p>Deployment 面向无状态服务，重点是副本数、滚动发布、回滚和通过 Service 做负载均衡。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. StatefulSet 的定位</div><p>StatefulSet 面向有状态服务，提供稳定序号、稳定网络身份和稳定 PVC，Pod 通常按顺序创建、更新和删除。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 存储与网络差异</div><p>Deployment 的 Pod 名称和挂载存储通常不稳定；StatefulSet 常配 Headless Service 和 volumeClaimTemplates，让每个副本有固定身份。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 适用场景</div><p>Web 服务、无状态 API 适合 Deployment；数据库、消息队列、需要固定 rank/身份的训练组件更适合 StatefulSet。</p></div>
+<div class="qa-summary">面试口径：Deployment 管无状态弹性副本，StatefulSet 管有状态、有序、稳定身份和稳定存储的副本。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Informer 为什么重要？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 概念</div><p>Informer 是 controller-runtime/client-go 中的 List/Watch 缓存机制，会把 API Server 中的对象变化同步到本地缓存。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 作用</div><p>它减少 controller 直接频繁访问 API Server 的压力，并把对象变化转成事件回调。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 和 WorkQueue 的关系</div><p>Informer 收到事件后通常只入队 namespace/name key，真正业务逻辑由 worker 从 WorkQueue 取出后 reconcile。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 生产价值</div><p>本地缓存、事件驱动、失败重试、限速和去重，是 Kubernetes controller 能大规模运行的基础。</p></div>
+<div class="qa-summary">面试口径：Informer 负责高效 watch 和缓存对象，WorkQueue 负责解耦事件与处理，Reconcile 负责把实际状态修正到期望状态。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 Controller 不直接 watch 后立刻处理对象，而要放 WorkQueue？</div>
-<div class="qa-a"><p>WorkQueue 可以去重、限速、重试，并把事件接收和业务处理解耦。Informer 事件可能很频繁，如果直接处理容易阻塞 watch 回调，也不利于失败重试和并发控制。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 解耦事件与处理</div><p>watch 回调应该尽快返回，避免业务处理阻塞事件接收，WorkQueue 把“收到事件”和“处理对象”拆开。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 去重</div><p>同一个对象短时间多次变化时，队列可以合并 key，避免重复处理。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 限速与重试</div><p>处理失败可以重新入队并退避，避免 tight loop 打爆 API Server 或外部系统。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 并发控制</div><p>多个 worker 可以并发消费队列，同时保持同一对象按 key 维度可控处理。</p></div>
+<div class="qa-summary">面试口径：WorkQueue 是 controller 的缓冲层，解决去重、限速、失败重试和并发控制。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Operator 和普通 Controller 有什么区别？</div>
-<div class="qa-a"><p>普通 Controller 是 Kubernetes 控制模式，Operator 是把某个领域的运维知识封装成 CRD 与 Controller。例如数据库 Operator 不只是创建 Pod，还会处理备份、扩缩容、故障切换和版本升级。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 共同点</div><p>二者都基于 watch、queue、reconcile 模式，持续把实际状态逼近期望状态。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Operator 的特点</div><p>Operator 通常包含 CRD 和领域运维逻辑，不只是管理原生资源，还把数据库、训练任务、推理服务等运维知识编码进去。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 作用</div><p>它能自动处理部署、扩缩容、备份、故障切换、版本升级、状态回写等复杂生命周期。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 边界</div><p>Operator 负责编排和生命周期，不应该替代 scheduler 做底层放置决策，也不应该替代 Device Plugin/DRA 做设备发现交付。</p></div>
+<div class="qa-summary">面试口径：Controller 是控制模式，Operator 是“CRD + Controller + 领域运维知识”的产品化控制器。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-5" aria-labelledby="kubernetes-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>网络与存储</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>网络与存储：Pod 能不能被访问，数据能不能挂上</h3>
 <p>网络和存储经常一起出现在排障题里。Pod 启动不仅要调度成功，还要 CNI 分配网络、CSI 挂载卷；服务访问不仅要 Pod Running，还要 readiness、EndpointSlice、Service 转发和 DNS 都正常。</p>
@@ -399,13 +783,45 @@
 <tr><td>StatefulSet volumeClaimTemplates</td><td>为每个 Pod 自动创建独立 PVC</td><td>数据库、消息队列、有状态训练组件</td></tr>
 </table>
 </div>
+<div class="card card-m">
+
+<h3>网络与存储高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Service 不通怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 确认访问入口</div><p>先确认客户端访问的是 DNS、ClusterIP、NodePort、LoadBalancer 还是 Ingress，不同入口对应不同链路。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 检查 Service 到 Pod 的映射</div><p>看 Service selector 是否匹配 Pod labels，再看 EndpointSlice 是否生成 ready endpoints。没有 endpoints 通常是 selector、readiness 或 Pod 状态问题。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分应用和 Service 问题</div><p>直接访问 Pod IP:Port，如果 Pod IP 不通，多半是应用、端口、容器或 CNI 问题；如果 Pod IP 通但 Service 不通，再看 kube-proxy/eBPF。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查网络基础设施</div><p>继续排查 CoreDNS、NetworkPolicy、CNI、kube-proxy/IPVS/iptables/eBPF、节点路由、安全组和云 LB。</p></div>
+<div class="qa-summary">面试口径：Service 不通按“入口 → selector/endpoints → Pod 直连 → DNS/策略/数据面”逐层缩小范围。</div>
+</div>
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
-<div class="qa-a"><p>ClusterIP Service 会分配一个虚拟 IP，客户端访问 VIP 后由 kube-proxy/eBPF 转发到后端 Pod。Headless Service 设置 <code>clusterIP: None</code>，DNS 直接返回后端 Pod 的地址，常用于 StatefulSet 稳定网络身份、客户端自定义负载均衡或需要感知每个副本的场景。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. ClusterIP 的概念</div><p>ClusterIP Service 会分配一个虚拟 IP，客户端访问 VIP 后由 kube-proxy、IPVS 或 eBPF 转发到后端 Pod。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Headless 的概念</div><p>Headless Service 设置 <code>clusterIP: None</code>，不提供 VIP，DNS 直接返回后端 Pod IP 或稳定域名。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 作用差异</div><p>ClusterIP 适合普通服务负载均衡；Headless 适合客户端自己做负载均衡、服务发现或需要感知每个副本身份的场景。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 典型场景</div><p>StatefulSet 常配 Headless Service，让 <code>pod-0.service.namespace.svc</code> 这类稳定域名指向固定副本。</p></div>
+<div class="qa-summary">面试口径：ClusterIP 提供稳定 VIP 和服务转发，Headless 不提供 VIP，而是通过 DNS 暴露后端 Pod 地址。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: PVC 一直 Pending 怎么排查？</div>
-<div class="qa-a"><p>先看 PVC events 和 StorageClass 是否存在，再看 provisioner/CSI Controller 是否正常、容量和访问模式是否匹配、volumeBindingMode 是否为 WaitForFirstConsumer、Pod 调度拓扑是否满足存储约束，以及底层存储系统是否有配额或权限问题。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先看 PVC 事件</div><p>用 <code>kubectl describe pvc</code> 看 Events，确认是 StorageClass 不存在、provisioner 异常、容量不足还是访问模式不匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 检查 StorageClass</div><p>看 provisioner、parameters、reclaimPolicy、allowVolumeExpansion 和 <code>volumeBindingMode</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 理解 WaitForFirstConsumer</div><p>如果是 <code>WaitForFirstConsumer</code>，PVC 可能会等使用它的 Pod 参与调度后才绑定或创建 PV。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查底层和拓扑</div><p>云盘、本地盘要看可用区、节点拓扑、配额、权限、CSI Controller/Node 组件和底层存储状态。</p></div>
+<div class="qa-summary">面试口径：PVC Pending 按“PVC Events → StorageClass/CSI → WaitForFirstConsumer → Pod 调度拓扑 → 底层存储”排查。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-6" aria-labelledby="kubernetes-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>安全、准入与多租户</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>安全、准入与多租户：请求能不能进入，资源能不能隔离</h3>
 <p>Kubernetes 安全链路可以概括为：<strong>Authentication 识别你是谁，Authorization 判断你能做什么，Admission 决定这个请求是否符合集群策略，Persistence 才会写入 etcd。</strong>多租户治理则在此基础上叠加 namespace、RBAC、Quota、LimitRange、Pod Security、PriorityClass 和队列配额。</p>
@@ -467,13 +883,45 @@
 <li>不要只限制 CPU/内存而忘记扩展资源：GPU 集群要把 <code>nvidia.com/gpu</code>、NPU 等纳入 Quota。</li>
 </ul>
 </div>
+<div class="card card-m">
+
+<h3>安全、准入与多租户高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: RBAC、Admission、Pod Security 分别解决什么问题？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. RBAC 解决权限问题</div><p>RBAC 判断某个 subject 是否能对某类 resource 执行某个 verb，例如某用户能否在某 namespace create pods。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Admission 解决准入策略问题</div><p>Admission 发生在认证鉴权之后、写入 etcd 之前，可以变更对象或校验对象，例如注入 sidecar、拒绝非法镜像。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Pod Security 解决 Pod 安全基线问题</div><p>Pod Security 限制特权容器、hostNetwork、hostPID、危险 capabilities、root 运行等高风险配置。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 三者关系</div><p>RBAC 管“谁能做”，Admission 管“请求对象是否合规”，Pod Security 是针对 Pod 安全字段的一类准入策略。</p></div>
+<div class="qa-summary">面试口径：RBAC 是权限，Admission 是写入前策略，Pod Security 是 Pod 运行安全基线，三者处在 API Server 请求链路不同阶段。</div>
+</div>
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 一个用户说自己没有权限创建 Pod，怎么排查？</div>
-<div class="qa-a"><p>先确认用户身份和 namespace，再用 <code>kubectl auth can-i create pods -n xxx --as user</code> 验证 RBAC。然后检查 Role/ClusterRole、RoleBinding/ClusterRoleBinding 是否绑定正确。如果 RBAC 允许但仍失败，再看 Admission Webhook、Quota、Pod Security 等是否拒绝。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 确认身份和范围</div><p>先确认用户、组、ServiceAccount 和 namespace，权限问题必须带着作用域看。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 验证 RBAC</div><p>用 <code>kubectl auth can-i create pods -n xxx --as user</code> 验证，再检查 Role/ClusterRole 和 Binding 是否正确。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分非 RBAC 拒绝</div><p>如果 RBAC 允许但仍失败，继续看 Admission Webhook、ResourceQuota、LimitRange、Pod Security、镜像策略等是否拒绝。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 生产建议</div><p>按最小权限原则授权，不要直接给 cluster-admin；默认 ServiceAccount 也不要绑定过大权限。</p></div>
+<div class="qa-summary">面试口径：权限排查先确认身份和 namespace，再用 can-i 验证 RBAC，最后排查 Admission、Quota 和 Pod Security。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 多租户 GPU 集群如何做公平性和利用率平衡？</div>
-<div class="qa-a"><p>基础层用 namespace、RBAC、ResourceQuota 做隔离；调度层用队列、PriorityClass、Gang Scheduling 做准入；资源层支持 borrowing 提升利用率，关键任务到来时 reclaim；运行层配合监控、审计和准入策略限制特权容器、非法镜像和越权访问。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 基础隔离</div><p>用 namespace、RBAC、ResourceQuota、LimitRange 隔离团队和资源，GPU 扩展资源也要纳入 quota。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 队列治理</div><p>用 Kueue、Volcano 或自研队列表达团队配额、优先级、借用和回收策略。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 公平性</div><p>用 PriorityClass、DRF、quota borrowing/reclaim 等机制，让关键任务有保障，普通任务不被长期饿死。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 利用率</div><p>空闲 GPU 可以借用给低优任务；高优任务到来时通过抢占、重排或 checkpoint 恢复释放资源。</p></div>
+<div class="qa-summary">面试口径：多租户 GPU 集群要同时做权限隔离、配额公平、空闲借用和高优任务回收，不能只靠 namespace。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-7" aria-labelledby="kubernetes-tabs-tab-7" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>故障排查与稳定性</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>故障排查总方法：从症状反推链路</h3>
 <p>Kubernetes 排障不要一上来背命令，而要按链路拆：<strong>API 对象是否存在 → 调度是否成功 → kubelet 是否执行 → 网络/存储是否就绪 → 应用是否健康 → 控制器是否持续修正。</strong></p>
@@ -544,13 +992,56 @@
 <tr><td>AI 训练</td><td>Gang 任务占用大量资源、失败重试风暴</td><td>队列准入、配额、checkpoint、失败退避、作业优先级</td></tr>
 </table>
 </div>
+<div class="card card-m">
+
+<h3>故障排查与稳定性高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod Pending 你会怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先定位阶段</div><p>Pending 可能卡在调度、PVC、配额、准入或镜像前准备阶段，先看 Pod Events 确认具体原因。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 调度失败</div><p>如果是 FailedScheduling，检查 requests、Node allocatable、污点容忍、亲和性、拓扑约束、优先级抢占。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 依赖未满足</div><p>如果事件指向 PVC、ResourceClaim、Quota、LimitRange 或队列准入，就去对应模块看存储、DRA、配额和批调度。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 节点执行前问题</div><p>如果已经绑定但仍 Pending/ContainerCreating，检查 kubelet、CNI、CSI、container runtime、镜像拉取和 sandbox 创建。</p></div>
+<div class="qa-summary">面试口径：Pending 不是单一问题，要先看 Events 判断卡在调度、存储、配额、设备还是节点执行链路。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CrashLoopBackOff 怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 理解概念</div><p>CrashLoopBackOff 表示容器反复启动失败，kubelet 正在按退避策略重启它；它是结果，不是根因。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 先看日志和退出码</div><p>看 <code>kubectl logs</code> 和 <code>kubectl logs --previous</code>，再看 lastState、exitCode、reason、启动命令和参数。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分常见根因</div><p>配置错误、依赖不可达、启动命令错误、权限问题、镜像入口错误、OOMKilled、应用主动退出都可能导致循环重启。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查探针</div><p>livenessProbe 过激会把慢启动应用杀死；慢启动应使用 startupProbe，readiness 失败不应导致重启。</p></div>
+<div class="qa-summary">面试口径：CrashLoopBackOff 按“日志/退出码 → 配置和依赖 → OOM → 探针”排查，先找容器为什么退出。</div>
+</div>
+</div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Node NotReady 怎么排查？</div>
-<div class="qa-a"><p>先看 Node conditions：Ready、MemoryPressure、DiskPressure、PIDPressure、NetworkUnavailable。再到节点看 kubelet、container runtime、CNI、磁盘、内存、网络和证书。还要看控制面是否能连接节点、节点心跳是否超时。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 看 Node conditions</div><p>先看 Ready、MemoryPressure、DiskPressure、PIDPressure、NetworkUnavailable，判断是资源压力还是节点不可达。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 看节点侧组件</div><p>登录节点检查 kubelet、container runtime、CNI、磁盘、内存、网络、证书和系统日志。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 看控制面连接</div><p>确认 API Server 能否收到节点心跳，网络、防火墙、证书过期、kubelet bootstrap 都可能影响上报。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 看影响面</div><p>评估该节点上的 Pod 是否 Unknown/Terminating，是否需要 cordon、drain、重建或等待节点恢复。</p></div>
+<div class="qa-summary">面试口径：Node NotReady 先看 conditions，再查 kubelet/runtime/CNI/资源压力和控制面连通性，最后评估 Pod 迁移影响。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 大规模集群为什么要关注 watch 和对象大小？</div>
-<div class="qa-a"><p>Kubernetes 组件大量依赖 List/Watch。如果对象过大、更新过频或 watcher 过多，会放大 API Server 和 etcd 压力。DRA 用 ResourceSlice 而不是把所有设备细节塞进 Node，也和控制对象大小、降低 Node status 膨胀有关。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. watch 的作用</div><p>Kubernetes 组件大量依赖 List/Watch 感知对象变化，watch 是控制器、scheduler、kubelet 协作的基础。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 对象过大的风险</div><p>Node status、Pod status、ResourceSlice 等对象过大会增加 API Server 序列化、网络传输、缓存和 etcd 存储压力。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 更新过频的风险</div><p>频繁 status 更新会放大 watch 广播和 etcd 写入压力，导致控制面 QPS、延迟和内存上升。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 治理方式</div><p>控制对象大小、减少无意义 status 更新、合理分片、使用分页和限流，DRA 用 ResourceSlice 也是为了避免 Node 对象无限膨胀。</p></div>
+<div class="qa-summary">面试口径：大集群稳定性要控制 watch 数量、对象大小和更新频率，否则 API Server 与 etcd 会成为瓶颈。</div>
+</div>
 </div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-8" aria-labelledby="kubernetes-tabs-tab-8" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>AI Infra：GPU / 批调度 / DRA</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>AI Infra：GPU / 批调度 / DRA 总览</h3>
 <p>AI Infra 场景下，Kubernetes 的核心问题从“跑一个无状态服务”扩展为：<strong>如何接入 GPU/NPU 等异构硬件，如何让分布式训练一组 Pod 同时拿到资源，如何表达显存、拓扑、MIG、NVLink、NUMA 等复杂约束。</strong></p>
@@ -639,8 +1130,8 @@
 <h3>CEL 表达式在 DRA 中的作用</h3>
 <p>CEL 是 Common Expression Language，一种安全、可嵌入的表达式语言。DRA 可以用 CEL 对 ResourceSlice 中的设备属性做过滤，例如选择 A100、显存至少 80Gi、同 NUMA 或带特定 NVLink fabric 的设备。</p>
 <pre><code class="language-yaml">selectors:
-<p>expression: &quot;device.attributes[&#x27;model&#x27;].string == &#x27;A100&#x27; &amp;&amp; device.capacity[&#x27;memory&#x27;].quantity &gt;= quantity(&#x27;80Gi&#x27;)&quot;</p>
-<ul><li>cel:</li></ul>
+- cel:
+    expression: "device.attributes['model'].string == 'A100' && device.capacity['memory'].quantity >= quantity('80Gi')"
 </code></pre>
 <p>面试回答要点：<strong>CEL 的价值是把“申请某个资源名”升级为“基于结构化设备属性做查询”。</strong></p>
 </div>
@@ -671,15 +1162,19 @@
 <div class="card card-w">
 <h3>DRA 排障路径</h3>
 <pre><code class="language-bash"># 1. 看 DRA API 是否存在
-<p>kubectl api-resources | grep resource.k8s.io</p>
-<h1>2. 看是否有设备库存</h1>
-<p>kubectl get resourceslices -A</p>
-<h1>3. 看平台暴露了哪些设备类别</h1>
-<p>kubectl get deviceclasses</p>
-<h1>4. 看具体 claim 的分配状态</h1>
-<p>kubectl describe resourceclaim &amp;lt;claim-name&amp;gt;</p>
-<h1>5. 看 driver 组件是否运行</h1>
-<p>kubectl get pods -A | grep -i dra</p>
+kubectl api-resources | grep resource.k8s.io
+
+# 2. 看是否有设备库存
+kubectl get resourceslices -A
+
+# 3. 看平台暴露了哪些设备类别
+kubectl get deviceclasses
+
+# 4. 看具体 claim 的分配状态
+kubectl describe resourceclaim &lt;claim-name&gt;
+
+# 5. 看 driver 组件是否运行
+kubectl get pods -A | grep -i dra
 </code></pre>
 <p>如果 ResourceClaim 长期未分配，重点检查 DeviceClass 是否存在、ResourceSlice 是否发布、CEL selector 是否过严、节点可访问性是否满足、driver controller 和 node plugin 是否正常。</p>
 </div>
@@ -695,89 +1190,102 @@
 <tr><td>国产 GPU/NPU 是否有 DRA driver？</td><td>公开成熟度要谨慎判断；多数生态更常见的是 Device Plugin、Operator、vGPU 或 HAMi 等方案</td><td>判断真 DRA 看是否使用 <code>resource.k8s.io</code>、ResourceSlice、DeviceClass、ResourceClaim</td></tr>
 </table>
 </div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 如何从 Device Plugin 平滑迁移到 DRA？</div>
-<div class="qa-a"><p>不要在同一批物理设备上同时开放 DP 和 DRA。推荐先建设独立 node pool，部署 DRA driver，发布 DeviceClass 和 ResourceSlice；再让少量训练任务通过 ResourceClaim 灰度接入，验证调度、prepare、监控和回收；最后按设备类型或业务队列逐步迁移。</p></div>
-</div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-9" aria-labelledby="kubernetes-tabs-tab-9" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频问答</h2></div><div class="tab-panel-body"><div class="card card-m">
-<h3>K8s 面试回答总模板</h3>
-<p>复杂题建议用固定结构回答：<strong>先给结论，再讲链路，再讲异常排查，最后讲取舍和生产经验。</strong>不要只背概念名词，要能把对象、组件、控制循环和故障现象串起来。</p>
-<table>
-<tr><th>题型</th><th>回答结构</th><th>示例</th></tr>
-<tr><td>原理题</td><td>定义 → 组件 → 流程 → 边界</td><td>Pod 如何启动、Service 如何转发</td></tr>
-<tr><td>排障题</td><td>症状 → 链路拆解 → 命令观察 → 根因分类</td><td>Pending、CrashLoop、Service 不通</td></tr>
-<tr><td>设计题</td><td>目标 → 约束 → 架构 → 风险 → 演进</td><td>多租户 GPU 集群、训练平台</td></tr>
-<tr><td>对比题</td><td>共同点 → 差异 → 适用场景 → 误区</td><td>Deployment vs StatefulSet、DP vs DRA</td></tr>
-</table>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 一个 Pod 从提交到运行经历哪些步骤？</div>
-<div class="qa-a"><p>kubectl 把对象提交给 API Server，经过认证、鉴权、准入后写入 etcd。如果是 Deployment，controller 创建 ReplicaSet 和 Pod。scheduler watch 到未绑定 Pod 后执行过滤、打分、绑定。目标节点 kubelet watch 到 Pod 后调用 CSI 准备存储、CNI 准备网络、CRI 创建容器，并持续把状态回写 API Server。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Pod Pending 你会怎么排查？</div>
-<div class="qa-a"><p>先看 <code>kubectl describe pod</code> Events。如果是 FailedScheduling，检查资源不足、污点容忍、nodeSelector/affinity、拓扑分布、优先级抢占。若提示 PVC，检查 PVC/StorageClass/CSI。若是 GPU，检查扩展资源、Device Plugin、DRA ResourceClaim/ResourceSlice。若是配额，检查 ResourceQuota、LimitRange 或队列准入。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: requests 和 limits 有什么区别？</div>
-<div class="qa-a"><p>requests 主要影响调度和资源预留，scheduler 用它判断节点是否放得下；limits 是运行时上限，CPU 超限通常 throttling，内存超限通常 OOMKilled。QoS 也由 CPU/Memory 的 requests/limits 组合决定，影响节点压力下的驱逐顺序。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Deployment 和 StatefulSet 有什么区别？</div>
-<div class="qa-a"><p>Deployment 管无状态副本，Pod 名称和存储不稳定，适合通过 Service 负载均衡。StatefulSet 管有状态副本，提供稳定序号、稳定网络身份和稳定 PVC，通常配合 Headless Service，用于数据库、消息队列或需要固定身份的训练组件。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Informer 为什么重要？</div>
-<div class="qa-a"><p>Informer 通过 List/Watch 维护本地缓存，并把事件转成回调和 WorkQueue key。它减少控制器直接访问 API Server 的压力，支持事件驱动、缓存读取、失败重试和多 controller 共享 watch，是 Controller Pattern 的核心基础设施。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Service 不通怎么排查？</div>
-<div class="qa-a"><p>先确认访问入口是 DNS、ClusterIP、NodePort 还是 LB。然后看 Service selector 是否匹配 Pod label、EndpointSlice 是否有 ready endpoints、Pod readiness 是否通过。再直接访问 Pod IP 区分应用问题和 Service 问题，最后检查 NetworkPolicy、CoreDNS、kube-proxy/eBPF、CNI 和节点网络。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
-<div class="qa-a"><p>ClusterIP Service 有虚拟 IP，客户端访问 VIP 后由 kube-proxy 或 eBPF 转发到后端 Pod。Headless Service 没有 ClusterIP，DNS 直接返回后端 Pod 地址，常用于 StatefulSet 稳定域名、服务发现或客户端自行负载均衡。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: PVC Pending 怎么排查？</div>
-<div class="qa-a"><p>看 PVC Events、StorageClass 是否存在、provisioner 是否运行、访问模式和容量是否满足。如果是 <code>WaitForFirstConsumer</code>，还要看使用该 PVC 的 Pod 是否能调度，以及卷拓扑和节点拓扑是否匹配。云盘或本地盘还要看可用区、配额和底层存储状态。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: RBAC、Admission、Pod Security 分别解决什么问题？</div>
-<div class="qa-a"><p>RBAC 判断某个主体能否对某类资源执行某个动作；Admission 在对象写入前做变更或校验；Pod Security 限制 Pod 是否能使用特权、宿主机 namespace、危险 capabilities 等。它们处在 API Server 请求链路不同阶段，需要配合使用。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: CrashLoopBackOff 怎么排查？</div>
-<div class="qa-a"><p>先看当前日志和 <code>--previous</code> 日志，再看退出码、环境变量、配置、依赖服务和启动命令。若是 OOMKilled，看内存 limit 和应用内存曲线；若是探针导致重启，检查 liveness 是否过激、慢启动是否需要 startupProbe。</p></div>
+<div class="card card-m">
+
+<h3>AI Infra GPU / DRA 高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: GPU Device Plugin 和普通调度有什么关系？</div>
-<div class="qa-a"><p>Device Plugin 在节点上发现 GPU 并向 kubelet 注册扩展资源，kubelet 把数量写到 Node allocatable。scheduler 根据 Pod 中的 GPU limits 和节点可分配数量做调度。Pod 绑定到节点后，kubelet 调用 Device Plugin Allocate，把具体设备、环境变量、mount 或 CDI 信息交给容器运行时。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. Device Plugin 的概念</div><p>Device Plugin 是节点侧插件，负责发现 GPU/NPU 等设备，并通过 gRPC 向 kubelet 注册扩展资源。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 对 scheduler 的作用</div><p>kubelet 会把扩展资源数量写入 Node capacity/allocatable，scheduler 根据 Pod limits 和 Node allocatable 做过滤。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 对 kubelet 的作用</div><p>Pod 绑定到节点后，kubelet 调用 Device Plugin Allocate，拿到 device id、环境变量、mount、CDI 等设备交付信息。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 边界</div><p>Device Plugin 让 K8s 能看到和交付设备，但默认调度器主要看到资源名和数量，不理解完整显存、拓扑和共享关系。</p></div>
+<div class="qa-summary">面试口径：Device Plugin 负责设备发现和节点侧交付，scheduler 只基于 kubelet 上报的扩展资源数量做普通调度。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: <code>nvidia.com/a100</code>、<code>nvidia.com/v100</code> 不也是 Device Plugin 实现的吗？那 DRA 价值在哪里？</div>
-<div class="qa-a"><p>是的，它们可以通过 Device Plugin 暴露，本质是把卡型编码进资源名。这能解决简单型号区分，但当要表达显存、MIG profile、NUMA、NVLink、健康状态、共享关系时，资源名和 label 会组合爆炸。DRA 的价值是用 ResourceSlice 发布结构化属性，用 ResourceClaim 和 CEL 表达需求，让 scheduler 做设备级匹配。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 它确实可以做到</div><p>Device Plugin 可以把不同卡型编码成不同扩展资源名，例如 <code>nvidia.com/a100</code>、<code>nvidia.com/v100</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 资源名编码的问题</div><p>当还要表达显存大小、MIG profile、NUMA、NVLink、PCIe/SXM、健康状态、共享关系时，资源名和 label 会组合爆炸。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. DRA 的价值</div><p>DRA 用 ResourceSlice 发布结构化设备属性，用 ResourceClaim 和 CEL 表达需求，让 scheduler 做设备级匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 适用边界</div><p>简单同质整卡分配继续用 Device Plugin 就够；复杂异构、共享、拓扑感知场景更适合 DRA。</p></div>
+<div class="qa-summary">面试口径：Device Plugin 能表达简单卡型，DRA 的价值是结构化表达设备属性、容量、拓扑和共享关系。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: ResourceSlice 是谁创建的？大集群会不会很多？</div>
-<div class="qa-a"><p>ResourceSlice 通常由 DRA driver 自动创建和维护，用户一般不手写。大集群会有很多 ResourceSlice，这是设计预期，因为它把设备库存从 Node status 中拆出来，避免 Node 对象膨胀和资源名爆炸。需要治理的是分片粒度、更新频率和 watch 压力。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 谁创建</div><p>ResourceSlice 通常由 DRA driver 的 controller 或节点组件自动创建和维护，用户一般不手写。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 表达什么</div><p>它表达设备库存分片，包括 driver、pool、可访问节点、设备列表、attributes、capacity 等结构化信息。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 大集群数量</div><p>大集群会有很多 ResourceSlice，这是设计预期，用来避免把大量设备细节塞进 Node status。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 治理点</div><p>需要控制分片粒度、更新频率、对象大小和 watch 压力，否则会给 API Server 和 scheduler 带来额外负担。</p></div>
+<div class="qa-summary">面试口径：ResourceSlice 由 DRA driver 维护，大集群很多是正常的，关键是控制分片和更新频率。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: CEL 表达式在 DRA 中怎么理解？</div>
-<div class="qa-a"><p>CEL 是安全表达式语言，在 DRA 中可用于基于设备属性过滤候选设备。例如选择 model 为 A100、显存不少于 80Gi、同 NUMA 或特定 NVLink fabric 的设备。它的核心价值是从“申请某个资源名”变成“查询结构化设备属性”。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. CEL 是什么</div><p>CEL 是 Common Expression Language，一种安全可嵌入的表达式语言，适合在 Kubernetes API 中做轻量条件判断。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 在 DRA 中的作用</div><p>DRA 可以用 CEL 基于设备属性过滤候选设备，例如型号、显存、NUMA、NVLink fabric、厂商等。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 和资源名的区别</div><p>传统方式是“申请某个资源名”，CEL 是“查询满足结构化条件的设备”，表达能力更强。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 注意点</div><p>表达式过复杂或条件过严会导致匹配失败，生产上要配合 DeviceClass、ResourceSlice 和调度日志排查。</p></div>
+<div class="qa-summary">面试口径：CEL 让 DRA 从申请固定资源名升级为按结构化设备属性做筛选。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: DRA 和 Device Plugin 能不能同时使用？</div>
-<div class="qa-a"><p>集群层面可以共存，但同一块物理设备不应同时由 DP 和 DRA 暴露，否则可能双重分配。更稳妥的方式是按 node pool、设备类型或灰度资源池隔离：一批节点继续用 Device Plugin，另一批节点用 DRA driver。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 集群层面</div><p>可以共存，例如一批节点继续使用 Device Plugin，另一批节点灰度 DRA。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 设备层面</div><p>同一块物理设备不建议同时由 DP 和 DRA 暴露，否则可能出现双重分配和状态不一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 推荐方式</div><p>按 node pool、设备类型、业务队列或灰度资源池隔离，逐步验证 DRA 的调度、prepare、回收和监控。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 迁移策略</div><p>先低风险业务灰度，再迁移复杂异构设备；保留回滚路径和资源命名隔离。</p></div>
+<div class="qa-summary">面试口径：DP 和 DRA 可以共存，但同一物理设备不能双重暴露，推荐按节点池或设备类型隔离迁移。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: DRA driver 是什么？如何获取？</div>
-<div class="qa-a"><p>DRA driver 是 Kubernetes 侧设备资源驱动，不是 Linux 内核驱动。它负责发现设备、发布 ResourceSlice、协助 ResourceClaim 分配，并在 Pod 落到节点后 prepare/unprepare 设备。获取方式通常是厂商或社区提供的 Kubernetes 组件，例如 controller、node plugin、Helm chart 或 Operator。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 概念</div><p>DRA driver 是 Kubernetes 侧设备资源驱动，不是 Linux kernel driver，也不是 CUDA/NPU runtime。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 作用</div><p>它负责发现设备、发布 ResourceSlice、协助 ResourceClaim 分配，并在 Pod 落到节点后 prepare/unprepare 设备。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 组成</div><p>通常包含 controller、node plugin、CRD/Helm chart/Operator 等组件，具体形态由厂商或社区实现。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 获取方式</div><p>一般来自硬件厂商、云平台或社区项目；是否成熟要看它是否支持 resource.k8s.io API、ResourceSlice、DeviceClass、ResourceClaim 和 kubelet prepare/unprepare。</p></div>
+<div class="qa-summary">面试口径：DRA driver 把真实硬件翻译成 Kubernetes DRA 资源，来源通常是厂商或社区组件。</div>
+</div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 国产 GPU/NPU 厂商有没有 DRA driver，面试怎么回答？</div>
-<div class="qa-a"><p>要谨慎回答公开成熟度。很多国产 GPU/NPU 生态更常见的是 Device Plugin、Operator、vGPU 或 HAMi 等方案，是否是真正 DRA driver 要看它是否使用 <code>resource.k8s.io</code> API、是否发布 ResourceSlice、DeviceClass、ResourceClaim，并支持 kubelet 的 prepare/unprepare 设备交付链路。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 谨慎态度</div><p>不要武断说都有或都没有，DRA 生态仍在演进，公开成熟度需要看具体厂商、版本和项目。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 常见现状</div><p>很多国产 GPU/NPU 生态更常见的是 Device Plugin、Operator、vGPU、HAMi 或厂商自定义调度方案。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 判断标准</div><p>看是否使用 <code>resource.k8s.io</code> API，是否发布 ResourceSlice、DeviceClass、ResourceClaim，是否支持 kubelet prepare/unprepare。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 面试补充</div><p>可以说“如果没有成熟 DRA driver，生产上通常先用 Device Plugin/Operator 接入，再通过 scheduler plugin、label、拓扑信息做增强”。</p></div>
+<div class="qa-summary">面试口径：国产 GPU/NPU 是否有成熟 DRA driver 要按公开实现判断，不能泛化；判断标准是是否完整使用 DRA API 和设备交付链路。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何从 Device Plugin 平滑迁移到 DRA？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先隔离资源池</div><p>不要在同一批物理设备上同时开放 DP 和 DRA，先建设独立 node pool 或灰度队列。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 部署 DRA 组件</div><p>部署 DRA driver，确认 DeviceClass、ResourceSlice、ResourceClaim 等 API 对象正常生成和更新。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 灰度业务</div><p>选择少量训练任务通过 ResourceClaim 接入，验证调度、prepare、容器注入、监控、回收和失败恢复。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 逐步迁移</div><p>按设备类型、业务队列或团队逐步迁移，保留 DP 回滚路径，并防止双重分配。</p></div>
+<div class="qa-summary">面试口径：迁移 DRA 要隔离节点池、灰度验证资源申请和设备交付链路，不能一上来混用同一批设备。</div>
+</div>
 </div></div></article></div></section>
 </div>
-<script src="../../../assets/script.js"></script>
+<script src="../../../assets/script.js?v=1779897928"></script>
 </body>
 </html>

@@ -1,10 +1,12 @@
 {
   "title": "GPU 硬件与资源共享",
-  "subtitle": "硬件架构 · 性能指标 · 性能预测 · MIG/MPS · CUDA VMM",
+  "subtitle": "硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · CUDA VMM · 面试体系化复习",
   "kicker": "AI Infra Foundation",
   "tags": [
     "gpu",
     "hardware",
+    "cuda",
+    "utilization",
     "sharing",
     "performance",
     "prediction",
@@ -23,6 +25,11 @@
           "file": "01-hardware.md"
         },
         {
+          "title": "CUDA 执行模型",
+          "description": "GPU core、kernel launch、grid、block、thread、warp、SM",
+          "file": "06-cuda-execution-model.md"
+        },
+        {
           "title": "共享方式",
           "description": "MIG、MPS、时间片、CUDA VMM",
           "file": "02-sharing.md"
@@ -33,9 +40,19 @@
           "file": "03-performance-metrics.md"
         },
         {
+          "title": "利用率诊断",
+          "description": "GPU-Util、SM Active、Occupancy、Warp Stall、Compute/Memory、Tensor Core",
+          "file": "07-utilization-diagnosis.md"
+        },
+        {
           "title": "性能预测指标",
           "description": "MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵",
           "file": "04-prediction-metrics.md"
+        },
+        {
+          "title": "面试体系化复习",
+          "description": "架构、指标、显存、通信、调度、排障与高频问答",
+          "file": "05-interview-guide.md"
         }
       ]
     }
@@ -46,6 +63,10 @@
       "file": "01-hardware.md"
     },
     {
+      "title": "CUDA 执行模型",
+      "file": "06-cuda-execution-model.md"
+    },
+    {
       "title": "GPU 共享方式",
       "file": "02-sharing.md"
     },
@@ -54,8 +75,16 @@
       "file": "03-performance-metrics.md"
     },
     {
+      "title": "GPU 利用率诊断",
+      "file": "07-utilization-diagnosis.md"
+    },
+    {
       "title": "GPU 性能预测指标",
       "file": "04-prediction-metrics.md"
+    },
+    {
+      "title": "GPU 面试体系化复习",
+      "file": "05-interview-guide.md"
     }
   ]
 }

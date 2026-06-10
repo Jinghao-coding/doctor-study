@@ -37,6 +37,10 @@
     {
       "title": "系统设计题",
       "href": "pages/ai-infra/system-design/index.html"
+    },
+    {
+      "title": "计算机基础",
+      "href": "pages/cs-basics/foundation-qa/index.html"
     }
   ],
   "topics": [
@@ -138,6 +142,20 @@
         "system-design"
       ],
       "color": "c3"
+    },
+    {
+      "title": "计算机基础问答",
+      "slug": "cs-basics/foundation-qa",
+      "source": "content/cs-basics/foundation-qa/topic.json",
+      "output": "pages/cs-basics/foundation-qa/index.html",
+      "description": "从飞书 Wiki 提取的系统基础、Linux、内存/NUMA、Docker/K8s、分布式与 GPU/NPU 高频思考题详解。",
+      "tags": [
+        "linux",
+        "docker",
+        "distributed",
+        "gpu"
+      ],
+      "color": "c4"
     }
   ]
 }

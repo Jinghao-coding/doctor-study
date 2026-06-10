@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计算机基础问答 · doctor-study</title>
+<link rel="stylesheet" href="../../../assets/style.css?v=1780747627">
+</head>
+<body>
+<nav class="topnav">
+  <a class="home" href="../../../index.html">← 首页</a>
+  <span class="sep">·</span>
+  <a href="../../../pages/ai-infra/papers/index.html">论文工作</a>
+  <a href="../../../pages/ai-infra/gpu/index.html">GPU</a>
+  <a href="../../../pages/ai-infra/llm-inference/index.html">LLM 推理系统</a>
+  <a href="../../../pages/ai-infra/kubernetes/index.html">Kubernetes 核心</a>
+  <a href="../../../pages/ai-infra/scheduling/index.html">任务调度理论</a>
+  <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
+  <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
+  <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
+  <a href="../../../pages/cs-basics/foundation-qa/index.html">计算机基础</a>
+</nav>
+<div class="wrap">
+<section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">CS Foundation</div><h1>计算机基础问答</h1><p class="sub">Linux · 内存/NUMA · Signal · 网络/RDMA · Docker/K8s · 分布式 · GPU/NPU</p><div class="hero-tags"><span>linux</span><span>memory</span><span>docker</span><span>k8s</span><span>distributed</span><span>gpu</span></div></div></section>
+
+<section class="tabs-shell" data-tabs><div class="tabs-nav" role="tablist" aria-label="计算机基础问答"><button class="tab-button active" type="button" role="tab" id="foundation-qa-tabs-tab-1" aria-controls="foundation-qa-tabs-panel-1" aria-selected="true"><span class="tab-title">系统与 Linux</span><span class="tab-desc">进程线程、OOM、NUMA、stdio、Signal、TCP/RDMA</span></button><button class="tab-button" type="button" role="tab" id="foundation-qa-tabs-tab-2" aria-controls="foundation-qa-tabs-panel-2" aria-selected="false"><span class="tab-title">软件环境与容器</span><span class="tab-desc">环境变量、Docker/K8s、RSS/Usage、cgroup</span></button><button class="tab-button" type="button" role="tab" id="foundation-qa-tabs-tab-3" aria-controls="foundation-qa-tabs-panel-3" aria-selected="false"><span class="tab-title">分布式与 GPU/NPU</span><span class="tab-desc">Role/Replica、NVIDIA GPU 查看、MLU、SM Active</span></button></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="foundation-qa-tabs-panel-1" aria-labelledby="foundation-qa-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>系统与 Linux</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>CPU Core、进程与线程</h3>
+<p>这组问题的核心是：并行度不是越大越好。真正的吞吐取决于 CPU core、内存带宽、锁竞争、I/O 等共享资源是否还能支撑更多并发。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么可能出现 parallel 越大、线程越多，运行越慢/吞吐越小的状况？</div>
+<div class="qa-a">
+<p>因为线程数增加只代表“可调度实体”变多，不代表硬件资源变多。当线程数超过 CPU core 数或共享资源瓶颈时，额外线程会带来调度和竞争成本，吞吐反而下降。</p>
+<table>
+<tr><th>原因</th><th>表现</th><th>例子</th></tr>
+<tr><td>上下文切换</td><td>CPU 时间花在保存/恢复寄存器、调度队列切换上</td><td>16 核机器跑 256 个 CPU 密集线程</td></tr>
+<tr><td>锁竞争</td><td>线程越多，等待 mutex、队列锁、allocator lock 的时间越长</td><td>多线程同时写同一个队列或日志</td></tr>
+<tr><td>缓存失效</td><td>不同 core 修改同一 cache line，导致 cache coherence 流量上升</td><td>多个线程更新相邻计数器，引发 false sharing</td></tr>
+<tr><td>内存带宽瓶颈</td><td>CPU core 空转等待内存，线程再多也无法提升吞吐</td><td>数据预处理、memcpy、特征读取</td></tr>
+<tr><td>I/O 或下游瓶颈</td><td>并发请求堆积在磁盘、网络、数据库、RPC 下游</td><td>并发下载数据但网卡已打满</td></tr>
+<tr><td>NUMA 远端访问</td><td>线程跨 socket 访问远端内存，延迟变高</td><td>进程绑在 NUMA0，却大量访问 NUMA1 内存</td></tr>
+</table>
+<p>排查时可以看 <code>top/htop</code>、<code>pidstat -w</code>、<code>perf top</code>、<code>vmstat</code>、<code>iostat</code>、<code>numastat</code>。面试回答可以总结为：并行度存在最优点，超过硬件和共享资源承载能力后，边际收益会变成负数。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 进程号是什么？进程名是什么？</div>
+<div class="qa-a">
+<p><strong>进程号</strong>是 PID（Process ID），是 Linux 内核给每个进程分配的数字标识，用于调度、信号发送、资源统计和父子进程管理。PID 在同一 PID namespace 内唯一，容器里看到的 PID 可能和宿主机不同。</p>
+<p><strong>进程名</strong>通常是用户态看到的命令名或可执行文件名，例如 <code>python</code>、<code>runner</code>、<code>java</code>。进程名不要求唯一，多个进程可以有同一个名字。</p>
+<table>
+<tr><th>字段</th><th>唯一性</th><th>用途</th></tr>
+<tr><td>PID</td><td>同一 PID namespace 内唯一</td><td>精准定位和操作进程，例如 <code>kill 1234</code></td></tr>
+<tr><td>进程名</td><td>不唯一</td><td>人类识别进程类型，例如搜索所有 <code>runner</code></td></tr>
+<tr><td>命令行</td><td>不唯一但信息更完整</td><td>区分同名进程的参数、脚本和工作模式</td></tr>
+</table>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 在 Linux 系统中，如何查看某个包含“runner”字符串的进程的进程号？</div>
+<div class="qa-a">
+<p>常用命令有三类：按完整命令行搜、按进程名搜、用 <code>ps</code> 自己过滤。</p>
+<pre><code class="language-bash"># 推荐：按完整命令行匹配，输出 PID 和命令
+pgrep -af runner
+
+# 只输出 PID
+pgrep -f runner
+
+# 通用写法，注意 [r]unner 避免 grep 自己也被匹配
+ps -ef | grep '[r]unner'
+
+# 只提取 PID
+ps -ef | awk '/[r]unner/ {print $2}'</code></pre>
+<p>如果在容器里排查，要注意 PID namespace：容器内 PID 与宿主机 PID 可能不同；在 Kubernetes 中还可以先 <code>kubectl exec</code> 进容器，再执行这些命令。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 在 Linux 系统中，如何 kill 掉某个进程？</div>
+<div class="qa-a">
+<p>本质是给进程发送 signal。默认 <code>kill PID</code> 发送 <code>SIGTERM</code>，请求进程优雅退出；如果进程不响应，再用 <code>SIGKILL</code> 强制杀掉。</p>
+<pre><code class="language-bash"># 优雅终止
+kill 1234
+kill -TERM 1234
+
+# 强制终止，不可被捕获或忽略
+kill -9 1234
+kill -KILL 1234
+
+# 按名称杀进程，谨慎使用
+pkill -f runner
+
+# 先确认再杀
+pgrep -af runner
+kill &lt;pid&gt;</code></pre>
+<p>生产环境建议先发 <code>SIGTERM</code>，给服务保存状态、flush 日志、释放锁和临时文件的机会。<code>SIGKILL</code> 虽然立即生效，但可能留下不一致状态。</p>
+</div>
+</div>
+<div class="card card-s">
+<h3>内存、OOM 与 NUMA</h3>
+<p>内存问题不能只看“总量是否够”。还要看 cgroup 限制、GPU 显存、NUMA locality、page cache、swap、内存带宽和碎片。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: OOM 是什么意思？CUDA OOM 是什么意思？有什么区别？</div>
+<div class="qa-a">
+<p><strong>OOM</strong> 是 Out Of Memory，通常指系统内存或 cgroup 内存不足。Linux 可能触发 OOM Killer 杀掉进程，Kubernetes 中常表现为 Pod 状态 <code>OOMKilled</code>。</p>
+<p><strong>CUDA OOM</strong> 指 NVIDIA GPU 显存不足，CUDA runtime 或深度学习框架申请 GPU memory 失败，常见报错是 <code>CUDA out of memory</code>。它通常不会由 Linux OOM Killer 直接处理，而是在程序里抛异常或报错退出。</p>
+<table>
+<tr><th>维度</th><th>系统 OOM</th><th>CUDA OOM</th></tr>
+<tr><td>资源</td><td>CPU 内存 / cgroup memory</td><td>GPU 显存 HBM</td></tr>
+<tr><td>触发方</td><td>Linux kernel / cgroup</td><td>CUDA runtime / driver / 框架 allocator</td></tr>
+<tr><td>现象</td><td>进程被杀，Pod <code>OOMKilled</code></td><td>程序报 <code>CUDA out of memory</code></td></tr>
+<tr><td>排查</td><td><code>dmesg</code>、<code>kubectl describe pod</code>、cgroup memory</td><td><code>nvidia-smi</code>、框架显存统计、batch size</td></tr>
+<tr><td>解决</td><td>增大 memory limit、减少进程内存、控制 page cache</td><td>减小 batch/seq len、释放 cache、模型并行/量化/checkpoint</td></tr>
+</table>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 在你的电脑/开发机上 <code>free -h</code>，输出的结果如何解释？</div>
+<div class="qa-a">
+<p><code>free -h</code> 展示系统内存概况，重点不要只看 <code>free</code>，更应该看 <code>available</code>。</p>
+<pre><code class="language-text">              total        used        free      shared  buff/cache   available
+Mem:           125G         40G         10G          1G         75G         82G
+Swap:            0B          0B          0B</code></pre>
+<table>
+<tr><th>字段</th><th>含义</th><th>怎么看</th></tr>
+<tr><td>total</td><td>总内存</td><td>机器或容器可见的总量</td></tr>
+<tr><td>used</td><td>已使用内存</td><td>包括进程使用和部分内核占用，不等于“不可回收”</td></tr>
+<tr><td>free</td><td>完全空闲内存</td><td>通常很小，不代表内存紧张</td></tr>
+<tr><td>buff/cache</td><td>buffer 和 page cache</td><td>用于加速文件 I/O，内存紧张时大多可回收</td></tr>
+<tr><td>available</td><td>估算还能给新程序使用的内存</td><td>判断是否真的缺内存时优先看这个</td></tr>
+<tr><td>swap</td><td>交换分区使用情况</td><td>大量 swap in/out 会显著降速</td></tr>
+</table>
+<p>在容器中，<code>free -h</code> 有时显示宿主机视角，不一定等于 Pod cgroup limit。Kubernetes 排查时还要看 <code>kubectl describe pod</code>、容器 memory limit 和 cgroup 文件。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 内存只用了 1/10，还有什么其他内存原因可能导致降速吗？</div>
+<div class="qa-a">
+<p>会。内存“容量”没用完，不代表内存系统没有瓶颈。常见原因包括：</p>
+<table>
+<tr><th>原因</th><th>为什么会慢</th><th>排查工具</th></tr>
+<tr><td>内存带宽打满</td><td>多线程都在读写大数组，CPU 等内存返回</td><td><code>perf</code>、硬件 PMU、<code>pcm-memory</code></td></tr>
+<tr><td>NUMA 远端访问</td><td>跨 socket 访问远端内存，延迟和带宽都变差</td><td><code>numastat</code>、<code>numactl -H</code></td></tr>
+<tr><td>page fault</td><td>缺页中断频繁，CPU 陷入内核处理页表/磁盘加载</td><td><code>vmstat</code>、<code>perf stat</code></td></tr>
+<tr><td>swap 抖动</td><td>热数据被换到磁盘，访问延迟从 ns/us 变成 ms</td><td><code>vmstat si/so</code>、<code>free -h</code></td></tr>
+<tr><td>透明大页/碎片</td><td>THP collapse 或内存碎片导致延迟毛刺</td><td><code>/sys/kernel/mm/transparent_hugepage</code></td></tr>
+<tr><td>page cache 争抢</td><td>大量文件 I/O 冲掉缓存，训练数据加载变慢</td><td><code>iostat</code>、<code>vmtouch</code></td></tr>
+</table>
+<p>面试回答：容量、带宽、延迟、局部性和回收机制是不同维度；“只用了 1/10”只能说明容量暂时不紧张，不能排除内存带宽和 NUMA 问题。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: NUMA 的全称是什么，为什么要存在 NUMA 架构？</div>
+<div class="qa-a">
+<p>NUMA 全称是 Non-Uniform Memory Access，非一致内存访问。它存在的原因是多路 CPU 服务器中，如果所有 CPU 都通过单一总线访问同一内存控制器，会形成严重瓶颈。NUMA 让每个 CPU socket 拥有自己的本地内存控制器和本地内存，同时允许跨 socket 访问远端内存。</p>
+<table>
+<tr><th>访问类型</th><th>特点</th></tr>
+<tr><td>本地内存访问</td><td>CPU 访问自己 NUMA node 下的内存，延迟低、带宽高</td></tr>
+<tr><td>远端内存访问</td><td>CPU 通过 UPI/Infinity Fabric 等互联访问其他 socket 的内存，延迟更高、带宽更低</td></tr>
+</table>
+<p>NUMA 的目标是在大内存、多 CPU 服务器中提升可扩展性，但代价是软件需要关注 CPU 绑核、内存绑定、GPU/NIC locality。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: NUMA 架构下，为什么进程没有用完机器所有内存就 OOM 了？</div>
+<div class="qa-a">
+<p>因为“机器总内存没用完”和“当前进程可用的本地/受限内存没用完”不是一回事。可能原因包括：</p>
+<table>
+<tr><th>原因</th><th>解释</th></tr>
+<tr><td>NUMA policy 限制</td><td>进程被 <code>numactl --membind</code> 或 cpuset mems 限制只能使用部分 NUMA node</td></tr>
+<tr><td>cgroup 限制</td><td>容器/Pod memory limit 小于宿主机总内存</td></tr>
+<tr><td>本地 node 内存耗尽</td><td>策略要求本地分配，远端 node 虽有空闲但不能或不愿 fallback</td></tr>
+<tr><td>内存碎片</td><td>总空闲足够，但无法满足大块连续页或 hugepage 分配</td></tr>
+<tr><td>hugepage 独立池</td><td>普通内存空闲不代表 hugepage 池可用</td></tr>
+</table>
+<pre><code class="language-bash">numactl -H
+numastat -p &lt;pid&gt;
+cat /proc/&lt;pid&gt;/status | grep -E 'Mems_allowed|Cpus_allowed'
+cat /sys/fs/cgroup/memory.max 2>/dev/null || true</code></pre>
+</div>
+</div>
+<div class="card card-d">
+<h3>stdin/stdout/stderr 与日志</h3>
+<p>标准流用于把程序输入、正常输出和错误输出分离，便于 shell 重定向、日志采集和故障排查。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Shell 的屏幕上输出的是 stdout 还是 stderr？</div>
+<div class="qa-a">
+<p>默认情况下，stdout 和 stderr 都连接到当前终端，所以屏幕上看到的可能两者都有。区别在于文件描述符：stdout 是 fd 1，stderr 是 fd 2。</p>
+<pre><code class="language-bash"># 只把 stdout 写入 out.txt，stderr 仍显示在屏幕
+cmd > out.txt
+
+# 只把 stderr 写入 err.txt，stdout 仍显示在屏幕
+cmd 2> err.txt
+
+# stdout 和 stderr 都写入 all.log
+cmd > all.log 2>&1
+
+# 丢弃 stderr
+cmd 2>/dev/null</code></pre>
+<p>很多命令会把正常结果写 stdout，把进度、warning、error 写 stderr。这样 stdout 可以安全地被管道消费，例如 <code>cmd | jq</code>，不会被错误日志污染。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: glog 默认的输出打到哪里？为什么？</div>
+<div class="qa-a">
+<p>Google glog 的默认行为通常是把日志写到日志文件，同时较高严重级别日志会输出到 stderr；具体行为受启动参数影响，例如 <code>--logtostderr</code>、<code>--alsologtostderr</code>、<code>--stderrthreshold</code>、<code>--log_dir</code>。</p>
+<table>
+<tr><th>参数</th><th>作用</th></tr>
+<tr><td><code>--logtostderr=1</code></td><td>所有日志只打到 stderr，不写文件</td></tr>
+<tr><td><code>--alsologtostderr=1</code></td><td>写文件的同时也打到 stderr</td></tr>
+<tr><td><code>--stderrthreshold=ERROR</code></td><td>达到 ERROR 及以上的日志额外打到 stderr</td></tr>
+<tr><td><code>--log_dir=/path</code></td><td>指定日志文件目录</td></tr>
+</table>
+<p>为什么要这样设计：文件日志适合长期保存和按级别切分，stderr 适合容器、systemd、Kubernetes 等运行环境统一采集进标准日志系统。</p>
+</div>
+</div>
+<div class="card card-w">
+<h3>Signal</h3>
+<p>Signal 是 Linux 进程间和内核到进程的异步通知机制，用于终止、暂停、恢复、用户中断、非法访问、计时器等场景。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Linux 系统中有哪些最常用的 Signal？Signal 的存在意义是什么？</div>
+<div class="qa-a">
+<table>
+<tr><th>Signal</th><th>常见来源</th><th>含义</th></tr>
+<tr><td><code>SIGTERM</code></td><td><code>kill PID</code>、K8s 删除 Pod</td><td>请求进程优雅终止，可捕获</td></tr>
+<tr><td><code>SIGKILL</code></td><td><code>kill -9 PID</code></td><td>强制杀死，不可捕获</td></tr>
+<tr><td><code>SIGINT</code></td><td>终端 <code>Ctrl+C</code></td><td>用户中断</td></tr>
+<tr><td><code>SIGHUP</code></td><td>终端断开、reload 约定</td><td>挂起或重载配置</td></tr>
+<tr><td><code>SIGSTOP</code></td><td><code>kill -STOP</code></td><td>暂停进程，不可捕获</td></tr>
+<tr><td><code>SIGCONT</code></td><td><code>kill -CONT</code></td><td>继续运行暂停进程</td></tr>
+<tr><td><code>SIGSEGV</code></td><td>非法内存访问</td><td>段错误，通常生成 core dump</td></tr>
+<tr><td><code>SIGABRT</code></td><td><code>abort()</code></td><td>进程主动异常退出</td></tr>
+<tr><td><code>SIGPIPE</code></td><td>管道读端关闭后继续写</td><td>写 broken pipe</td></tr>
+</table>
+<p>Signal 的意义是提供轻量异步控制通道，不需要进程主动轮询，就能被外部或内核通知发生了重要事件。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 哪些 Signal 是从进程外部触发的，哪些 Signal 是进程内部触发的？</div>
+<div class="qa-a">
+<table>
+<tr><th>类型</th><th>例子</th><th>说明</th></tr>
+<tr><td>外部触发</td><td><code>SIGTERM</code>、<code>SIGKILL</code>、<code>SIGINT</code>、<code>SIGHUP</code>、<code>SIGSTOP</code>、<code>SIGCONT</code></td><td>来自用户、shell、其他进程、Kubernetes、systemd 等</td></tr>
+<tr><td>内部/异常触发</td><td><code>SIGSEGV</code>、<code>SIGFPE</code>、<code>SIGILL</code>、<code>SIGABRT</code>、<code>SIGBUS</code></td><td>来自当前进程执行错误、主动 abort 或硬件异常</td></tr>
+<tr><td>内核事件触发</td><td><code>SIGPIPE</code>、<code>SIGALRM</code>、<code>SIGCHLD</code></td><td>由内核根据管道、定时器、子进程状态变化发送</td></tr>
+</table>
+<p>严格来说，signal 都由内核投递；这里的“外部/内部”是按根因划分。</p>
+</div>
+</div>
+<div class="card card-m">
+<h3>网络：TCP RPC 与 RDMA</h3>
+<p>AI Infra 中网络不仅影响 RPC 延迟，也影响参数同步、数据加载和分布式训练通信效率。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 使用 TCP 的 RPC 请求可能在什么地方消耗 CPU？使用 RDMA 可能会有什么改进？</div>
+<div class="qa-a">
+<p>TCP RPC 的 CPU 开销来自协议栈、拷贝、序列化、系统调用和中断处理等多个环节。</p>
+<table>
+<tr><th>环节</th><th>CPU 开销来源</th></tr>
+<tr><td>用户态序列化</td><td>Protobuf/Thrift 编解码、压缩、校验</td></tr>
+<tr><td>系统调用</td><td><code>send/recv</code> 进入内核，用户态/内核态切换</td></tr>
+<tr><td>内核协议栈</td><td>TCP 分片重组、拥塞控制、ACK、重传、checksum</td></tr>
+<tr><td>内存拷贝</td><td>用户 buffer 到 kernel buffer，再到 NIC DMA buffer</td></tr>
+<tr><td>中断和软中断</td><td>网卡收包、NAPI poll、softirq 处理</td></tr>
+</table>
+<p>RDMA 的改进是让网卡直接读写远端内存，绕过大部分内核协议栈和多次拷贝，降低 CPU 占用和延迟，提高吞吐。代价是编程模型更复杂，需要注册内存、管理 queue pair、处理可靠性和网络配置。</p>
+<p>一句话：TCP RPC 更通用，CPU 参与更多；RDMA 更接近“网卡直接搬内存”，适合高吞吐低延迟通信。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 给出一个 shell，用什么命令查看该 Pod 上是否有 RDMA（硬件 & 软件）支持？</div>
+<div class="qa-a">
+<p>可以同时检查设备文件、PCI 设备、内核模块、RDMA link 和用户态工具。</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+
+echo "== RDMA device files =="
+ls -l /dev/infiniband 2>/dev/null || echo "no /dev/infiniband"
+
+echo "== RDMA links =="
+if command -v rdma >/dev/null 2>&1; then
+  rdma link show || true
+else
+  echo "rdma command not found"
+fi
+
+echo "== InfiniBand devices =="
+if command -v ibv_devinfo >/dev/null 2>&1; then
+  ibv_devinfo || true
+else
+  echo "ibv_devinfo not found"
+fi
+
+echo "== PCI devices =="
+lspci 2>/dev/null | grep -Ei 'mellanox|infiniband|ethernet controller' || true
+
+echo "== Kernel modules =="
+lsmod 2>/dev/null | grep -E 'mlx5|ib_uverbs|rdma_ucm' || true</code></pre>
+<p>在 Kubernetes Pod 中，如果没有挂载 <code>/dev/infiniband</code> 或没有相应 device plugin / CNI / capability，即使宿主机有 RDMA，容器内也可能不可见。</p>
+</div>
+</div></div></article><article class="tab-panel" role="tabpanel" id="foundation-qa-tabs-panel-2" aria-labelledby="foundation-qa-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>软件环境与容器</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>环境变量</h3>
+<p>环境变量是进程启动时从父进程继承的一组 key-value 配置。它常用于传递路径、运行模式、认证配置、代理、动态库搜索路径等。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 在 Linux 系统中，哪条 shell 命令可以查看所有的环境变量？</div>
+<div class="qa-a">
+<p>最常用的是 <code>env</code> 或 <code>printenv</code>。</p>
+<pre><code class="language-bash"># 查看当前 shell 进程环境变量
+env
+printenv
+
+# 查看某个变量
+echo "$PATH"
+printenv PATH
+
+# 查看某个进程的环境变量，注意 NUL 分隔
+tr '\0' '\n' &lt; /proc/&lt;pid&gt;/environ</code></pre>
+<p><code>set</code> 会显示 shell 变量、函数和环境变量，范围更大；<code>env</code>/<code>printenv</code> 更适合回答“环境变量”。</p>
+<table>
+<tr><th>命令</th><th>范围</th><th>场景</th></tr>
+<tr><td><code>env</code></td><td>环境变量</td><td>查看当前进程启动子进程时会继承的变量</td></tr>
+<tr><td><code>printenv</code></td><td>环境变量</td><td>查看全部或某个指定变量</td></tr>
+<tr><td><code>set</code></td><td>shell 变量 + 函数 + 环境变量</td><td>调试 shell 脚本</td></tr>
+<tr><td><code>export KEY=VALUE</code></td><td>设置并导出</td><td>让子进程继承变量</td></tr>
+</table>
+</div>
+</div>
+<div class="card card-s">
+<h3>Binary、编译与工具链</h3>
+<p>原文这两节只列了“思考题”标题，没有给出具体问题。这里补一组面试中常被追问的基础答案，帮助建立上下文。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Binary 通常指什么？运行一个 binary 时系统做了什么？</div>
+<div class="qa-a">
+<p>Binary 通常指编译后的可执行文件或库文件，例如 Linux 下的 ELF executable、<code>.so</code> 动态库。运行 binary 时，shell 会调用 <code>execve</code>，内核读取 ELF header，建立虚拟地址空间，加载代码段/数据段，设置栈和环境变量，再跳转到入口点。</p>
+<table>
+<tr><th>阶段</th><th>说明</th></tr>
+<tr><td>解析格式</td><td>内核识别 ELF、解释器路径、程序头</td></tr>
+<tr><td>加载映射</td><td>把代码段、数据段、动态链接器 mmap 到进程地址空间</td></tr>
+<tr><td>动态链接</td><td>加载依赖的 <code>.so</code>，解析符号和重定位</td></tr>
+<tr><td>启动运行</td><td>执行运行时初始化，再进入 <code>main</code></td></tr>
+</table>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 编译和工具链通常包含哪些环节？</div>
+<div class="qa-a">
+<p>C/C++ 常见工具链链路是：预处理、编译、汇编、链接。</p>
+<pre><code class="language-bash"># 预处理：展开 include、宏
+gcc -E main.c -o main.i
+
+# 编译：C/C++ 到汇编
+gcc -S main.i -o main.s
+
+# 汇编：汇编到目标文件
+gcc -c main.s -o main.o
+
+# 链接：目标文件和库合成可执行文件
+gcc main.o -o main</code></pre>
+<p>排查 binary 问题常用 <code>ldd</code> 看动态库依赖，<code>nm</code> 看符号，<code>readelf</code>/<code>objdump</code> 看 ELF 结构，<code>file</code> 看文件类型。</p>
+</div>
+</div>
+<div class="card card-d">
+<h3>Docker 与 Kubernetes</h3>
+<p>Docker 解决“应用和依赖如何打包并隔离运行”，Kubernetes 解决“大量容器如何在集群中调度、编排、扩缩容、发现和自愈”。理解容器时不要只记“轻量级虚拟化”，更要能说清楚：<strong>namespace 负责视图隔离，cgroup 负责资源限制，rootfs/镜像负责文件系统环境，容器运行时负责把这些能力组合起来。</strong></p>
+</div>
+<div class="card card-s">
+<h3>容器隔离三件套：namespace、cgroup、rootfs</h3>
+<p>容器不是一台真正的虚拟机，它本质上还是宿主机上的进程。这个进程之所以“看起来像在一台独立机器里”，是因为 Linux 内核给它换了一套资源视图，并限制了它能使用的资源。</p>
+<table>
+<tr><th>机制</th><th>解决的问题</th><th>容器里的直观表现</th><th>面试口径</th></tr>
+<tr><td>namespace</td><td>隔离“能看到什么”</td><td>容器内看到自己的 PID、网卡、hostname、挂载点</td><td>让进程拥有隔离视图</td></tr>
+<tr><td>cgroup</td><td>限制“能用多少”</td><td>CPU、内存、PID、IO、设备访问被限制和统计</td><td>让进程不能无限消耗宿主机资源</td></tr>
+<tr><td>rootfs / image</td><td>提供“运行时文件系统”</td><td>容器内有自己的 <code>/bin</code>、<code>/lib</code>、Python 包、CUDA 库</td><td>让应用依赖可复制、可分发</td></tr>
+<tr><td>container runtime</td><td>把上述能力组装成容器</td><td>拉镜像、创建容器、配置网络和挂载、启动进程</td><td>Docker/containerd/CRI-O 等负责落地执行</td></tr>
+</table>
+<div class="qa-summary">一句话：namespace 让容器“看起来隔离”，cgroup 让容器“资源受控”，rootfs 让容器“环境可复现”。</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Linux namespace 是什么？Docker/K8s 常用哪些 namespace？</div>
+<div class="qa-a">
+<p>namespace 是 Linux 内核提供的资源视图隔离机制。不同 namespace 中的进程看到的系统资源不同，因此容器进程会觉得自己有独立的进程树、网络栈、hostname、挂载点等。</p>
+<table>
+<tr><th>namespace</th><th>隔离对象</th><th>容器中的表现</th><th>常见排查点</th></tr>
+<tr><td>PID namespace</td><td>进程号空间</td><td>容器内主进程通常是 PID 1</td><td>容器内 PID 与宿主机 PID 不同</td></tr>
+<tr><td>NET namespace</td><td>网络设备、IP、路由、端口</td><td>Pod 有自己的网卡、IP、路由表</td><td><code>ip addr</code>、端口监听、CNI 问题</td></tr>
+<tr><td>MNT namespace</td><td>挂载点视图</td><td>容器内看到独立的根文件系统和 volume</td><td>volume 是否挂载、路径是否一致</td></tr>
+<tr><td>UTS namespace</td><td>hostname、domain name</td><td>容器可拥有自己的 hostname</td><td>服务发现和日志标识</td></tr>
+<tr><td>IPC namespace</td><td>System V IPC、POSIX message queue</td><td>隔离共享内存、信号量等 IPC 资源</td><td>多进程通信、共享内存</td></tr>
+<tr><td>USER namespace</td><td>用户和用户组 ID 映射</td><td>容器内 root 可映射为宿主机非 root</td><td>权限隔离、安全加固</td></tr>
+<tr><td>TIME namespace</td><td>部分时间视图</td><td>可隔离 monotonic/boottime offset</td><td>较少见，和时间相关测试有关</td></tr>
+</table>
+<p>在 Kubernetes 中，同一个 Pod 内的容器通常共享 network namespace，所以它们可以通过 <code>localhost</code> 互相访问；但它们一般有各自的 mount namespace 和进程视图，具体还受 <code>shareProcessNamespace</code> 等配置影响。</p>
+<div class="qa-summary">面试口径：namespace 解决隔离视图问题；Pod 不是一组完全无关的容器，而是一组共享部分 namespace 和资源上下文的容器集合。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: cgroup 到底限制了什么？cgroup v1 和 v2 有什么直观区别？</div>
+<div class="qa-a">
+<p>cgroup 是 Linux Control Groups，用于对一组进程做资源限制、优先级控制和用量统计。容器平台会把容器进程放入特定 cgroup，再通过 cgroup 文件系统配置 CPU、内存、IO、PID、设备等控制规则。</p>
+<table>
+<tr><th>控制器</th><th>解决的问题</th><th>K8s/Docker 中的体现</th></tr>
+<tr><td>cpu</td><td>限制 CPU 时间片或设置相对权重</td><td>CPU limit、CPU request 对应的调度权重</td></tr>
+<tr><td>cpuset</td><td>限制可运行的 CPU core 和可用 NUMA node</td><td>绑核、NUMA locality、独占 CPU</td></tr>
+<tr><td>memory</td><td>限制内存、统计 usage、触发 OOM</td><td>memory limit、Pod OOMKilled</td></tr>
+<tr><td>io / blkio</td><td>限制块设备 IO 或设置权重</td><td>磁盘读写隔离，防止单任务打爆磁盘</td></tr>
+<tr><td>pids</td><td>限制进程/线程数量</td><td>防止 fork bomb 或线程数失控</td></tr>
+<tr><td>devices</td><td>控制设备文件访问</td><td>容器是否能访问 GPU、RDMA、磁盘设备</td></tr>
+</table>
+<p><strong>cgroup v1</strong> 是多 hierarchy 模型，不同 controller 可以挂在不同层级；<strong>cgroup v2</strong> 是统一 hierarchy 模型，资源控制更一致，文件名也不同。例如 v1 常见 <code>memory.usage_in_bytes</code>，v2 常见 <code>memory.current</code>、<code>memory.max</code>。</p>
+<pre><code class="language-bash"># 查看当前进程所在 cgroup
+cat /proc/self/cgroup
+
+# cgroup v2 常见内存文件
+cat /sys/fs/cgroup/memory.current 2>/dev/null
+cat /sys/fs/cgroup/memory.max 2>/dev/null
+
+# cgroup v1 常见内存文件
+cat /sys/fs/cgroup/memory/memory.usage_in_bytes 2>/dev/null
+cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null</code></pre>
+<div class="qa-summary">面试口径：namespace 管“看见什么”，cgroup 管“能用多少”；v2 相比 v1 更强调统一层级和一致语义。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kubernetes 的 request / limit 和 cgroup 是什么关系？为什么 Pod 会 OOMKilled？</div>
+<div class="qa-a">
+<p>Kubernetes 中，<code>requests</code> 主要用于调度和资源预留，<code>limits</code> 主要用于运行时限制。Pod 被调度到某个节点后，kubelet 会通过容器运行时创建容器，并把 CPU、memory 等限制写入对应 cgroup。</p>
+<table>
+<tr><th>K8s 字段</th><th>主要作用</th><th>落到运行时后大致体现</th></tr>
+<tr><td><code>resources.requests.cpu</code></td><td>调度时计算节点是否放得下；运行时设置相对权重</td><td>CPU shares / weight</td></tr>
+<tr><td><code>resources.limits.cpu</code></td><td>限制容器最多能用多少 CPU 时间</td><td>CPU quota / period</td></tr>
+<tr><td><code>resources.requests.memory</code></td><td>调度时计算内存预留；影响 QoS</td><td>不等于硬限制</td></tr>
+<tr><td><code>resources.limits.memory</code></td><td>限制容器最多能用多少内存</td><td>memory.max / memory.limit_in_bytes</td></tr>
+</table>
+<p>当容器内进程申请内存导致 cgroup memory 使用超过 limit 时，内核会在该 cgroup 内选择进程杀掉，Kubernetes 观察到容器退出原因后显示为 <code>OOMKilled</code>。注意：这和整机 OOM 不完全一样，哪怕宿主机还有空闲内存，容器也可能因为自己的 cgroup limit 被杀。</p>
+<p>CPU limit 通常表现为 throttling，即被限速而不是被杀；memory limit 则可能触发 OOMKilled，这是二者最重要的差别之一。</p>
+<div class="qa-summary">面试口径：request 决定“能不能调度、调度时算多少”，limit 决定“运行时最多能用多少”；memory 超 limit 会 OOMKilled，CPU 超 limit 多数是 throttling。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 大规模计算资源系统中，为什么要使用 Docker 和 K8s？用形象语言比喻一下，它们分别解决了什么问题？</div>
+<div class="qa-a">
+<p>可以用“集装箱”和“港口调度系统”来类比。</p>
+<table>
+<tr><th>系统</th><th>比喻</th><th>解决的问题</th></tr>
+<tr><td>Docker</td><td>标准化集装箱</td><td>把应用、依赖、运行环境打成统一镜像，减少“我机器上能跑”的问题</td></tr>
+<tr><td>Kubernetes</td><td>港口/物流调度系统</td><td>决定集装箱放哪台机器、如何重启、扩缩容、服务发现、滚动发布</td></tr>
+</table>
+<p>在大规模计算资源系统中，如果没有 Docker，每个任务都要手工配置 Python/CUDA/动态库/系统依赖，环境不可复现；如果没有 K8s，就需要人工决定任务跑在哪台机器、失败后谁拉起、资源如何隔离、服务如何发现。</p>
+<p>更具体地说：</p>
+<ul>
+<li>Docker 提供镜像、容器隔离、依赖封装和可复现运行环境。</li>
+<li>K8s 提供调度、资源声明、健康检查、控制器、自愈、Service、Secret/ConfigMap、滚动升级。</li>
+<li>AI Infra 里，K8s 还负责 GPU 扩展资源、队列、Gang Scheduling、训练/推理工作负载管理等上层能力。</li>
+</ul>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: K8s/Docker 的内存监控中，rss 和 usage 分别是什么？GPU 机器上，它们分别可能包括通过什么途径分配的内存？</div>
+<div class="qa-a">
+<p><strong>RSS</strong> 是 Resident Set Size，表示进程当前驻留在物理内存中的匿名页和文件映射页的一部分。它更接近“进程实际占用的物理内存”。</p>
+<p><strong>Usage</strong> 在容器/cgroup 语境下通常指 cgroup 统计的内存使用量，范围比单进程 RSS 更大，可能包括多个进程、page cache、slab、tmpfs 等。</p>
+<table>
+<tr><th>指标</th><th>常见来源</th><th>可能包含</th></tr>
+<tr><td>RSS</td><td><code>ps</code>、<code>top</code>、<code>/proc/&lt;pid&gt;/status</code></td><td>heap、stack、匿名 mmap、部分文件 mmap、部分共享库驻留页</td></tr>
+<tr><td>cgroup usage</td><td><code>memory.current</code>、cAdvisor、container runtime</td><td>容器内所有进程 RSS、page cache、tmpfs、部分 kernel memory</td></tr>
+<tr><td>working set</td><td>K8s/cAdvisor 常见展示</td><td>usage 减去一部分可回收 inactive file，更接近活跃内存</td></tr>
+</table>
+<p>GPU 机器上需要区分 CPU 内存和 GPU 显存：</p>
+<ul>
+<li>CPU 内存：Python 对象、DataLoader worker、预处理 buffer、mmap 数据集、page cache、pinned memory、NCCL/通信库 host buffer。</li>
+<li>GPU 显存：模型权重、optimizer state、activation、KV cache、CUDA context、cuBLAS/cuDNN workspace、framework caching allocator 保留的显存。</li>
+<li>Pinned memory 属于 CPU 内存，但用于加速 CPU-GPU DMA 拷贝，可能推高 RSS 或 cgroup usage。</li>
+<li>GPU 显存通常看 <code>nvidia-smi</code>、DCGM 或框架 API，不应简单等同于容器 memory usage。</li>
+</ul>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 从 Kubernetes 创建 Pod 到容器进程启动，中间大致发生了什么？</div>
+<div class="qa-a">
+<p>这条链路能把 K8s、容器运行时、namespace、cgroup 串起来。用户提交 Pod 后，Scheduler 只负责把 Pod 绑定到某个 Node；真正创建容器的是该 Node 上的 kubelet。</p>
+<table>
+<tr><th>阶段</th><th>主要组件</th><th>做什么</th></tr>
+<tr><td>1. 调度</td><td>kube-scheduler</td><td>根据 request、亲和性、污点容忍、资源插件等选择节点</td></tr>
+<tr><td>2. 下发</td><td>kubelet</td><td>watch 到分配给本节点的 Pod，准备启动容器</td></tr>
+<tr><td>3. 创建 sandbox</td><td>CRI runtime</td><td>创建 Pod sandbox，通常先准备 pause 容器和 Pod 网络 namespace</td></tr>
+<tr><td>4. 配置网络</td><td>CNI plugin</td><td>给 Pod 分配 IP、创建 veth、写路由和 iptables/eBPF 规则</td></tr>
+<tr><td>5. 拉镜像</td><td>containerd / CRI-O</td><td>拉取镜像，解压层，准备 rootfs</td></tr>
+<tr><td>6. 创建容器</td><td>OCI runtime，例如 runc</td><td>设置 namespace、cgroup、mount、capability、seccomp，最后 exec 用户进程</td></tr>
+<tr><td>7. 持续管理</td><td>kubelet</td><td>执行 probe、上报状态、重启失败容器、采集日志和资源指标</td></tr>
+</table>
+<p>Pod 内多个容器通常共享同一个 network namespace，因此共享 IP 和端口空间；这也是为什么同一个 Pod 内两个容器不能监听同一个端口。</p>
+<div class="qa-summary">面试口径：Scheduler 只决定 Pod 去哪台机器；kubelet 通过 CRI 调 runtime；runtime 再通过 OCI/runc 等机制配置 namespace、cgroup、rootfs 并启动容器进程。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kubernetes QoS 是什么？它和 request / limit / OOM 优先级有什么关系？</div>
+<div class="qa-a">
+<p>Kubernetes 会根据容器是否设置 CPU/Memory request 和 limit，把 Pod 分成 Guaranteed、Burstable、BestEffort 三类 QoS。QoS 会影响节点资源紧张时的驱逐顺序和 OOM 选择倾向。</p>
+<table>
+<tr><th>QoS 类型</th><th>条件</th><th>资源紧张时的风险</th><th>适合场景</th></tr>
+<tr><td>Guaranteed</td><td>每个容器都设置 CPU/Memory request 和 limit，且 request=limit</td><td>相对最不容易被驱逐</td><td>核心服务、关键训练控制面</td></tr>
+<tr><td>Burstable</td><td>至少一个容器设置了 request，但不满足 Guaranteed</td><td>中等风险，超过 request 越多越危险</td><td>大多数在线服务和训练任务</td></tr>
+<tr><td>BestEffort</td><td>没有设置 request 和 limit</td><td>最容易被驱逐或在资源竞争中受影响</td><td>临时调试、低优先级任务</td></tr>
+</table>
+<p>注意 QoS 不是简单等于 cgroup limit。limit 决定容器自己的硬上限；QoS 更多影响节点整体资源压力下，谁更可能先被驱逐或被 OOM 选中。</p>
+<div class="qa-summary">面试口径：request/limit 既影响调度和 cgroup，也影响 QoS；Guaranteed 最稳定，BestEffort 最脆弱，Burstable 最常见。</div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Docker 镜像、容器、进程之间是什么关系？容器为什么比虚拟机轻？</div>
+<div class="qa-a">
+<p>镜像是静态模板，容器是镜像运行起来后的实例，容器里的主程序本质上是宿主机上的一个进程。容器比虚拟机轻，是因为它不需要为每个应用启动一个完整 guest kernel，而是复用宿主机内核，通过 namespace、cgroup、rootfs 等机制提供隔离和限制。</p>
+<table>
+<tr><th>对象</th><th>本质</th><th>类比</th></tr>
+<tr><td>Image</td><td>分层只读文件系统 + 元数据</td><td>应用安装包 / 集装箱模板</td></tr>
+<tr><td>Container</td><td>镜像 + 可写层 + namespace + cgroup + 启动进程</td><td>正在运行的集装箱</td></tr>
+<tr><td>Process</td><td>内核调度的运行实体</td><td>容器里真正执行的程序</td></tr>
+<tr><td>VM</td><td>虚拟硬件 + guest OS + guest kernel</td><td>完整虚拟机器</td></tr>
+</table>
+<p>所以容器启动快、资源开销低，但隔离边界主要依赖共享内核的安全机制；虚拟机更重，但内核级隔离更强。</p>
+</div>
+</div>
+<div class="card card-w">
+<h3>C++ 基础提示</h3>
+<p>原文 C++ 小节没有列出具体问题。AI Infra 面试里，如果追问 C++，常见落点是内存生命周期、RAII、智能指针、线程同步、移动语义、动态库链接和性能 profiling。后续可以单独拆一个 C++ 专题页。</p>
+</div></div></article><article class="tab-panel" role="tabpanel" id="foundation-qa-tabs-panel-3" aria-labelledby="foundation-qa-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>分布式与 GPU/NPU</h2></div><div class="tab-panel-body"><div class="card card-m">
+<h3>分布式计算：Role 与 Replica</h3>
+<p>分布式系统里，Role 描述“这个进程承担什么职责”，Replica 描述“这个职责有多少个副本”。它们经常一起出现在训练任务、推理服务、微服务和 Kubernetes workload 中。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Role 和 Replica 在分布式计算中一般指什么？</div>
+<div class="qa-a">
+<p><strong>Role</strong> 是角色，表示一个进程或一组进程在系统中的职责；<strong>Replica</strong> 是副本，表示同一角色启动了多少个实例。</p>
+<table>
+<tr><th>概念</th><th>含义</th><th>例子</th></tr>
+<tr><td>Role</td><td>职责类型</td><td>worker、parameter server、chief、scheduler、trainer、evaluator</td></tr>
+<tr><td>Replica</td><td>同一 role 的实例数</td><td>8 个 worker、2 个 PS、3 个 serving replica</td></tr>
+<tr><td>Rank</td><td>分布式通信中的全局或局部编号</td><td>PyTorch DDP 的 global rank/local rank</td></tr>
+<tr><td>World size</td><td>参与通信的总进程数</td><td>8 卡训练通常 world size = 8</td></tr>
+</table>
+<p>例如一个 PyTorchJob 可以有 1 个 master role 和 8 个 worker role；worker role 的 replicas 是 8。每个 worker 进程会拿到不同的 rank，参与 NCCL all-reduce。</p>
+<p>面试中可以这样回答：Role 解决“做什么”，Replica 解决“做几个”，Rank 解决“我是第几个”。</p>
+</div>
+</div>
+<div class="card card-s">
+<h3>通信与存储补充</h3>
+<p>原文的“通信（NCCL，Thrift/RPC）”和“存储”没有列出具体思考题，这里补充最常见的理解边界。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: NCCL 通信和 Thrift/RPC 通信有什么区别？</div>
+<div class="qa-a">
+<table>
+<tr><th>维度</th><th>NCCL</th><th>Thrift/RPC</th></tr>
+<tr><td>定位</td><td>GPU 集合通信库</td><td>服务间请求/响应通信框架</td></tr>
+<tr><td>典型场景</td><td>all-reduce、broadcast、reduce-scatter</td><td>控制面 API、任务提交、元数据查询</td></tr>
+<tr><td>数据规模</td><td>大 tensor、高吞吐</td><td>结构化消息，通常较小</td></tr>
+<tr><td>网络</td><td>NVLink、PCIe、IB/RDMA、RoCE</td><td>TCP/HTTP/自定义传输</td></tr>
+<tr><td>关注点</td><td>带宽、拓扑、rank 映射、同步语义</td><td>延迟、超时、重试、负载均衡、兼容性</td></tr>
+</table>
+<p>一句话：NCCL 更像“训练数据平面的高速集体搬运”，RPC 更像“控制面的服务调用”。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 分布式训练为什么特别关注存储？</div>
+<div class="qa-a">
+<p>因为训练链路不只消耗 GPU，还持续读取样本、写 checkpoint、加载模型权重。如果存储吞吐或元数据性能不足，GPU 会等待数据，表现为 GPU 利用率低但任务并没有真正计算。</p>
+<table>
+<tr><th>场景</th><th>存储瓶颈</th><th>优化方向</th></tr>
+<tr><td>数据集读取</td><td>小文件多、随机读、元数据压力大</td><td>打包样本、缓存、预取、顺序读</td></tr>
+<tr><td>Checkpoint</td><td>多 worker 同时写大文件，带宽尖峰</td><td>分片 checkpoint、异步写、错峰保存</td></tr>
+<tr><td>模型加载</td><td>启动时大量节点同时拉权重</td><td>镜像预热、本地缓存、分层存储</td></tr>
+<tr><td>日志/指标</td><td>高频小写导致后端压力</td><td>批量写、采样、异步聚合</td></tr>
+</table>
+</div>
+</div>
+<div class="card card-d">
+<h3>NVIDIA GPU 查看命令</h3>
+<p>GPU 排查第一步通常是确认：机器有几张卡、是什么型号、显存使用多少、哪些进程占用了 GPU。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 对于 NVIDIA GPU 上的机器/容器，怎么查看有几块 GPU、分别是什么型号、有哪些进程在使用 GPU？</div>
+<div class="qa-a">
+<p>最常用工具是 <code>nvidia-smi</code>。</p>
+<pre><code class="language-bash"># 总览：卡数量、型号、显存、温度、功耗、进程
+nvidia-smi
+
+# 只列 GPU 编号、名称、显存
+nvidia-smi --query-gpu=index,name,memory.total,memory.used,memory.free --format=csv
+
+# 查看正在使用 GPU 的计算进程
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv
+
+# 持续刷新
+watch -n 1 nvidia-smi
+
+# 拓扑关系：GPU-GPU、GPU-NIC、CPU affinity
+nvidia-smi topo -m
+
+# 更详细的设备列表
+nvidia-smi -L</code></pre>
+<p>容器内如果看不到 GPU，可能是没有使用 NVIDIA Container Toolkit、没有分配 GPU device、<code>NVIDIA_VISIBLE_DEVICES</code> 限制、K8s device plugin 没有注入设备，或者权限/驱动不匹配。</p>
+<table>
+<tr><th>问题</th><th>排查方向</th></tr>
+<tr><td>看不到 <code>nvidia-smi</code></td><td>镜像里没有工具或 PATH 不对</td></tr>
+<tr><td><code>nvidia-smi</code> 报 driver 错</td><td>宿主机驱动、容器 runtime、CUDA 兼容性</td></tr>
+<tr><td>宿主机有卡，容器内无卡</td><td>K8s GPU request、device plugin、runtimeClass、设备挂载</td></tr>
+<tr><td>有进程占卡但不知道是谁</td><td>用 PID 结合 <code>ps -fp &lt;pid&gt;</code> 或 <code>cat /proc/&lt;pid&gt;/cmdline</code></td></tr>
+</table>
+</div>
+</div>
+<div class="card card-w">
+<h3>MLU 与 SM Active</h3>
+<p>原文 MLU 和 SM Active 小节没有具体问题，但这两个概念常用于国产加速器和 GPU 利用率分析。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MLU 通常指什么？和 GPU/NPU 是什么关系？</div>
+<div class="qa-a">
+<p>MLU 常指 Machine Learning Unit，是寒武纪等厂商对 AI 加速器的命名。它和 GPU/NPU 一样，都属于面向深度学习计算的加速器，但具体编程栈、驱动、算子库和监控工具不同。</p>
+<table>
+<tr><th>维度</th><th>NVIDIA GPU</th><th>MLU/NPU 等 AI 加速器</th></tr>
+<tr><td>编程栈</td><td>CUDA、cuDNN、NCCL</td><td>厂商 SDK、算子库、通信库</td></tr>
+<tr><td>K8s 接入</td><td>NVIDIA device plugin / DRA driver</td><td>厂商 device plugin / operator</td></tr>
+<tr><td>监控</td><td><code>nvidia-smi</code>、DCGM</td><td>厂商 CLI 和 exporter</td></tr>
+<tr><td>排查关注</td><td>显存、SM、Tensor Core、NVLink</td><td>片上内存、计算核心、算子支持、驱动兼容</td></tr>
+</table>
+<p>面试时不要把 MLU 简单说成 GPU。更准确的说法是：MLU 是某类 AI 加速器产品名，系统层面要关注设备发现、运行时、算子库、通信库、容器注入和调度资源表达。</p>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: SMA = SM Active 是什么？如何理解这个指标？</div>
+<div class="qa-a">
+<p>SM Active 表示 GPU Streaming Multiprocessor 处于 active 状态的比例，可以理解为 GPU 计算单元有多少时间在执行工作。它是判断 GPU 是否“忙于计算”的重要指标，但不能单独代表整体效率。</p>
+<table>
+<tr><th>现象</th><th>可能原因</th><th>进一步看什么</th></tr>
+<tr><td>SM Active 高，显存带宽高</td><td>计算和访存都很忙，可能接近满载</td><td>MFU、Tensor Core 利用率、功耗</td></tr>
+<tr><td>SM Active 低，显存带宽高</td><td>内存带宽瓶颈，典型如 LLM decode/KV cache 读取</td><td>HBM bandwidth、cache hit、batch size</td></tr>
+<tr><td>SM Active 低，显存带宽也低</td><td>CPU/data loading/I/O/调度等待瓶颈</td><td>DataLoader、磁盘、网络、CPU 利用率</td></tr>
+<tr><td>SM Active 高，但训练慢</td><td>可能 kernel 效率低、通信等待、算子碎片化</td><td>NCCL timeline、kernel profile、MFU</td></tr>
+</table>
+<p>SM Active 适合做诊断入口，但面试中要补充：它不等于模型 FLOPS 利用率，也不等于吞吐。分析 GPU 性能要同时看 SM、Tensor Core、HBM、PCIe/NVLink、CPU 数据供给和通信等待。</p>
+</div>
+</div></div></article></div></section>
+</div>
+<script src="../../../assets/script.js?v=1779897928"></script>
+</body>
+</html>

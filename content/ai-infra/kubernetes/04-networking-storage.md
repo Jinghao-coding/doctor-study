@@ -66,12 +66,46 @@
 </table>
 </div>
 
+<div class="card card-m">
+
+<h3>网络与存储高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Service 不通怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 确认访问入口</div><p>先确认客户端访问的是 DNS、ClusterIP、NodePort、LoadBalancer 还是 Ingress，不同入口对应不同链路。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 检查 Service 到 Pod 的映射</div><p>看 Service selector 是否匹配 Pod labels，再看 EndpointSlice 是否生成 ready endpoints。没有 endpoints 通常是 selector、readiness 或 Pod 状态问题。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分应用和 Service 问题</div><p>直接访问 Pod IP:Port，如果 Pod IP 不通，多半是应用、端口、容器或 CNI 问题；如果 Pod IP 通但 Service 不通，再看 kube-proxy/eBPF。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查网络基础设施</div><p>继续排查 CoreDNS、NetworkPolicy、CNI、kube-proxy/IPVS/iptables/eBPF、节点路由、安全组和云 LB。</p></div>
+<div class="qa-summary">面试口径：Service 不通按“入口 → selector/endpoints → Pod 直连 → DNS/策略/数据面”逐层缩小范围。</div>
+</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Headless Service 和 ClusterIP Service 的区别？</div>
-<div class="qa-a"><p>ClusterIP Service 会分配一个虚拟 IP，客户端访问 VIP 后由 kube-proxy/eBPF 转发到后端 Pod。Headless Service 设置 <code>clusterIP: None</code>，DNS 直接返回后端 Pod 的地址，常用于 StatefulSet 稳定网络身份、客户端自定义负载均衡或需要感知每个副本的场景。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. ClusterIP 的概念</div><p>ClusterIP Service 会分配一个虚拟 IP，客户端访问 VIP 后由 kube-proxy、IPVS 或 eBPF 转发到后端 Pod。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Headless 的概念</div><p>Headless Service 设置 <code>clusterIP: None</code>，不提供 VIP，DNS 直接返回后端 Pod IP 或稳定域名。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 作用差异</div><p>ClusterIP 适合普通服务负载均衡；Headless 适合客户端自己做负载均衡、服务发现或需要感知每个副本身份的场景。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 典型场景</div><p>StatefulSet 常配 Headless Service，让 <code>pod-0.service.namespace.svc</code> 这类稳定域名指向固定副本。</p></div>
+<div class="qa-summary">面试口径：ClusterIP 提供稳定 VIP 和服务转发，Headless 不提供 VIP，而是通过 DNS 暴露后端 Pod 地址。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: PVC 一直 Pending 怎么排查？</div>
-<div class="qa-a"><p>先看 PVC events 和 StorageClass 是否存在，再看 provisioner/CSI Controller 是否正常、容量和访问模式是否匹配、volumeBindingMode 是否为 WaitForFirstConsumer、Pod 调度拓扑是否满足存储约束，以及底层存储系统是否有配额或权限问题。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先看 PVC 事件</div><p>用 <code>kubectl describe pvc</code> 看 Events，确认是 StorageClass 不存在、provisioner 异常、容量不足还是访问模式不匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 检查 StorageClass</div><p>看 provisioner、parameters、reclaimPolicy、allowVolumeExpansion 和 <code>volumeBindingMode</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 理解 WaitForFirstConsumer</div><p>如果是 <code>WaitForFirstConsumer</code>，PVC 可能会等使用它的 Pod 参与调度后才绑定或创建 PV。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查底层和拓扑</div><p>云盘、本地盘要看可用区、节点拓扑、配额、权限、CSI Controller/Node 组件和底层存储状态。</p></div>
+<div class="qa-summary">面试口径：PVC Pending 按“PVC Events → StorageClass/CSI → WaitForFirstConsumer → Pod 调度拓扑 → 底层存储”排查。</div>
+</div>
 </div>

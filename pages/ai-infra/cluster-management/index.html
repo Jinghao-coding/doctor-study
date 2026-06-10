@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GPU 集群管理 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css">
+<link rel="stylesheet" href="../../../assets/style.css?v=1780747627">
 </head>
 <body>
 <nav class="topnav">
@@ -18,6 +18,7 @@
   <a href="../../../pages/ai-infra/cluster-management/index.html">GPU 集群管理</a>
   <a href="../../../pages/ai-infra/performance-prediction/index.html">性能预测与建模</a>
   <a href="../../../pages/ai-infra/system-design/index.html">系统设计题</a>
+  <a href="../../../pages/cs-basics/foundation-qa/index.html">计算机基础</a>
 </nav>
 <div class="wrap">
 <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Cluster Management</div><h1>GPU 集群管理</h1><p class="sub">调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错</p><div class="hero-tags"><span>cluster</span><span>volcano</span><span>zero</span><span>fault-tolerance</span></div></div></section>
@@ -30,6 +31,7 @@
 </div>
 <div class="card card-s">
 <h3>框架核心架构详解</h3>
+
 <h4>1. Volcano：K8S 原生批调度器</h4>
 <p><strong>定位</strong>：CNCF 孵化项目，K8S 原生的批处理调度器，专为 AI/ML 场景设计。</p>
 <p><strong>核心架构</strong>：三个核心 CRD + 一个调度引擎：</p>
@@ -47,6 +49,7 @@
 </ol>
 <p><strong>支持的调度策略</strong>：通过 <code>plugins</code> 配置，可组合使用——<code>gang</code>（Gang scheduling）、<code>drf</code>（主导资源公平）、<code>proportion</code>（按比例分配）、<code>priority</code>（优先级）、<code>sla</code>（等待时间加权）。</p>
 <p><strong>怎么理解 PodGroup</strong>：像一个"旅行团的最低成团人数"。一个 8 人团，至少 8 人都买票才出发。如果只有 5 个人到，大巴不开——因为 5 个人去了也没法完成旅行计划（对应 NCCL 需要所有 rank 才能建环）。</p>
+
 <h4>2. Yunikorn：多租户资源管理器</h4>
 <p><strong>定位</strong>：Apache 项目，源自 YARN 设计理念，支持 K8S 和 YARN 双调度，强项是层级队列和应用感知调度。</p>
 <p><strong>核心架构</strong>：</p>
@@ -57,6 +60,7 @@
 </ul>
 <p><strong>和 Volcano 的本质区别</strong>：Volcano 是"K8S 调度框架的插件"（SchedulingFramework plugin），和默认调度器共存。Yunikorn 是"替换调度器"，自己管理整个调度流程。这带来了不同的运维复杂度和灵活性 trade-off。</p>
 <p><strong>怎么理解层级队列</strong>：像一个公司的预算体系。公司总预算 1000 万 → NLP 部门分 400 万 → NLP-1 组分 150 万。如果 NLP-1 组只用了 100 万，剩下的 50 万可以被 NLP-2 组借用。但 NLP 部门总共不能超过 400 万。</p>
+
 <h4>3. Kueue：作业排队管理器</h4>
 <p><strong>定位</strong>：K8S SIGs 官方项目（sig-scheduling），聚焦于"作业排队"，不直接做调度决策，而是把排队逻辑从调度器中解耦出来。</p>
 <p><strong>核心概念</strong>：</p>
@@ -76,6 +80,7 @@
 </ol>
 <p><strong>关键设计：Kueue 不做 Pod 级调度</strong>。它只做"准入决策"（这个 Job 能不能开始？在哪个 flavor 上跑？），具体的 Pod→Node 绑定还是交给 K8S 默认调度器。这种分层设计让 Kueue 不需要重新实现拓扑感知、亲和性等功能，复用 K8S 调度器的能力。</p>
 <p><strong>怎么理解 Kueue 的分层</strong>：Kueue 像"电影院的售票系统"——它决定你这个团能不能进场、坐在哪个区域（flavor），但具体的座位（哪个节点）由领位员（K8S 调度器）安排。售票系统和领位员各司其职。</p>
+
 <h4>4. Run:ai：商业 GPU 虚拟化平台</h4>
 <p><strong>定位</strong>：商业产品，提供 GPU 分时共享、配额管理、可视化面板等一站式能力。</p>
 <p><strong>核心能力</strong>：</p>
@@ -102,6 +107,7 @@
 <tr><td>成熟度</td><td>生产可用</td><td>生产可用</td><td>快速成熟中</td><td>生产可用</td></tr>
 <tr><td>核心局限</td><td>配额弹性不够灵活、无干扰感知</td><td>GPU 拓扑支持有限、学习曲线陡</td><td>较新，生态发展中</td><td>闭源、大规模定制受限</td></tr>
 </table>
+
 <h4>怎么选择？</h4>
 <table>
 <tr><th>场景</th><th>推荐</th><th>原因</th></tr>
@@ -134,6 +140,7 @@
 </div>
 <div class="card card-m">
 <h3>调度框架面试问答</h3>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 的核心设计？它的局限性？</div>
 <div class="qa-a">
@@ -147,6 +154,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"Volcano 解决了 K8S 做 GPU 批调度的核心缺失——Gang + Queue，但它的配额和抢占模型偏简单。在需要弹性配额、代价感知抢占、运行时间预测等能力时，需要从 Scheduling Framework 原生构建。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Kueue 的 ResourceFlavor 是什么？为什么重要？</div>
 <div class="qa-a">
@@ -162,6 +170,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"ResourceFlavor 解决的是异构集群中'量相同但质不同'的调度问题。没有 Flavor，调度器只知道多少张 GPU；有了 Flavor，调度器还知道什么类型的 GPU。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 和 Kueue 的架构有什么本质区别？各适合什么场景？</div>
 <div class="qa-a">
@@ -175,6 +184,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"Volcano 是嵌入式架构，深度耦合但控制力强；Kueue 是旁路式架构，解耦但依赖调度器能力。选择取决于你对调度细节的控制需求和对升级稳定性的容忍度。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如果让你设计一个 GPU 集群调度器，你会怎么选？</div>
 <div class="qa-a">
@@ -188,6 +198,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"调度器的设计不是一次性选型，而是随规模演进的。每个规模阶段的瓶颈不同，需要不同的架构选择。关键是说清楚为什么当前阶段选这个架构，以及下一个阶段的演进方向。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Yunikorn 的层级队列有什么优势？什么场景下需要？</div>
 <div class="qa-a">
@@ -206,12 +217,14 @@
 </div>
 <div class="card card-s">
 <h3>四种配额方案详解</h3>
+
 <h4>1. 固定配额（Static Quota）</h4>
 <p><strong>定义</strong>：每个租户分配固定的 GPU 数量，互不借用。K8S 原生的 ResourceQuota 就是这种模型。</p>
 <p><strong>怎么理解</strong>：买断制——你买了 40 张 GPU，不用也归你，别人不能用。</p>
 <p><strong>优点</strong>：(1) 强保障——你的 GPU 永远不会被别人抢走；(2) 实现最简单——ResourceQuota + Namespace 隔离就够了。</p>
 <p><strong>致命问题</strong>：利用率低。实测数据：固定配额的 GPU 集群平均利用率通常只有 30-40%，因为总有租户的配额闲置（夜间、周末、实验间隙）。</p>
 <p><strong>面试中怎么答</strong>：不要说"固定配额不好"——要说"固定配额在什么场景下够用"：小型团队（GPU 少，每个租户都满载）、合规要求严格（不能混用资源的场景）。问题在于规模大了之后利用率不可接受。</p>
+
 <h4>2. ElasticQuota（弹性配额）</h4>
 <p><strong>定义</strong>：每个租户有 <code>min</code>（保障量）和 <code>max</code>（上限）。日常使用 min 以内的资源有保障；闲置时可以借用其他租户的 min 值，但总量不超过 max；被借用方需要时可以抢占回收。</p>
 <p><strong>怎么理解</strong>：信用卡 + 信用额度——你有 5 万信用额度（min = 5 万保障），最多可以刷 10 万（max = 10 万上限），但超出 5 万的部分银行随时可以收回。</p>
@@ -223,6 +236,7 @@
 </ul>
 <p><strong>关键机制：抢占回收</strong>。当 min 拥有者需要资源但被借用者占用时，借用者的 Pod 会被抢占。抢占策略影响很大——简单的优先级抢占可能杀掉一个训练了 10 小时的任务。</p>
 <p><strong>局限</strong>：(1) min/max 是静态值，不能动态调整；(2) 抢占不考虑沉没成本；(3) 没有"保障度"的概念——min 只是名义保障，实际保障度取决于抢占的及时性。</p>
+
 <h4>3. 弹性保障（QAD 驱动）</h4>
 <p><strong>定义</strong>：不设 max 上限，借用不受限，但通过 QAD（Quota Assurance Degree，配额保障度）来持续监控和保障每个租户的权益。</p>
 <p><strong>QAD 是什么</strong>：QAD = 实际获得资源时间 / 应获得资源时间。例如一个租户的 guarantee 是 30 GPU，过去 24 小时内他需要 30 GPU 的总时间是 20 小时，其中 18 小时确实获得了 30 GPU，则 QAD = 18/20 = 0.9。</p>
@@ -241,6 +255,7 @@
 <li>关键：A 不一定要退回 guarantee=30，只要 B 的需求被满足就行。A 保留了 40（比 guarantee 多 10），B 获得了 60（比 guarantee 多 20）。总量 100 刚好用满。</li>
 </ul>
 <p><strong>面试金句</strong>："ElasticQuota 是离散的保障信号——要么在 min 内要么超出。QAD 是连续的保障信号——像监控'配额健康度'一样持续度量保障水平，驱动更精细的调度决策。"</p>
+
 <h4>4. DRF（主导资源公平）</h4>
 <p><strong>定义</strong>：多维资源场景下的公平分配。每个租户的"主导资源"（占集群该资源比例最高的那个维度）获得相等份额。详见调度理论模块的 DRF 章节。</p>
 <p><strong>在多租户中的角色</strong>：DRF 解决的是公平性，不是保障性。它没有 min/max 的概念，只是确保每个租户的"最大需求维度"被公平对待。适合无保障要求的共享集群。</p>
@@ -261,6 +276,7 @@
 <div class="card card-w">
 <h3>多租户隔离的四个层次</h3>
 <p>配额管理解决的是"每个租户能用多少"，隔离解决的是"租户之间互相不影响"。隔离有四个层次，从粗到细：</p>
+
 <h4>第一层：Namespace 级别</h4>
 <p><strong>机制</strong>：K8S 原生的 ResourceQuota + LimitRange。</p>
 <p><strong>ResourceQuota</strong>：限制一个 Namespace 的总资源量（如最多 16 GPU）。硬限制，超了 Pod 创建直接被拒绝。</p>
@@ -268,15 +284,18 @@
 <p><strong>隔离能力</strong>：资源量隔离。不同 Namespace 的资源预算独立。</p>
 <p><strong>局限</strong>：(1) 不支持弹性——ResourceQuota 是硬限制，空闲资源不能被其他 Namespace 用；(2) 不做性能隔离——同一节点上两个 Namespace 的 Pod 可能互相干扰。</p>
 <p><strong>怎么理解</strong>：公司报销制度——每个部门有固定报销额度（ResourceQuota），单次报销有上下限（LimitRange），但额度用不完不能转给其他部门。</p>
+
 <h4>第二层：Queue 级别</h4>
 <p><strong>机制</strong>：Volcano Queue / Kueue ClusterQueue / Yunikorn Queue。</p>
 <p><strong>增强能力</strong>：(1) 弹性配额——支持 borrowing 和 reclaim；(2) 公平调度——Queue 内部可以按 DRF/proportion 调度；(3) 优先级——不同 Queue 可以有不同优先级；(4) 排队——配额不足时任务排队等待，而不是直接拒绝。</p>
 <p><strong>为什么比 Namespace 更好</strong>：ResourceQuota 是"硬墙"——超了就拒绝。Queue 是"弹性门"——超了可以借用，还可以排队等。后者更适合 GPU 集群的动态负载。</p>
+
 <h4>第三层：节点级别</h4>
 <p><strong>机制</strong>：NodeSelector / NodeAffinity / Taint-Toleration。</p>
 <p><strong>做法</strong>：把特定节点（或节点组）专属于特定租户。例如给 A 团队的节点打上 <code>tenant=A:NoSchedule</code> taint，只有带 A 团队 toleration 的 Pod 才能调度上去。</p>
 <p><strong>为什么需要</strong>：(1) <strong>合规要求</strong>：某些数据只能在特定机器上处理；(2) <strong>性能隔离</strong>：训练任务独占节点，避免推理任务的延迟抖动；(3) <strong>硬件差异</strong>：A 团队的模型需要 A100，B 团队 V100 就够了。</p>
 <p><strong>局限</strong>：降低利用率——专属于某个租户的节点即使闲置，其他租户也不能用。</p>
+
 <h4>第四层：GPU 级别</h4>
 <p><strong>机制</strong>：MIG（Multi-Instance GPU）硬件切片 / MPS（Multi-Process Service）软件共享。</p>
 <p><strong>MIG</strong>：A100/H100 支持将一张 GPU 硬件切分为最多 7 个实例，每个实例有独立的 SM、L2 cache、显存带宽。硬件级隔离——一个实例的故障和性能波动不影响其他实例。</p>
@@ -293,6 +312,7 @@
 </div>
 <div class="card card-m">
 <h3>多租户管理面试问答</h3>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: ElasticQuota 的抢占有什么问题？怎么改进？</div>
 <div class="qa-a">
@@ -306,6 +326,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"抢占不是免费的——它有沉没成本、延迟和级联效应。好的配额系统应该让抢占尽量少发生、尽量低代价、尽量可预测。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如何设计一个支持 10 个团队共享 200 GPU 的配额系统？</div>
 <div class="qa-a">
@@ -317,6 +338,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"配额系统设计的关键不是选哪个模型，而是说清楚 guarantee 怎么定、借用怎么管、回收怎么触发、代价怎么控制。这四个问题回答清楚了，配额系统就立住了。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: MIG 和 MPS 的区别？什么场景用哪个？</div>
 <div class="qa-a">
@@ -334,6 +356,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"MIG 用硬件换隔离，MPS 用共享换利用率。选择取决于你对性能确定性的要求——训练需要确定性，推理更看重利用率。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 多租户场景下如何防止"吵闹的邻居"？</div>
 <div class="qa-a">
@@ -347,6 +370,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"吵闹邻居的本质是共享资源的争抢。解决路径从粗到细：隔离（不共享）→ 干扰感知（有选择地共享）→ 限流（共享但约束）→ 监控（出问题再处理）。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Namespace 隔离和 Queue 隔离有什么区别？什么时候用哪个？</div>
 <div class="qa-a">
@@ -379,12 +403,14 @@
 <tr><td>节点间</td><td>InfiniBand / RoCE</td><td>200-400 Gbps (25-50 GB/s)</td><td>~5-10 μs</td><td>比 NVLink 慢 10-20x</td><td>DP/PP 通信，可接受</td></tr>
 <tr><td>机柜间</td><td>Spine 交换机</td><td>几百 Gbps</td><td>几十 μs</td><td>比节点间慢 5-10x</td><td>尽力避免跨机柜通信</td></tr>
 </table>
+
 <h4>NVLink vs PCIe vs InfiniBand：关键区别</h4>
 <p><strong>NVLink</strong>：NVIDIA 专有高速互联，GPU 之间直接通信，不经过 CPU。A100 每张卡 12 条 NVLink，总带宽 600 GB/s；H100 升级到 900 GB/s。NVLink 是张量并行的<strong>必要条件</strong>——没有 NVLink，TP 的通信延迟会让 GPU 大部分时间在等数据。</p>
 <p><strong>NVSwitch</strong>：NVLink 的交换芯片，让节点内所有 GPU 两两直连。8 卡 A100 服务器用 6 个 NVSwitch，实现 8 卡全互联（每对 GPU 间都有 NVLink）。没有 NVSwitch，8 卡只能部分互联（有些 GPU 对走 PCIe）。</p>
 <p><strong>PCIe</strong>：通用总线，CPU 和 GPU 之间的标准通道。Gen4 x16 带宽 32 GB/s，Gen5 翻倍。GPU 间也可以走 PCIe（没有 NVLink 连接的 GPU 对），但带宽远低于 NVLink。</p>
 <p><strong>InfiniBand</strong>：节点间高速网络，HDR 200 Gbps，NDR 400 Gbps。RDMA 能力让 GPU 可以直接写入远端 GPU 显存，不经 CPU。NCCL 默认使用 InfiniBand 做跨节点通信。</p>
 <p><strong>怎么理解</strong>：NVLink 是"高铁"（节点内、超高速、专用轨道），PCIe 是"国道"（通用、较慢），InfiniBand 是"飞机"（跨城市、快速但有起飞延迟）。</p>
+
 <h4>拓扑发现：调度器怎么知道拓扑？</h4>
 <p>调度器需要知道每张 GPU 在哪个节点、和哪些 GPU 有 NVLink 连接。信息来源：</p>
 <ol>
@@ -396,31 +422,37 @@
 <div class="card card-d">
 <h3>集合通信原语详解</h3>
 <p>分布式训练的核心通信操作由 NCCL 实现。理解每个原语的语义，才能理解不同并行策略为什么对拓扑有不同的偏好。</p>
+
 <h4>1. AllReduce</h4>
 <p><strong>操作</strong>：所有节点贡献数据，聚合（如求和）后结果广播回所有节点。</p>
 <p><strong>训练用途</strong>：数据并行的梯度同步。每个 worker 算完本地梯度后，AllReduce 求平均。</p>
 <p><strong>通信量</strong>：O(N × data_size)。Ring AllReduce 可以优化到 O(2(N-1)/N × data_size)。</p>
 <p><strong>拓扑敏感性</strong>：中等。AllReduce 的通信量取决于模型大小，不是拓扑结构。但拓扑决定每次 AllReduce 的完成时间——NVLink 互联的 8 卡比跨节点 8 卡快 3-5 倍。</p>
 <p><strong>怎么理解</strong>：8 个人各自算了一道题的部分答案，现在要把所有人的部分答案汇总，然后每个人拿到完整答案。</p>
+
 <h4>2. AllGather</h4>
 <p><strong>操作</strong>：每个节点贡献自己的数据，所有节点收集所有数据。</p>
 <p><strong>和 AllReduce 的区别</strong>：AllReduce 先 Reduce（聚合）再广播结果，每个节点拿到的是聚合值。AllGather 不聚合，每个节点拿到的是所有节点的原始数据。</p>
 <p><strong>训练用途</strong>：张量并行的前向/反向传播——每个 TP rank 计算局部结果，AllGather 拼出完整结果。</p>
 <p><strong>拓扑敏感性</strong>：极高。AllGather 的通信量 = 所有 rank 的数据总量，比 AllReduce 大。必须走 NVLink，否则通信时间 >> 计算时间。</p>
+
 <h4>3. ReduceScatter</h4>
 <p><strong>操作</strong>：先 Reduce（聚合），再 Scatter（每个节点只拿自己负责的分片）。</p>
 <p><strong>训练用途</strong>：ZeRO 优化器的梯度分片——ReduceScatter 后每个 rank 只保留自己负责的梯度分片，不需要完整的梯度。</p>
 <p><strong>通信量</strong>：比 AllReduce 少——最终每个节点只拿 data_size/N 的数据。</p>
 <p><strong>怎么理解</strong>：8 个人汇总答案后，每人只拿走自己负责的那部分，不需要完整答案。</p>
+
 <h4>4. Broadcast</h4>
 <p><strong>操作</strong>：一个节点（root）把数据广播给所有节点。</p>
 <p><strong>训练用途</strong>：参数初始化（rank 0 广播初始权重）、模型同步。</p>
 <p><strong>通信量</strong>：O(N × data_size)。但只需一个方向（root → others），比 AllReduce 少一半。</p>
+
 <h4>5. P2P Send/Recv</h4>
 <p><strong>操作</strong>：点对点传输，一个节点发送，一个节点接收。</p>
 <p><strong>训练用途</strong>：流水线并行的 stage 间传递——stage 0 算完把中间激活发给 stage 1。</p>
 <p><strong>拓扑敏感性</strong>：低。每次只传一对，带宽需求小。跨节点走 InfiniBand 可以接受。</p>
 <p><strong>怎么理解</strong>：流水线上游把半成品递给下游，只有相邻两个 stage 在交互。</p>
+
 <h4>6. All-to-All</h4>
 <p><strong>操作</strong>：每个节点向所有其他节点发送不同的数据，同时从所有其他节点接收不同的数据。</p>
 <p><strong>训练用途</strong>：MoE 模型的专家并行——token 被路由到不同专家所在的 GPU。</p>
@@ -437,6 +469,7 @@
 <tr><td>专家并行（EP）</td><td>All-to-All</td><td>每层 1 次</td><td>token 数 × hidden_dim</td><td>NVLink + 高带宽网络</td><td>All-to-All 需要全网带宽，拓扑要求最苛刻</td></tr>
 <tr><td>ZeRO-3</td><td>AllGather + ReduceScatter</td><td>每层前向+反向各 1 次</td><td>参数分片量</td><td>节点间即可（DP 变体）</td><td>本质是 DP 的内存优化，通信模式类似</td></tr>
 </table>
+
 <h4>关键洞察：TP 必须同节点</h4>
 <p>这是面试中最高频的拓扑问题。为什么 TP 必须放在同一 NVLink 节点内？</p>
 <p><strong>数学推导</strong>：假设训练 GPT-3（175B 参数，96 层）。TP=8，每层 AllGather 通信量 ≈ 175B × 2 bytes / 8 ≈ 43.75 GB。前向 + 反向 = 4 次/层，96 层共 384 次 AllGather。</p>
@@ -456,9 +489,19 @@
 </ul>
 <p><strong>物理布局</strong>：</p>
 <pre>
-<p>节点 0: [TP group 0] ← NVLink → GPU 0-7 节点 1: [TP group 1] ← NVLink → GPU 8-15 节点 2: [TP group 2] ← NVLink → GPU 16-23 节点 3: [TP group 3] ← NVLink → GPU 24-31 节点 4: [TP group 4] ← NVLink → GPU 32-39 节点 5: [TP group 5] ← NVLink → GPU 40-47 节点 6: [TP group 6] ← NVLink → GPU 48-55 节点 7: [TP group 7] ← NVLink → GPU 56-63</p>
-<p>Pipeline 0: 节点 0 → 节点 1 → 节点 2 → 节点 3  (PP=4, P2P over IB) Pipeline 1: 节点 4 → 节点 5 → 节点 6 → 节点 7  (PP=4, P2P over IB)</p>
-<p>DP group 0: Pipeline 0 和 Pipeline 1 之间 AllReduce 梯度 (DP=2, over IB)</p>
+节点 0: [TP group 0] ← NVLink → GPU 0-7
+节点 1: [TP group 1] ← NVLink → GPU 8-15
+节点 2: [TP group 2] ← NVLink → GPU 16-23
+节点 3: [TP group 3] ← NVLink → GPU 24-31
+节点 4: [TP group 4] ← NVLink → GPU 32-39
+节点 5: [TP group 5] ← NVLink → GPU 40-47
+节点 6: [TP group 6] ← NVLink → GPU 48-55
+节点 7: [TP group 7] ← NVLink → GPU 56-63
+
+Pipeline 0: 节点 0 → 节点 1 → 节点 2 → 节点 3  (PP=4, P2P over IB)
+Pipeline 1: 节点 4 → 节点 5 → 节点 6 → 节点 7  (PP=4, P2P over IB)
+
+DP group 0: Pipeline 0 和 Pipeline 1 之间 AllReduce 梯度 (DP=2, over IB)
 </pre>
 <p><strong>调度器的任务</strong>：确保 TP group 分配在同一节点，PP stage 尽量在同一机柜（减少 InfiniBand 跳数），DP group 可以跨机柜。</p>
 <p><strong>怎么理解</strong>：像一个大型工程项目。8 个密切协作的工程师坐同一办公室（TP，高频沟通），4 个办公室依次传递半成品（PP，低频但有序），两组流水线定期同步进度（DP，频率最低）。</p>
@@ -466,6 +509,7 @@
 <div class="card card-d">
 <h3>NCCL：拓扑感知通信引擎</h3>
 <p>NCCL（NVIDIA Collective Communication Library）是分布式训练通信的底层引擎。它自动根据 GPU 拓扑选择最优通信路径。</p>
+
 <h4>NCCL 通道选择逻辑</h4>
 <p>NCCL 检测 GPU 之间的所有可用路径，构建拓扑图，然后为每次集合通信选择最优通道：</p>
 <ol>
@@ -474,10 +518,12 @@
 <li><strong>混合</strong>：NVLink 用于节点内 reduce，InfiniBand 用于节点间 scatter/gather</li>
 </ol>
 <p><strong>NCCL_TOPO_FILE</strong>：NCCL 读取拓扑文件来决定通道。调度器可以通过设置这个环境变量来影响 NCCL 的路径选择——例如告诉 NCCL "这些 GPU 在同一个机柜内，可以用更激进的树形算法"。</p>
+
 <h4>Ring AllReduce 的拓扑依赖</h4>
 <p>Ring AllReduce 是 NCCL 最常用的 AllReduce 算法。它把所有 GPU 排成一个逻辑环，数据在环上分步传递。</p>
 <p><strong>拓扑要求</strong>：环上相邻 GPU 之间需要高带宽。如果环跨越了低带宽链路（如 PCIe 替代 NVLink），该链路成为瓶颈——环的速度取决于最慢的那一跳。</p>
 <p><strong>NCCL 的优化</strong>：NCCL 会构建多个环，避免所有数据走同一条路径。在 8 卡 NVSwitch 服务器中，NCCL 通常构建 4 个环，充分利用 NVLink 的带宽。</p>
+
 <h4>NCCL 超时：最常见的训练故障</h4>
 <p><strong>现象</strong>：训练卡住，日志显示 <code>NCCL error: timeout</code>。</p>
 <p><strong>原因</strong>：某个 rank 没有按时到达同步点。可能原因：(1) Gang 不完整——某个 worker 没启动成功；(2) 网络分区——某个节点网络断了；(3) GPU 挂了——ECC 错误导致 GPU 不可用但没被检测到；(4) 负载不均——某个 rank 的计算量特别大，其他 rank 等待超时。</p>
@@ -485,6 +531,7 @@
 </div>
 <div class="card card-w">
 <h3>拓扑与通信面试问答</h3>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 TP 必须在同一节点？可以用 InfiniBand 替代 NVLink 吗？</div>
 <div class="qa-a">
@@ -493,6 +540,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"TP 和 DP 的本质区别是通信频率——TP 每层都要通信，DP 每步才通信一次。频率差两个量级，所以 TP 需要高一个量级的带宽。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 调度器怎么做拓扑感知？有哪些实现路径？</div>
 <div class="qa-a">
@@ -508,6 +556,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"拓扑感知的实现路径不是一蹴而就的——从 Node Label 到 NFD 到 Scheduler Plugin 到 DRA，逐步演进。关键是当前阶段选择够用的方案，不追求一步到位。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: NCCL 通信卡住（超时）怎么排查？</div>
 <div class="qa-a">
@@ -523,6 +572,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"NCCL 超时 80% 的原因是 Gang 不完整或网络问题，不是 NCCL 本身的 bug。先查 Pod 状态和网络，再看 NCCL 日志。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Ring AllReduce 和 Tree AllReduce 有什么区别？各适合什么场景？</div>
 <div class="qa-a">
@@ -551,6 +601,7 @@
 </div>
 <div class="card card-s">
 <h3>并行策略详解</h3>
+
 <h4>1. 数据并行（Data Parallelism, DP）</h4>
 <p><strong>核心思想</strong>：每张卡存一份完整模型，不同的数据分片分配给不同卡。每步训练后 AllReduce 同步梯度。</p>
 <p><strong>怎么理解</strong>：8 个厨师各自做一桌菜（同样的菜单、不同的食材），做完后汇总经验（梯度同步），下次做得更好。</p>
@@ -558,6 +609,7 @@
 <p><strong>通信模式</strong>：每步 1 次 AllReduce，通信量 = 模型参数量 × 2（Ring AllReduce）。GPT-3 175B 参数 FP16 约需 700 GB 通信量/步。</p>
 <p><strong>拓扑需求</strong>：低。AllReduce 频率低（每步 1 次），InfiniBand 带宽足够。但大规模 DP（>64 卡）时，AllReduce 的延迟会累积。</p>
 <p><strong>适用场景</strong>：模型能放进单卡（< 80GB 参数）。小模型训练的标准方案。</p>
+
 <h4>2. 张量并行（Tensor Parallelism, TP）</h4>
 <p><strong>核心思想</strong>：把模型每一层的参数矩阵切分到多张卡上，每张卡只算矩阵的一部分，然后 AllGather 拼出完整结果。</p>
 <p><strong>怎么理解</strong>：8 个厨师合作做一道大菜——每人负责切一部分食材，然后拼在一起下锅。如果厨师不在同一个厨房（没有 NVLink），来回传递食材太慢。</p>
@@ -565,6 +617,7 @@
 <p><strong>通信模式</strong>：每层前向 AllGather + 反向 AllGather/ReduceScatter。96 层模型一步有 384 次集合通信。</p>
 <p><strong>拓扑需求</strong>：极高。必须 NVLink 互联。InfiniBand 的带宽差 10-20 倍，会让通信时间远超计算时间。</p>
 <p><strong>适用场景</strong>：单层参数量太大，单卡放不下。大模型训练的标配。</p>
+
 <h4>3. 流水线并行（Pipeline Parallelism, PP）</h4>
 <p><strong>核心思想</strong>：把模型按层切分成多个 stage，不同 stage 放在不同卡上。数据像流水线一样从 stage 0 → stage 1 → ... → stage N 依次传递。</p>
 <p><strong>怎么理解</strong>：工厂流水线——冲压车间把半成品传给焊接车间，焊接车间传给喷漆车间。每个车间只做一部分工序。</p>
@@ -572,11 +625,13 @@
 <p><strong>通信模式</strong>：相邻 stage 之间 P2P Send/Recv，传递激活值（前向）和梯度（反向）。</p>
 <p><strong>拓扑需求</strong>：低。P2P 通信量小（只传激活值，不传模型参数），InfiniBand 够用。但相邻 stage 的网络跳数越少越好（减少延迟）。</p>
 <p><strong>适用场景</strong>：模型层数多，单卡放不下所有层。通常和 TP 组合使用——TP 处理单层太大的问题，PP 处理层数太多的问题。</p>
+
 <h4>4. 专家并行（Expert Parallelism, EP）</h4>
 <p><strong>核心思想</strong>：MoE（Mixture of Experts）模型中，不同的专家放在不同的 GPU 上。输入 token 被路由到对应专家所在的 GPU。</p>
 <p><strong>通信模式</strong>：All-to-All。每个 token 都可能被路由到任何专家，所以每个 GPU 都需要和所有其他 GPU 通信。</p>
 <p><strong>拓扑需求</strong>：极高。All-to-All 需要全网等带宽（bisection bandwidth），比 AllReduce 要求更高。在非全互联拓扑中（如 fat-tree），All-to-All 性能受限于交换机带宽。</p>
 <p><strong>适用场景</strong>：MoE 模型（Mixtral、DeepSeek-MoE）。这是 MoE 训练的专属并行策略。</p>
+
 <h4>5. ZeRO 优化</h4>
 <p><strong>核心思想</strong>：数据并行的显存优化。训练需要存三类数据：优化器状态（Adam: momentum + variance，每参数 12 字节）、梯度（4 字节/参数）、模型参数（FP16: 2 字节/参数）。ZeRO 把这些数据切分到 N 张卡上。</p>
 <p><strong>三个阶段</strong>：</p>
@@ -604,6 +659,7 @@
 <tr><td>ZeRO-1</td><td>优化器状态</td><td>AllReduce</td><td>每步 1 次</td><td>低</td><td>优化器/N</td><td>DP 的低成本优化</td></tr>
 <tr><td>ZeRO-3</td><td>全部状态</td><td>AllGather + ReduceScatter</td><td>每层 2 次</td><td>中</td><td>全部/N</td><td>超大模型</td></tr>
 </table>
+
 <h3>3D 并行组合策略</h3>
 <p>大模型训练通常组合 DP + TP + PP。核心原则：</p>
 <ol>
@@ -622,23 +678,28 @@
 <div class="card card-w">
 <h3>梯度同步优化</h3>
 <p>数据并行（包括 ZeRO）的核心性能瓶颈是梯度同步。几种关键优化：</p>
+
 <h4>1. 通信-计算重叠</h4>
 <p><strong>核心思想</strong>：反向传播是逐层计算的。当某一层的梯度算完时，立即启动该层的 AllReduce，不等所有层都算完。</p>
 <p><strong>怎么理解</strong>：做饭的同时洗碗——不等所有菜做完再统一洗碗，而是做完一道洗一道。锅的利用率更高。</p>
 <p><strong>效果</strong>：在带宽够的情况下，通信时间可以几乎完全隐藏在计算时间内，等效通信开销接近 0。</p>
+
 <h4>2. 梯度累积</h4>
 <p><strong>核心思想</strong>：多个 micro-batch 的梯度在本地累积，累积到 N 个后再做一次 AllReduce。通信频率降低 1/N。</p>
 <p><strong>怎么理解</strong>：快递攒够一车再发，不一个个寄。</p>
 <p><strong>Trade-off</strong>：增大有效 batch size，可能影响模型收敛。</p>
+
 <h4>3. 梯度压缩</h4>
 <p><strong>核心思想</strong>：只传 top-k 梯度或量化为低精度（FP8/INT8），减少通信量。</p>
 <p><strong>Trade-off</strong>：压缩引入误差，可能影响模型精度。需要仔细调参。</p>
+
 <h4>4. Ring AllReduce</h4>
 <p><strong>核心思想</strong>：GPU 排成逻辑环，数据分步传递。每步每个 GPU 只和左右邻居通信，带宽利用均匀。</p>
 <p><strong>通信量</strong>：2(N-1)/N × data_size ≈ 2 × data_size（当 N 较大时）。比朴素的 centralized reduce（通信量 = (N-1) × data_size）节省很多。</p>
 </div>
 <div class="card card-m">
 <h3>分布式训练面试问答</h3>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: ZeRO 三个阶段分别做了什么？通信开销怎么变化？</div>
 <div class="qa-a">
@@ -652,6 +713,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"ZeRO-2 是性价比最高的选择——和纯 DP 几乎相同的通信量，但显存节省接近 ZeRO-3 的 2/3。除非模型大到 ZeRO-2 还放不下，否则优先选 ZeRO-2。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 3D 并行（DP+TP+PP）的配置怎么选？有什么经验规则？</div>
 <div class="qa-a">
@@ -665,6 +727,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"3D 并行的配置是 TP 决定拓扑约束、PP 决定显存约束、DP 决定吞吐。先满足约束（TP 同节点、PP 不超显存），再优化目标（DP 最大化吞吐）。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Pipeline Bubble 怎么优化？</div>
 <div class="qa-a">
@@ -678,6 +741,7 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"Pipeline Bubble 的优化核心是'让更多 stage 同时工作'。Micro-batching 让不同 micro-batch 占据不同 stage，1F1B 减少显存占用，Interleaved 让流水线更紧凑。"</p></div>
 </div>
 </div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 调度器怎么感知并行策略？</div>
 <div class="qa-a">
@@ -1203,6 +1267,6 @@ gang 插件 PreFilter: 可调度 Pod 数 &gt;= minMember?
 <ul><li>每 15 秒采集一次指标（Prometheus scrape_interval）</li><li>ECC 不可纠正错误 → 自动驱逐 Pod</li><li>温度 &gt; 85°C → 告警 + 降低频率</li><li>GPU 利用率持续 &lt; 10% → 可能卡死，需要检查</li></ul>
 <p><strong>面试金句</strong>：「DCGM 是 GPU 监控的基石——它不是可选的，而是必须的。没有 DCGM 的 GPU 集群就像没有仪表盘的汽车，出了问题你连原因都不知道。」</p></div></article></div></section>
 </div>
-<script src="../../../assets/script.js"></script>
+<script src="../../../assets/script.js?v=1779897928"></script>
 </body>
 </html>

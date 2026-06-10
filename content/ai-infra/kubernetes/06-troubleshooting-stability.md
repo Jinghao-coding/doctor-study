@@ -74,12 +74,58 @@
 </table>
 </div>
 
+<div class="card card-m">
+
+<h3>故障排查与稳定性高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod Pending 你会怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先定位阶段</div><p>Pending 可能卡在调度、PVC、配额、准入或镜像前准备阶段，先看 Pod Events 确认具体原因。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 调度失败</div><p>如果是 FailedScheduling，检查 requests、Node allocatable、污点容忍、亲和性、拓扑约束、优先级抢占。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 依赖未满足</div><p>如果事件指向 PVC、ResourceClaim、Quota、LimitRange 或队列准入，就去对应模块看存储、DRA、配额和批调度。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 节点执行前问题</div><p>如果已经绑定但仍 Pending/ContainerCreating，检查 kubelet、CNI、CSI、container runtime、镜像拉取和 sandbox 创建。</p></div>
+<div class="qa-summary">面试口径：Pending 不是单一问题，要先看 Events 判断卡在调度、存储、配额、设备还是节点执行链路。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CrashLoopBackOff 怎么排查？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 理解概念</div><p>CrashLoopBackOff 表示容器反复启动失败，kubelet 正在按退避策略重启它；它是结果，不是根因。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 先看日志和退出码</div><p>看 <code>kubectl logs</code> 和 <code>kubectl logs --previous</code>，再看 lastState、exitCode、reason、启动命令和参数。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分常见根因</div><p>配置错误、依赖不可达、启动命令错误、权限问题、镜像入口错误、OOMKilled、应用主动退出都可能导致循环重启。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 检查探针</div><p>livenessProbe 过激会把慢启动应用杀死；慢启动应使用 startupProbe，readiness 失败不应导致重启。</p></div>
+<div class="qa-summary">面试口径：CrashLoopBackOff 按“日志/退出码 → 配置和依赖 → OOM → 探针”排查，先找容器为什么退出。</div>
+</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Node NotReady 怎么排查？</div>
-<div class="qa-a"><p>先看 Node conditions：Ready、MemoryPressure、DiskPressure、PIDPressure、NetworkUnavailable。再到节点看 kubelet、container runtime、CNI、磁盘、内存、网络和证书。还要看控制面是否能连接节点、节点心跳是否超时。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 看 Node conditions</div><p>先看 Ready、MemoryPressure、DiskPressure、PIDPressure、NetworkUnavailable，判断是资源压力还是节点不可达。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 看节点侧组件</div><p>登录节点检查 kubelet、container runtime、CNI、磁盘、内存、网络、证书和系统日志。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 看控制面连接</div><p>确认 API Server 能否收到节点心跳，网络、防火墙、证书过期、kubelet bootstrap 都可能影响上报。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 看影响面</div><p>评估该节点上的 Pod 是否 Unknown/Terminating，是否需要 cordon、drain、重建或等待节点恢复。</p></div>
+<div class="qa-summary">面试口径：Node NotReady 先看 conditions，再查 kubelet/runtime/CNI/资源压力和控制面连通性，最后评估 Pod 迁移影响。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 大规模集群为什么要关注 watch 和对象大小？</div>
-<div class="qa-a"><p>Kubernetes 组件大量依赖 List/Watch。如果对象过大、更新过频或 watcher 过多，会放大 API Server 和 etcd 压力。DRA 用 ResourceSlice 而不是把所有设备细节塞进 Node，也和控制对象大小、降低 Node status 膨胀有关。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. watch 的作用</div><p>Kubernetes 组件大量依赖 List/Watch 感知对象变化，watch 是控制器、scheduler、kubelet 协作的基础。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 对象过大的风险</div><p>Node status、Pod status、ResourceSlice 等对象过大会增加 API Server 序列化、网络传输、缓存和 etcd 存储压力。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 更新过频的风险</div><p>频繁 status 更新会放大 watch 广播和 etcd 写入压力，导致控制面 QPS、延迟和内存上升。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 治理方式</div><p>控制对象大小、减少无意义 status 更新、合理分片、使用分页和限流，DRA 用 ResourceSlice 也是为了避免 Node 对象无限膨胀。</p></div>
+<div class="qa-summary">面试口径：大集群稳定性要控制 watch 数量、对象大小和更新频率，否则 API Server 与 etcd 会成为瓶颈。</div>
+</div>
 </div>

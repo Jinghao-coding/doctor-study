@@ -65,12 +65,46 @@
 </ul>
 </div>
 
+<div class="card card-m">
+
+<h3>安全、准入与多租户高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: RBAC、Admission、Pod Security 分别解决什么问题？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. RBAC 解决权限问题</div><p>RBAC 判断某个 subject 是否能对某类 resource 执行某个 verb，例如某用户能否在某 namespace create pods。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Admission 解决准入策略问题</div><p>Admission 发生在认证鉴权之后、写入 etcd 之前，可以变更对象或校验对象，例如注入 sidecar、拒绝非法镜像。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Pod Security 解决 Pod 安全基线问题</div><p>Pod Security 限制特权容器、hostNetwork、hostPID、危险 capabilities、root 运行等高风险配置。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 三者关系</div><p>RBAC 管“谁能做”，Admission 管“请求对象是否合规”，Pod Security 是针对 Pod 安全字段的一类准入策略。</p></div>
+<div class="qa-summary">面试口径：RBAC 是权限，Admission 是写入前策略，Pod Security 是 Pod 运行安全基线，三者处在 API Server 请求链路不同阶段。</div>
+</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 一个用户说自己没有权限创建 Pod，怎么排查？</div>
-<div class="qa-a"><p>先确认用户身份和 namespace，再用 <code>kubectl auth can-i create pods -n xxx --as user</code> 验证 RBAC。然后检查 Role/ClusterRole、RoleBinding/ClusterRoleBinding 是否绑定正确。如果 RBAC 允许但仍失败，再看 Admission Webhook、Quota、Pod Security 等是否拒绝。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 确认身份和范围</div><p>先确认用户、组、ServiceAccount 和 namespace，权限问题必须带着作用域看。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 验证 RBAC</div><p>用 <code>kubectl auth can-i create pods -n xxx --as user</code> 验证，再检查 Role/ClusterRole 和 Binding 是否正确。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 区分非 RBAC 拒绝</div><p>如果 RBAC 允许但仍失败，继续看 Admission Webhook、ResourceQuota、LimitRange、Pod Security、镜像策略等是否拒绝。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 生产建议</div><p>按最小权限原则授权，不要直接给 cluster-admin；默认 ServiceAccount 也不要绑定过大权限。</p></div>
+<div class="qa-summary">面试口径：权限排查先确认身份和 namespace，再用 can-i 验证 RBAC，最后排查 Admission、Quota 和 Pod Security。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 多租户 GPU 集群如何做公平性和利用率平衡？</div>
-<div class="qa-a"><p>基础层用 namespace、RBAC、ResourceQuota 做隔离；调度层用队列、PriorityClass、Gang Scheduling 做准入；资源层支持 borrowing 提升利用率，关键任务到来时 reclaim；运行层配合监控、审计和准入策略限制特权容器、非法镜像和越权访问。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 基础隔离</div><p>用 namespace、RBAC、ResourceQuota、LimitRange 隔离团队和资源，GPU 扩展资源也要纳入 quota。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 队列治理</div><p>用 Kueue、Volcano 或自研队列表达团队配额、优先级、借用和回收策略。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 公平性</div><p>用 PriorityClass、DRF、quota borrowing/reclaim 等机制，让关键任务有保障，普通任务不被长期饿死。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 利用率</div><p>空闲 GPU 可以借用给低优任务；高优任务到来时通过抢占、重排或 checkpoint 恢复释放资源。</p></div>
+<div class="qa-summary">面试口径：多租户 GPU 集群要同时做权限隔离、配额公平、空闲借用和高优任务回收，不能只靠 namespace。</div>
+</div>
 </div>

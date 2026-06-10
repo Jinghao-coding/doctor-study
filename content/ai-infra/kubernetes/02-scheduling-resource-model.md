@@ -70,12 +70,46 @@
 </table>
 </div>
 
+<div class="card card-m">
+
+<h3>调度与资源模型高频问答</h3>
+
+<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Pod Pending 时，调度侧怎么排查？</div>
-<div class="qa-a"><p>先看 <code>kubectl describe pod</code> 的 Events，确认是资源不足、污点不容忍、nodeSelector/affinity 不匹配、PVC 未绑定，还是抢占也无法解决。再看节点 allocatable、Pod requests、PriorityClass、scheduler 日志和相关调度插件。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. 先看事件</div><p>先用 <code>kubectl describe pod</code> 看 Events，确认是否是 <code>FailedScheduling</code>，不要一上来就猜 kubelet 或 CNI。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 资源类原因</div><p>对比 Pod requests 和 Node allocatable，关注 CPU、内存、GPU 扩展资源、DaemonSet 占用、系统预留和资源碎片。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 约束类原因</div><p>检查 nodeSelector、nodeAffinity、podAffinity/anti-affinity、topologySpreadConstraints、taints/tolerations 是否让可选节点变少。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 外部依赖原因</div><p>如果事件提到 PVC、ResourceClaim、Quota 或队列准入，就分别转到存储、DRA、ResourceQuota、Kueue/Volcano 链路排查。</p></div>
+<div class="qa-summary">面试口径：Pending 先看 Events，再按资源、约束、存储、配额、GPU/DRA、调度器插件逐层排查。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: requests 和 limits 有什么区别？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. requests 的概念</div><p><code>requests</code> 是 Pod 对资源的最低需求和调度依据，scheduler 用它判断节点是否放得下。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. limits 的概念</div><p><code>limits</code> 是运行时上限，CPU 超过 limit 通常被 throttling，内存超过 limit 通常触发 OOMKilled。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 对 QoS 的作用</div><p>CPU/Memory 的 requests 和 limits 组合决定 QoS：Guaranteed、Burstable、BestEffort，进而影响节点压力下的驱逐顺序。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 常见误区</div><p>调度器默认不看实时使用量，而是看 requests；limits 不是资源预留，设置过低会影响稳定性。</p></div>
+<div class="qa-summary">面试口径：requests 主要管调度和预留，limits 主要管运行时限制，QoS 决定资源压力下谁更容易被驱逐。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 GPU requests 和 limits 通常要相等？</div>
-<div class="qa-a"><p>GPU 属于离散扩展资源，Kubernetes 默认无法像 CPU 那样按时间片细粒度超卖，因此通常只在 limits 中声明，requests 会被视为等于 limits。这样 scheduler 和 kubelet 能按整数设备做一致的分配。</p></div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
+<div class="qa-section"><div class="qa-section-title">1. GPU 的资源属性</div><p>GPU 是离散扩展资源，默认按整数设备分配，不像 CPU 那样天然支持细粒度超卖。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 调度一致性</div><p>scheduler 根据 Pod 申请的扩展资源数量过滤节点，kubelet 也按同样数量调用 Device Plugin Allocate，二者需要一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Kubernetes 约定</div><p>扩展资源通常只允许设置 limits，requests 会被视为等于 limits，避免“调度申请少、运行占用多”的不一致。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 例外场景</div><p>MIG、MPS、time-slicing、vGPU 或 DRA 可以表达更复杂共享，但那是额外机制，不是普通 GPU limit 的默认语义。</p></div>
+<div class="qa-summary">面试口径：普通 GPU 扩展资源按整数设备调度和分配，所以 requests/limits 通常保持一致，保证 scheduler 与 kubelet 看到同一个资源需求。</div>
+</div>
 </div>
