@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LLM 推理系统 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781104452">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781104970">
 </head>
 <body>
 <nav class="topnav">
@@ -15,7 +15,61 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Serving System</div><h1>LLM 推理系统</h1><p class="sub">推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 性能优化 · 引擎选型</p><div class="hero-tags"><span>llm</span><span>inference</span><span>kv-cache</span><span>serving</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" title="推理总览" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-title">推理总览</span><span class="tab-desc">定义、核心概念、Prefill/Decode 区别</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" title="请求生命周期" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-title">请求生命周期</span><span class="tab-desc">请求接入、调度、计算、生成、返回</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" title="Prefill 阶段" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-title">Prefill 阶段</span><span class="tab-desc">计算密集、TTFT、首 token 延迟</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" title="Decode 阶段" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-title">Decode 阶段</span><span class="tab-desc">逐 token 生成、memory-bound、TPOT</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV 缓存、PagedAttention、FlashAttention、GQA</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-6" data-initial="06" title="性能指标与瓶颈" aria-controls="llm-inference-tabs-panel-6" aria-selected="false"><span class="tab-title">性能指标与瓶颈</span><span class="tab-desc">TTFT、TPOT、吞吐、显存、MFU</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-7" data-initial="07" title="优化技术" aria-controls="llm-inference-tabs-panel-7" aria-selected="false"><span class="tab-title">优化技术</span><span class="tab-desc">Batching、量化、投机解码、Prefix Cache</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-8" data-initial="08" title="推理引擎对比" aria-controls="llm-inference-tabs-panel-8" aria-selected="false"><span class="tab-title">推理引擎对比</span><span class="tab-desc">AI Infra 视角 · 学习路线 · 13 题面试清单</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理总览</h2></div><div class="tab-panel-body"><h2>LLM 推理是什么</h2>
+<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" title="端到端链路" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-title">端到端链路</span><span class="tab-desc">Prompt 进模型后内部发生了什么：6 阶段完整流程</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" title="推理总览" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-title">推理总览</span><span class="tab-desc">定义、核心概念、Prefill/Decode 区别</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" title="请求生命周期" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-title">请求生命周期</span><span class="tab-desc">请求接入、调度、计算、生成、返回</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" title="Prefill 阶段" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-title">Prefill 阶段</span><span class="tab-desc">计算密集、TTFT、首 token 延迟</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" title="Decode 阶段" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-title">Decode 阶段</span><span class="tab-desc">逐 token 生成、memory-bound、TPOT</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-6" data-initial="06" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-6" aria-selected="false"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV 缓存、PagedAttention、FlashAttention、GQA</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-7" data-initial="07" title="性能指标与瓶颈" aria-controls="llm-inference-tabs-panel-7" aria-selected="false"><span class="tab-title">性能指标与瓶颈</span><span class="tab-desc">TTFT、TPOT、吞吐、显存、MFU</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-8" data-initial="08" title="优化技术" aria-controls="llm-inference-tabs-panel-8" aria-selected="false"><span class="tab-title">优化技术</span><span class="tab-desc">Batching、量化、投机解码、Prefix Cache</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-9" data-initial="09" title="推理引擎对比" aria-controls="llm-inference-tabs-panel-9" aria-selected="false"><span class="tab-title">推理引擎对比</span><span class="tab-desc">AI Infra 视角 · 学习路线 · 13 题面试清单</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>端到端链路</h2></div><div class="tab-panel-body"><h3>完整推理链路概览</h3>
+<p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>：请求封装 → tokenization → 推理调度 → prefill → decode → 结果反解码返回。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
+<p>这种"自回归 + 不做本次梯度更新"的推理方式，正是 GPT 类语言模型的基本范式；而 Transformer 则提供了它内部 attention 和前馈网络的计算骨架。</p>
+<h3>第一阶段：请求封装与 Tokenization</h3>
+<p>用户输入的自然语言并不是模型真正看到的内容。服务层会先把 system、user、assistant 等多轮消息按固定模板组织起来，补上特殊标记。随后，文本经过 tokenizer（如 BPE 算法的 tiktoken），被切成 token 序列。对模型来说，一切输入都是 token IDs，不是"句子"。</p>
+<h3>第二阶段：推理调度层</h3>
+<p>请求到达后不会立刻进入 GPU，而是先进入推理服务框架（如 vLLM、TGI）。它们负责：</p>
+<ul>
+<li>请求排队与优先级管理</li>
+<li>动态 batching（continuous batching）</li>
+<li>KV 缓存管理</li>
+<li>流式返回</li>
+</ul>
+<p>从系统视角看：用户输入 → prompt 模板展开 → tokenization → 请求调度/batching → 送入模型。vLLM 架构至少有 1 个 API server 负责 HTTP 和 tokenization，1 个 engine core 负责 scheduler 和 KV cache 管理，N 个 GPU worker 执行前向计算。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Tokenization 属于 Transformer 前向推理的一部分吗？</div>
+<div class="qa-a"><p>严格来说，tokenization 不属于 Transformer 前向推理本身——模型只接收 input_ids。但在现代推理服务中，tokenizer 往往和 serving 引擎绑定在一起，工程上看起来像是推理引擎在处理原始字符串。vLLM 同时支持 text prompt 和 pre-tokenized prompt，两种模式都能跑。</p></div>
+</div>
+<h3>第三阶段：Embedding 与位置编码</h3>
+<p>Token IDs 进入模型后，第一步是 <strong>embedding lookup</strong>——每个 token 查一张巨大的 embedding 表，得到高维向量表示。此时模型才真正进入连续空间的数值计算。</p>
+<p>仅有 token 向量还不够，模型还需知道"谁在前、谁在后"。现代大模型通常使用 <strong>RoPE（Rotary Position Embedding）</strong>，把位置信息融入 attention 计算，让模型在处理 token 时同时保留相对位置信息。</p>
+<h3>第四阶段：Transformer Block 内部计算</h3>
+<p>一个典型的 decoder-only LLM，每一层做两件事：</p>
+<ol>
+<li><strong>Self-Attention</strong>：当前位置的 token 查看上下文中哪些 token 最相关。模型把隐藏状态投影成 Q、K、V 三组向量，通过 Q 和 K 的相似度算出注意力权重，再对 V 加权求和。<strong>Causal mask</strong> 确保当前位置只能看到自己和前面的 token，不能偷看未来——这决定了模型天然是自回归生成的。</li>
+<li><strong>FFN / MLP</strong>：对每个 token 的表示单独做非线性变换，进一步提纯和增强特征，不跨位置交互。</li>
+</ol>
+<p>可以粗略理解：<strong>Attention 负责"从上下文搬运信息"，FFN 负责"对当前位置做进一步加工"</strong>。中间配合残差连接和归一化。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Q、K、V 的直觉理解？</div>
+<div class="qa-a"><p>Q = 我现在想找什么；K = 每个词身上的"索引标签"；V = 每个词真正携带的信息。类比图书馆检索：你的问题是 Q，书架上每本书的标签是 K，书里的内容是 V。先拿 Q 和所有 K 比较，相关度高的那些 V 被更多取出来，合成当前步该看的信息。Transformer 论文对 attention 的定义，本质上就是"一个 query 对一组 key-value 对做匹配，输出是 values 的加权和"。</p></div>
+</div>
+<h3>第五阶段：Prefill——读完 Prompt</h3>
+<p>Prefill 阶段把整段 prompt 一次性跑完整个前向过程，为所有 token 计算各层隐藏状态，并生成后续 decode 要用到的 KV cache。这一步可以高度并行，因为整段输入已经完整给定，GPU 能把很多矩阵操作一起做完。Prefill 更像"先整体读题"，吞吐通常更高，属于 <strong>compute-bound</strong> 阶段。</p>
+<h3>第六阶段：Decode——逐 token 生成</h3>
+<p>Prefill 完成后，模型取最后一个位置的隐藏状态，通过输出层映射成整个词表上的 logits（下一个 token 的打分），再经 softmax 和解码策略决定输出。常见解码策略：</p>
+<table>
+<tr><th>策略</th><th>方式</th><th>特点</th></tr>
+<tr><td>Greedy</td><td>选概率最大的 token</td><td>确定性输出，缺乏多样性</td></tr>
+<tr><td>Top-k</td><td>从概率最高的 k 个中采样</td><td>控制候选范围</td></tr>
+<tr><td>Top-p（nucleus）</td><td>从累积概率达 p 的最小集合中采样</td><td>动态调整候选数</td></tr>
+<tr><td>Temperature</td><td>调整 softmax 温度</td><td>高温更随机，低温更确定</td></tr>
+</table>
+<p>随后进入循环：把刚生成的 token 接到上下文后面 → 复用 KV cache → 只为新 token 跑一遍前向 → 得到新的 logits → 再生成下一个 token。这就是大模型回答总是一个 token 一个 token 流式吐出来的原因。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么"第一个字慢，后面快"？</div>
+<div class="qa-a"><p>Prefill 更偏 compute-bound，可以把整段输入并行做大矩阵乘法，吃满 GPU 算力；Decode 更偏 memory-bound，每步只算一个 token，但强依赖历史 KV cache，频繁访问显存，步骤间有严格顺序依赖。所以工程上需要 FlashAttention、continuous batching、chunked prefill / Paged Attention 等优化来提升推理效率。</p></div>
+</div>
+<h3>推理引擎与模型本体的职责划分</h3>
+<table>
+<tr><th>职责方</th><th>负责内容</th></tr>
+<tr><td>推理引擎 / serving 系统</td><td>接 HTTP 请求、tokenization / 输入处理、调度 batching、管理 KV cache、协调 GPU worker、流式返回、采样与系统优化</td></tr>
+<tr><td>LLM 模型本体</td><td>对 input_ids 做 embedding，经多层 Transformer block 的 self-attention 和 FFN，输出 logits（下一个 token 的分数分布）</td></tr>
+</table>
+<p><strong>推理引擎决定"怎么高效地跑"，模型决定"到底生成什么"。</strong>前者偏"编排与优化"，后者偏"语义计算与内容生成"。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-2" aria-labelledby="llm-inference-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理总览</h2></div><div class="tab-panel-body"><h2>LLM 推理是什么</h2>
 <p>LLM 推理是模型接收用户输入，并逐步生成回复的过程。一次完整请求通常包含请求调度、Prompt 预处理、Prefill 计算、Decode 逐 token 生成和结果返回几个阶段。</p>
 <p>推理可以拆成两个核心阶段：<code>Prefill</code> 一次性处理完整 Prompt，生成初始 KV Cache；<code>Decode</code> 基于已有上下文逐 token 生成回复，并持续更新 KV Cache。</p>
 <p>核心判断：Prefill 更偏计算密集，主要受输入长度、模型规模和 GPU 算力影响；Decode 更偏访存密集，主要受 KV Cache 读写、显存带宽和 batch 调度影响。</p>
@@ -41,8 +95,20 @@
 </table>
 <h2>记忆框架</h2>
 <p>LLM 推理系统的主线可以按“请求怎么流动、每个阶段做什么、瓶颈在哪里、如何优化、用什么引擎落地”来理解。</p>
-<p>后续模块按这个顺序展开：先讲请求生命周期，再分别拆 Prefill 和 Decode，然后解释 KV Cache 与 Attention，最后落到性能指标、优化技术和推理引擎选型。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-2" aria-labelledby="llm-inference-tabs-tab-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>请求生命周期</h2></div><div class="tab-panel-body"><h2>请求生命周期</h2>
+<p>后续模块按这个顺序展开：先讲请求生命周期，再分别拆 Prefill 和 Decode，然后解释 KV Cache 与 Attention，最后落到性能指标、优化技术和推理引擎选型。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-3" aria-labelledby="llm-inference-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>请求生命周期</h2></div><div class="tab-panel-body"><h2>请求生命周期</h2>
 <p>一次 LLM 推理请求不是“直接进模型然后输出文本”，而是经过接入、排队、调度、计算、采样和返回等多个环节。理解这条链路，才能判断 TTFT、TPOT、吞吐和显存问题分别发生在哪里。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 KV 缓存只缓存 K 和 V，不缓存 Q？</div>
+<div class="qa-a"><p>一个东西值不值得缓存，不看它"重不重要"，而看它"后面还会不会再次被用到"。Q 只在当前这一步有用一次——当前 token 的 Query 只需要和历史 K/V 做注意力计算；而 K、V 会在后面每一步继续被反复用到——未来每个新 token 的 Query 都需要和所有历史 token 的 Key 做匹配。所以 KV cache 只缓存 K 和 V，不缓存 Q，不是因为 Q 不重要，而是因为 Q 不需要重复使用。</p></div>
+</div>
+<h3>PagedAttention（vLLM）</h3>
+<p>传统 KV 缓存预分配连续内存，最大长度固定，短请求浪费严重。PagedAttention 借鉴操作系统虚拟内存的分页思想：</p>
+<ul>
+<li>把 KV 缓存切成固定大小的 block（如 16 token 一块）</li>
+<li>用 block table 维护逻辑到物理的映射</li>
+<li>按需分配，请求结束释放，消除内部碎片</li>
+<li>支持 copy-on-write，多个 beam 可共享公共前缀</li>
+</ul>
 <h2>端到端流程</h2>
 <table>
 <tr><th>阶段</th><th>输入</th><th>主要动作</th><th>输出</th></tr>
@@ -80,7 +146,7 @@
 <tr><td>并发上不去</td><td>KV Cache、显存、调度</td><td>看显存余量、block 碎片、最大 batch</td></tr>
 <tr><td>GPU 利用率低</td><td>Decode memory-bound</td><td>看 MFU、HBM 带宽、batch size</td></tr>
 <tr><td>P99 抖动大</td><td>长 prompt 阻塞、抢占、换出</td><td>看 chunked prefill、优先级调度</td></tr>
-</table></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-3" aria-labelledby="llm-inference-tabs-tab-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Prefill 阶段</h2></div><div class="tab-panel-body"><h2>Prefill 阶段</h2>
+</table></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-4" aria-labelledby="llm-inference-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Prefill 阶段</h2></div><div class="tab-panel-body"><h2>Prefill 阶段</h2>
 <p>Prefill 阶段一次性处理完整 Prompt，计算所有输入 token 的 attention，并生成后续 Decode 所需的 KV Cache。它主要影响 <code>TTFT</code>，也就是用户看到第一个 token 前的等待时间。</p>
 <h2>输入与输出</h2>
 <table>
@@ -113,7 +179,7 @@
 <tr><td>降低显存占用</td><td>量化、KV Cache 管理</td><td>给更多并发请求留空间</td></tr>
 </table>
 <h2>易错点</h2>
-<p>Prefill 不等于“生成阶段”，它主要处理输入上下文。Prefill 慢不一定是模型本身慢，也可能是排队、Prompt 过长、batch 组织不合理或前缀缓存没有命中。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-4" aria-labelledby="llm-inference-tabs-tab-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 阶段</h2></div><div class="tab-panel-body"><h2>Decode 阶段</h2>
+<p>Prefill 不等于“生成阶段”，它主要处理输入上下文。Prefill 慢不一定是模型本身慢，也可能是排队、Prompt 过长、batch 组织不合理或前缀缓存没有命中。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-5" aria-labelledby="llm-inference-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 阶段</h2></div><div class="tab-panel-body"><h2>Decode 阶段</h2>
 <p>Decode 阶段负责自回归生成。模型每一步只生成一个新 token，但每一步都需要读取历史 KV Cache，所以它通常是推理服务中最容易受到显存带宽限制的阶段。</p>
 <h2>输入与输出</h2>
 <table>
@@ -145,7 +211,7 @@
 <tr><td>降低长尾延迟</td><td>优先级调度、抢占、分离式推理</td><td>避免长请求拖垮短请求</td></tr>
 </table>
 <h2>易错点</h2>
-<p>Decode 的 GPU 利用率低不一定是实现差，根因通常是 memory-bound。增大 batch 可以摊销权重读取，但 KV Cache 读取也会随 batch 和序列长度增长，所以 batch 不是无限增大的。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-5" aria-labelledby="llm-inference-tabs-tab-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>KV Cache 与 Attention</h2></div><div class="tab-panel-body"><h2>KV Cache 的作用</h2>
+<p>Decode 的 GPU 利用率低不一定是实现差，根因通常是 memory-bound。增大 batch 可以摊销权重读取，但 KV Cache 读取也会随 batch 和序列长度增长，所以 batch 不是无限增大的。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-6" aria-labelledby="llm-inference-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>KV Cache 与 Attention</h2></div><div class="tab-panel-body"><h2>KV Cache 的作用</h2>
 <p>自回归生成时，模型每生成一个新 token 都需要关注历史上下文。如果每一步都重新计算全部历史 token 的 Key 和 Value，计算代价会非常高；KV Cache 的作用就是把历史 K/V 缓存下来，每步只计算新增 token 的 K/V。</p>
 <pre><code>KV Cache 大小 = 2 × num_layers × num_kv_heads × head_dim × seq_len × dtype_bytes</code></pre>
 <p>公式中的 <code>2</code> 分别代表 Key 和 Value。KV Cache 随序列长度、batch size 和 KV head 数量线性增长，是长上下文和高并发推理的核心显存压力来源。</p>
@@ -207,7 +273,7 @@
 <div class="qa-a"><p>它增加了 block table 查询和非连续 block 访问的管理复杂度，但换来更高的显存利用率和更大的可运行 batch。在服务场景中，吞吐瓶颈往往来自 KV Cache 容量和调度空洞，而不是单次 attention 的极限 kernel 性能，所以整体收益通常更大。</p></div>
 </div>
 <h2>参考资料</h2>
-<ul><li>vLLM 官方 Anatomy 文章：系统性解释 scheduler、PagedAttention、continuous batching、chunked prefill、speculative decoding 和 disaggregated P/D。</li><li>vLLM internals 资料：从 block pool、KV cache manager 和 scheduler 角度解释 PagedAttention 的运行方式。</li></ul></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-6" aria-labelledby="llm-inference-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标与瓶颈</h2></div><div class="tab-panel-body"><div class="card card-m">
+<ul><li>vLLM 官方 Anatomy 文章：系统性解释 scheduler、PagedAttention、continuous batching、chunked prefill、speculative decoding 和 disaggregated P/D。</li><li>vLLM internals 资料：从 block pool、KV cache manager 和 scheduler 角度解释 PagedAttention 的运行方式。</li></ul></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-7" aria-labelledby="llm-inference-tabs-tab-7" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标与瓶颈</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>性能指标与瓶颈：先分清 TTFT、TPOT 和吞吐</h3>
 <p>LLM 推理性能不能只看 QPS。在线服务通常同时关注首 token 延迟、每 token 延迟、端到端延迟、吞吐、显存占用和稳定性。不同指标对应不同瓶颈：prefill 更偏计算密集，decode 更偏访存和 KV cache 读取。</p>
 </div>
@@ -230,7 +296,7 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 prefill 和 decode 的瓶颈不同？</div>
 <div class="qa-a"><p><strong>回答思路：</strong>从计算形态和内存访问形态解释。</p><div class="qa-section"><div class="qa-section-title">Prefill</div><p>Prefill 一次处理整段 prompt，可以形成较大的矩阵乘，GPU 算力利用更高，通常偏 compute-bound。</p></div><div class="qa-section"><div class="qa-section-title">Decode</div><p>Decode 每次只生成一个 token，但要读取历史 KV cache，batch 小时矩阵规模小，常偏 memory-bound。</p></div><div class="qa-summary">面试口径：prefill 看首 token 和算力，decode 看逐 token 延迟和 KV cache 访存。</div></div>
-</div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-7" aria-labelledby="llm-inference-tabs-tab-7" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>优化技术</h2></div><div class="tab-panel-body"><div class="card card-m">
+</div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-8" aria-labelledby="llm-inference-tabs-tab-8" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>优化技术</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>优化技术：用显存、带宽和调度换延迟/吞吐</h3>
 <p>LLM 推理优化不是单一技巧，而是围绕三类资源做权衡：算力、显存和调度队列。高频优化包括 batching、KV cache 管理、量化、投机解码、prefix cache、并行切分和 prefill/decode 分离。</p>
 </div>
@@ -311,7 +377,7 @@
 <li>vLLM 官方 Anatomy 文章：覆盖 scheduler、PagedAttention、continuous batching、chunked prefill、prefix cache、speculative decoding 和 disaggregated P/D。</li>
 <li>vLLM internals 资料：解释 waiting/running 队列、SchedulerOutput、KV block pool 和 continuous batching 的具体机制。</li>
 </ul>
-</div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-8" aria-labelledby="llm-inference-tabs-tab-8" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理引擎对比</h2></div><div class="tab-panel-body"><div class="card card-m">
+</div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-9" aria-labelledby="llm-inference-tabs-tab-9" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>推理引擎对比</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>AI Infra 视角：推理引擎 = 调度器 + 内存系统 + 计算后端 + 分布式策略 + Serving 工程</h3>
 <p>面向应用的人只需要会用 vLLM 启服务；做 AI Infra 必须能讲清楚引擎内部的请求调度、KV 内存管理、CUDA Kernel 选择、并行切分和容错。下面把推理引擎拆成 5 个子系统，每个子系统直接给出原理、关键数据结构、源码定位和实战要点。</p>
 </div>
@@ -578,6 +644,6 @@
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781104065"></script>
+<script src="../../../assets/script.js?v=1781104970"></script>
 </body>
 </html>
