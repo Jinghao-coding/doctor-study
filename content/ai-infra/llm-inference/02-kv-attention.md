@@ -4,6 +4,11 @@
 <p>以 LLaMA-70B 为例：2 × 80 × 8 × 128 × 4096 × 2（FP16）≈ 10.7GB（单个请求）。</p>
 <p><strong>为什么 KV 缓存是瓶颈？</strong>GPU 显存有限（80GB），模型权重占 140GB（FP16）需要张量并行到多卡。剩余显存被 KV 缓存瓜分，决定了能同时服务多少请求。</p>
 
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 KV 缓存只缓存 K 和 V，不缓存 Q？</div>
+<div class="qa-a"><p>一个东西值不值得缓存，不看它"重不重要"，而看它"后面还会不会再次被用到"。Q 只在当前这一步有用一次——当前 token 的 Query 只需要和历史 K/V 做注意力计算；而 K、V 会在后面每一步继续被反复用到——未来每个新 token 的 Query 都需要和所有历史 token 的 Key 做匹配。所以 KV cache 只缓存 K 和 V，不缓存 Q，不是因为 Q 不重要，而是因为 Q 不需要重复使用。</p></div>
+</div>
+
 <h3>PagedAttention（vLLM）</h3>
 <p>传统 KV 缓存预分配连续内存，最大长度固定，短请求浪费严重。PagedAttention 借鉴操作系统虚拟内存的分页思想：</p>
 <ul>
