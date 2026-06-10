@@ -16,6 +16,11 @@
       "title": "LLM 推理内容模块",
       "items": [
         {
+          "title": "端到端链路",
+          "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程",
+          "file": "05-e2e-pipeline.md"
+        },
+        {
           "title": "推理流程",
           "description": "Prefill、Decode、TTFT、TPOT",
           "file": "01-prefill-decode.md"
@@ -39,6 +44,10 @@
     }
   ],
   "sections": [
+    {
+      "title": "端到端推理链路",
+      "file": "05-e2e-pipeline.md"
+    },
     {
       "title": "LLM 推理流程",
       "file": "01-prefill-decode.md"
