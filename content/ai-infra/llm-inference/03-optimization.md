@@ -1,21 +1,46 @@
-<h3>常见优化手段</h3>
-<table>
-<tr><th>技术</th><th>原理</th><th>效果</th></tr>
-<tr><td>连续批处理（Continuous Batching）</td><td>请求完成立即释放位置，新请求加入，不等整批结束</td><td>吞吐提升 2-5×</td></tr>
-<tr><td>张量并行（Tensor Parallelism）</td><td>单层的矩阵乘法切分到多卡并行计算</td><td>降低延迟，需 NVLink</td></tr>
-<tr><td>流水线并行（Pipeline Parallelism）</td><td>不同层放不同卡，请求依次流过</td><td>支持更大模型</td></tr>
-<tr><td>投机解码（Speculative Decoding）</td><td>小模型快速生成候选 token，大模型验证</td><td>延迟降低 2-3×</td></tr>
-<tr><td>量化（INT8/FP8/INT4）</td><td>降低权重和激活精度</td><td>显存减半，速度提升</td></tr>
-<tr><td>前缀缓存（Prefix Caching）</td><td>共享前缀的请求复用 KV 缓存</td><td>减少重复计算</td></tr>
-<tr><td>CUDA Graph</td><td>录制 kernel 调用序列为图，一次提交</td><td>减少 CPU-GPU 启动开销</td></tr>
-</table>
+## Prefill 阶段
 
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 连续批处理和传统静态批处理的区别？</div>
-<div class="qa-a"><p>静态批处理：一批请求同时开始，最慢的请求完成后整批释放。短请求等长请求，GPU 空转。连续批处理（iteration-level scheduling）：每个 decode step 结束后检查，已完成的请求释放位置，等待的请求立即加入。GPU 始终满载。vLLM、TensorRT-LLM 都采用连续批处理。</p></div>
-</div>
+Prefill 阶段一次性处理完整 Prompt，计算所有输入 token 的 attention，并生成后续 Decode 所需的 KV Cache。它主要影响 `TTFT`，也就是用户看到第一个 token 前的等待时间。
 
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 投机解码为什么能加速？不是算了两次吗？</div>
-<div class="qa-a"><p>关键在于 decode 阶段是内存密集型——GPU 算力大量闲置。小模型（draft model）快速自回归生成 K 个候选 token，大模型（target model）一次性并行验证这 K 个 token（相当于做一次 prefill）。验证比逐个解码快，因为并行利用了算力。如果候选全部接受，等价于一次 forward 生成了 K 个 token。</p></div>
-</div>
+## 输入与输出
+
+| 项目 | 内容 |
+|---|---|
+| 输入 | 完整 Prompt token 序列 |
+| 计算 | Embedding、QKV 投影、Attention、FFN、Logits |
+| 输出 | 首 token 分布、完整 Prompt 的 KV Cache |
+| 关键指标 | TTFT、Prefill tokens/s、排队等待时间 |
+
+## 为什么计算密集
+
+Prefill 会并行处理多个 token，矩阵乘规模大，能够较好地利用 Tensor Core。长 Prompt 下 attention 的计算和显存访问都会增加，但整体通常更偏 compute-bound。
+
+| 影响因素 | 影响方式 | 优化方向 |
+|---|---|---|
+| Prompt 长度 | 输入越长，attention 和 FFN 计算越多 | Prompt 压缩、Prefix Cache |
+| 模型参数量 | 模型越大，前向计算越重 | 量化、模型裁剪、并行 |
+| Batch 大小 | 大 batch 提升吞吐，也可能增加排队 | 动态 batch、优先级调度 |
+| Attention 实现 | 标准 attention 中间读写开销高 | FlashAttention、算子融合 |
+| 长 Prompt | 单次 Prefill 时间过长 | Chunked Prefill |
+
+## TTFT 拆解
+
+```text
+TTFT = 排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络返回
+```
+
+其中 Prefill 计算通常是主要部分，但在高并发服务中，排队等待也可能成为 TTFT 的主要来源。
+
+## 优化重点
+
+| 目标 | 手段 | 说明 |
+|---|---|---|
+| 降低首 token 延迟 | FlashAttention、算子融合 | 减少 attention 中间读写 |
+| 减少重复计算 | Prefix Cache | 复用相同 system prompt 或历史上下文 |
+| 防止长 Prompt 阻塞 | Chunked Prefill | 把长 Prompt 拆块，穿插 Decode 执行 |
+| 提升吞吐 | Continuous Batching | 调度器动态填充 batch |
+| 降低显存占用 | 量化、KV Cache 管理 | 给更多并发请求留空间 |
+
+## 易错点
+
+Prefill 不等于“生成阶段”，它主要处理输入上下文。Prefill 慢不一定是模型本身慢，也可能是排队、Prompt 过长、batch 组织不合理或前缀缓存没有命中。

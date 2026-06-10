@@ -39,13 +39,160 @@
 </div>
 
 <div class="card card-w">
-<h3>MIG / MPS / time-slicing 的区别</h3>
+<h3>K8s 中 MPS / Time Slicing 的一句话</h3>
+<p><strong>在 Kubernetes 里使用 MPS 或 Time Slicing，通常不是直接改 kube-scheduler，而是通过 NVIDIA Device Plugin 或 NVIDIA GPU Operator 的配置，把一张物理 GPU 暴露成多个可被 Pod 申请的逻辑 GPU 资源。</strong></p>
+<p>scheduler 只看到类似 <code>nvidia.com/gpu.shared: 4</code> 这样的扩展资源数量；底层共享逻辑由 NVIDIA Device Plugin、driver、MPS daemon 或 CUDA/驱动层实现。</p>
+</div>
+
+<div class="card card-s">
+<h3>K8s 为什么默认不好共享 GPU</h3>
+<p>Kubernetes 原生资源模型通常把 GPU 当作整数扩展资源。例如 Pod 申请：</p>
+<pre><code class="language-yaml">resources:
+  limits:
+    nvidia.com/gpu: 1
+</code></pre>
+<p>这通常表示这个 Pod 要独占 1 张 GPU。默认调度器只根据 Node 上报的 <code>capacity</code> / <code>allocatable</code> 做整数资源扣减，一张 GPU 被分配后，其他 Pod 不能再申请同一张 GPU。</p>
+<p>但开发测试、Notebook、小模型推理、小 batch 服务、低优实验等场景经常用不满一张 GPU，所以 NVIDIA Device Plugin 提供 GPU oversubscription 能力，通过 sharing 配置支持 <strong>Time Slicing</strong> 和 <strong>MPS</strong> 两种共享方式。</p>
+</div>
+
+<div class="card card-m">
+<h3>Time Slicing：把一张 GPU 暴露成多个逻辑 slot</h3>
+<p>Time Slicing 可以理解为多个 Pod 按时间片轮流使用同一张物理 GPU。它不是把 GPU 硬件切开，而是在软件/驱动层做时间片复用。</p>
 <table>
-<tr><th>机制</th><th>隔离粒度</th><th>优点</th><th>风险</th></tr>
-<tr><td>MIG</td><td>硬件级 GPU 分区</td><td>隔离强，profile 清晰</td><td>切分形态固定，资源碎片</td></tr>
-<tr><td>MPS</td><td>进程级共享</td><td>提升小任务并发利用率</td><td>隔离弱，干扰和故障影响更复杂</td></tr>
-<tr><td>time-slicing</td><td>时间片共享</td><td>部署简单，适合轻量任务</td><td>不是硬隔离，显存仍可能竞争</td></tr>
-<tr><td>vGPU</td><td>虚拟化切分</td><td>适合云化售卖和多租户</td><td>依赖厂商方案和授权</td></tr>
+<tr><th>维度</th><th>说明</th></tr>
+<tr><td>资源表达</td><td>通过 <code>replicas</code> 把每张 <code>nvidia.com/gpu</code> 暴露成多个逻辑 slot</td></tr>
+<tr><td>调度视角</td><td>如果 1 张卡配置 <code>replicas: 4</code>，K8s 会看到 4 个可申请资源；8 张卡会看到 32 个</td></tr>
+<tr><td>隔离能力</td><td>没有硬件隔离，显存、cache、带宽和 kernel 执行都会互相影响</td></tr>
+<tr><td>适合场景</td><td>开发测试、Notebook、小实验、小模型推理、内部工具、低优任务</td></tr>
+<tr><td>主要风险</td><td>一个 Pod 的重 kernel 或高显存占用会影响其他 Pod，P99 延迟可能明显抖动</td></tr>
+</table>
+<p>Time Slicing 的关键认知：<strong>它让 K8s 能调度更多 Pod 到同一张卡上，但不保证每个 Pod 拿到稳定的 1/N 算力或 1/N 显存。</strong></p>
+</div>
+
+<div class="card card-s">
+<h3>Time Slicing ConfigMap 示例</h3>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config
+  namespace: gpu-operator
+data:
+  any: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        renameByDefault: true
+        failRequestsGreaterThanOne: true
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 4
+</code></pre>
+<table>
+<tr><th>字段</th><th>含义</th><th>面试解释</th></tr>
+<tr><td><code>replicas: 4</code></td><td>每张物理 GPU 暴露成 4 个共享 slot</td><td>1 张卡上报 4 个资源，8 张卡上报 32 个资源</td></tr>
+<tr><td><code>renameByDefault: true</code></td><td>把共享资源重命名为类似 <code>nvidia.com/gpu.shared</code></td><td>让用户明确知道自己申请的是共享 GPU，不是独占 GPU</td></tr>
+<tr><td><code>failRequestsGreaterThanOne: true</code></td><td>拒绝单个 Pod 一次申请多个共享 slot</td><td>避免用户误以为申请 2 个 slot 就等于拿到 2 张独立 GPU</td></tr>
+</table>
+</div>
+
+<div class="card card-d">
+<h3>Pod 如何申请共享 GPU</h3>
+<p>如果开启 <code>renameByDefault: true</code>，Pod 侧推荐申请重命名后的共享资源：</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: ts-demo
+spec:
+  containers:
+  - name: app
+    image: nvidia/cuda:12.2.0-base-ubuntu22.04
+    command: ["nvidia-smi"]
+    resources:
+      limits:
+        nvidia.com/gpu.shared: 1
+</code></pre>
+<p>如果没有开启资源重命名，Pod 仍可能申请 <code>nvidia.com/gpu: 1</code>，但这在语义上容易被误解为独占 GPU。共享资源生产落地时，更推荐使用 <code>nvidia.com/gpu.shared</code> 这类显式资源名。</p>
+</div>
+
+<div class="card card-m">
+<h3>GPU Operator 如何加载 sharing 配置</h3>
+<p>如果使用 NVIDIA GPU Operator，常见流程是先创建 ConfigMap，再 patch <code>ClusterPolicy</code>，让 device plugin 读取该配置。</p>
+<pre><code class="language-bash">kubectl apply -f time-slicing-config.yaml
+
+kubectl patch clusterpolicies.nvidia.com/cluster-policy \
+  -n gpu-operator \
+  --type merge \
+  -p '{"spec":{"devicePlugin":{"config":{"name":"time-slicing-config","default":"any"}}}}'
+</code></pre>
+<ol>
+<li>管理员创建 sharing ConfigMap。</li>
+<li>GPU Operator 或 NVIDIA Device Plugin 加载该配置。</li>
+<li>Device Plugin 重新向 kubelet 注册扩展资源数量。</li>
+<li>kubelet 更新 Node <code>capacity</code> / <code>allocatable</code>。</li>
+<li>scheduler 按新的逻辑资源数量调度 Pod。</li>
+</ol>
+<p>注意：不同 GPU Operator / Device Plugin 版本的字段和 patch 命令可能略有差异，但核心模式都是 <strong>ConfigMap → Device Plugin → kubelet 上报资源 → Pod 申请扩展资源</strong>。</p>
+</div>
+
+<div class="card card-m">
+<h3>MPS：多 CUDA 进程并发共享 GPU</h3>
+<p>MPS 是 NVIDIA Multi-Process Service。它让多个 CUDA 进程通过 MPS control daemon 共享同一张 GPU，减少上下文切换开销，并提升小 kernel、多进程推理等场景的并发执行效率。</p>
+<table>
+<tr><th>维度</th><th>Time Slicing</th><th>MPS</th></tr>
+<tr><td>共享方式</td><td>多个 workload 按时间片轮流用 GPU</td><td>多个 CUDA 进程通过 MPS daemon 并发提交 work</td></tr>
+<tr><td>实现直觉</td><td>轮流用</td><td>一起提交 CUDA work</td></tr>
+<tr><td>隔离能力</td><td>弱，主要是时间复用</td><td>比 Time Slicing 稍强，可做一定计算/显存资源限制</td></tr>
+<tr><td>适合场景</td><td>开发测试、Notebook、低优任务、小推理</td><td>同团队可信任务、小 kernel、多 CUDA 进程推理</td></tr>
+<tr><td>不适合场景</td><td>强 SLA、强隔离、多租户不可信任务</td><td>强硬隔离、大模型训练、显存不可控、不可信用户</td></tr>
+</table>
+<p>面试时要强调：<strong>MPS 仍然不是 MIG 那种硬件级隔离。</strong>它能改善并发和一定程度资源控制，但故障、显存、cache、带宽和性能干扰仍然可能跨 Pod 传播。</p>
+</div>
+
+<div class="card card-s">
+<h3>MPS ConfigMap 示例</h3>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mps-config
+  namespace: gpu-operator
+data:
+  any: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      mps:
+        renameByDefault: true
+        failRequestsGreaterThanOne: true
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 4
+</code></pre>
+<p>这个配置的含义是：每张 GPU 通过 MPS 方式暴露成 4 个共享 slot。Pod 侧仍然通过 <code>resources.limits</code> 申请共享 GPU，例如 <code>nvidia.com/gpu.shared: 1</code>。具体资源名是否重命名取决于 <code>renameByDefault</code> 和当前 device plugin 版本。</p>
+</div>
+
+<div class="card card-w">
+<h3>生产使用注意事项</h3>
+<table>
+<tr><th>问题</th><th>说明</th><th>工程建议</th></tr>
+<tr><td>K8s 不理解性能隔离</td><td>scheduler 只看到逻辑资源数量，不知道每个 slot 的真实算力、显存、带宽</td><td>不要把 <code>replicas: 8</code> 理解为稳定 1/8 GPU</td></tr>
+<tr><td>显存互相影响</td><td>Time Slicing 下多个 Pod 共享整张卡显存，单个 Pod 高显存占用可能导致其他 Pod OOM</td><td>按 workload profiling 设置 replicas，限制不可信任务</td></tr>
+<tr><td>延迟抖动</td><td>重 kernel、长任务、上下文切换和带宽争用会拉高 P99</td><td>强 SLA 在线服务优先用独占 GPU、MIG，或只让同类服务共享</td></tr>
+<tr><td>监控归因困难</td><td>启用 Time Slicing 后，DCGM-Exporter 对 container 维度 GPU metrics 的归因能力可能受限</td><td>补充应用侧指标、队列指标、Pod 级吞吐和延迟观测</td></tr>
+<tr><td>过度超卖</td><td><code>replicas</code> 配太大容易造成显存爆、上下文切换严重、P99 暴涨</td><td>从 2/4 这类保守值灰度，按业务曲线逐步调参</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>MIG / MPS / Time Slicing / vGPU 对比</h3>
+<table>
+<tr><th>机制</th><th>隔离粒度</th><th>优点</th><th>风险</th><th>典型场景</th></tr>
+<tr><td>MIG</td><td>硬件级 GPU 分区</td><td>隔离强，profile 清晰</td><td>切分形态固定，资源碎片</td><td>多租户推理、强隔离生产服务</td></tr>
+<tr><td>MPS</td><td>进程级共享</td><td>提升小任务并发利用率，可做一定资源控制</td><td>不是硬隔离，干扰和故障影响复杂</td><td>可信团队内多进程推理、小 kernel 任务</td></tr>
+<tr><td>Time Slicing</td><td>时间片共享</td><td>部署简单，兼容性好，适合轻量任务</td><td>显存共享，QoS 不稳定，P99 抖动明显</td><td>Notebook、开发测试、低优实验、小推理</td></tr>
+<tr><td>vGPU</td><td>虚拟化切分</td><td>适合云化售卖和多租户</td><td>依赖厂商方案和授权</td><td>云桌面、云 GPU、多租户售卖</td></tr>
 </table>
 </div>
 
@@ -152,6 +299,7 @@ kubectl get pods -A | grep -i dra
 <tr><td>ResourceSlice 是谁创建的？</td><td>通常由 DRA driver 自动创建和维护，用户一般不手写</td><td>driver 根据节点、资源池、设备类型和更新粒度做分片</td></tr>
 <tr><td>大集群会不会有很多 ResourceSlice？</td><td>会，而且这是预期设计；目的是避免 Node 对象膨胀和资源名爆炸</td><td>代价是 API Server / scheduler watch 对象更多，需要控制分片和更新频率</td></tr>
 <tr><td>DRA 和 Device Plugin 冲突吗？</td><td>集群层面可以共存，同一物理设备不能双重暴露</td><td>推荐按 node pool、设备类型或灰度资源池隔离</td></tr>
+<tr><td>K8s 中怎么使用 MPS / Time Slicing？</td><td>通过 NVIDIA Device Plugin / GPU Operator 配置 sharing 和 replicas，把物理 GPU 暴露成多个逻辑 slot</td><td>ConfigMap、<code>nvidia.com/gpu.shared</code>、隔离边界、监控归因</td></tr>
 <tr><td><code>nvidia.com/a100</code> 已能表达卡型，DRA 价值在哪里？</td><td>资源名编码只能解决简单分类，DRA 可表达结构化属性、容量、拓扑和共享关系</td><td>显存、NVLink、NUMA、MIG profile、健康状态都适合放进 ResourceSlice</td></tr>
 <tr><td>DRA driver 和 Linux driver 是一回事吗？</td><td>不是。Linux driver / CUDA / NPU runtime 管底层硬件，DRA driver 管 Kubernetes 资源发现、库存发布和设备交付</td><td>面试中要说清楚 controller、node plugin、prepare/unprepare 的边界</td></tr>
 <tr><td>国产 GPU/NPU 是否有 DRA driver？</td><td>公开成熟度要谨慎判断；多数生态更常见的是 Device Plugin、Operator、vGPU 或 HAMi 等方案</td><td>判断真 DRA 看是否使用 <code>resource.k8s.io</code>、ResourceSlice、DeviceClass、ResourceClaim</td></tr>
@@ -175,6 +323,18 @@ kubectl get pods -A | grep -i dra
 <div class="qa-section"><div class="qa-section-title">3. 对 kubelet 的作用</div><p>Pod 绑定到节点后，kubelet 调用 Device Plugin Allocate，拿到 device id、环境变量、mount、CDI 等设备交付信息。</p></div>
 <div class="qa-section"><div class="qa-section-title">4. 边界</div><p>Device Plugin 让 K8s 能看到和交付设备，但默认调度器主要看到资源名和数量，不理解完整显存、拓扑和共享关系。</p></div>
 <div class="qa-summary">面试口径：Device Plugin 负责设备发现和节点侧交付，scheduler 只基于 kubelet 上报的扩展资源数量做普通调度。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kubernetes 中如何使用 MPS 和 Time Slicing 共享 GPU？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>先说不是改 scheduler，再说 Device Plugin / GPU Operator 的资源上报方式，最后补充两者区别和生产风险。</p>
+<div class="qa-section"><div class="qa-section-title">1. 落地方式</div><p>通常通过 NVIDIA Device Plugin 或 GPU Operator 配置 sharing。管理员在 ConfigMap 中配置 <code>sharing.timeSlicing</code> 或 <code>sharing.mps</code>，并为 <code>nvidia.com/gpu</code> 设置 <code>replicas</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. K8s 看到什么</div><p>如果一张 GPU 配成 <code>replicas: 4</code>，kubelet 上报后 scheduler 会看到 4 个逻辑 GPU slot；如果启用 <code>renameByDefault</code>，Pod 通常申请 <code>nvidia.com/gpu.shared: 1</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 两者区别</div><p>Time Slicing 是多个 Pod 按时间片轮流使用 GPU，配置简单但隔离弱；MPS 是多个 CUDA 进程通过 MPS daemon 并发共享 GPU，能减少上下文切换并做一定资源控制，但仍不是硬隔离。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 生产注意</div><p>共享 GPU 不能当作 MIG。要关注显存 OOM、P99 抖动、DCGM 监控归因限制、过度超卖和不同 workload 之间的干扰。</p></div>
+<div class="qa-summary">面试口径：K8s 调度的是 Device Plugin 上报的逻辑 GPU slot，Time Slicing 负责轮流用，MPS 负责多 CUDA 进程并发共享，二者都不等于硬件级隔离。</div>
 </div>
 </div>
 

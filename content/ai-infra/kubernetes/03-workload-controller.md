@@ -1,10 +1,15 @@
 <div class="card card-m">
-<h3>Workload 与 Controller：声明式系统的核心</h3>
+<p><strong>Workload 与 Controller：声明式系统的核心。</strong></p>
 <p>Workload 解决“如何管理一组 Pod”，Controller 解决“如何让实际状态持续逼近期望状态”。面试中不要只背 Deployment、StatefulSet、DaemonSet、Job 的用途，还要讲清楚 <strong>Informer → WorkQueue → Reconcile → 更新 status</strong> 这条控制循环。</p>
 </div>
 
+<div class="card card-m">
+<h3>第一部分：Workload（管理 Pod 生命周期与副本形态）</h3>
+<p>Workload 这一部分回答“应该用哪种对象来管理 Pod”。先理解 Pod 生命周期和探针，再学习 Deployment、StatefulSet、DaemonSet、Job、CronJob 的选型边界，最后落到发布链路和 AI Infra 场景。</p>
+</div>
+
 <div class="card card-s">
-<h3>Pod 生命周期与探针</h3>
+<h4>Pod 生命周期与探针</h4>
 <table>
 <tr><th>阶段/机制</th><th>含义</th><th>面试重点</th></tr>
 <tr><td>Pending</td><td>Pod 已创建但还未全部容器运行</td><td>可能卡在调度、镜像、网络、存储、资源</td></tr>
@@ -17,19 +22,57 @@
 </div>
 
 <div class="card card-d">
-<h3>Workload 控制器选型</h3>
+<h4>Workload 控制器选型</h4>
+<p>Workload 控制器的本质不是“换一种 Pod 写法”，而是把不同类型应用的生命周期管理模式固化下来。选型时不要先背名字，而要先问五个问题：这个任务是否长期运行？是否无状态？是否需要稳定身份和稳定存储？是否必须每个节点都运行？是否以完成为目标而不是持续服务？</p>
 <table>
-<tr><th>控制器</th><th>适合场景</th><th>关键机制</th><th>常见追问</th></tr>
-<tr><td>Deployment</td><td>无状态服务</td><td>ReplicaSet、滚动发布、回滚</td><td>maxSurge / maxUnavailable 如何影响发布</td></tr>
-<tr><td>StatefulSet</td><td>有状态服务</td><td>稳定网络身份、稳定存储、有序部署/删除</td><td>为什么常配 Headless Service 和 PVC</td></tr>
-<tr><td>DaemonSet</td><td>每个节点一个 agent</td><td>节点新增自动补 Pod</td><td>CNI、日志采集、Device Plugin 为什么用它</td></tr>
-<tr><td>Job</td><td>一次性任务</td><td>成功完成、失败重试、并行度</td><td>backoffLimit、completionMode、Indexed Job</td></tr>
-<tr><td>CronJob</td><td>周期任务</td><td>按时间创建 Job</td><td>并发策略、错过调度、历史保留</td></tr>
+<tr><th>控制器</th><th>核心语义</th><th>适合场景</th><th>不适合场景</th><th>面试追问</th></tr>
+<tr><td>Deployment</td><td>维护一组可替换的无状态 Pod 副本</td><td>Web API、推理服务、网关、普通无状态 worker</td><td>需要稳定 Pod 名称、每个副本独立存储、严格启动顺序的服务</td><td>ReplicaSet、滚动发布、回滚、<code>maxSurge</code>/<code>maxUnavailable</code></td></tr>
+<tr><td>StatefulSet</td><td>维护有序、有稳定身份和稳定存储的 Pod 集合</td><td>数据库、ZooKeeper/etcd、Kafka、需要固定 ordinal 的训练/服务组件</td><td>副本完全等价、随便替换即可的无状态服务</td><td>Headless Service、PVC 模板、ordinal、有序扩缩容</td></tr>
+<tr><td>DaemonSet</td><td>保证符合条件的每个 Node 上运行一个 Pod</td><td>日志采集、监控 agent、CNI、CSI node plugin、GPU/Device Plugin</td><td>只想运行固定副本数，或者只想对外提供水平扩缩容服务</td><td>节点新增自动补 Pod、nodeSelector/tolerations、滚动升级 agent</td></tr>
+<tr><td>Job</td><td>运行到成功完成为止，关注完成数和失败重试</td><td>离线计算、一次性数据处理、模型转换、批量压测、训练前预处理</td><td>需要长期常驻、持续接流量的服务</td><td><code>backoffLimit</code>、<code>parallelism</code>、<code>completions</code>、Indexed Job</td></tr>
+<tr><td>CronJob</td><td>按时间周期创建 Job</td><td>定时清理、周期报表、定期 checkpoint 校验、定时数据同步</td><td>强实时任务、必须精确到秒且不能受控制面延迟影响的任务</td><td><code>concurrencyPolicy</code>、<code>startingDeadlineSeconds</code>、历史保留</td></tr>
 </table>
 </div>
 
+<div class="card card-s">
+<h4>选型决策树：先看生命周期，再看身份和放置约束</h4>
+<table>
+<tr><th>问题</th><th>如果答案是 yes</th><th>通常选择</th><th>原因</th></tr>
+<tr><td>任务是否只需要跑完一次或跑完 N 个分片？</td><td>是</td><td>Job</td><td>Job 关心成功完成、失败重试和并行完成数，而不是常驻副本</td></tr>
+<tr><td>任务是否按固定周期触发？</td><td>是</td><td>CronJob</td><td>CronJob 负责按 schedule 创建 Job，并处理错过调度和并发策略</td></tr>
+<tr><td>是否要求每个节点都运行一个组件？</td><td>是</td><td>DaemonSet</td><td>节点级 agent 的目标不是副本数，而是覆盖所有符合条件的节点</td></tr>
+<tr><td>每个副本是否需要稳定网络身份或独立持久化存储？</td><td>是</td><td>StatefulSet</td><td>StatefulSet 提供稳定 Pod 名、ordinal、PVC 和有序生命周期</td></tr>
+<tr><td>副本是否完全等价、可替换、可水平扩缩容？</td><td>是</td><td>Deployment</td><td>Deployment 最适合无状态服务滚动发布、扩缩容和回滚</td></tr>
+</table>
+<div class="qa-summary">一句话：Deployment 管“可替换副本”，StatefulSet 管“有身份副本”，DaemonSet 管“每节点一个”，Job 管“跑完即止”，CronJob 管“定时跑完”。</div>
+</div>
+
+<div class="card card-w">
+<h4>AI Infra 场景怎么选</h4>
+<table>
+<tr><th>场景</th><th>推荐控制器</th><th>为什么</th><th>容易踩坑</th></tr>
+<tr><td>在线推理服务</td><td>Deployment</td><td>请求无状态，副本可替换，适合 HPA、滚动发布和回滚</td><td>如果有本地 KV cache / 模型 warmup，要用 readiness 控制接流量时机</td></tr>
+<tr><td>每台 GPU 节点运行 device plugin</td><td>DaemonSet</td><td>需要覆盖所有 GPU 节点，并随节点加入自动部署</td><td>要配 nodeSelector、tolerations，避免部署到非 GPU 节点</td></tr>
+<tr><td>NCCL benchmark / 模型转换 / 数据预处理</td><td>Job</td><td>目标是完成任务并退出，失败可按策略重试</td><td>不要用 Deployment 跑一次性任务，否则失败语义和完成语义不清楚</td></tr>
+<tr><td>周期性清理 checkpoint 或生成资源报表</td><td>CronJob</td><td>按时间创建 Job，并控制并发和历史保留</td><td>要设置 <code>concurrencyPolicy</code>，避免上一次未完成时重复跑</td></tr>
+<tr><td>带稳定身份的分布式存储或协调组件</td><td>StatefulSet</td><td>每个副本需要固定名称、固定存储和有序启动</td><td>不要把普通无状态服务强行做 StatefulSet，会增加运维复杂度</td></tr>
+<tr><td>PyTorch/Volcano/Kubeflow 训练任务</td><td>通常不是原生 Deployment，而是 Job/CRD/Operator</td><td>训练需要 gang、角色、rank、状态机、失败恢复和队列准入</td><td>原生 Job 不理解训练语义；复杂训练通常要 TrainingJob / PyTorchJob / VolcanoJob</td></tr>
+</table>
+</div>
+
+<div class="card card-r">
+<h4>高频误区</h4>
+<ul>
+<li><strong>误区 1：有多个副本就用 Deployment。</strong>如果副本有固定身份、固定磁盘或有序启动要求，应考虑 StatefulSet。</li>
+<li><strong>误区 2：跑一次的任务也用 Deployment。</strong>Deployment 追求长期副本数稳定，任务完成退出后会被重新拉起；一次性任务应该用 Job。</li>
+<li><strong>误区 3：定时任务直接在应用里 sleep 循环。</strong>CronJob 可以把调度、失败重试、历史保留和并发策略交给 Kubernetes 管理。</li>
+<li><strong>误区 4：DaemonSet 等于每台机器一定有一个 Pod。</strong>它只会在符合 nodeSelector、affinity、taints/tolerations 等条件的节点上创建 Pod。</li>
+<li><strong>误区 5：StatefulSet 自动解决数据一致性。</strong>StatefulSet 只提供稳定身份和存储，数据复制、选主、分片、故障恢复仍然是应用或 Operator 的职责。</li>
+</ul>
+</div>
+
 <div class="card card-m">
-<h3>Deployment 滚动发布链路</h3>
+<h4>Deployment 滚动发布链路</h4>
 <ol>
 <li>用户修改 Deployment template，例如镜像 tag。</li>
 <li>Deployment Controller 发现 template hash 变化，创建新的 ReplicaSet。</li>
@@ -40,8 +83,13 @@
 <p>发布排障要看 Deployment condition、ReplicaSet、Pod events、readiness probe、镜像拉取和应用日志。</p>
 </div>
 
+<div class="card card-m">
+<h3>第二部分：Controller（让实际状态持续逼近期望状态）</h3>
+<p>Controller 这一部分回答“系统如何自动修正状态”。核心不是事件回调，而是基于 Informer 缓存、WorkQueue 和 Reconcile 循环，把用户声明的 spec 转换为实际资源，并把结果写回 status。</p>
+</div>
+
 <div class="card card-s">
-<h3>Controller Pattern：Informer、WorkQueue、Reconcile</h3>
+<h4>Controller Pattern：Informer、WorkQueue、Reconcile</h4>
 <table>
 <tr><th>组件</th><th>作用</th><th>为什么需要</th></tr>
 <tr><td>Reflector</td><td>List/Watch API Server，把变化写入本地缓存</td><td>减少控制器直接打 API Server 的压力</td></tr>
@@ -54,7 +102,7 @@
 </div>
 
 <div class="card card-w">
-<h3>CRD / Operator：先把三个层次讲清楚</h3>
+<h4>CRD / Operator：先把三个层次讲清楚</h4>
 <p><strong>Operator = CRD + Controller + 领域运维逻辑。</strong>面试时不要只说“Operator 是自定义控制器”，而要把三层拆开：CRD 让 Kubernetes 认识一种新的资源类型；Controller 负责 watch 这种资源并不断 reconcile；Operator 在 reconcile 里放入某个领域的生命周期管理经验，例如训练任务启动、失败恢复、扩缩容、checkpoint 清理和状态回写。</p>
 <table>
 <tr><th>层次</th><th>解决的问题</th><th>面试中要讲清楚</th></tr>
@@ -66,7 +114,7 @@
 </div>
 
 <div class="card card-s">
-<h3>CRD 对象应该怎么设计：spec、status、conditions</h3>
+<h4>CRD 对象应该怎么设计：spec、status、conditions</h4>
 <p>CRD 设计的核心是把“用户想要什么”和“系统观察到什么”分开。<code>spec</code> 是用户声明的期望状态，<code>status</code> 是控制器观察和计算出的实际状态，<code>conditions</code> 是结构化阶段信息。这个边界如果混乱，Operator 很容易变成不可维护的脚本。</p>
 <table>
 <tr><th>字段</th><th>应该放什么</th><th>不应该放什么</th><th>训练任务例子</th></tr>
@@ -80,7 +128,7 @@
 </div>
 
 <div class="card card-d">
-<h3>Reconcile 到底在做什么：从“事件驱动”到“状态驱动”</h3>
+<h4>Reconcile 到底在做什么：从“事件驱动”到“状态驱动”</h4>
 <p>Operator 不是收到一个事件就执行一次脚本，而是每次 reconcile 都重新读取当前世界，计算期望状态和实际状态的差异，然后执行最小修正动作。这样即使事件丢失、Controller 重启、Pod 被人工删除，也能最终恢复一致。</p>
 <div class="sched-flow">
 <svg viewBox="0 0 980 250" role="img" aria-label="Operator reconcile flow">
@@ -120,7 +168,7 @@
 </div>
 
 <div class="card card-m">
-<h3>AI 训练任务 Operator 如何设计：从 CRD 到训练状态机</h3>
+<h4>AI 训练任务 Operator 如何设计：从 CRD 到训练状态机</h4>
 <p>训练任务 Operator 的关键不是“创建一堆 Pod”，而是把训练任务抽象成一个可恢复、可观测、可排队、可清理的状态机。它要同时理解 Kubernetes 资源、训练框架语义和调度系统边界。</p>
 <div class="queue-detail-grid">
 <div class="queue-detail"><h4>1. TrainingJob spec</h4><p>描述用户想要的训练任务：镜像、启动命令、worker 数、每个 worker 的 GPU/CPU/内存、数据路径、checkpoint 策略、队列、优先级、容错策略。</p></div>
@@ -140,7 +188,7 @@
 </div>
 
 <div class="card card-r">
-<h3>AI 训练 Operator 的边界：不要和 Scheduler / Device Plugin 混在一起</h3>
+<h4>AI 训练 Operator 的边界：不要和 Scheduler / Device Plugin 混在一起</h4>
 <p>这部分是面试官最常追问的地方。Operator、Scheduler Plugin、Device Plugin/DRA 都和 GPU 训练有关，但它们管的层次完全不同。答清楚边界，说明你真的理解 Kubernetes 扩展体系。</p>
 <table>
 <tr><th>组件</th><th>它负责什么</th><th>不负责什么</th><th>训练场景例子</th></tr>
@@ -153,7 +201,7 @@
 </div>
 
 <div class="card card-w">
-<h3>Kubebuilder 实战：从脚手架到第一个 Operator</h3>
+<h4>Kubebuilder 实战：从脚手架到第一个 Operator</h4>
 <p>前面的内容解决“Operator 是什么”，Kubebuilder 解决“怎么把它写出来”。Kubebuilder 的价值不是替你写业务逻辑，而是把项目骨架、CRD 生成、RBAC、Webhook、部署 YAML、测试目录这些重复工程化工作标准化。参考文章把完整流程拆成：初始化项目、创建 API、完善 CRD、实现 Controller、可选 Webhook、本地调试、构建镜像和部署清单。</p>
 <table>
 <tr><th>步骤</th><th>命令 / 产物</th><th>你要真正理解什么</th></tr>
@@ -170,7 +218,7 @@
 </div>
 
 <div class="card card-s">
-<h3>GVK / GVR：写 Operator 前必须分清的两个标识</h3>
+<h4>GVK / GVR：写 Operator 前必须分清的两个标识</h4>
 <p>CRD 注册进 API Server 之后，会同时涉及“这个对象是什么”和“我通过 REST 路径怎么访问它”。这就是 GVK 和 GVR 的区别。面试时如果能讲清这个点，说明你不是只会套 Kubebuilder 命令。</p>
 <table>
 <tr><th>概念</th><th>组成</th><th>更常出现在哪里</th><th>例子</th></tr>
@@ -182,7 +230,7 @@
 </div>
 
 <div class="card card-d">
-<h3>Reconcile 代码骨架：Application Demo 到 TrainingJob 的迁移</h3>
+<h4>Reconcile 代码骨架：Application Demo 到 TrainingJob 的迁移</h4>
 <p>参考文章中的 Application Demo 很适合入门：用户提交一个 Application CR，里面包含 <code>spec.image</code> 和 <code>spec.enabled</code>；Controller 根据它创建、更新或删除 Deployment，并把 Deployment 是否 ready 写回 <code>status.ready</code>。把这个例子迁移到 AI 训练场景，就是把 Deployment 换成一组 role 化的 worker/master Pod、Service、ConfigMap、PVC、队列对象和状态机。</p>
 <pre><code>// 典型 Reconcile 思路，不是完整可运行代码
 func Reconcile(ctx, req) {
@@ -219,7 +267,7 @@ func Reconcile(ctx, req) {
 </div>
 
 <div class="card card-m">
-<h3>Webhook：把默认值和校验前移到 Admission 阶段</h3>
+<h4>Webhook：把默认值和校验前移到 Admission 阶段</h4>
 <p>Operator 里经常有两类逻辑不要放到 Reconcile 里硬兜底：一类是默认值，一类是非法输入校验。Kubebuilder 可以生成 Webhook 骨架，常见命令是 <code>kubebuilder create webhook --group core --version v1 --kind Application --defaulting --programmatic-validation</code>。</p>
 <table>
 <tr><th>Webhook 类型</th><th>作用</th><th>Application 例子</th><th>TrainingJob 例子</th></tr>
@@ -231,7 +279,7 @@ func Reconcile(ctx, req) {
 </div>
 
 <div class="card card-w">
-<h3>从 Kubebuilder 到生产级 Operator：面试应该主动补充什么</h3>
+<h4>从 Kubebuilder 到生产级 Operator：面试应该主动补充什么</h4>
 <p>文章中的流程能帮助你快速跑通第一个 Operator，但面试官通常会继续问“生产环境怎么做”。你需要主动补上工程化、稳定性和可观测性维度。</p>
 <table>
 <tr><th>维度</th><th>入门 Demo 常见做法</th><th>生产级思考</th></tr>
@@ -268,7 +316,7 @@ func Reconcile(ctx, req) {
 
 <div class="card card-m">
 
-<h3>Workload 与 Controller 高频问答</h3>
+<h4>Workload 与 Controller 高频问答</h4>
 
 <p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
 

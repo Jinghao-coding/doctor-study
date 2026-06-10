@@ -1,6 +1,6 @@
 {
   "title": "Kubernetes 面试学习",
-  "subtitle": "架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA",
+  "subtitle": "架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA · 扩展与工程化",
   "kicker": "Platform Infrastructure",
   "tags": [
     "k8s",
@@ -9,6 +9,10 @@
     "networking",
     "storage",
     "operator",
+    "crd",
+    "gitops",
+    "helm",
+    "kustomize",
     "gpu",
     "dra",
     "interview"
@@ -59,6 +63,11 @@
           "title": "AI Infra：GPU / 批调度 / DRA",
           "description": "Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA",
           "file": "07-ai-infra-gpu-dra.md"
+        },
+        {
+          "title": "扩展与工程化",
+          "description": "CRD、Operator、controller-runtime、Helm、Kustomize、GitOps、ArgoCD/Flux",
+          "file": "08-extension-engineering.md"
         }
       ]
     }
@@ -95,6 +104,10 @@
     {
       "title": "AI Infra：GPU / 批调度 / DRA",
       "file": "07-ai-infra-gpu-dra.md"
+    },
+    {
+      "title": "扩展与工程化",
+      "file": "08-extension-engineering.md"
     }
   ]
 }

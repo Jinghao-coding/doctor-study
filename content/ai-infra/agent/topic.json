@@ -1,0 +1,61 @@
+{
+  "title": "AI Agent",
+  "subtitle": "ReAct · 工具调用 · 记忆 · 多 Agent 协作 · 工程实践",
+  "kicker": "AI Infra Foundation",
+  "tags": [
+    "agent",
+    "llm",
+    "react",
+    "function-calling",
+    "rag",
+    "interview"
+  ],
+  "output": "pages/ai-infra/agent/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "agent-tabs",
+      "title": "Agent 内容模块",
+      "items": [
+        {
+          "title": "基础概念",
+          "description": "Agent 定义、ReAct、Plan-Execute、CoT、ToT",
+          "file": "01-agent-concepts.md"
+        },
+        {
+          "title": "核心组件",
+          "description": "记忆系统、工具调用、规划、多 Agent 协作",
+          "file": "02-agent-components.md"
+        },
+        {
+          "title": "工程实践",
+          "description": "LangChain、Function Calling、RAG、评估、部署",
+          "file": "03-agent-engineering.md"
+        },
+        {
+          "title": "面试高频题",
+          "description": "Agent 常见面试问题和深度解析",
+          "file": "04-agent-interview.md"
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": "Agent 基础概念",
+      "file": "01-agent-concepts.md"
+    },
+    {
+      "title": "Agent 核心组件",
+      "file": "02-agent-components.md"
+    },
+    {
+      "title": "Agent 工程实践",
+      "file": "03-agent-engineering.md"
+    },
+    {
+      "title": "Agent 面试高频题",
+      "file": "04-agent-interview.md"
+    }
+  ]
+}

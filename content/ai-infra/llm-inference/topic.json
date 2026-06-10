@@ -1,6 +1,6 @@
 {
   "title": "LLM 推理系统",
-  "subtitle": "Prefill/Decode · KV 缓存 · Attention 优化 · 推理引擎",
+  "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 性能优化 · 引擎选型",
   "kicker": "Serving System",
   "tags": [
     "llm",
@@ -13,7 +13,7 @@
     {
       "type": "tabs",
       "id": "llm-inference-tabs",
-      "title": "LLM 推理内容模块",
+      "title": "LLM 推理系统化模块",
       "items": [
         {
           "title": "端到端链路",
@@ -21,24 +21,44 @@
           "file": "05-e2e-pipeline.md"
         },
         {
-          "title": "推理流程",
-          "description": "Prefill、Decode、TTFT、TPOT",
+          "title": "推理总览",
+          "description": "定义、核心概念、Prefill/Decode 区别",
           "file": "01-prefill-decode.md"
         },
         {
-          "title": "KV 与 Attention",
-          "description": "KV cache、PagedAttention、FlashAttention",
+          "title": "请求生命周期",
+          "description": "请求接入、调度、计算、生成、返回",
           "file": "02-kv-attention.md"
         },
         {
-          "title": "优化技术",
-          "description": "批处理、量化、投机解码、缓存复用",
+          "title": "Prefill 阶段",
+          "description": "计算密集、TTFT、首 token 延迟",
           "file": "03-optimization.md"
         },
         {
-          "title": "推理引擎",
-          "description": "vLLM、SGLang、TensorRT-LLM 对比",
+          "title": "Decode 阶段",
+          "description": "逐 token 生成、memory-bound、TPOT",
           "file": "04-serving-engines.md"
+        },
+        {
+          "title": "KV Cache 与 Attention",
+          "description": "KV 缓存、PagedAttention、FlashAttention、GQA",
+          "file": "05-kv-cache-attention.md"
+        },
+        {
+          "title": "性能指标与瓶颈",
+          "description": "TTFT、TPOT、吞吐、显存、MFU",
+          "file": "06-performance-bottlenecks.md"
+        },
+        {
+          "title": "优化技术",
+          "description": "Batching、量化、投机解码、Prefix Cache",
+          "file": "07-optimization-techniques.md"
+        },
+        {
+          "title": "推理引擎对比",
+          "description": "AI Infra 视角 · 学习路线 · 13 题面试清单",
+          "file": "08-serving-engines.md"
         }
       ]
     }
@@ -49,20 +69,36 @@
       "file": "05-e2e-pipeline.md"
     },
     {
-      "title": "LLM 推理流程",
+      "title": "推理总览",
       "file": "01-prefill-decode.md"
     },
     {
-      "title": "KV 缓存与 Attention 优化",
+      "title": "请求生命周期",
       "file": "02-kv-attention.md"
     },
     {
-      "title": "推理优化技术",
+      "title": "Prefill 阶段",
       "file": "03-optimization.md"
     },
     {
-      "title": "主流推理引擎",
+      "title": "Decode 阶段",
       "file": "04-serving-engines.md"
+    },
+    {
+      "title": "KV Cache 与 Attention",
+      "file": "05-kv-cache-attention.md"
+    },
+    {
+      "title": "性能指标与瓶颈",
+      "file": "06-performance-bottlenecks.md"
+    },
+    {
+      "title": "优化技术",
+      "file": "07-optimization-techniques.md"
+    },
+    {
+      "title": "推理引擎对比",
+      "file": "08-serving-engines.md"
     }
   ]
 }

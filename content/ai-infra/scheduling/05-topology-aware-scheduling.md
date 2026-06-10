@@ -141,3 +141,71 @@
 <div class="qa-summary">面试要点：Device Plugin 是"我有 8 张 GPU"，DRA 是"我有 8 张 GPU，它们之间是这样连接的"。</div>
 </div>
 </div>
+
+<div class="card card-m">
+<h3>面试题：多机多卡下如何最小化通信开销？</h3>
+<p>回答这类题时，不要只说“尽量放近”。更完整的回答是：先建立通信代价模型，再把并行策略映射到拓扑层次，最后在调度器的 Filter/Score/Reserve 阶段落地。</p>
+<ol>
+<li><strong>建模拓扑图</strong>：把 GPU、CPU Socket、NUMA node、PCIe root complex、NVLink/NVSwitch、NIC/RDMA、机架/交换机都建成图节点或边；边权可以表示带宽、延迟、拥塞和故障域。</li>
+<li><strong>识别通信模式</strong>：TP 是层内高频 AllReduce/AllGather，MoE 是 All-to-All，DP 是每步梯度 AllReduce，PP 是相邻 stage P2P。不同通信模式对拓扑的敏感度不同。</li>
+<li><strong>优先满足强约束</strong>：TP/MoE 优先放在同 NVLink/NVSwitch 域；GPU 与 NIC 尽量同 NUMA/同 PCIe root complex；需要 GDR 的任务避免 GPU 和 RDMA NIC 跨 Socket。</li>
+<li><strong>再做软打分</strong>：如果不能完全满足，就用拓扑质量分数排序，例如同 NVLink 加高分、同 NUMA 加中分、跨 Socket/跨机架加惩罚。</li>
+<li><strong>保留未来大块资源</strong>：不能为了当前小任务打散完整 8 卡 NVLink 节点或同机柜 RDMA 域，否则后续大任务会排队更久。</li>
+</ol>
+<p>调度器视角可以抽象成：</p>
+<pre><code>score(placement) =
+  - communication_cost(rank_graph, topology_graph)
+  - fragmentation_cost(remaining_resources)
+  - contention_cost(current_load)
+  + locality_bonus(gpu_nic_numa_alignment)</code></pre>
+<p>这里的关键是 rank graph：模型并行里的哪些 rank 通信最频繁，就应该在物理拓扑里放得最近。不能只按 GPU 数量调度。</p>
+</div>
+
+<div class="card card-d">
+<h3>4 张 GPU 应该怎么分配？</h3>
+<p>如果一个任务需要 4 张 GPU，优先级通常是：</p>
+<table>
+<tr><th>候选放置</th><th>优先级</th><th>原因</th><th>适合场景</th></tr>
+<tr><td>同一 NVLink/NVSwitch 域内 4 卡</td><td>最高</td><td>GPU-GPU 通信带宽最高、延迟最低，TP/MoE 收益明显</td><td>张量并行、小规模预训练、通信密集训练</td></tr>
+<tr><td>同一 Socket / 同 NUMA 下 4 卡</td><td>高</td><td>CPU 线程、内存、GPU、NIC 亲和性最好，减少跨 UPI/QPI</td><td>数据加载重、GDR/RDMA 依赖强</td></tr>
+<tr><td>同节点但跨 NUMA / 跨 Socket</td><td>中</td><td>仍避免跨节点网络，但 CPU-GPU、GPU-NIC 可能走远端路径</td><td>DP 或通信不密集任务</td></tr>
+<tr><td>跨节点 2+2 或 1+1+1+1</td><td>低</td><td>NCCL 通信走 RDMA/以太网，延迟和带宽都更差，还增加故障面</td><td>纯 DP、资源紧张时的降级方案</td></tr>
+</table>
+<p>跨 NUMA / 跨 Socket 的影响主要有三类：</p>
+<ul>
+<li><strong>Host-device copy 变慢</strong>：DataLoader 线程和 pinned memory 如果在远端 NUMA，H2D 拷贝会经过跨 Socket 互联。</li>
+<li><strong>GPU-NIC 路径变差</strong>：GPU 和 RDMA NIC 不在同一 PCIe root/NUMA 时，GPUDirect RDMA 可能退化，增加 CPU/内存中转和链路延迟。</li>
+<li><strong>NCCL 拓扑选择受影响</strong>：NCCL 会根据 NVLink、PCIe、NIC 拓扑选择 ring/tree，但差拓扑会让 collective 的慢边拖累整体。</li>
+</ul>
+<p>面试可以这样答：如果是 4 卡 TP，我倾向于同节点同 NVLink 域；如果是 DP，跨节点也能接受但要保证 RDMA 网络质量；如果同时有 RDMA 通信，就要把 GPU 和 NIC 做 NUMA 对齐。</p>
+</div>
+
+<div class="card card-w">
+<h3>基础知识补全：NUMA、PCIe、NVLink、RDMA 分别影响什么</h3>
+<table>
+<tr><th>概念</th><th>是什么</th><th>调度里为什么重要</th></tr>
+<tr><td>NUMA</td><td>多 Socket 服务器中，每个 CPU Socket 有本地内存，访问远端内存更慢</td><td>CPU 线程、内存页、GPU、NIC 要尽量同 NUMA，否则数据加载和网络路径变慢</td></tr>
+<tr><td>PCIe root complex</td><td>CPU 到外设的 PCIe 根路径，GPU/NIC 可能挂在不同 root 下</td><td>决定 GPU-GPU P2P、GPU-NIC GDR 是否走本地路径</td></tr>
+<tr><td>NVLink / NVSwitch</td><td>NVIDIA GPU 间高带宽互联</td><td>TP、MoE、频繁 collective 的核心拓扑资源</td></tr>
+<tr><td>RDMA / InfiniBand / RoCE</td><td>跨节点低延迟高带宽网络，可绕过 CPU 做远端内存访问</td><td>多机训练、跨节点 AllReduce、KV cache 迁移和 P/D 分离推理都依赖它</td></tr>
+<tr><td>GPUDirect RDMA</td><td>NIC 直接访问 GPU 显存，减少 CPU bounce buffer</td><td>要求 GPU 与 NIC 拓扑亲和，否则带宽和延迟可能明显退化</td></tr>
+</table>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何设计一个拓扑感知 GPU 调度算法？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">回答框架</div><p>先把任务抽象成 rank 通信图，把集群抽象成硬件拓扑图，然后做约束过滤和代价打分。Filter 阶段保证 GPU 型号、显存、同节点/同 NUMA、GPU-NIC 亲和等硬约束；Score 阶段最小化通信代价和碎片代价；Reserve 阶段锁定具体 GPU/NIC，避免并发绑定时重复分配。</p></div>
+<div class="qa-section"><div class="qa-section-title">工程落点</div><p>短期可以用 Node Label + Scheduler Plugin + NVIDIA/DCGM 拓扑发现；节点内用 kubelet Topology Manager 对齐 CPU/Memory/Device；更长期可用 DRA ResourceSlice 表达 GPU/NIC/NUMA 属性，让 scheduler 直接做设备级匹配。</p></div>
+<div class="qa-summary">面试金句：拓扑感知调度不是“找 4 张空闲 GPU”，而是“找通信图和硬件图代价最小的一组 GPU”。</div>
+</div>
+</div>
+
+<div class="card card-s">
+<h3>参考资料</h3>
+<ul>
+<li>Kubernetes Topology Manager 文档：说明 kubelet 如何协调 CPU Manager、Memory Manager、Device Manager 的 NUMA hint，避免 CPU 和设备跨 NUMA 分配。</li>
+<li>NVIDIA rack-scale topology-aware scheduling 文章：强调 NVLink domain、clique/partition、GPU fabric 等硬件拓扑需要被调度系统理解。</li>
+<li>AKS DRANET / DRA RDMA 资料：展示 GPU 与 RDMA NIC 同 NUMA 对齐对 GPUDirect RDMA 的重要性。</li>
+</ul>
+</div>

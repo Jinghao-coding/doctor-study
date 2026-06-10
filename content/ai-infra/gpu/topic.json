@@ -35,6 +35,11 @@
           "file": "06-cuda-execution-model.md"
         },
         {
+          "title": "Host-Device 数据拷贝",
+          "description": "H2D/D2H、pinned memory、异步拷贝、DataLoader、拷贝诊断",
+          "file": "08-host-device-copy.md"
+        },
+        {
           "title": "共享方式",
           "description": "MIG、MPS、时间片、CUDA VMM",
           "file": "02-sharing.md"
@@ -89,6 +94,10 @@
     {
       "title": "CUDA 执行模型",
       "file": "06-cuda-execution-model.md"
+    },
+    {
+      "title": "Host-Device 数据拷贝",
+      "file": "08-host-device-copy.md"
     },
     {
       "title": "GPU 共享方式",

@@ -1,6 +1,6 @@
 {
   "title": "任务调度理论",
-  "subtitle": "目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 研究路线",
+  "subtitle": "目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 面试题精讲",
   "kicker": "Scheduling Theory",
   "tags": [
     "scheduling",
@@ -42,8 +42,8 @@
           "file": "05-topology-aware-scheduling.md"
         },
         {
-          "title": "调度研究路线图",
-          "description": "理论层、K8S 机制层、AI 集群层、系统设计层的学习边界",
+          "title": "调度面试题精讲",
+          "description": "GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练",
           "file": "06-scheduler-research-roadmap.md"
         }
       ]
@@ -71,7 +71,7 @@
       "file": "05-topology-aware-scheduling.md"
     },
     {
-      "title": "调度研究路线图",
+      "title": "调度面试题精讲",
       "file": "06-scheduler-research-roadmap.md"
     }
   ]

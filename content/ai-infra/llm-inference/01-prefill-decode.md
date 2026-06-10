@@ -1,25 +1,35 @@
-<h3>四阶段流程</h3>
-<ol>
-<li><strong>模型加载</strong>：权重从存储（磁盘/网络）加载到 GPU 显存。大模型可能需要几十秒到几分钟</li>
-<li><strong>Prefill（预填充，计算密集）</strong>：一次性处理整个 prompt，并行计算所有 token 的 attention，生成初始 KV 缓存。延迟主要取决于 prompt 长度和模型大小</li>
-<li><strong>Decode（解码，内存密集）</strong>：自回归逐 token 生成。每步只计算一个新 token 的 attention，但需要读取全量 KV 缓存。带宽瓶颈，GPU 计算单元大量空闲</li>
-<li><strong>返回结果</strong>：流式输出或一次性返回</li>
-</ol>
+## LLM 推理是什么
 
-<h3>关键性能指标</h3>
-<table>
-<tr><th>指标</th><th>含义</th><th>影响因素</th></tr>
-<tr><td>TTFT（Time to First Token）</td><td>首 token 延迟</td><td>模型加载 + prefill 时间</td></tr>
-<tr><td>TPOT（Time Per Output Token）</td><td>每 token 延迟</td><td>decode 单步时间，受显存带宽限制</td></tr>
-<tr><td>Throughput</td><td>吞吐（tokens/s）</td><td>batch size × 单步速度</td></tr>
-<tr><td>SLO 达成率</td><td>满足延迟目标的请求比例</td><td>排队 + 计算 + 内存管理</td></tr>
-</table>
+LLM 推理是模型接收用户输入，并逐步生成回复的过程。一次完整请求通常包含请求调度、Prompt 预处理、Prefill 计算、Decode 逐 token 生成和结果返回几个阶段。
 
-<h3>Prefill vs Decode 的计算特性差异</h3>
-<table>
-<tr><th>维度</th><th>Prefill</th><th>Decode</th></tr>
-<tr><td>计算模式</td><td>并行处理 N 个 token</td><td>每步只处理 1 个 token</td></tr>
-<tr><td>瓶颈</td><td>计算密集（矩阵乘法）</td><td>内存密集（读 KV 缓存）</td></tr>
-<tr><td>GPU 利用率</td><td>高（Tensor Core 饱和）</td><td>低（大量等待显存读取）</td></tr>
-<tr><td>优化方向</td><td>算子融合、FlashAttention</td><td>增大 batch、KV 缓存压缩</td></tr>
-</table>
+推理可以拆成两个核心阶段：`Prefill` 一次性处理完整 Prompt，生成初始 KV Cache；`Decode` 基于已有上下文逐 token 生成回复，并持续更新 KV Cache。
+
+核心判断：Prefill 更偏计算密集，主要受输入长度、模型规模和 GPU 算力影响；Decode 更偏访存密集，主要受 KV Cache 读写、显存带宽和 batch 调度影响。
+
+## 核心概念
+
+| 概念 | 说明 |
+|---|---|
+| Prompt | 用户输入给模型的上下文 |
+| Token | 模型处理和生成文本的基本单位 |
+| Prefill | 处理完整输入，生成首 token 所需上下文和 KV Cache |
+| Decode | 每次生成一个新 token，并更新 KV Cache |
+| KV Cache | 缓存历史 token 的 Key 和 Value，避免重复计算 |
+| TTFT | Time To First Token，首 token 延迟 |
+| TPOT | Time Per Output Token，单 token 生成耗时 |
+
+## Prefill 与 Decode
+
+| 维度 | Prefill | Decode |
+|---|---|---|
+| 输入 | 完整 Prompt token 序列 | 上一步生成的 token 和历史 KV Cache |
+| 输出 | 初始上下文、KV Cache、首 token 分布 | 下一个 token 和新增 KV Cache |
+| 计算模式 | 并行处理多个 token | 串行逐 token 生成 |
+| 主要瓶颈 | 矩阵计算、长上下文 attention | KV Cache 读取、显存带宽 |
+| 关键指标 | TTFT | TPOT、吞吐、P99 延迟 |
+
+## 记忆框架
+
+LLM 推理系统的主线可以按“请求怎么流动、每个阶段做什么、瓶颈在哪里、如何优化、用什么引擎落地”来理解。
+
+后续模块按这个顺序展开：先讲请求生命周期，再分别拆 Prefill 和 Decode，然后解释 KV Cache 与 Attention，最后落到性能指标、优化技术和推理引擎选型。

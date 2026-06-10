@@ -159,11 +159,88 @@ def markdown_to_html(markdown: str) -> str:
     return "\n".join(out)
 
 
-def render_nav(output: Path) -> str:
-    links = []
-    for item in SITE.get("nav", [])[1:]:
-        links.append(f'  <a href="{rel_link(output, item["href"])}">{html.escape(item["title"])}</a>')
-    return "\n".join(links)
+def topic_group(topic: dict) -> str:
+    slug = topic.get("slug", "")
+    if slug.startswith("ai-infra/"):
+        return "AI Infra"
+    if slug.startswith("cs-basics"):
+        return "计算机基础"
+    return "其他"
+
+
+def render_top_nav(output: Path) -> str:
+    topics = SITE.get("topics", [])
+    ai_topics = [topic for topic in topics if topic_group(topic) == "AI Infra"]
+    cs_topics = [topic for topic in topics if topic_group(topic) == "计算机基础"]
+
+    def topic_link(topic: dict) -> str:
+        return (
+            f'<a href="{rel_link(output, topic["output"])}">'
+            f'<span>{html.escape(topic["title"])}</span>'
+            f'<small>{html.escape(" / ".join(topic.get("tags", [])[:3]))}</small>'
+            "</a>"
+        )
+
+    ai_menu = "".join(topic_link(topic) for topic in ai_topics)
+    cs_href = rel_link(output, cs_topics[0]["output"]) if cs_topics else rel_link(output, "index.html")
+    return (
+        '<a class="nav-brand" href="{home}">'
+        '<span class="brand-mark">DS</span>'
+        '<span><strong>doctor-study</strong><small>AI Infra interview desk</small></span>'
+        '</a>'
+        '<div class="nav-primary">'
+        '<a class="nav-pill" href="{home}">首页</a>'
+        '<details class="nav-menu">'
+        '<summary>AI Infra</summary>'
+        '<div class="nav-menu-panel">{ai_menu}</div>'
+        '</details>'
+        '<a class="nav-pill" href="{cs_href}">计算机基础</a>'
+        '<button class="nav-search" type="button" data-focus-tabs>搜索模块</button>'
+        '</div>'
+        '<button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>'
+    ).format(home=rel_link(output, "index.html"), ai_menu=ai_menu, cs_href=cs_href)
+
+
+def render_side_nav(output: Path, current_output: Path) -> str:
+    groups: dict[str, list[dict]] = {}
+    for topic in SITE.get("topics", []):
+        groups.setdefault(topic_group(topic), []).append(topic)
+
+    sections = []
+    for group_name, topics in groups.items():
+        links = []
+        for topic in topics:
+            active = (ROOT / topic["output"]).resolve() == current_output.resolve()
+            tags = " · ".join(topic.get("tags", [])[:2])
+            initial = topic.get("title", "T").strip()[:2]
+            links.append(
+                '<a class="side-link{active}" href="{href}" data-initial="{initial}" title="{title}">'
+                '<span>{title}</span>'
+                '<small>{tags}</small>'
+                '</a>'.format(
+                    active=" active" if active else "",
+                    href=rel_link(output, topic["output"]),
+                    initial=html.escape(initial),
+                    title=html.escape(topic["title"]),
+                    tags=html.escape(tags),
+                )
+            )
+        sections.append(
+            '<div class="side-section">'
+            f'<div class="side-section-title">{html.escape(group_name)}</div>'
+            f'{"".join(links)}'
+            '</div>'
+        )
+    return (
+        '<aside class="app-sidebar">'
+        '<div class="side-head">'
+        '<div><div class="side-kicker">Study Map</div>'
+        '<div class="side-title">学习主题</div></div>'
+        '<button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button>'
+        '</div>'
+        f'{"".join(sections)}'
+        '</aside>'
+    )
 
 
 def render_chip_list(items: list[str]) -> str:
@@ -298,13 +375,20 @@ def render_tabs(block: dict, topic_path: Path) -> str:
         active = index == 0
         title = item.get("title", f"模块 {index + 1}")
         desc = item.get("description", "")
+        initial = f"{index + 1:02d}"
         body = ""
         if item.get("file"):
             body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
+        elif item.get("files"):
+            body = "\n".join(
+                markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
+                for file in item["files"]
+            )
         elif item.get("text"):
             body = markdown_to_html(item["text"])
         nav.append(
             '<button class="tab-button{active}" type="button" role="tab" id="{tab_id}" '
+            'data-initial="{initial}" title="{title}" '
             'aria-controls="{panel_id}" aria-selected="{selected}">'
             '<span class="tab-title">{title}</span>'
             '<span class="tab-desc">{desc}</span>'
@@ -313,6 +397,7 @@ def render_tabs(block: dict, topic_path: Path) -> str:
                 tab_id=tab_id,
                 panel_id=panel_id,
                 selected="true" if active else "false",
+                initial=html.escape(initial),
                 title=html.escape(title),
                 desc=html.escape(desc),
             )
@@ -336,7 +421,18 @@ def render_tabs(block: dict, topic_path: Path) -> str:
         )
     return (
         '<section class="tabs-shell" data-tabs>'
-        f'<div class="tabs-nav" role="tablist" aria-label="{html.escape(block.get("title", "内容模块"))}">{"".join(nav)}</div>'
+        '<div class="tabs-toolbar">'
+        '<button class="module-toggle" type="button" aria-pressed="false">折叠模块</button>'
+        '<div class="module-current"><span>当前模块</span><strong></strong></div>'
+        '</div>'
+        '<div class="tabs-nav">'
+        '<button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button>'
+        '<div class="tabs-nav-head">'
+        f'<div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">{html.escape(block.get("title", "内容模块"))}</div></div>'
+        '<input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块">'
+        '</div>'
+        f'<div class="tabs-list" role="tablist" aria-label="{html.escape(block.get("title", "内容模块"))}">{"".join(nav)}</div>'
+        '</div>'
         f'<div class="tabs-panels">{"".join(panels)}</div>'
         "</section>"
     )
@@ -370,7 +466,8 @@ def render_topic(topic_path: Path) -> Path:
     page = template.replace("{{title}}", html.escape(topic["title"]))
     page = page.replace("{{subtitle}}", html.escape(topic.get("subtitle", "")))
     page = page.replace("{{content}}", "\n\n".join(blocks))
-    page = page.replace("{{nav_links}}", render_nav(output))
+    page = page.replace("{{top_nav}}", render_top_nav(output))
+    page = page.replace("{{side_nav}}", render_side_nav(output, output))
     page = page.replace("{{home_path}}", rel_link(output, "index.html"))
     page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))
     page = page.replace("{{script_path}}", asset_link(output, "assets/script.js"))

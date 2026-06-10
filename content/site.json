@@ -27,6 +27,10 @@
       "href": "pages/ai-infra/scheduling/index.html"
     },
     {
+      "title": "分布式训练",
+      "href": "pages/ai-infra/distributed-training/index.html"
+    },
+    {
       "title": "GPU 集群管理",
       "href": "pages/ai-infra/cluster-management/index.html"
     },
@@ -40,7 +44,11 @@
     },
     {
       "title": "计算机基础",
-      "href": "pages/cs-basics/foundation-qa/index.html"
+      "href": "pages/cs-basics/index.html"
+    },
+    {
+      "title": "AI Agent",
+      "href": "pages/ai-infra/agent/index.html"
     }
   ],
   "topics": [
@@ -108,17 +116,30 @@
       "color": "c4"
     },
     {
+      "title": "分布式训练",
+      "slug": "ai-infra/distributed-training",
+      "source": "content/ai-infra/distributed-training/topic.json",
+      "output": "pages/ai-infra/distributed-training/index.html",
+      "description": "数据并行、张量并行、流水线并行、专家并行、ZeRO、梯度同步与通信优化等训练核心知识。",
+      "tags": [
+        "training",
+        "parallelism",
+        "zero"
+      ],
+      "color": "c5"
+    },
+    {
       "title": "GPU 集群管理",
       "slug": "ai-infra/cluster-management",
       "source": "content/ai-infra/cluster-management/topic.json",
       "output": "pages/ai-infra/cluster-management/index.html",
-      "description": "Volcano、Yunikorn、Kueue、多租户配额、拓扑与 NCCL、3D 并行、ZeRO、故障与 Checkpoint。",
+      "description": "Volcano、Yunikorn、Kueue、多租户配额、GPU 拓扑与 NCCL、故障恢复与 Checkpoint。",
       "tags": [
         "cluster",
         "volcano",
-        "zero"
+        "fault-tolerance"
       ],
-      "color": "c5"
+      "color": "c1"
     },
     {
       "title": "性能预测与建模",
@@ -144,18 +165,31 @@
       "color": "c3"
     },
     {
-      "title": "计算机基础问答",
-      "slug": "cs-basics/foundation-qa",
-      "source": "content/cs-basics/foundation-qa/topic.json",
-      "output": "pages/cs-basics/foundation-qa/index.html",
-      "description": "从飞书 Wiki 提取的系统基础、Linux、内存/NUMA、Docker/K8s、分布式与 GPU/NPU 高频思考题详解。",
+      "title": "计算机基础知识",
+      "slug": "cs-basics",
+      "source": "content/cs-basics/topic.json",
+      "output": "pages/cs-basics/index.html",
+      "description": "统一整理操作系统、组成原理、网络、Linux/容器、编程工程、分布式与 AI Infra 基础，按左侧目录切换复习。",
       "tags": [
-        "linux",
-        "docker",
-        "distributed",
-        "gpu"
+        "cs-basics",
+        "os",
+        "networking"
       ],
       "color": "c4"
+    },
+    {
+      "title": "AI Agent",
+      "slug": "ai-infra/agent",
+      "source": "content/ai-infra/agent/topic.json",
+      "output": "pages/ai-infra/agent/index.html",
+      "description": "ReAct、Plan-Execute、CoT/ToT、记忆系统、工具调用、Function Calling、RAG、多 Agent 协作、LangChain/LangGraph 与面试高频题。",
+      "tags": [
+        "agent",
+        "llm",
+        "react",
+        "rag"
+      ],
+      "color": "c1"
     }
   ]
 }

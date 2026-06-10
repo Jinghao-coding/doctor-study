@@ -129,3 +129,128 @@
 <div class="qa-summary">面试口径：大集群稳定性要控制 watch 数量、对象大小和更新频率，否则 API Server 与 etcd 会成为瓶颈。</div>
 </div>
 </div>
+
+<div class="card card-d">
+<h3>etcd 故障排查：raft、defrag、备份</h3>
+<p>etcd 是 K8s 的"单点真相"，控制面所有问题最终都会落到 etcd 上。面试常考 etcd 抖动后控制面有什么症状，怎么定位。</p>
+<table>
+<tr><th>典型症状</th><th>底层原因</th><th>处理</th></tr>
+<tr><td>API Server 5xx、kubectl 卡顿</td><td>etcd leader 选举失败 / 慢盘</td><td>看 <code>etcd_server_has_leader</code>、<code>etcd_disk_wal_fsync_duration_seconds</code>，换 SSD 或独立磁盘</td></tr>
+<tr><td>etcd "took too long" 警告</td><td>大事务、慢盘、内存压力</td><td>分析慢请求的 key 前缀，限制大对象（CRD/Lease 风暴）</td></tr>
+<tr><td>etcd 数据库膨胀</td><td>历史 revision 太多没有 compact</td><td>开启 auto compaction，定期 <code>etcdctl defrag</code></td></tr>
+<tr><td>NOSPACE alarm</td><td>db size 超 quota</td><td>调大 <code>--quota-backend-bytes</code>、defrag、删冗余对象</td></tr>
+<tr><td>raft 心跳超时</td><td>跨可用区 / 跨地域延迟过高</td><td>etcd 必须低延迟，建议同 AZ 同机房；不要跨 region 部署 etcd</td></tr>
+<tr><td>数据损坏</td><td>磁盘故障 / 异常关机</td><td>需要从 snapshot 恢复，所以备份和恢复演练必须常态化</td></tr>
+</table>
+<table>
+<tr><th>关键指标</th><th>含义</th><th>报警阈值参考</th></tr>
+<tr><td><code>etcd_server_has_leader</code></td><td>是否有 leader</td><td>持续 0 立刻告警</td></tr>
+<tr><td><code>etcd_server_leader_changes_seen_total</code></td><td>leader 变更次数</td><td>短时多次切主，通常是慢盘或网络</td></tr>
+<tr><td><code>etcd_disk_wal_fsync_duration_seconds</code> p99</td><td>WAL 落盘耗时</td><td>&gt;25ms 危险，需要立刻查盘</td></tr>
+<tr><td><code>etcd_disk_backend_commit_duration_seconds</code> p99</td><td>事务提交耗时</td><td>&gt;25ms 危险</td></tr>
+<tr><td><code>etcd_mvcc_db_total_size_in_bytes</code></td><td>数据库大小</td><td>接近 quota 时安排 defrag</td></tr>
+</table>
+<div class="qa-summary">面试口径：etcd 出问题先看 leader、WAL fsync、backend commit 三个指标；优化方向是独立 SSD、控制对象数量和 watch 风暴、定期 compact + defrag、跨 AZ 三节点而不是跨 region。</div>
+</div>
+
+<div class="card card-w">
+<h3>控制面 HA：API Server / Scheduler / Controller Manager</h3>
+<p>控制面的高可用模式不一样：API Server 是<strong>无状态</strong>，多副本同时工作，前面挂 LB；Scheduler 和 Controller Manager 是<strong>有状态</strong>，多副本通过 leader election 选主，一主多备。</p>
+<table>
+<tr><th>组件</th><th>HA 模式</th><th>关键依赖</th><th>面试要点</th></tr>
+<tr><td>API Server</td><td>多副本 active-active</td><td>前置 LB（HAProxy / 云 LB）+ etcd</td><td>客户端用 LB VIP 而不是直连某个节点</td></tr>
+<tr><td>etcd</td><td>奇数节点 raft 集群（3 / 5）</td><td>低延迟磁盘和网络</td><td>quorum 是 N/2+1，3 节点最多挂 1，5 节点最多挂 2</td></tr>
+<tr><td>kube-scheduler</td><td>leader election，主备</td><td>API Server 上的 Lease 对象</td><td>主副本挂掉后秒级切主，调度短暂停顿</td></tr>
+<tr><td>kube-controller-manager</td><td>leader election，主备</td><td>同上</td><td>同上，注意 <code>--leader-elect-renew-deadline</code></td></tr>
+<tr><td>cloud-controller-manager</td><td>leader election</td><td>云 API</td><td>主备切换不要太频繁，否则云资源回收抖动</td></tr>
+<tr><td>kubelet / kube-proxy</td><td>每节点一个，独立</td><td>API Server 可达</td><td>没有 HA 概念，节点级单点</td></tr>
+</table>
+<div class="qa-section"><div class="qa-section-title">面试口径</div><p>控制面 HA 不是简单"复制 3 份"：API Server 是无状态多活，etcd 是 raft quorum，scheduler / CM 是 leader election 主备。整体 SLO 取决于<strong>木桶最短板</strong>，绝大多数事故的根因都在 etcd（慢盘、跨 AZ 延迟、对象膨胀）。</p></div>
+</div>
+
+<div class="card card-s">
+<h3>API Server 过载：怎么定位与缓解</h3>
+<p>"控制面慢"是大集群最常见的"症状"，背后可能是 API Server / etcd / 客户端任意一环。</p>
+<table>
+<tr><th>分层</th><th>常见原因</th><th>定位指标</th></tr>
+<tr><td>客户端</td><td>controller 写循环、watch 重连风暴、finalizer 死循环</td><td><code>apiserver_request_total</code> 按 user / verb / resource 拆</td></tr>
+<tr><td>API Server</td><td>反序列化大对象、admission webhook 慢、APF 排队</td><td><code>apiserver_request_duration_seconds</code>、<code>apiserver_admission_webhook_admission_duration_seconds</code></td></tr>
+<tr><td>etcd</td><td>慢盘、leader 抖动、db 太大</td><td><code>etcd_disk_*</code> 系列指标</td></tr>
+<tr><td>watch 缓存</td><td>cacher 满 → resourceVersion too old / watch error</td><td><code>apiserver_watch_cache_*</code></td></tr>
+</table>
+<table>
+<tr><th>缓解动作</th><th>说明</th></tr>
+<tr><td>开启/调优 APF</td><td>把关键 controller 提到独立 PriorityLevel，普通客户端限流</td></tr>
+<tr><td>缩减对象数量和大小</td><td>合并 status 更新、清理无主 Pod / Event、Lease 用 v1 版</td></tr>
+<tr><td>合理分页 List</td><td>客户端禁止 List 全量大资源（Pod / Event），改为 paginated 或 informer</td></tr>
+<tr><td>升级 etcd 磁盘</td><td>独立 NVMe，避免和 kubelet / 容器盘共用</td></tr>
+<tr><td>限制 webhook</td><td>缩短超时、failurePolicy=Ignore、避免阻塞核心资源</td></tr>
+</table>
+</div>
+
+<div class="card card-d">
+<h3>集群网络故障：DNS、conntrack、MTU</h3>
+<p>"Pod 偶发超时"通常不是业务代码而是网络层的问题。这几个高频根因建议背下来。</p>
+<table>
+<tr><th>故障</th><th>典型症状</th><th>定位</th><th>修复</th></tr>
+<tr><td>CoreDNS 抖动</td><td>偶发解析失败、5s 延迟</td><td><code>kubectl logs coredns</code>、客户端 <code>ndots</code>、retry</td><td>启用 NodeLocal DNSCache，调小 ndots 或写 FQDN</td></tr>
+<tr><td>conntrack 表打满</td><td>连接 reset、新连接建立失败</td><td>看节点 <code>nf_conntrack_count</code> / <code>max</code></td><td>调大 <code>nf_conntrack_max</code>，必要时切 eBPF 模式绕过</td></tr>
+<tr><td>MTU 不一致</td><td>大包丢失、TLS 握手失败但 ping 通</td><td>抓包看是否在大包处卡住</td><td>统一 overlay MTU（如 1450）、检查 PMTUD 是否被 ICMP 黑洞</td></tr>
+<tr><td>kube-proxy 同步慢</td><td>新建 Service 几十秒不通</td><td>看 kube-proxy <code>sync_proxy_rules_duration_seconds</code></td><td>切到 IPVS / eBPF</td></tr>
+<tr><td>NetworkPolicy 误杀</td><td>原本通的连接突然不通</td><td>对比 NP 变更和现象时间线</td><td>放行 DNS、明确 Egress 列表</td></tr>
+<tr><td>跨 AZ / region 抖动</td><td>P99 高、AllReduce 慢</td><td>看物理网络指标 + 拓扑感知调度</td><td>训练任务 same leaf 调度，避免跨 spine</td></tr>
+</table>
+</div>
+
+<div class="card card-m">
+<h3>故障排查 SOP：从现象到根因的标准动作</h3>
+<p>面试常被问"线上 Pod 怎么排查"，面试官想看的不是技巧而是<strong>系统化方法</strong>。下面这个 SOP 适用于绝大多数 K8s 故障。</p>
+<table>
+<tr><th>步骤</th><th>看什么</th><th>命令 / 工具</th></tr>
+<tr><td>1. 现象</td><td>Pod 状态、Service 通否、用户报错</td><td><code>kubectl get pods -o wide</code>、<code>kubectl describe</code></td></tr>
+<tr><td>2. Events</td><td>调度、拉镜像、探针、OOM 都会留痕</td><td><code>kubectl get events --sort-by=.lastTimestamp</code></td></tr>
+<tr><td>3. 容器日志</td><td>当前 + 上一容器的日志</td><td><code>kubectl logs -f</code>、<code>kubectl logs --previous</code></td></tr>
+<tr><td>4. 节点侧</td><td>kubelet / runtime / 内核日志</td><td>登录节点 <code>journalctl -u kubelet</code>、<code>dmesg -T</code></td></tr>
+<tr><td>5. 控制面</td><td>API Server / scheduler / CM / etcd</td><td>看指标和日志，确认控制面是否同样异常</td></tr>
+<tr><td>6. 网络面</td><td>DNS / Service / NetworkPolicy / CNI</td><td>从故障 Pod 内 <code>nslookup</code> / <code>curl</code>，再到节点抓包</td></tr>
+<tr><td>7. 时间线对照</td><td>变更（发布、配置、节点回收）</td><td>结合 audit log 和 CMDB 找时间相关性</td></tr>
+<tr><td>8. 假设验证</td><td>缩小到一个假设，主动复现</td><td>测试 namespace、灰度修复、最小复现脚本</td></tr>
+</table>
+<div class="qa-summary">面试口径：故障排查不是猜，要按"现象 → events → 日志 → 节点 → 控制面 → 网络 → 变更时间线"的顺序逐层下钻；先收敛假设，再做最小复现验证。</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: etcd 抖动会让 K8s 出现什么症状？怎么定位？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>从用户能看到的症状反推到 etcd 指标，再讲常见根因。</p>
+<div class="qa-section"><div class="qa-section-title">1. 用户侧症状</div><p><code>kubectl</code> 卡顿、API Server 5xx、controller reconcile 间断、scheduler 调度停顿、Pod status 上报滞后。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 控制面指标</div><p>看 API Server 写延迟（<code>apiserver_request_duration_seconds</code>）和 etcd 的 <code>has_leader</code>、<code>leader_changes_seen_total</code>、<code>wal_fsync</code>、<code>backend_commit</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 常见根因</div><p>慢盘（fsync 飙到几十毫秒）、跨 AZ 延迟、db 太大没 compact、Lease/Event 风暴、大对象（如巨型 ConfigMap）频繁更新。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 缓解</div><p>独立 NVMe、定期 compact + defrag、限制单对象大小、修客户端 watch 风暴；恶劣情况下从 snapshot 恢复。</p></div>
+<div class="qa-summary">面试口径：etcd 抖动表现为控制面整体慢，定位看 leader / WAL fsync / backend commit，根因多在磁盘和对象膨胀。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 控制面 HA 怎么设计？为什么不能跨 region 部署 etcd？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>区分组件无状态 / 有状态，再讲 etcd 对延迟的硬性要求。</p>
+<div class="qa-section"><div class="qa-section-title">1. 无状态组件</div><p>API Server 多副本 active-active，前面挂 LB；客户端访问的是 LB VIP，不绑定节点。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 有状态组件</div><p>scheduler / controller-manager 通过 Lease 做 leader election，主备秒级切换；切换时短暂停顿是可接受的。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. etcd 是 raft</div><p>raft 每次写都需要 quorum，跨 region 的网络延迟（几十毫秒）会让每次写延迟翻倍，整个 K8s 慢到不可用。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 推荐部署</div><p>etcd 同 region 跨 AZ 三节点（最多挂 1）或五节点（最多挂 2）；跨 region 用多集群联邦或 fleet，而不是单集群跨 region。</p></div>
+<div class="qa-summary">面试口径：控制面 HA = API Server 多活 + etcd raft quorum + scheduler/CM leader election；etcd 不能跨 region 是因为 raft 每写都要 quorum，延迟敏感。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod 偶发超时但不是 OOM，可能是什么？</div>
+<div class="qa-a">
+<p><strong>回答思路：</strong>排除业务后聚焦"网络层 / 内核层 / DNS"。</p>
+<div class="qa-section"><div class="qa-section-title">1. DNS</div><p>CoreDNS 抖动 + 客户端没 NodeLocal DNSCache 时，常见 5s 超时（resolv.conf 默认 timeout）；ndots 过大也放大 DNS 次数。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. conntrack</div><p>节点 <code>nf_conntrack_max</code> 不够大，新连接被丢；典型症状是高峰期连接重置、ECONNRESET。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. MTU</div><p>overlay MTU 没和物理网卡对齐，TLS 握手等大包卡住，但小包（ping）正常，迷惑性强。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. kube-proxy</div><p>iptables 模式下 Service 变更扫描慢、conntrack 老化也会偶发；切 IPVS / eBPF 通常能稳定下来。</p></div>
+<div class="qa-summary">面试口径：偶发超时优先看 DNS（5s 这个数字几乎就是签名）、conntrack 容量、MTU 一致性，再看 kube-proxy 模式。</div>
+</div>
+</div>

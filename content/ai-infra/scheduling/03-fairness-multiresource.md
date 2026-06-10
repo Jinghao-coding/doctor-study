@@ -147,6 +147,36 @@
 </ol>
 </div>
 
+<div class="card card-d">
+<h3>多租户 GPU 调度器：公平性怎么落地</h3>
+<p>多租户场景不能只靠 Kubernetes Namespace 或 ResourceQuota。真正的公平调度至少要有队列、配额、借用、回收、优先级和审计。面试回答时可以从“保障谁、允许谁借、从谁回收、怎么避免饥饿”四个问题展开。</p>
+<table>
+<tr><th>机制</th><th>解决的问题</th><th>设计要点</th><th>常见追问</th></tr>
+<tr><td>队列 Queue</td><td>把不同团队/业务隔离成可治理单元</td><td>支持层级队列：公司 / 部门 / 团队 / 项目</td><td>为什么不用一个全局 FIFO？</td></tr>
+<tr><td>配额 Quota</td><td>给团队资源保障和上限</td><td>min 是保障，max 是上限；按 GPU flavor 拆分</td><td>H100 和 A100 能不能混算？</td></tr>
+<tr><td>借用 Borrowing</td><td>避免空闲配额浪费</td><td>空闲资源可借，但要记录 owner 和 borrower</td><td>借用资源什么时候归还？</td></tr>
+<tr><td>回收 Reclaim</td><td>保障租户需要资源时拿回来</td><td>优先回收低优先级、checkpoint 新鲜、沉没成本小的任务</td><td>如何避免回收造成大量损失？</td></tr>
+<tr><td>优先级 Priority</td><td>表达业务重要性</td><td>线上推理、紧急评测、关键训练高于 best-effort 实验</td><td>低优任务会不会永远饿死？</td></tr>
+<tr><td>Aging</td><td>避免长时间等待</td><td>等待越久，动态优先级越高</td><td>aging 会不会破坏业务优先级？</td></tr>
+</table>
+<div class="qa-summary">面试口径：公平不是平均分资源，而是在保障配额、弹性借用和可控回收之间取得平衡。</div>
+</div>
+
+<div class="card card-w">
+<h3>高优任务抢占低优任务：代价不能忽略</h3>
+<p>抢占是解决高优任务等待的手段，但在 AI 训练里非常昂贵。一个 Pod 被杀不只是“重启一下”，还可能丢失 checkpoint 之后的训练进度、重建 NCCL 通信组、重新加载模型和数据。</p>
+<table>
+<tr><th>代价</th><th>含义</th><th>缓解方式</th></tr>
+<tr><td>进度损失</td><td>回滚到上一次 checkpoint</td><td>checkpoint-aware preemption，优先抢 checkpoint 新鲜任务</td></tr>
+<tr><td>重启成本</td><td>排队、拉镜像、加载模型、初始化通信</td><td>镜像预热、本地缓存、NCCL 初始化优化</td></tr>
+<tr><td>通信重建</td><td>DDP/NCCL world 重新建立</td><td>弹性训练或 gang 级别重启</td></tr>
+<tr><td>用户体验</td><td>长期训练被频繁打断</td><td>抢占次数限制、冷却时间、优雅抢占</td></tr>
+<tr><td>系统抖动</td><td>大量任务被杀和重启造成控制面压力</td><td>分批抢占、限速、队列级回收</td></tr>
+</table>
+<p>工程上常用一个简化打分：释放资源价值越高越适合抢，占用资源越少但 checkpoint 很旧的任务不一定适合抢。</p>
+<div class="formula">preemption_score = release_value / (checkpoint_age + restart_cost + disruption_penalty)</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么只用 ResourceQuota 不够做 GPU 多租户调度？</div>
 <div class="qa-a">

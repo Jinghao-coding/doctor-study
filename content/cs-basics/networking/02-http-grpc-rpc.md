@@ -1,0 +1,3 @@
+<div class="card card-m"><h3>HTTP、gRPC 与 RPC</h3><p>RPC 是远程调用抽象，HTTP/gRPC 是常见承载方式。面试要区分“调用语义”和“网络协议”：RPC 关心方法、参数、返回值、超时、重试、负载均衡；底层可能走 HTTP/1.1、HTTP/2、TCP 或其他协议。</p></div>
+<div class="card card-d"><h3>RPC 链路 CPU 开销</h3><table><tr><th>阶段</th><th>开销</th><th>优化</th></tr><tr><td>序列化/反序列化</td><td>CPU 与内存分配</td><td>Protobuf、对象复用、零拷贝 buffer</td></tr><tr><td>系统调用</td><td>用户态/内核态切换</td><td>batch、io_uring、连接复用</td></tr><tr><td>协议栈</td><td>TCP/IP 处理、中断</td><td>内核调优、RSS/RPS、RDMA</td></tr><tr><td>重试</td><td>放大流量</td><td>deadline、幂等、退避、熔断</td></tr></table></div>
+<div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: RPC 超时和重试怎么设计？</div><div class="qa-a"><p>先设置端到端 deadline，再把预算分配给下游调用；重试必须要求幂等或有去重机制，并使用指数退避和 jitter，避免在故障时形成重试风暴。</p></div></div>

@@ -50,11 +50,74 @@ document.addEventListener('DOMContentLoaded', function(){
   render();
 });
 
+// App shell: mobile sidebar, dropdown hygiene, and quick focus search.
+document.addEventListener('DOMContentLoaded', function(){
+  var sideToggle = document.querySelector('.side-toggle');
+  var sideCollapse = document.querySelector('.side-collapse');
+  var navMenus = Array.from(document.querySelectorAll('.nav-menu'));
+
+  function setSideCollapsed(collapsed){
+    document.body.classList.toggle('side-collapsed', collapsed);
+    [sideToggle, sideCollapse].forEach(function(button){
+      if(button) button.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+    });
+    if(sideToggle) sideToggle.textContent = collapsed ? '展开主题' : '折叠主题';
+  }
+
+  [sideToggle, sideCollapse].forEach(function(button){
+    if(!button) return;
+    button.addEventListener('click', function(){
+      setSideCollapsed(!document.body.classList.contains('side-collapsed'));
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    navMenus.forEach(function(menu){
+      if(!menu.contains(e.target)) menu.removeAttribute('open');
+    });
+  });
+
+  document.querySelectorAll('[data-focus-tabs]').forEach(function(button){
+    button.addEventListener('click', function(){
+      var group = document.querySelector('[data-tabs]');
+      if(group) group.classList.remove('module-collapsed');
+      var input = document.querySelector('.tabs-filter');
+      if(!input) return;
+      setTimeout(function(){ input.focus(); }, 120);
+    });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      navMenus.forEach(function(menu){ menu.removeAttribute('open'); });
+    }
+  });
+  setSideCollapsed(document.body.classList.contains('side-collapsed'));
+});
+
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('[data-tabs]').forEach(function(group){
     var buttons = Array.from(group.querySelectorAll('.tab-button'));
     var panels = Array.from(group.querySelectorAll('.tab-panel'));
+    var filter = group.querySelector('.tabs-filter');
+    var moduleToggle = group.querySelector('.module-toggle');
+    var moduleCollapse = group.querySelector('.module-collapse');
+    var currentTitle = group.querySelector('.module-current strong');
     if(!buttons.length || !panels.length) return;
+
+    function setModuleCollapsed(collapsed){
+      group.classList.toggle('module-collapsed', collapsed);
+      [moduleToggle, moduleCollapse].forEach(function(button){
+        if(button) button.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+      });
+      if(moduleToggle) moduleToggle.textContent = collapsed ? '展开模块' : '折叠模块';
+    }
+
+    function updateCurrentTitle(){
+      if(!currentTitle) return;
+      var active = group.querySelector('.tab-button.active .tab-title');
+      currentTitle.textContent = active ? active.textContent.trim() : '';
+    }
 
     function activate(index){
       buttons.forEach(function(button, i){
@@ -67,21 +130,57 @@ document.addEventListener('DOMContentLoaded', function(){
         panel.classList.toggle('active', active);
         panel.hidden = !active;
       });
+      updateCurrentTitle();
       document.dispatchEvent(new CustomEvent('tab:activated', {detail: {group: group}}));
     }
 
+    function visibleButtons(){
+      return buttons.filter(function(button){ return !button.hidden; });
+    }
+
     buttons.forEach(function(button, index){
-      button.addEventListener('click', function(){ activate(index); });
+      button.addEventListener('click', function(){
+        activate(index);
+      });
       button.addEventListener('keydown', function(e){
         if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
         e.preventDefault();
-        var next = e.key === 'ArrowRight' ? index + 1 : index - 1;
-        if(next < 0) next = buttons.length - 1;
-        if(next >= buttons.length) next = 0;
-        buttons[next].focus();
+        var visible = visibleButtons();
+        var current = visible.indexOf(button);
+        if(current < 0 || !visible.length) return;
+        var nextVisible = e.key === 'ArrowRight' ? current + 1 : current - 1;
+        if(nextVisible < 0) nextVisible = visible.length - 1;
+        if(nextVisible >= visible.length) nextVisible = 0;
+        var nextButton = visible[nextVisible];
+        var next = buttons.indexOf(nextButton);
+        nextButton.focus();
         activate(next);
       });
     });
+
+    if(filter){
+      filter.addEventListener('input', function(){
+        var query = filter.value.trim().toLowerCase();
+        buttons.forEach(function(button){
+          var text = button.textContent.replace(/\s+/g, ' ').toLowerCase();
+          button.hidden = query.length > 0 && text.indexOf(query) === -1;
+        });
+        var active = group.querySelector('.tab-button.active');
+        if(active && active.hidden){
+          var firstVisible = visibleButtons()[0];
+          if(firstVisible) activate(buttons.indexOf(firstVisible));
+        }
+      });
+    }
+
+    if(moduleToggle) moduleToggle.addEventListener('click', function(){
+      setModuleCollapsed(!group.classList.contains('module-collapsed'));
+    });
+    if(moduleCollapse) moduleCollapse.addEventListener('click', function(){
+      setModuleCollapsed(!group.classList.contains('module-collapsed'));
+    });
+    setModuleCollapsed(group.classList.contains('module-collapsed'));
+    updateCurrentTitle();
   });
 });
 
@@ -96,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function(){
   function collectHeadings(){
     var activePanel = wrap.querySelector('.tab-panel.active');
     var scope = activePanel || wrap;
-    var selector = activePanel ? '.tab-panel-body h3, .tab-panel-body h4' : 'h2, h3';
+    var selector = activePanel ? '.tab-panel-body > h3, .tab-panel-body > h4, .tab-panel-body > .card > h3, .tab-panel-body > .card > h4' : 'h2, h3';
     var allHeadings = Array.from(scope.querySelectorAll(selector)).filter(function(heading){
       return heading.textContent.trim().length > 0;
     });

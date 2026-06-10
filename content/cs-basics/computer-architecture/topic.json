@@ -1,0 +1,37 @@
+{
+  "title": "计算机组成原理",
+  "subtitle": "CPU Core · Cache/TLB · DMA/PCIe · NUMA/拓扑",
+  "kicker": "CS Basics",
+  "tags": [
+    "computer-architecture",
+    "cpu",
+    "cache",
+    "pcie"
+  ],
+  "output": "pages/cs-basics/computer-architecture/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-arch-tabs",
+      "title": "计算机组成原理",
+      "items": [
+        {
+          "title": "CPU 与内存层次",
+          "description": "Core、寄存器、cache、内存带宽",
+          "file": "01-cpu-memory-hierarchy.md"
+        },
+        {
+          "title": "Cache / TLB / False Sharing",
+          "description": "局部性、cache line、TLB miss、伪共享",
+          "file": "02-cache-tlb.md"
+        },
+        {
+          "title": "DMA、PCIe 与 NUMA 拓扑",
+          "description": "Host-device copy、DMA、PCIe、GPU/NIC locality",
+          "file": "03-dma-pcie-numa.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

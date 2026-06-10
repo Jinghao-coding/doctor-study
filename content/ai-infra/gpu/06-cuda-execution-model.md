@@ -214,6 +214,32 @@ thread31 -> a[99999]</code></pre>
 <p>这个例子也说明：不是所有 GPU kernel 都能很好利用 GPU。向量加法每个元素只做一次加法，却要读两个数、写一个数，所以很容易是 memory-bound；矩阵乘每读入一块数据可以做很多乘加，更容易提高算术强度并利用 Tensor Core。</p>
 </div>
 
+<div class="card card-d">
+<h3>面试标准题：CUDA kernel 的执行模型是什么？</h3>
+<p><strong>标准回答：</strong>CUDA kernel 由 CPU Host 端发起，一次 kernel launch 会创建一个 grid。grid 由多个 block 组成，block 由多个 thread 组成。block 是被调度到 SM 上执行的基本单位；thread 是程序员看到的逻辑执行单元；硬件实际通常以 warp 为单位执行，一个 warp 通常包含 32 个 thread。SM 内部的 warp scheduler 会选择 ready warp 发射指令，通过让多个 warp 同时驻留来隐藏访存延迟。</p>
+<table>
+<tr><th>层级</th><th>属于什么</th><th>作用</th><th>面试重点</th></tr>
+<tr><td>Host</td><td>CPU 端</td><td>分配显存、准备参数、发起 kernel launch</td><td><code>kernel&lt;&lt;&lt;gridDim, blockDim&gt;&gt;&gt;(args)</code></td></tr>
+<tr><td>Grid</td><td>CUDA 逻辑层级</td><td>一次 kernel launch 的全部 block 集合</td><td>grid 不是硬件，而是任务组织方式</td></tr>
+<tr><td>Block</td><td>CUDA 逻辑层级 + 调度边界</td><td>一组 thread，调度到某个 SM 上执行</td><td>block 内可用 shared memory 和 <code>__syncthreads()</code></td></tr>
+<tr><td>Thread</td><td>CUDA 逻辑执行单元</td><td>运行同一份 kernel 代码，处理不同数据</td><td>用 <code>blockIdx</code>、<code>blockDim</code>、<code>threadIdx</code> 计算全局下标</td></tr>
+<tr><td>Warp</td><td>硬件执行单位</td><td>通常 32 个 thread 一组执行同一条指令</td><td>关注 warp divergence 和 memory coalescing</td></tr>
+<tr><td>SM</td><td>GPU 硬件执行单元</td><td>承载 block，调度 warp，提供 register/shared memory/CUDA Core/Tensor Core</td><td>关注 occupancy、warp stall、register pressure、shared memory</td></tr>
+</table>
+<div class="qa-summary">一句话背诵：Host 启动 kernel，kernel 形成 grid，grid 拆成 block，block 调度到 SM，block 内 thread 被组织成 warp，SM 以 warp 为单位执行并通过多 warp 并发隐藏内存延迟。</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA kernel 的执行模型是什么？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">回答主线</div><p>从 <code>kernel launch</code> 开始讲：CPU Host 发起 kernel，CUDA runtime 创建 grid；grid 中有多个 block；block 中有多个 thread；block 被调度到 SM 上执行；SM 把 thread 组织成 warp，并由 warp scheduler 调度 ready warp 执行。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么 block 是关键边界</div><p>block 内 thread 可以共享 shared memory，也可以用 <code>__syncthreads()</code> 同步。不同 block 默认不能直接同步，因为 block 可能被调度到不同 SM，执行顺序也不确定。如果需要全局同步，通常拆成多个 kernel launch。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么 warp 是性能关键</div><p>硬件实际按 warp 调度。一个 warp 通常 32 个 thread，同一 warp 内如果分支不同，会出现 warp divergence；如果访存地址连续对齐，可以 memory coalescing，显著提升有效带宽。</p></div>
+<div class="qa-section"><div class="qa-section-title">如何联系性能优化</div><p>理解执行模型后，优化方向就很清楚：让 grid/block 足够多以铺满 SM；控制 register/shared memory 避免 occupancy 过低；减少 warp divergence；让 global memory 访问 coalesced；用 shared memory 做数据复用；能用 Tensor Core 的算子尽量满足 dtype 和 shape 条件。</p></div>
+<div class="qa-summary">面试口径：CUDA 执行模型的关键不是“线程很多”，而是 grid/block/thread 的逻辑组织如何映射到 SM/warp 的硬件执行。</div>
+</div>
+</div>
+
 <div class="card card-w">
 <h3>面试官怎么问：从概念题到排障题</h3>
 <p>如果面试官问 CUDA 层级，通常不是为了考你背定义，而是想确认你能不能从执行模型解释性能现象。建议回答时使用这个顺序：先讲 kernel launch，再讲 grid/block/thread，再讲 warp/SM，再讲内存层级，最后联系性能问题。</p>

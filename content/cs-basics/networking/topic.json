@@ -1,0 +1,37 @@
+{
+  "title": "计算机网络基础",
+  "subtitle": "TCP/UDP · HTTP/gRPC/RPC · RDMA/RoCE/IB · 超时重试",
+  "kicker": "CS Basics",
+  "tags": [
+    "networking",
+    "tcp",
+    "rpc",
+    "rdma"
+  ],
+  "output": "pages/cs-basics/networking/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-network-tabs",
+      "title": "计算机网络基础",
+      "items": [
+        {
+          "title": "TCP / UDP 基础",
+          "description": "可靠性、连接、流控、拥塞控制",
+          "file": "01-tcp-udp.md"
+        },
+        {
+          "title": "HTTP、gRPC 与 RPC",
+          "description": "服务调用、序列化、超时、重试、连接池",
+          "file": "02-http-grpc-rpc.md"
+        },
+        {
+          "title": "RDMA、RoCE 与 IB",
+          "description": "内核旁路、零拷贝、QP、RC/UC/UD、AI 通信",
+          "file": "03-rdma.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

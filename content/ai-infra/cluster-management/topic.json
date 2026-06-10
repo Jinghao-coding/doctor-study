@@ -1,11 +1,10 @@
 {
   "title": "GPU 集群管理",
-  "subtitle": "调度框架 · 多租户 · 拓扑通信 · 分布式训练 · 故障容错",
+  "subtitle": "调度框架 · 多租户 · 拓扑通信 · 故障容错",
   "kicker": "Cluster Management",
   "tags": [
     "cluster",
     "volcano",
-    "zero",
     "fault-tolerance"
   ],
   "output": "pages/ai-infra/cluster-management/index.html",
@@ -29,11 +28,6 @@
           "title": "拓扑与通信",
           "description": "GPU 拓扑、NCCL 通信与作业放置",
           "file": "03-topology-communication.md"
-        },
-        {
-          "title": "分布式训练",
-          "description": "数据并行、模型并行、Pipeline 与 ZeRO",
-          "file": "04-distributed-training.md"
         },
         {
           "title": "故障与弹性",
@@ -60,10 +54,6 @@
     {
       "title": "GPU 拓扑与通信",
       "file": "03-topology-communication.md"
-    },
-    {
-      "title": "分布式训练",
-      "file": "04-distributed-training.md"
     },
     {
       "title": "故障处理与弹性",

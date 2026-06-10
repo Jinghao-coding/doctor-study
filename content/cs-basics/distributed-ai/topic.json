@@ -1,0 +1,37 @@
+{
+  "title": "分布式与 AI Infra 基础",
+  "subtitle": "Role/Replica/Rank · NCCL/RPC · 存储链路 · GPU/NPU 观测",
+  "kicker": "CS Basics",
+  "tags": [
+    "distributed",
+    "gpu",
+    "nccl",
+    "observability"
+  ],
+  "output": "pages/cs-basics/distributed-ai/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-distributed-ai-tabs",
+      "title": "分布式与 AI Infra 基础",
+      "items": [
+        {
+          "title": "Role、Replica、Rank",
+          "description": "分布式任务的基础命名和身份模型",
+          "file": "01-role-replica-rank.md"
+        },
+        {
+          "title": "通信与存储链路",
+          "description": "NCCL、RPC、训练数据面、存储数据面",
+          "file": "02-communication-storage.md"
+        },
+        {
+          "title": "GPU/NPU 观测",
+          "description": "nvidia-smi、拓扑、SM Active、MFU、MLU",
+          "file": "03-gpu-npu-observability.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

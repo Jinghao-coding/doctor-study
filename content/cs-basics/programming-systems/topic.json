@@ -1,0 +1,32 @@
+{
+  "title": "编程语言与工程基础",
+  "subtitle": "Binary · 编译链接 · 动态库 · ABI · C++ 系统编程",
+  "kicker": "CS Basics",
+  "tags": [
+    "cpp",
+    "binary",
+    "compiler",
+    "systems"
+  ],
+  "output": "pages/cs-basics/programming-systems/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-programming-tabs",
+      "title": "编程语言与工程基础",
+      "items": [
+        {
+          "title": "Binary 与编译链接",
+          "description": "源码到进程、ELF、动态库、ABI",
+          "file": "01-binary-linking.md"
+        },
+        {
+          "title": "C++ 系统编程",
+          "description": "RAII、智能指针、并发、性能排查",
+          "file": "02-cpp-systems.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

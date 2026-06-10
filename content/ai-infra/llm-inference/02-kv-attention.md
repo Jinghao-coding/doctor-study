@@ -1,8 +1,6 @@
-<h3>KV 缓存机制</h3>
-<p>自回归解码时，每步需要之前所有 token 的 Key 和 Value 向量。如果每步重新计算，代价是 O(n²)。KV 缓存把之前算过的 K/V 存下来，每步只计算新 token 的 K/V 并追加。</p>
-<div class="formula">KV 缓存大小 = 2 × num_layers × num_heads × head_dim × seq_len × dtype_size</div>
-<p>以 LLaMA-70B 为例：2 × 80 × 8 × 128 × 4096 × 2（FP16）≈ 10.7GB（单个请求）。</p>
-<p><strong>为什么 KV 缓存是瓶颈？</strong>GPU 显存有限（80GB），模型权重占 140GB（FP16）需要张量并行到多卡。剩余显存被 KV 缓存瓜分，决定了能同时服务多少请求。</p>
+## 请求生命周期
+
+一次 LLM 推理请求不是“直接进模型然后输出文本”，而是经过接入、排队、调度、计算、采样和返回等多个环节。理解这条链路，才能判断 TTFT、TPOT、吞吐和显存问题分别发生在哪里。
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 KV 缓存只缓存 K 和 V，不缓存 Q？</div>
@@ -18,14 +16,48 @@
 <li>支持 copy-on-write，多个 beam 可共享公共前缀</li>
 </ul>
 
-<h3>Attention 变体</h3>
-<table>
-<tr><th>变体</th><th>KV Head 数</th><th>KV 缓存大小</th><th>代表模型</th></tr>
-<tr><td>MHA（Multi-Head Attention）</td><td>= Query Head 数</td><td>最大</td><td>GPT-3, LLaMA-1</td></tr>
-<tr><td>GQA（Grouped-Query Attention）</td><td>Query Head 数 / G</td><td>缩小 G 倍</td><td>LLaMA-2/3, Mixtral</td></tr>
-<tr><td>MQA（Multi-Query Attention）</td><td>1</td><td>最小</td><td>Falcon, StarCoder</td></tr>
-</table>
-<p>GQA 是实际部署的主流选择——在质量和效率之间取得平衡。</p>
+## 端到端流程
 
-<h3>FlashAttention</h3>
-<p>标准 attention 的显存占用 O(N²)，FlashAttention 通过 tiling（分块计算）+ 重计算（不存中间 softmax 矩阵）将显存降到 O(N)，同时利用 GPU SRAM 提速。核心思想：用计算换显存，避免 HBM 的反复读写。</p>
+| 阶段 | 输入 | 主要动作 | 输出 |
+|---|---|---|---|
+| 请求接入 | 用户 Prompt、生成参数 | 鉴权、限流、参数校验 | 标准化请求 |
+| Tokenization | 文本 Prompt | 切分为 token ID | token 序列 |
+| 调度排队 | token 序列、优先级、SLO | 选择进入 batch 的请求 | 执行计划 |
+| Prefill | 完整 Prompt token | 并行计算上下文和 attention | 初始 KV Cache |
+| Decode | 历史 KV Cache、新 token | 逐 token 自回归生成 | 新 token、更新后的 KV Cache |
+| 采样与返回 | logits、采样参数 | temperature、top-p、top-k、反序列化 | 流式文本或完整文本 |
+
+## 调度器职责
+
+调度器决定“哪些请求先跑、哪些请求一起跑、显存不够时怎么办”。它需要同时处理计算资源、显存资源和服务延迟目标。
+
+| 职责 | 说明 |
+|---|---|
+| 准入控制 | 根据显存、batch、优先级决定请求能否进入运行队列 |
+| Batch 组织 | 把多个请求组合成更高效的执行批次 |
+| KV Cache 分配 | 为每个请求分配或复用 KV block |
+| 抢占与恢复 | 显存不足时换出、重算或终止低优先级请求 |
+| 完成回收 | 请求结束后释放 KV Cache 和调度状态 |
+
+## 核心路径
+
+```text
+用户请求
+  → 网关 / API Server
+  → Tokenizer
+  → Scheduler
+  → Prefill Worker
+  → Decode Worker
+  → Sampler
+  → Stream Response
+```
+
+## 常见问题定位
+
+| 现象 | 更可能的问题位置 | 排查方向 |
+|---|---|---|
+| 首 token 很慢 | 排队、Tokenization、Prefill | 看 TTFT、prefill batch、prompt 长度 |
+| 输出过程中卡顿 | Decode、采样、流式返回 | 看 TPOT、KV Cache 读取、网络返回 |
+| 并发上不去 | KV Cache、显存、调度 | 看显存余量、block 碎片、最大 batch |
+| GPU 利用率低 | Decode memory-bound | 看 MFU、HBM 带宽、batch size |
+| P99 抖动大 | 长 prompt 阻塞、抢占、换出 | 看 chunked prefill、优先级调度 |

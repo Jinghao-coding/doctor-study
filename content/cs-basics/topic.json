@@ -1,0 +1,78 @@
+{
+  "title": "计算机基础知识",
+  "subtitle": "操作系统 · 组成原理 · 网络 · Linux/容器 · 编程工程 · 分布式与 AI Infra",
+  "kicker": "CS Basics",
+  "tags": [
+    "os",
+    "architecture",
+    "networking",
+    "linux",
+    "cpp",
+    "distributed"
+  ],
+  "output": "pages/cs-basics/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-basics-tabs",
+      "title": "计算机基础知识",
+      "items": [
+        {
+          "title": "操作系统基础",
+          "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、Signal",
+          "files": [
+            "os/01-process-thread-coroutine.md",
+            "os/02-cpu-scheduling.md",
+            "os/03-memory-oom-numa.md",
+            "os/04-signal-stdio.md"
+          ]
+        },
+        {
+          "title": "计算机组成原理",
+          "description": "CPU/内存层次、Cache/TLB、DMA、PCIe、NUMA 拓扑",
+          "files": [
+            "computer-architecture/01-cpu-memory-hierarchy.md",
+            "computer-architecture/02-cache-tlb.md",
+            "computer-architecture/03-dma-pcie-numa.md"
+          ]
+        },
+        {
+          "title": "计算机网络基础",
+          "description": "TCP/UDP、HTTP/gRPC/RPC、RDMA/RoCE/IB",
+          "files": [
+            "networking/01-tcp-udp.md",
+            "networking/02-http-grpc-rpc.md",
+            "networking/03-rdma.md"
+          ]
+        },
+        {
+          "title": "Linux 与容器基础",
+          "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s",
+          "files": [
+            "linux-container/01-env-runtime.md",
+            "linux-container/02-namespace-cgroup-rootfs.md",
+            "linux-container/03-docker-k8s-resource.md"
+          ]
+        },
+        {
+          "title": "编程语言与工程基础",
+          "description": "Binary、编译链接、动态库、ABI、C++ 系统编程",
+          "files": [
+            "programming-systems/01-binary-linking.md",
+            "programming-systems/02-cpp-systems.md"
+          ]
+        },
+        {
+          "title": "分布式与 AI Infra 基础",
+          "description": "Role/Replica/Rank、NCCL/RPC、存储链路、GPU/NPU 观测",
+          "files": [
+            "distributed-ai/01-role-replica-rank.md",
+            "distributed-ai/02-communication-storage.md",
+            "distributed-ai/03-gpu-npu-observability.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

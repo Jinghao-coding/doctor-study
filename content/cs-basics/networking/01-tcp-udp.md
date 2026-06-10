@@ -1,0 +1,2 @@
+<div class="card card-m"><h3>TCP 与 UDP 的核心区别</h3><table><tr><th>维度</th><th>TCP</th><th>UDP</th></tr><tr><td>连接</td><td>面向连接</td><td>无连接</td></tr><tr><td>可靠性</td><td>重传、有序、流控、拥塞控制</td><td>不保证可靠和有序</td></tr><tr><td>延迟/开销</td><td>开销更高</td><td>开销更低</td></tr><tr><td>场景</td><td>HTTP/gRPC、数据库、可靠 RPC</td><td>DNS、实时音视频、QUIC 底层</td></tr></table></div>
+<div class="card card-s"><h3>面试重点</h3><p>TCP 不是“永远可靠”，而是通过确认、重传、窗口、拥塞控制尽力提供可靠字节流。真实系统还要处理超时、半开连接、队头阻塞、连接池和重试风暴。</p></div>

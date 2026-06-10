@@ -1,0 +1,42 @@
+{
+  "title": "操作系统基础",
+  "subtitle": "进程线程协程 · CPU 调度 · 内存/OOM/NUMA · Signal/标准流",
+  "kicker": "CS Basics",
+  "tags": [
+    "os",
+    "linux",
+    "scheduling",
+    "memory"
+  ],
+  "output": "pages/cs-basics/os/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-os-tabs",
+      "title": "操作系统基础",
+      "items": [
+        {
+          "title": "进程、线程、协程",
+          "description": "资源边界、调度主体、上下文切换、并发模型",
+          "file": "01-process-thread-coroutine.md"
+        },
+        {
+          "title": "CPU 调度",
+          "description": "FIFO、SJF、RR、优先级、CFS、抢占与非抢占",
+          "file": "02-cpu-scheduling.md"
+        },
+        {
+          "title": "内存、OOM 与 NUMA",
+          "description": "虚拟内存、page cache、swap、cgroup、NUMA locality",
+          "file": "03-memory-oom-numa.md"
+        },
+        {
+          "title": "Signal 与标准流",
+          "description": "SIGTERM/SIGKILL、graceful shutdown、stdin/stdout/stderr",
+          "file": "04-signal-stdio.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

@@ -8,13 +8,21 @@
 </head>
 <body>
 <nav class="topnav">
-  <a class="home" href="{{home_path}}">← 首页</a>
-  <span class="sep">·</span>
-{{nav_links}}
+{{top_nav}}
 </nav>
-<div class="wrap">
-{{content}}
+<div class="app-shell">
+{{side_nav}}
+  <main class="wrap">
+  {{content}}
+  </main>
 </div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>doctor-study · AI Infra 面试准备</span>
+    <span class="footer-dot">·</span>
+    <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
+  </div>
+</footer>
 <script src="{{script_path}}"></script>
 </body>
 </html>

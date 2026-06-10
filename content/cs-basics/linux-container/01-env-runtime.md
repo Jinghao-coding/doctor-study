@@ -1,0 +1,2 @@
+<div class="card card-m"><h3>环境变量与运行环境</h3><p>环境变量是进程启动时继承的一组 key-value，用于传递配置、路径、鉴权和运行模式。它不是全局状态，而是每个进程自己的环境快照。</p></div>
+<div class="card card-d"><h3>常见变量</h3><table><tr><th>变量</th><th>作用</th><th>问题</th></tr><tr><td>PATH</td><td>查找可执行文件</td><td>命令找不到或执行了错误版本</td></tr><tr><td>LD_LIBRARY_PATH</td><td>动态库查找路径</td><td>缺库、ABI 不兼容</td></tr><tr><td>CUDA_VISIBLE_DEVICES</td><td>控制 GPU 可见性</td><td>容器内卡号和宿主机卡号映射混淆</td></tr><tr><td>HTTP_PROXY</td><td>网络代理</td><td>下载失败或访问内网异常</td></tr></table></div>

@@ -3,6 +3,19 @@
 <p>经典调度算法是所有调度系统的基础。不管你用的是 K8S 默认调度器、Volcano 还是自研调度器，底层的排序逻辑一定逃不出这几个经典算法的思想。面试中，面试官期望你不只是知道算法名字，还能说清楚：<strong>为什么这个算法最优？最优的条件是什么？在什么条件下它会失败？</strong></p>
 </div>
 
+<div class="card card-d">
+<h3>操作系统算法到 AI 集群调度的映射</h3>
+<p>FIFO、SJF、Round Robin、优先级、CFS 这些名字来自操作系统，但在 AI Infra 里会变成队列排序、准入控制、租户公平、抢占和节点放置策略。学习时建议把它们分成两层：<strong>排序层</strong>决定“谁先被考虑”，<strong>放置层</strong>决定“放到哪里”。</p>
+<table>
+<tr><th>OS 调度概念</th><th>核心含义</th><th>集群调度中的对应物</th><th>AI Infra 注意点</th></tr>
+<tr><td>FIFO / FCFS</td><td>按到达顺序执行</td><td>队列按提交时间排序</td><td>大 gang 任务可能造成 head-of-line blocking</td></tr>
+<tr><td>SJF</td><td>短任务优先</td><td>短实验、短 inference batch、短 pipeline stage 优先</td><td>需要运行时长预测，长任务要配 aging 防饥饿</td></tr>
+<tr><td>Round Robin</td><td>时间片轮转</td><td>队列/租户轮转，按 ClusterQueue 轮转取任务</td><td>GPU 任务不适合频繁时间片切换，但适合队列级轮转</td></tr>
+<tr><td>优先级调度</td><td>高优先级先执行</td><td>PriorityClass、Queue priority、抢占</td><td>低优任务要有 aging 或保障份额，否则会长期饥饿</td></tr>
+<tr><td>CFS</td><td>按虚拟运行时间实现公平份额</td><td>按 dominant share、quota debt 或保障度做公平调度</td><td>多资源场景不能只按 GPU 数公平，要看 CPU/内存/GPU/NIC 的主导资源</td></tr>
+</table>
+</div>
+
 <div class="card card-s">
 <h3>基础调度策略详解</h3>
 
@@ -75,10 +88,19 @@
 <p>这是放置策略的经典对比，面试中经常出现。</p>
 
 <h4>Bin Packing</h4>
-<p><strong>定义</strong>：尽量把任务塞到已有节点，减少碎片。</p>
+<p><strong>定义</strong>：尽量把任务塞到已有节点，减少碎片。它来自装箱问题：给定一批物品和若干箱子，希望用尽可能少的箱子装下所有物品。在调度里，物品是 Pod/Job 的资源需求，箱子是 Node 或资源池。</p>
 <p><strong>类比</strong>：装箱——先把一个箱子装满，再开新的。</p>
 <p><strong>GPU 集群为什么常用</strong>：GPU 是昂贵资源，碎片化（节点 A 剩 1 GPU，节点 B 也剩 1 GPU，但需要 2 GPU 的任务放不进去）是最大浪费。Bin Packing 尽量让某些节点跑满，留出完整的空闲节点给大 gang。</p>
 <p><strong>风险</strong>：(1) 单节点故障影响更多任务（爆炸半径大）；(2) 热点——某些节点过于拥挤。</p>
+
+<h4>Bin Packing 在调度器里怎么实现</h4>
+<table>
+<tr><th>层次</th><th>做法</th><th>直觉</th><th>风险控制</th></tr>
+<tr><td>Filter</td><td>过滤放不下 CPU/内存/GPU/端口/拓扑约束的节点</td><td>先保证可行</td><td>不要为了装箱破坏硬约束</td></tr>
+<tr><td>Score</td><td>给“放入后剩余资源更少、更紧凑”的节点更高分</td><td>优先填满已有节点</td><td>加入温度、故障域、拓扑质量权重</td></tr>
+<tr><td>Reserve</td><td>暂存被选节点上的资源占用</td><td>避免并发调度重复占用</td><td>失败时必须 Unreserve</td></tr>
+<tr><td>全局队列</td><td>把小任务回填到碎片，把大任务留完整资源窗口</td><td>减少碎片累积</td><td>配合 backfill 和 aging 避免大任务/小任务互相伤害</td></tr>
+</table>
 
 <h4>Spread</h4>
 <p><strong>定义</strong>：尽量把任务分散到不同节点。</p>

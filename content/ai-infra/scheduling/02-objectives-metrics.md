@@ -115,6 +115,33 @@
 <p>Bin packing 降低碎片，但把任务集中到少数节点会增加单节点故障的影响范围。解决方式是按故障域分级——在线服务尽量分散，训练任务可以集中但需要快速恢复机制。</p>
 </div>
 
+<div class="card card-d">
+<h3>公平性、吞吐量、延迟、资源利用率的 trade-off</h3>
+<p>调度系统不可能同时把所有指标都推到最优。面试里最重要的不是说“我都优化”，而是说明你的场景下哪个指标是硬约束、哪个是优化目标、哪个可以让步。</p>
+<table>
+<tr><th>优化目标</th><th>常用策略</th><th>通常牺牲什么</th><th>适用场景</th><th>风险</th></tr>
+<tr><td>公平性</td><td>quota、DRF、CFS-like share、aging</td><td>短期利用率和整体吞吐</td><td>多租户平台、共享 GPU 集群</td><td>严格隔离会让空闲配额不能被借用</td></tr>
+<tr><td>吞吐量</td><td>SJF、batching、bin packing、提高并发</td><td>单个任务延迟和长任务公平</td><td>离线批处理、低优训练队列</td><td>短任务偏置导致长任务饥饿</td></tr>
+<tr><td>低延迟</td><td>优先级、预留资源、抢占、spread</td><td>资源利用率和吞吐</td><td>在线推理、交互式 notebook、紧急任务</td><td>预留过多会造成 GPU 闲置</td></tr>
+<tr><td>高资源利用率</td><td>backfill、bin packing、GPU sharing、超卖</td><td>SLO、故障隔离、公平性</td><td>成本敏感平台、离线混部</td><td>“忙但没产出”，或互相干扰</td></tr>
+</table>
+<div class="qa-summary">回答模板：先说场景，再定硬约束，然后说明优化目标和牺牲项。例如在线推理把 SLO 当硬约束，训练队列把利用率/JCT 当优化目标，多租户平台把公平性当底线。</div>
+</div>
+
+<div class="card card-s">
+<h3>在线调度 vs 离线调度</h3>
+<p>在线和离线不是“线上服务”和“离线任务”的简单同义词，而是算法是否提前知道完整输入的区别。在线调度只能看到已经到达的任务，必须边到达边决策；离线调度提前知道全部任务、资源和运行时间，可以做全局优化。</p>
+<table>
+<tr><th>维度</th><th>在线调度 Online Scheduling</th><th>离线调度 Offline Scheduling</th></tr>
+<tr><td>信息可见性</td><td>只知道当前和历史任务，不知道未来</td><td>提前知道完整任务集合和约束</td></tr>
+<tr><td>决策方式</td><td>每个任务到达时立即或短时间内决策</td><td>可以全局搜索、排序、规划</td></tr>
+<tr><td>典型系统</td><td>K8s scheduler、在线推理调度、交互式实验平台</td><td>批处理排程、生产计划、trace replay 仿真</td></tr>
+<tr><td>评价重点</td><td>竞争比、延迟、鲁棒性、实时响应</td><td>全局最优性、makespan、平均 JCT</td></tr>
+<tr><td>工程难点</td><td>未来不确定、任务时长预测不准、不能频繁反悔</td><td>求解复杂度高，假设可能不符合真实在线环境</td></tr>
+</table>
+<p>AI 集群大多数实际调度是在线调度，但会吸收离线思想：用历史 trace 训练预测器，用未来资源释放估计做 backfill，用离线仿真评估策略。</p>
+</div>
+
 <div class="card card-m">
 <h3>面试回答模板</h3>
 <p>当面试官问"你怎么衡量调度系统的好坏"，用这个框架回答：</p>

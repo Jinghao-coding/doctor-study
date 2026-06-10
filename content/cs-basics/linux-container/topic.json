@@ -1,0 +1,37 @@
+{
+  "title": "Linux 与容器基础",
+  "subtitle": "环境变量 · namespace · cgroup · Docker/K8s · QoS/RSS/Usage",
+  "kicker": "CS Basics",
+  "tags": [
+    "linux",
+    "container",
+    "docker",
+    "cgroup"
+  ],
+  "output": "pages/cs-basics/linux-container/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-linux-container-tabs",
+      "title": "Linux 与容器基础",
+      "items": [
+        {
+          "title": "环境变量与运行环境",
+          "description": "env、PATH、LD_LIBRARY_PATH、配置注入",
+          "file": "01-env-runtime.md"
+        },
+        {
+          "title": "namespace / cgroup / rootfs",
+          "description": "容器隔离三件套",
+          "file": "02-namespace-cgroup-rootfs.md"
+        },
+        {
+          "title": "Docker 与 Kubernetes 资源模型",
+          "description": "requests/limits、QoS、RSS/Usage、OOMKilled",
+          "file": "03-docker-k8s-resource.md"
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

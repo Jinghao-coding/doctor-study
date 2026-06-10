@@ -1,0 +1,3 @@
+<div class="card card-m"><h3>Cache、TLB 和局部性</h3><p>Cache 利用时间局部性和空间局部性减少内存访问；TLB 缓存虚拟地址到物理地址的页表翻译结果。Cache miss 和 TLB miss 都会显著拖慢程序。</p></div>
+<div class="card card-s"><h3>False Sharing</h3><p>多个线程修改不同变量，但这些变量落在同一 cache line 上，会导致 cache coherence 协议反复让 cache line 在 core 之间迁移。现象是 CPU 利用率高但吞吐低。</p><div class="qa-summary">解决：padding、alignas、按线程分片计数、减少共享写。</div></div>
+<div class="card card-d"><h3>面试排查入口</h3><table><tr><th>问题</th><th>现象</th><th>工具</th></tr><tr><td>Cache miss 高</td><td>CPU 等内存</td><td><code>perf stat</code>、PMU</td></tr><tr><td>TLB miss 高</td><td>随机访问大内存慢</td><td><code>perf stat</code>、hugepage</td></tr><tr><td>False sharing</td><td>多线程扩展性差</td><td><code>perf c2c</code>、benchmark 对比</td></tr></table></div>
