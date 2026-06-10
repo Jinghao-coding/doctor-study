@@ -1,6 +1,6 @@
 {
   "title": "GPU 硬件与资源共享",
-  "subtitle": "硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · CUDA VMM · 面试体系化复习",
+  "subtitle": "硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · K8S 共享 · CUDA VMM · 面试体系化复习",
   "kicker": "AI Infra Foundation",
   "tags": [
     "gpu",
@@ -38,6 +38,11 @@
           "title": "共享方式",
           "description": "MIG、MPS、时间片、CUDA VMM",
           "file": "02-sharing.md"
+        },
+        {
+          "title": "K8S GPU 共享",
+          "description": "K8S 里的 MPS、time-slicing、device-plugin 配置",
+          "file": "10-k8s-gpu-sharing.md"
         },
         {
           "title": "性能指标",
@@ -88,6 +93,10 @@
     {
       "title": "GPU 共享方式",
       "file": "02-sharing.md"
+    },
+    {
+      "title": "K8S GPU 共享",
+      "file": "10-k8s-gpu-sharing.md"
     },
     {
       "title": "GPU 性能指标",
