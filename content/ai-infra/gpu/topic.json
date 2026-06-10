@@ -20,6 +20,11 @@
       "title": "GPU 内容模块",
       "items": [
         {
+          "title": "CPU vs GPU",
+          "description": "架构差异、为什么 GPU 适合深度学习",
+          "file": "00-cpu-vs-gpu.md"
+        },
+        {
           "title": "硬件基础",
           "description": "架构、A100/H100/H200、显存带宽",
           "file": "01-hardware.md"
@@ -45,6 +50,16 @@
           "file": "07-utilization-diagnosis.md"
         },
         {
+          "title": "Stream 与数据拷贝",
+          "description": "CUDA stream、H2D/D2H、Pinned Memory、计算拷贝重叠",
+          "file": "08-cuda-streams-data-copy.md"
+        },
+        {
+          "title": "瓶颈分类",
+          "description": "计算瓶颈、显存瓶颈、通信瓶颈的判断与优化",
+          "file": "09-bottleneck-classification.md"
+        },
+        {
           "title": "性能预测指标",
           "description": "MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵",
           "file": "04-prediction-metrics.md"
@@ -58,6 +73,10 @@
     }
   ],
   "sections": [
+    {
+      "title": "CPU vs GPU 架构差异",
+      "file": "00-cpu-vs-gpu.md"
+    },
     {
       "title": "GPU 硬件基础",
       "file": "01-hardware.md"
@@ -77,6 +96,14 @@
     {
       "title": "GPU 利用率诊断",
       "file": "07-utilization-diagnosis.md"
+    },
+    {
+      "title": "CUDA Stream 与数据拷贝",
+      "file": "08-cuda-streams-data-copy.md"
+    },
+    {
+      "title": "GPU 瓶颈分类",
+      "file": "09-bottleneck-classification.md"
     },
     {
       "title": "GPU 性能预测指标",
