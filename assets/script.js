@@ -20,7 +20,7 @@ document.addEventListener('keydown', function(e){
 });
 
 document.addEventListener('DOMContentLoaded', function(){
-  var nav = document.querySelector('.topnav');
+  var nav = document.querySelector('.topnav') || document.querySelector('.idx-home-nav');
   if(!nav) return;
 
   var toggle = document.createElement('button');

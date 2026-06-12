@@ -7,58 +7,38 @@
 <link rel="stylesheet" href="{{css_path}}">
 </head>
 <body class="home-page">
-<main class="home-shell">
 
 <header class="idx-topbar">
-  <a class="idx-logo" href="index.html" aria-label="doctor-study 首页">
-    <span>DS</span>
-    <strong>doctor-study</strong>
-  </a>
-  <nav class="idx-home-nav" aria-label="首页快捷入口">
-    <a href="pages/ai-infra/gpu/index.html">GPU</a>
-    <a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>
-    <a href="pages/cs-basics/index.html">计算机基础</a>
-    <a href="pages/ai-infra/agent/index.html">AI Agent</a>
-  </nav>
+  <div class="idx-topbar-inner">
+    <a class="idx-logo" href="index.html" aria-label="doctor-study 首页">
+      <span>DS</span>
+      <strong>doctor-study</strong>
+    </a>
+    <nav class="idx-home-nav" aria-label="首页快捷入口">
+      <a href="pages/ai-infra/gpu/index.html">GPU</a>
+      <a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>
+      <a href="pages/cs-basics/index.html">计算机基础</a>
+      <a href="pages/ai-infra/agent/index.html">AI Agent</a>
+    </nav>
+  </div>
 </header>
 
+<main class="home-shell">
+
 <section class="idx-hero">
-  <div class="idx-hero-copy">
-    <div class="idx-kicker">AI Infra Interview Operating System</div>
-    <h1>把面试知识组织成一张系统地图</h1>
-    <p class="sub">{{subtitle}}</p>
-    <p class="idx-hero-desc">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到“资源路径”和“面试回答”里理解，而不是孤立背概念。</p>
-    <div class="idx-actions">
-      <a class="idx-primary" href="pages/ai-infra/gpu/index.html">从 GPU 主线开始</a>
-      <a class="idx-secondary" href="pages/cs-basics/index.html">补 Linux/CS 基础</a>
-      <a class="idx-secondary" href="pages/ai-infra/system-design/index.html">进入系统设计题</a>
-    </div>
-    <div class="idx-hero-stats" aria-label="站点内容概览">
-      <div><strong>11</strong><span>学习主题</span></div>
-      <div><strong>4</strong><span>复习主线</span></div>
-      <div><strong>QA</strong><span>面试问答</span></div>
-    </div>
+  <div class="idx-kicker">AI Infra Interview Notes</div>
+  <h1>把面试知识组织成一张系统地图</h1>
+  <p class="idx-hero-desc">{{subtitle}}</p>
+  <p class="idx-hero-sub">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到资源路径和面试回答里理解，而不是孤立背概念。</p>
+  <div class="idx-actions">
+    <a class="idx-primary" href="pages/ai-infra/gpu/index.html">从 GPU 主线开始</a>
+    <a class="idx-secondary" href="pages/cs-basics/index.html">补 Linux / CS 基础</a>
+    <a class="idx-secondary" href="pages/ai-infra/system-design/index.html">进入系统设计题</a>
   </div>
-  <div class="idx-hero-panel" aria-label="学习驾驶舱">
-    <div class="idx-panel-top">
-      <span>Module Radar</span>
-      <strong>从底层到系统</strong>
-    </div>
-    <div class="idx-radar">
-      <div class="idx-radar-core">AI Infra</div>
-      <span class="r1">GPU</span>
-      <span class="r2">Linux</span>
-      <span class="r3">K8s</span>
-      <span class="r4">LLM</span>
-      <span class="r5">NCCL</span>
-      <span class="r6">Agent</span>
-    </div>
-    <div class="idx-mini-flow" aria-label="推荐复习路径">
-      <span>硬件资源路径</span>
-      <span>内核与容器隔离</span>
-      <span>训练/推理调度</span>
-      <span>系统设计表达</span>
-    </div>
+  <div class="idx-hero-stats" aria-label="站点内容概览">
+    <div><strong>11</strong><span>学习主题</span></div>
+    <div><strong>4</strong><span>复习主线</span></div>
+    <div><strong>QA</strong><span>面试问答</span></div>
   </div>
 </section>
 
@@ -66,7 +46,7 @@
   <article>
     <span>01</span>
     <h3>先建立资源路径直觉</h3>
-    <p>看 GPU、PCIe/NVLink、RDMA、NUMA，理解数据真正从哪里走。</p>
+    <p>看 GPU、PCIe / NVLink、RDMA、NUMA，理解数据真正从哪里走。</p>
   </article>
   <article>
     <span>02</span>
@@ -80,61 +60,51 @@
   </article>
 </section>
 
-<div class="idx-section-header">
-  <span class="idx-section-dot"></span>
-  <div>
-    <h2>模块分区</h2>
-    <p>按复习目标拆成 4 条路径，先看入口，再深入每个页面的模块切换和问答。</p>
+<section class="idx-track" aria-label="底层资源与计算机基础">
+  <div class="idx-track-head">
+    <span>Foundation</span>
+    <h2>底层资源与计算机基础</h2>
+    <p>先把 GPU、CPU、内存、网络、I/O 的物理路径和 Linux 抽象讲清楚。</p>
   </div>
-</div>
-
-<section class="idx-module-board" aria-label="学习模块分区">
-  <article class="idx-track idx-track-featured">
-    <div class="idx-track-head">
-      <span>Foundation</span>
-      <h3>底层资源与计算机基础</h3>
-      <p>先把 GPU、CPU、内存、网络、I/O 的物理路径和 Linux 抽象讲清楚。</p>
-    </div>
-    <div class="idx-track-cards">
-      {{foundation_cards}}
-    </div>
-  </article>
-
-  <article class="idx-track">
-    <div class="idx-track-head">
-      <span>Systems</span>
-      <h3>训练、推理与集群调度</h3>
-      <p>围绕大模型任务生命周期，理解调度器、训练并行、推理引擎和集群治理。</p>
-    </div>
-    <div class="idx-track-cards">
-      {{systems_cards}}
-    </div>
-  </article>
-
-  <article class="idx-track">
-    <div class="idx-track-head">
-      <span>Interview</span>
-      <h3>系统设计与工程表达</h3>
-      <p>把知识点组织成可以回答的方案：容量、调度、性能预测、Agent 工程。</p>
-    </div>
-    <div class="idx-track-cards">
-      {{interview_cards}}
-    </div>
-  </article>
-
-  <article class="idx-track idx-track-compact">
-    <div class="idx-track-head">
-      <span>Research</span>
-      <h3>论文与项目复盘</h3>
-      <p>用于沉淀论文工作、项目方案、实验结果和高频追问。</p>
-    </div>
-    <div class="idx-track-cards">
-      {{paper_cards}}
-    </div>
-  </article>
+  <div class="idx-track-cards">
+    {{foundation_cards}}
+  </div>
 </section>
 
-<section class="idx-footer-panel">
+<section class="idx-track" aria-label="训练、推理与集群调度">
+  <div class="idx-track-head">
+    <span>Systems</span>
+    <h2>训练、推理与集群调度</h2>
+    <p>围绕大模型任务生命周期，理解调度器、训练并行、推理引擎和集群治理。</p>
+  </div>
+  <div class="idx-track-cards">
+    {{systems_cards}}
+  </div>
+</section>
+
+<section class="idx-track" aria-label="系统设计与工程表达">
+  <div class="idx-track-head">
+    <span>Interview</span>
+    <h2>系统设计与工程表达</h2>
+    <p>把知识点组织成可以回答的方案：容量、调度、性能预测、Agent 工程。</p>
+  </div>
+  <div class="idx-track-cards">
+    {{interview_cards}}
+  </div>
+</section>
+
+<section class="idx-track" aria-label="论文与项目复盘">
+  <div class="idx-track-head">
+    <span>Research</span>
+    <h2>论文与项目复盘</h2>
+    <p>用于沉淀论文工作、项目方案、实验结果和高频追问。</p>
+  </div>
+  <div class="idx-track-cards">
+    {{paper_cards}}
+  </div>
+</section>
+
+<footer class="idx-footer-panel">
   <div>
     <h3>维护约定</h3>
     <p>内容源统一维护在 <code>content/</code>，页面由 <code>tools/build_site.py</code> 生成；新增资料放入 <code>resources/</code>。</p>
@@ -144,7 +114,7 @@
     <span>右下角目录</span>
     <span>模块搜索</span>
   </div>
-</section>
+</footer>
 
 </main>
 <script src="{{script_path}}"></script>

@@ -12,6 +12,57 @@ CONTENT = ROOT / "content"
 TEMPLATES = ROOT / "templates"
 SITE = json.loads((CONTENT / "site.json").read_text(encoding="utf-8"))
 
+# 单一分类数据源：首页 Track、顶部导航、侧栏「学习主题」三处共用，避免分类逻辑漂移。
+TRACKS = [
+    {
+        "key": "foundation_cards",
+        "label": "底层资源与基础",
+        "eyebrow": "Foundation",
+        "slugs": ["ai-infra/gpu", "cs-basics"],
+    },
+    {
+        "key": "systems_cards",
+        "label": "训练推理与调度",
+        "eyebrow": "Systems",
+        "slugs": [
+            "ai-infra/llm-inference",
+            "ai-infra/kubernetes",
+            "ai-infra/scheduling",
+            "ai-infra/distributed-training",
+            "ai-infra/cluster-management",
+        ],
+    },
+    {
+        "key": "interview_cards",
+        "label": "系统设计与表达",
+        "eyebrow": "Interview",
+        "slugs": [
+            "ai-infra/performance-prediction",
+            "ai-infra/system-design",
+            "ai-infra/agent",
+        ],
+    },
+    {
+        "key": "paper_cards",
+        "label": "论文与复盘",
+        "eyebrow": "Research",
+        "slugs": ["ai-infra/papers"],
+    },
+]
+
+
+def track_of(topic: dict) -> dict | None:
+    slug = topic.get("slug", "")
+    for track in TRACKS:
+        if slug in track["slugs"]:
+            return track
+    return None
+
+
+def topics_in_track(track: dict) -> list[dict]:
+    """按 site.json 中 topics 的出现顺序返回属于该 track 的主题。"""
+    return [t for t in SITE.get("topics", []) if t.get("slug") in track["slugs"]]
+
 
 def rel_link(output: Path, target: str) -> str:
     target_path = ROOT / target
@@ -195,20 +246,7 @@ def markdown_to_html(markdown: str) -> str:
     return "\n".join(out)
 
 
-def topic_group(topic: dict) -> str:
-    slug = topic.get("slug", "")
-    if slug.startswith("ai-infra/"):
-        return "AI Infra"
-    if slug.startswith("cs-basics"):
-        return "计算机基础"
-    return "其他"
-
-
 def render_top_nav(output: Path) -> str:
-    topics = SITE.get("topics", [])
-    ai_topics = [topic for topic in topics if topic_group(topic) == "AI Infra"]
-    cs_topics = [topic for topic in topics if topic_group(topic) == "计算机基础"]
-
     def topic_link(topic: dict) -> str:
         return (
             f'<a href="{rel_link(output, topic["output"])}">'
@@ -217,8 +255,19 @@ def render_top_nav(output: Path) -> str:
             "</a>"
         )
 
-    ai_menu = "".join(topic_link(topic) for topic in ai_topics)
-    cs_href = rel_link(output, cs_topics[0]["output"]) if cs_topics else rel_link(output, "index.html")
+    menus = []
+    for track in TRACKS:
+        topics = topics_in_track(track)
+        if not topics:
+            continue
+        links = "".join(topic_link(topic) for topic in topics)
+        menus.append(
+            '<details class="nav-menu">'
+            f'<summary>{html.escape(track["label"])}</summary>'
+            f'<div class="nav-menu-panel">{links}</div>'
+            '</details>'
+        )
+
     return (
         '<a class="nav-brand" href="{home}">'
         '<span class="brand-mark">DS</span>'
@@ -226,24 +275,20 @@ def render_top_nav(output: Path) -> str:
         '</a>'
         '<div class="nav-primary">'
         '<a class="nav-pill" href="{home}">首页</a>'
-        '<details class="nav-menu">'
-        '<summary>AI Infra</summary>'
-        '<div class="nav-menu-panel">{ai_menu}</div>'
-        '</details>'
-        '<a class="nav-pill" href="{cs_href}">计算机基础</a>'
+        '{menus}'
         '<button class="nav-search" type="button" data-focus-tabs>搜索模块</button>'
         '</div>'
         '<button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>'
-    ).format(home=rel_link(output, "index.html"), ai_menu=ai_menu, cs_href=cs_href)
+    ).format(home=rel_link(output, "index.html"), menus="".join(menus))
 
 
 def render_side_nav(output: Path, current_output: Path) -> str:
-    groups: dict[str, list[dict]] = {}
-    for topic in SITE.get("topics", []):
-        groups.setdefault(topic_group(topic), []).append(topic)
-
     sections = []
-    for group_name, topics in groups.items():
+    for track in TRACKS:
+        topics = topics_in_track(track)
+        if not topics:
+            continue
+        group_name = track["label"]
         links = []
         for topic in topics:
             active = (ROOT / topic["output"]).resolve() == current_output.resolve()
@@ -527,25 +572,9 @@ def render_index() -> Path:
 
     topics = SITE.get("topics", [])
     cards = [topic_card(topic) for topic in topics]
-    groups = {
-        "foundation_cards": {"ai-infra/gpu", "cs-basics"},
-        "systems_cards": {
-            "ai-infra/llm-inference",
-            "ai-infra/kubernetes",
-            "ai-infra/scheduling",
-            "ai-infra/distributed-training",
-            "ai-infra/cluster-management",
-        },
-        "interview_cards": {
-            "ai-infra/performance-prediction",
-            "ai-infra/system-design",
-            "ai-infra/agent",
-        },
-        "paper_cards": {"ai-infra/papers"},
-    }
     grouped_cards = {
-        key: "\n\n".join(topic_card(topic) for topic in topics if topic.get("slug") in slugs)
-        for key, slugs in groups.items()
+        track["key"]: "\n\n".join(topic_card(topic) for topic in topics_in_track(track))
+        for track in TRACKS
     }
     template = (TEMPLATES / "index.html").read_text(encoding="utf-8")
     page = template.replace("{{title}}", html.escape(SITE["title"]))
