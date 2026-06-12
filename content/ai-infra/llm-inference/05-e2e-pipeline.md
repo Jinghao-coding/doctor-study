@@ -1,5 +1,15 @@
 <h3>完整推理链路概览</h3>
-<p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>：请求封装 → tokenization → 推理调度 → prefill → decode → 结果反解码返回。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
+<p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
+
+```flow
+请求封装 | 组织 system、user、assistant 消息和生成参数
+Tokenization | 把自然语言切成模型可读的 token IDs
+推理调度 | 排队、优先级、continuous batching、KV Cache 预算
+Prefill | 并行处理完整 prompt，建立初始 KV Cache
+Decode | 逐 token 自回归生成，并持续更新 KV Cache
+反解码返回 | 采样、detokenize，并通过流式接口返回
+```
+
 <p>这种"自回归 + 不做本次梯度更新"的推理方式，正是 GPT 类语言模型的基本范式；而 Transformer 则提供了它内部 attention 和前馈网络的计算骨架。</p>
 
 <h3>第一阶段：请求封装与 Tokenization</h3>

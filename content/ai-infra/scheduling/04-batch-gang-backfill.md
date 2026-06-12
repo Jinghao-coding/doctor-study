@@ -97,15 +97,17 @@
 
 <div class="card card-d">
 <h3>EASY Backfill 的调度流程</h3>
-<ol>
-<li><strong>取队头任务</strong>：每轮调度先看队列第一个任务。</li>
-<li><strong>尝试直接启动</strong>：如果队头任务现在能启动，直接调度，不需要回填。</li>
-<li><strong>估计最早启动时间</strong>：如果现在跑不了，根据 running jobs 的预计完成时间模拟未来资源释放。</li>
-<li><strong>建立逻辑预留</strong>：记录队头任务的 reservation time 和资源需求，避免后续任务破坏这次预留。</li>
-<li><strong>扫描后续任务</strong>：逐个判断候选任务是否能使用当前碎片资源。</li>
-<li><strong>检查结束时间或抢占能力</strong>：候选任务预计能按时结束，或者可在 reservation time 被抢占，才允许回填。</li>
-<li><strong>到期回收</strong>：如果回填任务超时未结束，优先优雅退出；不可等待时强制抢占。</li>
-</ol>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">取队头任务</div><div class="flow-desc">每轮调度先看队列第一个任务</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">尝试直接启动</div><div class="flow-desc">如果队头任务现在能启动，直接调度</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">估计最早启动时间</div><div class="flow-desc">根据 running jobs 的预计完成时间模拟未来资源释放</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">建立逻辑预留</div><div class="flow-desc">记录 reservation time 和资源需求，避免后续任务破坏预留</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">扫描后续任务</div><div class="flow-desc">逐个判断候选任务是否能使用当前碎片资源</div></div>
+<div class="flow-step"><div class="flow-index">06</div><div class="flow-title">检查结束时间或抢占能力</div><div class="flow-desc">能按时结束，或可在 reservation time 被抢占，才允许回填</div></div>
+<div class="flow-step"><div class="flow-index">07</div><div class="flow-title">到期回收</div><div class="flow-desc">回填任务超时未结束时优雅退出或强制抢占</div></div>
+</div>
+
 <pre><code>head = queue.first()
 
 if can_schedule(head):

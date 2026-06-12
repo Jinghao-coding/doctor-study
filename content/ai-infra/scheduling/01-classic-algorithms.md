@@ -74,12 +74,14 @@
 
 <h4>实际系统的组合策略</h4>
 <p>真实调度器不会只用一个算法，而是<strong>组合使用</strong>：</p>
-<ul>
-<li><strong>排序阶段</strong>：优先级 + SJF（同优先级内按运行时间排序）</li>
-<li><strong>准入阶段</strong>：Gang 检查 + Quota 检查</li>
-<li><strong>放置阶段</strong>：Bin Packing + 拓扑打分</li>
-<li><strong>抢占阶段</strong>：优先级 + 代价感知</li>
-</ul>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">排序阶段</div><div class="flow-desc">优先级 + SJF，同优先级内按运行时间排序</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">准入阶段</div><div class="flow-desc">Gang 检查 + Quota 检查</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">放置阶段</div><div class="flow-desc">Bin Packing + 拓扑打分</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">抢占阶段</div><div class="flow-desc">优先级 + 代价感知</div></div>
+</div>
+
 <p>面试中，你要说清楚"每个决策点用了哪个算法的什么思想"，而不是笼统地说"用了 SJF"。</p>
 </div>
 

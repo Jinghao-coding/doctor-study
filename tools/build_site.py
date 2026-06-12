@@ -29,6 +29,7 @@ def apply_inline(text: str) -> str:
     text = html.escape(text)
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", r'<a href="\2">\1</a>', text)
     return text
 
 
@@ -47,6 +48,36 @@ def render_table(lines: list[str]) -> str:
     return "\n".join(parts)
 
 
+def render_flow(lines: list[str]) -> str:
+    steps = []
+    for index, line in enumerate(lines, 1):
+        text = line.strip()
+        if not text:
+            continue
+        if "|" in text:
+            title, desc = [part.strip() for part in text.split("|", 1)]
+        else:
+            title, desc = text, ""
+        desc_html = f'<div class="flow-desc">{apply_inline(desc)}</div>' if desc else ""
+        steps.append(
+            '<div class="flow-step">'
+            f'<div class="flow-index">{index:02d}</div>'
+            f'<div class="flow-title">{apply_inline(title)}</div>'
+            f'{desc_html}'
+            '</div>'
+        )
+    if not steps:
+        return ""
+    return '<div class="flow" role="list">' + "".join(steps) + "</div>"
+
+
+def render_code_block(lines: list[str], lang: str) -> str:
+    if lang.lower() == "flow":
+        return render_flow(lines)
+    class_attr = f' class="language-{html.escape(lang)}"' if lang else ""
+    return f"<pre><code{class_attr}>" + html.escape("\n".join(lines)) + "</code></pre>"
+
+
 def markdown_to_html(markdown: str) -> str:
     out: list[str] = []
     para: list[str] = []
@@ -55,6 +86,7 @@ def markdown_to_html(markdown: str) -> str:
     table_lines: list[str] = []
     code_lines: list[str] = []
     in_code = False
+    code_lang = ""
     raw_html_lines: list[str] = []
     raw_html_tag: str | None = None
     raw_html_depth = 0
@@ -95,11 +127,13 @@ def markdown_to_html(markdown: str) -> str:
         if line.startswith("```"):
             flush_para(); flush_list(); flush_table()
             if in_code:
-                out.append("<pre><code>" + html.escape("\n".join(code_lines)) + "</code></pre>")
+                out.append(render_code_block(code_lines, code_lang))
                 code_lines = []
                 in_code = False
+                code_lang = ""
             else:
                 in_code = True
+                code_lang = line[3:].strip()
             continue
         if in_code:
             code_lines.append(line)
@@ -154,6 +188,8 @@ def markdown_to_html(markdown: str) -> str:
         para.append(line.strip())
 
     flush_para(); flush_list(); flush_table()
+    if in_code and code_lines:
+        out.append(render_code_block(code_lines, code_lang))
     if raw_html_lines:
         out.append("\n".join(raw_html_lines))
     return "\n".join(out)
@@ -426,6 +462,7 @@ def render_tabs(block: dict, topic_path: Path) -> str:
         '<div class="module-current"><span>当前模块</span><strong></strong></div>'
         '</div>'
         '<div class="tabs-nav">'
+        '<div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div>'
         '<button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button>'
         '<div class="tabs-nav-head">'
         f'<div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">{html.escape(block.get("title", "内容模块"))}</div></div>'
@@ -478,19 +515,44 @@ def render_topic(topic_path: Path) -> Path:
 def render_index() -> Path:
     output = ROOT / "index.html"
     card_template = (TEMPLATES / "topic-card.html").read_text(encoding="utf-8")
-    cards = []
-    for topic in SITE.get("topics", []):
+
+    def topic_card(topic: dict) -> str:
         tags = "".join(f"<span>{html.escape(tag)}</span>" for tag in topic.get("tags", []))
         card = card_template.replace("{{color}}", html.escape(topic.get("color", "c1")))
         card = card.replace("{{href}}", html.escape(topic["output"]))
         card = card.replace("{{title}}", html.escape(topic["title"]))
         card = card.replace("{{description}}", html.escape(topic.get("description", "")))
         card = card.replace("{{tags}}", tags)
-        cards.append(card)
+        return card
+
+    topics = SITE.get("topics", [])
+    cards = [topic_card(topic) for topic in topics]
+    groups = {
+        "foundation_cards": {"ai-infra/gpu", "cs-basics"},
+        "systems_cards": {
+            "ai-infra/llm-inference",
+            "ai-infra/kubernetes",
+            "ai-infra/scheduling",
+            "ai-infra/distributed-training",
+            "ai-infra/cluster-management",
+        },
+        "interview_cards": {
+            "ai-infra/performance-prediction",
+            "ai-infra/system-design",
+            "ai-infra/agent",
+        },
+        "paper_cards": {"ai-infra/papers"},
+    }
+    grouped_cards = {
+        key: "\n\n".join(topic_card(topic) for topic in topics if topic.get("slug") in slugs)
+        for key, slugs in groups.items()
+    }
     template = (TEMPLATES / "index.html").read_text(encoding="utf-8")
     page = template.replace("{{title}}", html.escape(SITE["title"]))
     page = page.replace("{{subtitle}}", html.escape(SITE.get("subtitle", "")))
     page = page.replace("{{topic_cards}}", "\n\n".join(cards))
+    for key, value in grouped_cards.items():
+        page = page.replace("{{" + key + "}}", value)
     page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))
     page = page.replace("{{script_path}}", asset_link(output, "assets/script.js"))
     output.write_text(page, encoding="utf-8")

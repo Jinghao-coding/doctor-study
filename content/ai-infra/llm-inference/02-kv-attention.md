@@ -41,15 +41,15 @@
 
 ## 核心路径
 
-```text
-用户请求
-  → 网关 / API Server
-  → Tokenizer
-  → Scheduler
-  → Prefill Worker
-  → Decode Worker
-  → Sampler
-  → Stream Response
+```flow
+用户请求 | Prompt、会话上下文、生成参数进入服务层
+网关 / API Server | 鉴权、限流、参数校验、路由到推理引擎
+Tokenizer | 文本转 token IDs，必要时应用聊天模板
+Scheduler | 组织 batch、分配 KV Cache、决定 prefill/decode 顺序
+Prefill Worker | 处理完整 prompt，写入初始 KV Cache
+Decode Worker | 每轮生成新 token，并追加 K/V
+Sampler | 根据 logits 执行 temperature、top-p、top-k 等采样
+Stream Response | detokenize 后通过 SSE/WebSocket/HTTP 返回
 ```
 
 ## 常见问题定位

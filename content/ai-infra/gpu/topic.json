@@ -30,9 +30,19 @@
           "file": "01-hardware.md"
         },
         {
+          "title": "GPU 互联与数据路径",
+          "description": "NVLink/NVSwitch、PCIe、RDMA、GPUDirect、NUMA/NIC 亲和",
+          "file": "11-interconnect-data-paths.md"
+        },
+        {
           "title": "CUDA 执行模型",
           "description": "GPU core、kernel launch、grid、block、thread、warp、SM",
           "file": "06-cuda-execution-model.md"
+        },
+        {
+          "title": "CFS vs CUDA 调度",
+          "description": "Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比",
+          "file": "12-cfs-vs-cuda-scheduling.md"
         },
         {
           "title": "Host-Device 数据拷贝",
@@ -92,8 +102,16 @@
       "file": "01-hardware.md"
     },
     {
+      "title": "GPU 互联与数据路径",
+      "file": "11-interconnect-data-paths.md"
+    },
+    {
       "title": "CUDA 执行模型",
       "file": "06-cuda-execution-model.md"
+    },
+    {
+      "title": "CFS vs CUDA 调度",
+      "file": "12-cfs-vs-cuda-scheduling.md"
     },
     {
       "title": "Host-Device 数据拷贝",

@@ -55,6 +55,16 @@
           ]
         },
         {
+          "title": "Linux 内核与大模型系统",
+          "description": "NUMA、cgroups、THP、大页、I/O、零拷贝与权重加载路径",
+          "files": [
+            "linux-kernel-ai/01-numa-binding.md",
+            "linux-kernel-ai/02-cgroups-gpu-isolation.md",
+            "linux-kernel-ai/03-memory-hugepages-thp.md",
+            "linux-kernel-ai/04-io-zero-copy.md"
+          ]
+        },
+        {
           "title": "编程语言与工程基础",
           "description": "Binary、编译链接、动态库、ABI、C++ 系统编程",
           "files": [

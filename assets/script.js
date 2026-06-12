@@ -102,8 +102,21 @@ document.addEventListener('DOMContentLoaded', function(){
     var filter = group.querySelector('.tabs-filter');
     var moduleToggle = group.querySelector('.module-toggle');
     var moduleCollapse = group.querySelector('.module-collapse');
+    var moduleResizer = group.querySelector('.module-resizer');
     var currentTitle = group.querySelector('.module-current strong');
     if(!buttons.length || !panels.length) return;
+    var widthKey = 'doctor-study-module-width';
+
+    function clampWidth(value){
+      var max = Math.min(420, Math.max(240, window.innerWidth * 0.42));
+      return Math.max(180, Math.min(max, value));
+    }
+
+    function setModuleWidth(width){
+      var clamped = clampWidth(width);
+      group.style.setProperty('--module-nav-width', clamped + 'px');
+      localStorage.setItem(widthKey, String(Math.round(clamped)));
+    }
 
     function setModuleCollapsed(collapsed){
       group.classList.toggle('module-collapsed', collapsed);
@@ -179,6 +192,33 @@ document.addEventListener('DOMContentLoaded', function(){
     if(moduleCollapse) moduleCollapse.addEventListener('click', function(){
       setModuleCollapsed(!group.classList.contains('module-collapsed'));
     });
+    if(moduleResizer){
+      var savedWidth = parseInt(localStorage.getItem(widthKey), 10);
+      if(!Number.isNaN(savedWidth)) setModuleWidth(savedWidth);
+
+      moduleResizer.addEventListener('pointerdown', function(e){
+        if(group.classList.contains('module-collapsed')) return;
+        e.preventDefault();
+        moduleResizer.setPointerCapture(e.pointerId);
+        group.classList.add('module-resizing');
+        document.body.classList.add('resizing-module');
+      });
+      moduleResizer.addEventListener('pointermove', function(e){
+        if(!group.classList.contains('module-resizing')) return;
+        var rect = group.getBoundingClientRect();
+        setModuleWidth(e.clientX - rect.left);
+      });
+      function stopResize(e){
+        if(!group.classList.contains('module-resizing')) return;
+        group.classList.remove('module-resizing');
+        document.body.classList.remove('resizing-module');
+        if(e && moduleResizer.hasPointerCapture && moduleResizer.hasPointerCapture(e.pointerId)){
+          moduleResizer.releasePointerCapture(e.pointerId);
+        }
+      }
+      moduleResizer.addEventListener('pointerup', stopResize);
+      moduleResizer.addEventListener('pointercancel', stopResize);
+    }
     setModuleCollapsed(group.classList.contains('module-collapsed'));
     updateCurrentTitle();
   });

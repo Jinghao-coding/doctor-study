@@ -27,7 +27,37 @@
 </table>
 </div>
 
+<div class="card card-m">
+<h3>CFS 深挖：vruntime、权重和 runqueue</h3>
+<p>CFS（Completely Fair Scheduler）的核心思想是：不要只按固定时间片轮转，而是持续维护每个 runnable task 已经获得的“公平份额”。它用 <code>vruntime</code> 表示加权后的虚拟运行时间，倾向于选择 <code>vruntime</code> 最小的任务运行。</p>
+<table>
+<tr><th>概念</th><th>含义</th><th>面试解释</th></tr>
+<tr><td><code>vruntime</code></td><td>加权虚拟运行时间</td><td>越小表示相对越“没跑够”，越应该获得 CPU</td></tr>
+<tr><td>nice / weight</td><td>优先级权重</td><td>权重越高，同样真实运行时间带来的 <code>vruntime</code> 增长越慢</td></tr>
+<tr><td>runqueue</td><td>可运行任务队列</td><td>每个 CPU 有自己的可运行任务集合，CFS 按 <code>vruntime</code> 组织任务</td></tr>
+<tr><td>抢占</td><td>打断当前任务</td><td>新唤醒任务或更小 <code>vruntime</code> 任务可能触发重新调度</td></tr>
+<tr><td>上下文切换</td><td>保存/恢复执行状态</td><td>线程过多、频繁阻塞唤醒会让 CPU 时间浪费在切换上</td></tr>
+</table>
+<p>CFS 的目标是公平和响应性，而不是让某一个任务吞吐最大。这个点和 GPU 的 warp/block 调度形成鲜明对比：GPU kernel 内部通常不追求每个 CUDA thread 的公平时间片，而是追求 SM 吞吐、occupancy 和隐藏内存延迟。</p>
+</div>
+
+<div class="card card-s">
+<h3>和 CUDA 调度的层次区别</h3>
+<p>Linux CFS 调度的是 OS task；CUDA Stream/Event 管的是 GPU 任务队列和依赖；CUDA block/warp 调度管的是 kernel 内部如何映射到 SM。这三层经常被混淆。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">CFS</div><div class="flow-desc">进程/线程共享 CPU 时间，强调公平和响应性</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Stream/Event</div><div class="flow-desc">组织 H2D、kernel、D2H 的异步顺序和依赖</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Block → SM</div><div class="flow-desc">GPU 把 grid 里的 block 分配到 SM 执行</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Warp Scheduler</div><div class="flow-desc">SM 选择 ready warp 发射指令，隐藏访存延迟</div></div>
+</div>
+</div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 SJF 可以降低平均等待时间？有什么问题？</div>
 <div class="qa-a"><p><strong>直觉：</strong>短任务放前面，只会让长任务多等一个短任务时间；长任务放前面，会让所有短任务都等一个长任务时间。因此短任务优先能降低平均等待。</p><div class="qa-section"><div class="qa-section-title">问题</div><p>SJF 需要知道或预测运行时间，并且会让长任务饥饿。工程上通常用 aging、配额保障或最大等待时间兜底。</p></div><div class="qa-summary">面试口径：说最优性时必须补前提和饥饿问题。</div></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Linux CFS 和 CUDA thread block 调度有什么区别？</div>
+<div class="qa-a"><p>CFS 是 CPU 上的操作系统调度器，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享；CUDA thread block 调度是 GPU kernel 内部的硬件执行机制，调度对象是 grid 中的 block/CTA，目标是把 block 分配到 SM、让 warp scheduler 用 ready warp 隐藏访存延迟。CFS 通过 <code>vruntime</code>、权重、抢占和上下文切换决定哪个 task 运行；CUDA block 一旦驻留 SM 通常运行到完成，SM 内部以 warp 为单位发射指令，更强调吞吐而不是公平时间片。</p><div class="qa-summary">一句话：CFS 管 OS task 的公平 CPU 时间，CUDA block/warp 调度管 kernel 内部的高吞吐并行执行。</div></div>
 </div>

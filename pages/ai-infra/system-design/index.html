@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>系统设计题 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781104970">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781232717">
 </head>
 <body>
 <nav class="topnav">
@@ -15,7 +15,7 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">System Design</div><h1>系统设计题</h1><p class="sub">多模型推理 · 多租户调度 · 训练平台 · KV 缓存管理</p><div class="hero-tags"><span>system-design</span><span>interview</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">系统设计题</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="系统设计题"><button class="tab-button active" type="button" role="tab" id="system-design-tabs-tab-1" data-initial="01" title="多模型 LLM 推理" aria-controls="system-design-tabs-panel-1" aria-selected="true"><span class="tab-title">多模型 LLM 推理</span><span class="tab-desc">模型驻留、内存管理、请求路由、排队策略</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-2" data-initial="02" title="多租户 GPU 调度" aria-controls="system-design-tabs-panel-2" aria-selected="false"><span class="tab-title">多租户 GPU 调度</span><span class="tab-desc">QAD 配额、弹性借用、干扰感知合用</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-3" data-initial="03" title="分布式训练平台" aria-controls="system-design-tabs-panel-3" aria-selected="false"><span class="tab-title">分布式训练平台</span><span class="tab-desc">任务抽象、Gang 调度、容错与可观测性</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-4" data-initial="04" title="KV 缓存管理" aria-controls="system-design-tabs-panel-4" aria-selected="false"><span class="tab-title">KV 缓存管理</span><span class="tab-desc">分页管理、前缀共享、层级存储</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="system-design-tabs-panel-1" aria-labelledby="system-design-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多模型 LLM 推理</h2></div><div class="tab-panel-body"><div class="card card-m">
+<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">系统设计题</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="系统设计题"><button class="tab-button active" type="button" role="tab" id="system-design-tabs-tab-1" data-initial="01" title="多模型 LLM 推理" aria-controls="system-design-tabs-panel-1" aria-selected="true"><span class="tab-title">多模型 LLM 推理</span><span class="tab-desc">模型驻留、内存管理、请求路由、排队策略</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-2" data-initial="02" title="多租户 GPU 调度" aria-controls="system-design-tabs-panel-2" aria-selected="false"><span class="tab-title">多租户 GPU 调度</span><span class="tab-desc">QAD 配额、弹性借用、干扰感知合用</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-3" data-initial="03" title="分布式训练平台" aria-controls="system-design-tabs-panel-3" aria-selected="false"><span class="tab-title">分布式训练平台</span><span class="tab-desc">任务抽象、Gang 调度、容错与可观测性</span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-4" data-initial="04" title="KV 缓存管理" aria-controls="system-design-tabs-panel-4" aria-selected="false"><span class="tab-title">KV 缓存管理</span><span class="tab-desc">分页管理、前缀共享、层级存储</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="system-design-tabs-panel-1" aria-labelledby="system-design-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多模型 LLM 推理</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>题目</h3>
 <p>设计一个支持多模型的 LLM 推理服务，要求低延迟高利用率，多个 agent 组成工作流协作。</p>
 
@@ -299,6 +299,6 @@
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781104970"></script>
+<script src="../../../assets/script.js?v=1781105691"></script>
 </body>
 </html>

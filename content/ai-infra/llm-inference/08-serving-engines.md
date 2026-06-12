@@ -63,7 +63,16 @@
 <div class="card card-w">
 <h3>子系统五：Serving 工程化</h3>
 <p>这部分决定能不能扛生产流量。</p>
-<p><strong>请求生命周期：</strong>HTTP/gRPC 入口 → tokenizer（独立进程或 worker，避免阻塞）→ 调度器队列 → forward → detokenizer（流式逐 token decode）→ SSE/WebSocket 推流。</p>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">HTTP/gRPC 入口</div><div class="flow-desc">接收请求、鉴权、限流和协议适配</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Tokenizer</div><div class="flow-desc">独立进程或 worker 处理文本，避免阻塞 GPU 调度</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">调度器队列</div><div class="flow-desc">排队、batching、KV Cache 预算和优先级决策</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Forward</div><div class="flow-desc">GPU worker 执行 prefill/decode 前向计算</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Detokenizer</div><div class="flow-desc">逐 token 反解码，准备流式输出</div></div>
+<div class="flow-step"><div class="flow-index">06</div><div class="flow-title">SSE/WebSocket 推流</div><div class="flow-desc">按协议持续返回增量结果</div></div>
+</div>
+
 <p><strong>OpenAI 兼容协议：</strong>路径 <code>/v1/chat/completions</code>、<code>/v1/completions</code>、<code>/v1/embeddings</code>；流式用 SSE，<code>data: {...}\n\n</code>，结束 <code>data: [DONE]</code>。tool calling、structured output（JSON schema、正则约束）走 Outlines/XGrammar。</p>
 <p><strong>核心指标（Prometheus）：</strong></p>
 <ul>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>任务调度理论 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781104970">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781232717">
 </head>
 <body>
 <nav class="topnav">
@@ -15,7 +15,7 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Scheduling Theory</div><h1>任务调度理论</h1><p class="sub">目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 面试题精讲</p><div class="hero-tags"><span>scheduling</span><span>theory</span><span>fairness</span><span>batch</span><span>topology</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">任务调度理论</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="任务调度理论"><button class="tab-button active" type="button" role="tab" id="scheduling-tabs-tab-1" data-initial="01" title="经典调度算法" aria-controls="scheduling-tabs-panel-1" aria-selected="true"><span class="tab-title">经典调度算法</span><span class="tab-desc">FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-2" data-initial="02" title="目标函数与评价指标" aria-controls="scheduling-tabs-panel-2" aria-selected="false"><span class="tab-title">目标函数与评价指标</span><span class="tab-desc">JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-3" data-initial="03" title="多资源公平调度" aria-controls="scheduling-tabs-panel-3" aria-selected="false"><span class="tab-title">多资源公平调度</span><span class="tab-desc">Max-Min、DRF、Elastic Quota、借用、回收与队列治理</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-4" data-initial="04" title="批调度、Gang 与 Backfill" aria-controls="scheduling-tabs-panel-4" aria-selected="false"><span class="tab-title">批调度、Gang 与 Backfill</span><span class="tab-desc">Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-5" data-initial="05" title="拓扑感知调度" aria-controls="scheduling-tabs-panel-5" aria-selected="false"><span class="tab-title">拓扑感知调度</span><span class="tab-desc">NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-6" data-initial="06" title="调度面试题精讲" aria-controls="scheduling-tabs-panel-6" aria-selected="false"><span class="tab-title">调度面试题精讲</span><span class="tab-desc">GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="scheduling-tabs-panel-1" aria-labelledby="scheduling-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>经典调度算法</h2></div><div class="tab-panel-body"><div class="card card-m">
+<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">任务调度理论</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="任务调度理论"><button class="tab-button active" type="button" role="tab" id="scheduling-tabs-tab-1" data-initial="01" title="经典调度算法" aria-controls="scheduling-tabs-panel-1" aria-selected="true"><span class="tab-title">经典调度算法</span><span class="tab-desc">FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-2" data-initial="02" title="目标函数与评价指标" aria-controls="scheduling-tabs-panel-2" aria-selected="false"><span class="tab-title">目标函数与评价指标</span><span class="tab-desc">JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-3" data-initial="03" title="多资源公平调度" aria-controls="scheduling-tabs-panel-3" aria-selected="false"><span class="tab-title">多资源公平调度</span><span class="tab-desc">Max-Min、DRF、Elastic Quota、借用、回收与队列治理</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-4" data-initial="04" title="批调度、Gang 与 Backfill" aria-controls="scheduling-tabs-panel-4" aria-selected="false"><span class="tab-title">批调度、Gang 与 Backfill</span><span class="tab-desc">Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-5" data-initial="05" title="拓扑感知调度" aria-controls="scheduling-tabs-panel-5" aria-selected="false"><span class="tab-title">拓扑感知调度</span><span class="tab-desc">NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置</span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-6" data-initial="06" title="调度面试题精讲" aria-controls="scheduling-tabs-panel-6" aria-selected="false"><span class="tab-title">调度面试题精讲</span><span class="tab-desc">GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="scheduling-tabs-panel-1" aria-labelledby="scheduling-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>经典调度算法</h2></div><div class="tab-panel-body"><div class="card card-m">
 <h3>经典调度算法：从直觉到数学</h3>
 <p>经典调度算法是所有调度系统的基础。不管你用的是 K8S 默认调度器、Volcano 还是自研调度器，底层的排序逻辑一定逃不出这几个经典算法的思想。面试中，面试官期望你不只是知道算法名字，还能说清楚：<strong>为什么这个算法最优？最优的条件是什么？在什么条件下它会失败？</strong></p>
 </div>
@@ -88,12 +88,14 @@
 
 <h4>实际系统的组合策略</h4>
 <p>真实调度器不会只用一个算法，而是<strong>组合使用</strong>：</p>
-<ul>
-<li><strong>排序阶段</strong>：优先级 + SJF（同优先级内按运行时间排序）</li>
-<li><strong>准入阶段</strong>：Gang 检查 + Quota 检查</li>
-<li><strong>放置阶段</strong>：Bin Packing + 拓扑打分</li>
-<li><strong>抢占阶段</strong>：优先级 + 代价感知</li>
-</ul>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">排序阶段</div><div class="flow-desc">优先级 + SJF，同优先级内按运行时间排序</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">准入阶段</div><div class="flow-desc">Gang 检查 + Quota 检查</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">放置阶段</div><div class="flow-desc">Bin Packing + 拓扑打分</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">抢占阶段</div><div class="flow-desc">优先级 + 代价感知</div></div>
+</div>
+
 <p>面试中，你要说清楚"每个决策点用了哪个算法的什么思想"，而不是笼统地说"用了 SJF"。</p>
 </div>
 <div class="card card-w">
@@ -716,15 +718,17 @@
 </div>
 <div class="card card-d">
 <h3>EASY Backfill 的调度流程</h3>
-<ol>
-<li><strong>取队头任务</strong>：每轮调度先看队列第一个任务。</li>
-<li><strong>尝试直接启动</strong>：如果队头任务现在能启动，直接调度，不需要回填。</li>
-<li><strong>估计最早启动时间</strong>：如果现在跑不了，根据 running jobs 的预计完成时间模拟未来资源释放。</li>
-<li><strong>建立逻辑预留</strong>：记录队头任务的 reservation time 和资源需求，避免后续任务破坏这次预留。</li>
-<li><strong>扫描后续任务</strong>：逐个判断候选任务是否能使用当前碎片资源。</li>
-<li><strong>检查结束时间或抢占能力</strong>：候选任务预计能按时结束，或者可在 reservation time 被抢占，才允许回填。</li>
-<li><strong>到期回收</strong>：如果回填任务超时未结束，优先优雅退出；不可等待时强制抢占。</li>
-</ol>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">取队头任务</div><div class="flow-desc">每轮调度先看队列第一个任务</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">尝试直接启动</div><div class="flow-desc">如果队头任务现在能启动，直接调度</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">估计最早启动时间</div><div class="flow-desc">根据 running jobs 的预计完成时间模拟未来资源释放</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">建立逻辑预留</div><div class="flow-desc">记录 reservation time 和资源需求，避免后续任务破坏预留</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">扫描后续任务</div><div class="flow-desc">逐个判断候选任务是否能使用当前碎片资源</div></div>
+<div class="flow-step"><div class="flow-index">06</div><div class="flow-title">检查结束时间或抢占能力</div><div class="flow-desc">能按时结束，或可在 reservation time 被抢占，才允许回填</div></div>
+<div class="flow-step"><div class="flow-index">07</div><div class="flow-title">到期回收</div><div class="flow-desc">回填任务超时未结束时优雅退出或强制抢占</div></div>
+</div>
+
 <pre><code>head = queue.first()
 
 if can_schedule(head):
@@ -1053,6 +1057,19 @@ for job in queue.after(head):
 <li>同节点 vs 跨节点的延迟差 <strong>1-2 个数量级</strong></li>
 </ul>
 <p>这些量级差异决定了：如果你把需要频繁通信的 worker 放错了位置，性能可能直接腰斩。</p>
+</div>
+<div class="card card-d">
+<h3>通信路径模型：调度器真正要优化的对象</h3>
+<p>拓扑感知调度不是简单地区分“同机”和“跨机”，而是要把训练通信映射到真实数据路径上。单机内 GPU-GPU 通信优先使用 NVLink/NVSwitch；CPU、GPU、NIC、NVMe 等设备之间通过 PCIe 连接；跨机 GPU-GPU 通信则依赖 NIC + InfiniBand/RoCE RDMA，理想情况下使用 GPUDirect RDMA 直接读写 GPU HBM。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">识别 rank 通信图</div><div class="flow-desc">TP、DP、PP、MoE 的通信频率和通信量不同</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">映射硬件路径</div><div class="flow-desc">NVLink/NVSwitch、PCIe、GPU-NIC、RDMA、机架网络</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">过滤硬约束</div><div class="flow-desc">GPU 型号、显存、完整 NVSwitch 域、NIC 亲和、NUMA</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">按代价打分</div><div class="flow-desc">惩罚跨 Socket、host staging、跨机架、网络拥塞和碎片化</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">绑定设备组合</div><div class="flow-desc">锁定具体 GPU/NIC，避免并发调度破坏拓扑假设</div></div>
+</div>
+<p>因此，调度器看待“4 张 GPU”时不应该只看数量，而要判断它们之间的路径：同 NVSwitch 域的 4 卡、同 PCIe switch 的 4 卡、跨 Socket 的 4 卡、跨机器 2+2，通信代价完全不同。跨机训练还要继续看 GPU 到 NIC 是否同 NUMA、RDMA 是否能走 GPUDirect、是否会退化成 CPU host staging。</p>
+<div class="qa-summary">面试金句：拓扑感知调度优化的不是 GPU 数量，而是 rank 通信图到硬件数据路径图的映射代价。</div>
 </div>
 <div class="card card-d">
 <h3>不同并行策略的拓扑偏好</h3>
@@ -1390,6 +1407,6 @@ for job in queue.after(head):
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781104970"></script>
+<script src="../../../assets/script.js?v=1781105691"></script>
 </body>
 </html>

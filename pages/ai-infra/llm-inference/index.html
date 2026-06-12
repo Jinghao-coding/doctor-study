@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LLM 推理系统 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781104970">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781232717">
 </head>
 <body>
 <nav class="topnav">
@@ -15,8 +15,9 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Serving System</div><h1>LLM 推理系统</h1><p class="sub">推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 性能优化 · 引擎选型</p><div class="hero-tags"><span>llm</span><span>inference</span><span>kv-cache</span><span>serving</span></div></div></section>
 
-<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" title="端到端链路" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-title">端到端链路</span><span class="tab-desc">Prompt 进模型后内部发生了什么：6 阶段完整流程</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" title="推理总览" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-title">推理总览</span><span class="tab-desc">定义、核心概念、Prefill/Decode 区别</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" title="请求生命周期" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-title">请求生命周期</span><span class="tab-desc">请求接入、调度、计算、生成、返回</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" title="Prefill 阶段" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-title">Prefill 阶段</span><span class="tab-desc">计算密集、TTFT、首 token 延迟</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" title="Decode 阶段" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-title">Decode 阶段</span><span class="tab-desc">逐 token 生成、memory-bound、TPOT</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-6" data-initial="06" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-6" aria-selected="false"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV 缓存、PagedAttention、FlashAttention、GQA</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-7" data-initial="07" title="性能指标与瓶颈" aria-controls="llm-inference-tabs-panel-7" aria-selected="false"><span class="tab-title">性能指标与瓶颈</span><span class="tab-desc">TTFT、TPOT、吞吐、显存、MFU</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-8" data-initial="08" title="优化技术" aria-controls="llm-inference-tabs-panel-8" aria-selected="false"><span class="tab-title">优化技术</span><span class="tab-desc">Batching、量化、投机解码、Prefix Cache</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-9" data-initial="09" title="推理引擎对比" aria-controls="llm-inference-tabs-panel-9" aria-selected="false"><span class="tab-title">推理引擎对比</span><span class="tab-desc">AI Infra 视角 · 学习路线 · 13 题面试清单</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>端到端链路</h2></div><div class="tab-panel-body"><h3>完整推理链路概览</h3>
-<p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>：请求封装 → tokenization → 推理调度 → prefill → decode → 结果反解码返回。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
+<section class="tabs-shell" data-tabs><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" title="端到端链路" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-title">端到端链路</span><span class="tab-desc">Prompt 进模型后内部发生了什么：6 阶段完整流程</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" title="推理总览" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-title">推理总览</span><span class="tab-desc">定义、核心概念、Prefill/Decode 区别</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" title="请求生命周期" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-title">请求生命周期</span><span class="tab-desc">请求接入、调度、计算、生成、返回</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" title="Prefill 阶段" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-title">Prefill 阶段</span><span class="tab-desc">计算密集、TTFT、首 token 延迟</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" title="Decode 阶段" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-title">Decode 阶段</span><span class="tab-desc">逐 token 生成、memory-bound、TPOT</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-6" data-initial="06" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-6" aria-selected="false"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV 缓存、PagedAttention、FlashAttention、GQA</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-7" data-initial="07" title="性能指标与瓶颈" aria-controls="llm-inference-tabs-panel-7" aria-selected="false"><span class="tab-title">性能指标与瓶颈</span><span class="tab-desc">TTFT、TPOT、吞吐、显存、MFU</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-8" data-initial="08" title="优化技术" aria-controls="llm-inference-tabs-panel-8" aria-selected="false"><span class="tab-title">优化技术</span><span class="tab-desc">Batching、量化、投机解码、Prefix Cache</span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-9" data-initial="09" title="推理引擎对比" aria-controls="llm-inference-tabs-panel-9" aria-selected="false"><span class="tab-title">推理引擎对比</span><span class="tab-desc">AI Infra 视角 · 学习路线 · 13 题面试清单</span></button></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>端到端链路</h2></div><div class="tab-panel-body"><h3>完整推理链路概览</h3>
+<p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">请求封装</div><div class="flow-desc">组织 system、user、assistant 消息和生成参数</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Tokenization</div><div class="flow-desc">把自然语言切成模型可读的 token IDs</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">推理调度</div><div class="flow-desc">排队、优先级、continuous batching、KV Cache 预算</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Prefill</div><div class="flow-desc">并行处理完整 prompt，建立初始 KV Cache</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Decode</div><div class="flow-desc">逐 token 自回归生成，并持续更新 KV Cache</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">反解码返回</div><div class="flow-desc">采样、detokenize，并通过流式接口返回</div></div></div>
 <p>这种"自回归 + 不做本次梯度更新"的推理方式，正是 GPT 类语言模型的基本范式；而 Transformer 则提供了它内部 attention 和前馈网络的计算骨架。</p>
 <h3>第一阶段：请求封装与 Tokenization</h3>
 <p>用户输入的自然语言并不是模型真正看到的内容。服务层会先把 system、user、assistant 等多轮消息按固定模板组织起来，补上特殊标记。随后，文本经过 tokenizer（如 BPE 算法的 tiktoken），被切成 token 序列。对模型来说，一切输入都是 token IDs，不是"句子"。</p>
@@ -130,14 +131,7 @@
 <tr><td>完成回收</td><td>请求结束后释放 KV Cache 和调度状态</td></tr>
 </table>
 <h2>核心路径</h2>
-<pre><code>用户请求
-  → 网关 / API Server
-  → Tokenizer
-  → Scheduler
-  → Prefill Worker
-  → Decode Worker
-  → Sampler
-  → Stream Response</code></pre>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">用户请求</div><div class="flow-desc">Prompt、会话上下文、生成参数进入服务层</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">网关 / API Server</div><div class="flow-desc">鉴权、限流、参数校验、路由到推理引擎</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Tokenizer</div><div class="flow-desc">文本转 token IDs，必要时应用聊天模板</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Scheduler</div><div class="flow-desc">组织 batch、分配 KV Cache、决定 prefill/decode 顺序</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Prefill Worker</div><div class="flow-desc">处理完整 prompt，写入初始 KV Cache</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">Decode Worker</div><div class="flow-desc">每轮生成新 token，并追加 K/V</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">Sampler</div><div class="flow-desc">根据 logits 执行 temperature、top-p、top-k 等采样</div></div><div class="flow-step"><div class="flow-index">08</div><div class="flow-title">Stream Response</div><div class="flow-desc">detokenize 后通过 SSE/WebSocket/HTTP 返回</div></div></div>
 <h2>常见问题定位</h2>
 <table>
 <tr><th>现象</th><th>更可能的问题位置</th><th>排查方向</th></tr>
@@ -167,7 +161,7 @@
 <tr><td>长 Prompt</td><td>单次 Prefill 时间过长</td><td>Chunked Prefill</td></tr>
 </table>
 <h2>TTFT 拆解</h2>
-<pre><code>TTFT = 排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络返回</code></pre>
+<pre><code class="language-text">TTFT = 排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络返回</code></pre>
 <p>其中 Prefill 计算通常是主要部分，但在高并发服务中，排队等待也可能成为 TTFT 的主要来源。</p>
 <h2>优化重点</h2>
 <table>
@@ -199,7 +193,7 @@
 <tr><td>调度</td><td>batch 组织决定权重读取能否被多请求摊销</td></tr>
 </table>
 <h2>TPOT 拆解</h2>
-<pre><code>TPOT = 单步模型计算 + KV Cache 读取 + 采样 + 流式返回</code></pre>
+<pre><code class="language-text">TPOT = 单步模型计算 + KV Cache 读取 + 采样 + 流式返回</code></pre>
 <p>Decode 阶段的用户感知不是“第一个 token 多快”，而是“后续 token 是否稳定、连续、不卡顿”。</p>
 <h2>优化重点</h2>
 <table>
@@ -213,7 +207,7 @@
 <h2>易错点</h2>
 <p>Decode 的 GPU 利用率低不一定是实现差，根因通常是 memory-bound。增大 batch 可以摊销权重读取，但 KV Cache 读取也会随 batch 和序列长度增长，所以 batch 不是无限增大的。</p></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-6" aria-labelledby="llm-inference-tabs-tab-6" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>KV Cache 与 Attention</h2></div><div class="tab-panel-body"><h2>KV Cache 的作用</h2>
 <p>自回归生成时，模型每生成一个新 token 都需要关注历史上下文。如果每一步都重新计算全部历史 token 的 Key 和 Value，计算代价会非常高；KV Cache 的作用就是把历史 K/V 缓存下来，每步只计算新增 token 的 K/V。</p>
-<pre><code>KV Cache 大小 = 2 × num_layers × num_kv_heads × head_dim × seq_len × dtype_bytes</code></pre>
+<pre><code class="language-text">KV Cache 大小 = 2 × num_layers × num_kv_heads × head_dim × seq_len × dtype_bytes</code></pre>
 <p>公式中的 <code>2</code> 分别代表 Key 和 Value。KV Cache 随序列长度、batch size 和 KV head 数量线性增长，是长上下文和高并发推理的核心显存压力来源。</p>
 <h2>显存为什么紧张</h2>
 <table>
@@ -436,7 +430,16 @@
 <div class="card card-w">
 <h3>子系统五：Serving 工程化</h3>
 <p>这部分决定能不能扛生产流量。</p>
-<p><strong>请求生命周期：</strong>HTTP/gRPC 入口 → tokenizer（独立进程或 worker，避免阻塞）→ 调度器队列 → forward → detokenizer（流式逐 token decode）→ SSE/WebSocket 推流。</p>
+
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">HTTP/gRPC 入口</div><div class="flow-desc">接收请求、鉴权、限流和协议适配</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Tokenizer</div><div class="flow-desc">独立进程或 worker 处理文本，避免阻塞 GPU 调度</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">调度器队列</div><div class="flow-desc">排队、batching、KV Cache 预算和优先级决策</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Forward</div><div class="flow-desc">GPU worker 执行 prefill/decode 前向计算</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Detokenizer</div><div class="flow-desc">逐 token 反解码，准备流式输出</div></div>
+<div class="flow-step"><div class="flow-index">06</div><div class="flow-title">SSE/WebSocket 推流</div><div class="flow-desc">按协议持续返回增量结果</div></div>
+</div>
+
 <p><strong>OpenAI 兼容协议：</strong>路径 <code>/v1/chat/completions</code>、<code>/v1/completions</code>、<code>/v1/embeddings</code>；流式用 SSE，<code>data: {...}\n\n</code>，结束 <code>data: [DONE]</code>。tool calling、structured output（JSON schema、正则约束）走 Outlines/XGrammar。</p>
 <p><strong>核心指标（Prometheus）：</strong></p>
 <ul>
@@ -644,6 +647,6 @@
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781104970"></script>
+<script src="../../../assets/script.js?v=1781105691"></script>
 </body>
 </html>

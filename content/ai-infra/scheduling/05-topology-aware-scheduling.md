@@ -28,6 +28,20 @@
 </div>
 
 <div class="card card-d">
+<h3>通信路径模型：调度器真正要优化的对象</h3>
+<p>拓扑感知调度不是简单地区分“同机”和“跨机”，而是要把训练通信映射到真实数据路径上。单机内 GPU-GPU 通信优先使用 NVLink/NVSwitch；CPU、GPU、NIC、NVMe 等设备之间通过 PCIe 连接；跨机 GPU-GPU 通信则依赖 NIC + InfiniBand/RoCE RDMA，理想情况下使用 GPUDirect RDMA 直接读写 GPU HBM。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">识别 rank 通信图</div><div class="flow-desc">TP、DP、PP、MoE 的通信频率和通信量不同</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">映射硬件路径</div><div class="flow-desc">NVLink/NVSwitch、PCIe、GPU-NIC、RDMA、机架网络</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">过滤硬约束</div><div class="flow-desc">GPU 型号、显存、完整 NVSwitch 域、NIC 亲和、NUMA</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">按代价打分</div><div class="flow-desc">惩罚跨 Socket、host staging、跨机架、网络拥塞和碎片化</div></div>
+<div class="flow-step"><div class="flow-index">05</div><div class="flow-title">绑定设备组合</div><div class="flow-desc">锁定具体 GPU/NIC，避免并发调度破坏拓扑假设</div></div>
+</div>
+<p>因此，调度器看待“4 张 GPU”时不应该只看数量，而要判断它们之间的路径：同 NVSwitch 域的 4 卡、同 PCIe switch 的 4 卡、跨 Socket 的 4 卡、跨机器 2+2，通信代价完全不同。跨机训练还要继续看 GPU 到 NIC 是否同 NUMA、RDMA 是否能走 GPUDirect、是否会退化成 CPU host staging。</p>
+<div class="qa-summary">面试金句：拓扑感知调度优化的不是 GPU 数量，而是 rank 通信图到硬件数据路径图的映射代价。</div>
+</div>
+
+<div class="card card-d">
 <h3>不同并行策略的拓扑偏好</h3>
 <p>这是拓扑感知调度最核心的知识点。面试中经常问"为什么张量并行要放在同节点"。下面的表格解释了每种并行策略为什么有特定的拓扑偏好。</p>
 
