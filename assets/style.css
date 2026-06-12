@@ -2203,6 +2203,78 @@ body.resizing-module {
 .tab-panel-body > .qa .qa-q { padding: 0.8rem 1rem; }
 
 /* ============================================
+   SUBTABS — 内容页内部子标签
+   ============================================ */
+.subtabs {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.subtabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  position: sticky;
+  top: 0.4rem;
+  z-index: 5;
+}
+.subtab-button {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: 0.5rem 0.85rem;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  line-height: 1.3;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.subtab-button:hover {
+  background: var(--card-solid);
+  color: var(--txt);
+}
+.subtab-button.active {
+  background: var(--card-solid);
+  color: var(--txt);
+  border-color: var(--border-2);
+  box-shadow: var(--shadow-xs);
+  font-weight: 700;
+}
+.subtab-title { font-size: 0.92rem; font-weight: 650; }
+.subtab-desc {
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: var(--muted-2);
+  letter-spacing: 0;
+}
+.subtab-button.active .subtab-desc { color: var(--muted); }
+.subtabs-panels { min-width: 0; }
+.subtab-panel { min-width: 0; }
+.subtab-panel[hidden] { display: none; }
+.subtab-panel > :first-child { margin-top: 0; }
+.subtab-panel > :last-child { margin-bottom: 0; }
+@media (max-width: 720px) {
+  .subtabs-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    position: static;
+  }
+  .subtab-button { flex-shrink: 0; }
+  .subtab-desc { display: none; }
+}
+
+/* ============================================
    K8S ARCHITECTURE SVG
    ============================================ */
 

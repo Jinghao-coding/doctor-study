@@ -28,10 +28,41 @@
             {
               "title": "IEEE Cluster 2026 DeepShare",
               "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
-              "file": "02-ieee-cluster-2026-deepshare-gpu.md",
               "level": "精通",
               "priority": 1,
-              "time": 40
+              "time": 40,
+              "subtabs": [
+                {
+                  "title": "概述与设计",
+                  "description": "问题背景 / 系统设计 / 核心定位",
+                  "file": "02a-overview.md"
+                },
+                {
+                  "title": "总体架构",
+                  "description": "Controller + Plugin 架构 / K8S 对象设计",
+                  "file": "02b-architecture.md"
+                },
+                {
+                  "title": "K8S 实现细节",
+                  "description": "两级队列 / Controller 工作流 / Scheduler 扩展点",
+                  "file": "02c-impl-details.md"
+                },
+                {
+                  "title": "高频问答",
+                  "description": "DeepShare + 实现细节高频问题",
+                  "file": "02d-faq-base.md"
+                },
+                {
+                  "title": "论文延伸问答",
+                  "description": "EMA / RF / ablation / sensitivity / related work",
+                  "file": "02e-faq-paper.md"
+                },
+                {
+                  "title": "面试背诵",
+                  "description": "完整背诵版 + 60 秒缩略版",
+                  "file": "02f-talk.md"
+                }
+              ]
             }
           ]
         },
@@ -55,10 +86,6 @@
     {
       "title": "ICDCS 2026 Maestro — LLM 多智能体系统的工作负载感知调度",
       "file": "01-icdcs-2026-maestro-llm.md"
-    },
-    {
-      "title": "IEEE Cluster 2026 DeepShare — 多租户 GPU 集群的保障驱动调度",
-      "file": "02-ieee-cluster-2026-deepshare-gpu.md"
     },
     {
       "title": "共通 两篇论文的关系与面试叙事",

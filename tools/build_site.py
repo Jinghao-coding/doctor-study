@@ -498,6 +498,56 @@ def _render_item_chips(item: dict) -> str:
     return f'<span class="tab-chips">{"".join(chips)}</span>'
 
 
+def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str) -> str:
+    if not subtabs:
+        return ""
+    nav_buttons: list[str] = []
+    panels: list[str] = []
+    for idx, sub in enumerate(subtabs):
+        sub_id = f"{parent_id}-sub-{idx + 1}"
+        panel_sub_id = f"{parent_id}-subpanel-{idx + 1}"
+        active = idx == 0
+        title = sub.get("title", f"子模块 {idx + 1}")
+        desc = sub.get("description", "")
+        body = ""
+        if sub.get("file"):
+            body = markdown_to_html((topic_path.parent / sub["file"]).read_text(encoding="utf-8"))
+        elif sub.get("text"):
+            body = markdown_to_html(sub["text"])
+        desc_html = f'<span class="subtab-desc">{html.escape(desc)}</span>' if desc else ""
+        nav_buttons.append(
+            '<button class="subtab-button{active}" type="button" role="tab" id="{sid}" '
+            'aria-controls="{pid}" aria-selected="{sel}" title="{title}">'
+            '<span class="subtab-title">{title}</span>'
+            '{desc_html}'
+            '</button>'.format(
+                active=" active" if active else "",
+                sid=sub_id,
+                pid=panel_sub_id,
+                sel="true" if active else "false",
+                title=html.escape(title),
+                desc_html=desc_html,
+            )
+        )
+        panels.append(
+            '<div class="subtab-panel{active}" role="tabpanel" id="{pid}" aria-labelledby="{sid}" {hidden}>'
+            '{body}'
+            '</div>'.format(
+                active=" active" if active else "",
+                pid=panel_sub_id,
+                sid=sub_id,
+                hidden="" if active else "hidden",
+                body=body,
+            )
+        )
+    return (
+        '<div class="subtabs" data-subtabs>'
+        '<div class="subtabs-nav" role="tablist" aria-label="子模块">{buttons}</div>'
+        '<div class="subtabs-panels">{panels}</div>'
+        '</div>'
+    ).format(buttons="".join(nav_buttons), panels="".join(panels))
+
+
 def render_tabs(block: dict, topic_path: Path) -> str:
     groups = _normalize_groups(block)
     if not groups:
@@ -526,7 +576,9 @@ def render_tabs(block: dict, topic_path: Path) -> str:
             desc = item.get("description", "")
             initial = f"{index + 1:02d}"
             body = ""
-            if item.get("file"):
+            if item.get("subtabs"):
+                body = _render_subtabs(item["subtabs"], topic_path, panel_id)
+            elif item.get("file"):
                 body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
             elif item.get("files"):
                 body = "\n".join(

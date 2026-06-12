@@ -622,3 +622,25 @@ document.addEventListener('DOMContentLoaded', function(){
     if(e.key && e.key.indexOf('doctor-study-progress::') === 0) refresh();
   });
 });
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('[data-subtabs]').forEach(function(box){
+    var nav = box.querySelector('.subtabs-nav');
+    if(!nav) return;
+    nav.addEventListener('click', function(e){
+      var btn = e.target.closest('.subtab-button');
+      if(!btn) return;
+      var pid = btn.getAttribute('aria-controls');
+      box.querySelectorAll('.subtab-button').forEach(function(b){
+        var on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      box.querySelectorAll('.subtab-panel').forEach(function(p){
+        var on = p.id === pid;
+        p.classList.toggle('active', on);
+        if(on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
+      });
+    });
+  });
+});
