@@ -19,11 +19,14 @@
       "items": [
         {
           "title": "操作系统基础",
-          "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、Signal",
+          "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、虚拟内存、I/O 多路复用、死锁、Signal",
           "files": [
             "os/01-process-thread-coroutine.md",
             "os/02-cpu-scheduling.md",
             "os/03-memory-oom-numa.md",
+            "os/06-virtual-memory-paging.md",
+            "os/05-io-multiplexing.md",
+            "os/07-deadlock.md",
             "os/04-signal-stdio.md"
           ]
         },
@@ -38,7 +41,7 @@
         },
         {
           "title": "计算机网络基础",
-          "description": "TCP/UDP、HTTP/gRPC/RPC、RDMA/RoCE/IB",
+          "description": "TCP/UDP、握手挥手、拥塞控制、HTTP 演进、gRPC/RPC、RDMA/RoCE/IB",
           "files": [
             "networking/01-tcp-udp.md",
             "networking/02-http-grpc-rpc.md",
