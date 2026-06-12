@@ -450,6 +450,18 @@ LEVEL_CLASSES = {
 }
 
 
+def _stable_mid(item: dict, group_id: str, idx: int) -> str:
+    """基于源文件路径生成稳定 mid，避免章节顺序调整导致进度错位。"""
+    src = item.get("file")
+    if not src:
+        files = item.get("files") or []
+        src = files[0] if files else None
+    if src:
+        slug = re.sub(r"[^a-z0-9]+", "-", src.lower()).strip("-")
+        return f"{group_id}::{slug}"
+    return f"{group_id}::idx-{idx + 1}"
+
+
 def _normalize_groups(block: dict) -> list[dict]:
     """统一返回 groups 结构。旧的扁平 items 包成单一隐式 group。"""
     if block.get("groups"):
@@ -525,7 +537,7 @@ def render_tabs(block: dict, topic_path: Path) -> str:
                 body = markdown_to_html(item["text"])
 
             chip_html = _render_item_chips(item)
-            mid = f"{group_id}::{index + 1}"
+            mid = _stable_mid(item, group_id, index)
             level_attr = f' data-level="{html.escape(item.get("level", ""))}"' if item.get("level") else ""
 
             nav_buttons.append(
@@ -574,8 +586,14 @@ def render_tabs(block: dict, topic_path: Path) -> str:
             done_btn = (
                 '<button type="button" class="tab-done" data-mid="{mid}" aria-pressed="false">'
                 '<span class="tab-done-icon" aria-hidden="true">✓</span>'
-                '<span class="tab-done-label">标记为已学习</span>'
+                '<span class="tab-done-label">标记为已浏览</span>'
                 '</button>'.format(mid=html.escape(mid))
+            )
+            last_seen = (
+                '<div class="tab-last-seen" data-mid="{mid}" hidden>'
+                '<span class="tab-last-seen-label">上次学习</span>'
+                '<span class="tab-last-seen-value"></span>'
+                '</div>'.format(mid=html.escape(mid))
             )
             chip_panel = chip_html.replace('class="tab-chips"', 'class="tab-panel-chips"', 1) if chip_html else ""
 
@@ -590,6 +608,7 @@ def render_tabs(block: dict, topic_path: Path) -> str:
                 '<div class="tab-panel-body">{body}</div>'
                 '<div class="tab-panel-footer">'
                 '{done_btn}'
+                '{last_seen}'
                 '<div class="tab-step-row">{prev_btn}{next_btn}</div>'
                 '</div>'
                 '</article>'.format(
@@ -602,6 +621,7 @@ def render_tabs(block: dict, topic_path: Path) -> str:
                     chip_panel=chip_panel,
                     body=body,
                     done_btn=done_btn,
+                    last_seen=last_seen,
                     prev_btn=prev_btn,
                     next_btn=next_btn,
                 )
@@ -648,6 +668,12 @@ def render_tabs(block: dict, topic_path: Path) -> str:
         '<div class="module-progress"><span class="module-progress-label">学习进度</span>'
         '<span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span>'
         '<span class="module-progress-text">0 / {total}</span></div>'
+        '<div class="module-actions">'
+        '<button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button>'
+        '<button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button>'
+        '<button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button>'
+        '<input type="file" class="module-import-input" accept="application/json,.json" hidden>'
+        '</div>'
         '</div>'
         '<div class="tabs-nav">'
         '<div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div>'
@@ -688,6 +714,30 @@ def render_layout_block(block: dict, topic_path: Path, output: Path) -> str:
     return render_section(block, topic_path)
 
 
+def _topic_progress_meta(topic: dict) -> tuple[str, int]:
+    """返回该 topic 对应的 (progressKey, totalItems)，用于首页跨页面汇总。"""
+    topic_path = ROOT / topic["source"]
+    try:
+        data = json.loads(topic_path.read_text(encoding="utf-8"))
+    except Exception:
+        return "", 0
+    layout = data.get("layout") or []
+    total = 0
+    tabs_id = ""
+    for block in layout:
+        if block.get("type") != "tabs":
+            continue
+        if not tabs_id:
+            tabs_id = block.get("id", "topic-tabs")
+        for grp in (block.get("groups") or []):
+            total += len(grp.get("items") or [])
+        total += len(block.get("items") or [])
+    output = topic.get("output", "")
+    pathname = "/" + output if output and not output.startswith("/") else output
+    progress_key = f"doctor-study-progress::{pathname}#{tabs_id or 'tabs'}"
+    return progress_key, total
+
+
 def render_topic(topic_path: Path) -> Path:
     topic = json.loads(topic_path.read_text(encoding="utf-8"))
     output = ROOT / topic["output"]
@@ -714,11 +764,14 @@ def render_index() -> Path:
 
     def topic_card(topic: dict) -> str:
         tags = "".join(f"<span>{html.escape(tag)}</span>" for tag in topic.get("tags", []))
+        progress_key, progress_total = _topic_progress_meta(topic)
         card = card_template.replace("{{color}}", html.escape(topic.get("color", "c1")))
         card = card.replace("{{href}}", html.escape(topic["output"]))
         card = card.replace("{{title}}", html.escape(topic["title"]))
         card = card.replace("{{description}}", html.escape(topic.get("description", "")))
         card = card.replace("{{tags}}", tags)
+        card = card.replace("{{progress_key}}", html.escape(progress_key))
+        card = card.replace("{{progress_total}}", str(progress_total))
         return card
 
     topics = SITE.get("topics", [])

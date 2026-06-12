@@ -6,6 +6,24 @@
   }
 })();
 
+// 全局轻量 toast，用于隐私模式 / 存储失败 / 导入导出反馈。
+var __dsToastTimer = null;
+function showStorageToast(msg){
+  try {
+    var toast = document.querySelector('.storage-toast');
+    if(!toast){
+      toast = document.createElement('div');
+      toast.className = 'storage-toast';
+      toast.setAttribute('role', 'status');
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if(__dsToastTimer) clearTimeout(__dsToastTimer);
+    __dsToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 3200);
+  } catch(_) { /* DOM 还没准备好就放弃 */ }
+}
+
 // QA blocks already have inline onclick="this.classList.toggle('open')".
 // Alt+E: expand / collapse all Q&A on current page.
 document.addEventListener('keydown', function(e){
@@ -42,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function(){
   toggle.addEventListener('click', function(){
     var next = currentTheme() === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('doctor-study-theme', next);
+    try { localStorage.setItem('doctor-study-theme', next); } catch(_) { /* 隐私模式静默 */ }
     render();
   });
 
@@ -115,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function(){
     function setModuleWidth(width){
       var clamped = clampWidth(width);
       group.style.setProperty('--module-nav-width', clamped + 'px');
-      localStorage.setItem(widthKey, String(Math.round(clamped)));
+      try { localStorage.setItem(widthKey, String(Math.round(clamped))); } catch(_) { /* 隐私模式静默 */ }
     }
 
     function setModuleCollapsed(collapsed){
@@ -237,7 +255,26 @@ document.addEventListener('DOMContentLoaded', function(){
       catch(_) { return {}; }
     }
     function saveProgress(state){
-      localStorage.setItem(progressKey, JSON.stringify(state));
+      try {
+        localStorage.setItem(progressKey, JSON.stringify(state));
+      } catch(err) {
+        showStorageToast('当前浏览器禁用了本地存储，进度无法保存。');
+      }
+    }
+    function formatRelativeTime(ts){
+      if(!ts) return '';
+      var diff = Date.now() - ts;
+      if(diff < 0) diff = 0;
+      var min = 60 * 1000;
+      var hour = 60 * min;
+      var day = 24 * hour;
+      if(diff < min) return '刚刚';
+      if(diff < hour) return Math.floor(diff / min) + ' 分钟前';
+      if(diff < day) return Math.floor(diff / hour) + ' 小时前';
+      var d = new Date(ts);
+      var days = Math.floor(diff / day);
+      if(days < 30) return days + ' 天前';
+      return (d.getMonth() + 1) + '月' + d.getDate() + '日';
     }
     function syncProgress(){
       var state = loadProgress();
@@ -255,7 +292,21 @@ document.addEventListener('DOMContentLoaded', function(){
           var isDone = !!(mid && state[mid]);
           doneBtn.setAttribute('aria-pressed', isDone ? 'true' : 'false');
           var label = doneBtn.querySelector('.tab-done-label');
-          if(label) label.textContent = isDone ? '已学习' : '标记为已学习';
+          if(label) label.textContent = isDone ? '已浏览' : '标记为已浏览';
+        }
+        var lastSeen = panel.querySelector('.tab-last-seen');
+        if(lastSeen){
+          var ts = mid ? state[mid] : 0;
+          if(ts){
+            lastSeen.hidden = false;
+            var staleDays = (Date.now() - ts) / (24 * 3600 * 1000);
+            lastSeen.classList.toggle('is-stale', staleDays >= 7);
+            var valueEl = lastSeen.querySelector('.tab-last-seen-value');
+            if(valueEl) valueEl.textContent = formatRelativeTime(ts) + (staleDays >= 7 ? ' · 建议复习' : '');
+          } else {
+            lastSeen.hidden = true;
+            lastSeen.classList.remove('is-stale');
+          }
         }
       });
       var total = buttons.length;
@@ -289,6 +340,90 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     });
 
+    // ===== 工具栏动作：导出 / 导入 / 重置 =====
+    var actionBtns = Array.from(group.querySelectorAll('.module-action'));
+    var importInput = group.querySelector('.module-import-input');
+    function downloadJSON(filename, obj){
+      try {
+        var blob = new Blob([JSON.stringify(obj, null, 2)], {type: 'application/json'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      } catch(err) {
+        showStorageToast('导出失败：' + (err && err.message ? err.message : err));
+      }
+    }
+    function exportProgress(){
+      var payload = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        page: location.pathname,
+        progressKey: progressKey,
+        progress: loadProgress()
+      };
+      var slug = (progressKey.split('::')[1] || 'progress').replace(/[^a-z0-9]+/gi, '-');
+      downloadJSON('doctor-study-progress-' + slug + '.json', payload);
+    }
+    function importProgressFromText(text){
+      try {
+        var data = JSON.parse(text);
+        var incoming = data && data.progress ? data.progress : data;
+        if(!incoming || typeof incoming !== 'object'){
+          showStorageToast('导入失败：JSON 格式不正确。');
+          return;
+        }
+        var current = loadProgress();
+        Object.keys(incoming).forEach(function(k){
+          var v = incoming[k];
+          if(typeof v === 'number' || typeof v === 'string'){
+            current[k] = Number(v) || Date.now();
+          } else if(v) {
+            current[k] = Date.now();
+          }
+        });
+        saveProgress(current);
+        syncProgress();
+        showStorageToast('已导入 ' + Object.keys(incoming).length + ' 条进度记录。');
+      } catch(err) {
+        showStorageToast('导入失败：' + (err && err.message ? err.message : err));
+      }
+    }
+    function resetProgress(){
+      if(!window.confirm('确认清空本页所有学习进度？此操作不可撤销。')) return;
+      try {
+        localStorage.removeItem(progressKey);
+      } catch(_) { /* ignore */ }
+      syncProgress();
+      showStorageToast('已重置本页学习进度。');
+    }
+    actionBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var action = btn.dataset.action;
+        if(action === 'export') exportProgress();
+        else if(action === 'reset') resetProgress();
+        else if(action === 'import' && importInput) importInput.click();
+      });
+    });
+    if(importInput){
+      importInput.addEventListener('change', function(){
+        var file = importInput.files && importInput.files[0];
+        if(!file) return;
+        var reader = new FileReader();
+        reader.onload = function(){ importProgressFromText(String(reader.result || '')); importInput.value = ''; };
+        reader.onerror = function(){ showStorageToast('读取文件失败。'); importInput.value = ''; };
+        reader.readAsText(file);
+      });
+    }
+
+    // 多 tab 跨页同步
+    window.addEventListener('storage', function(e){
+      if(!e.key) return;
+      if(e.key === progressKey) syncProgress();
+    });
+
     // 级别筛选
     function applyLevel(level){
       levelChips.forEach(function(c){ c.classList.toggle('active', c.dataset.level === level); });
@@ -298,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function(){
         btn.dataset.levelHidden = match ? '' : '1';
         applyVisibility(btn);
       });
-      localStorage.setItem(levelKey, level);
+      try { localStorage.setItem(levelKey, level); } catch(_) { /* 隐私模式静默 */ }
     }
     function applyVisibility(btn){
       btn.hidden = !!btn.dataset.levelHidden || !!btn.dataset.queryHidden;
@@ -312,7 +447,9 @@ document.addEventListener('DOMContentLoaded', function(){
       try { return JSON.parse(localStorage.getItem(groupKey) || '{}') || {}; }
       catch(_) { return {}; }
     }
-    function saveGroupState(state){ localStorage.setItem(groupKey, JSON.stringify(state)); }
+    function saveGroupState(state){
+      try { localStorage.setItem(groupKey, JSON.stringify(state)); } catch(_) { /* 隐私模式静默 */ }
+    }
     var savedGroupState = loadGroupState();
     detailGroups.forEach(function(d){
       var id = d.dataset.groupId;
@@ -452,4 +589,36 @@ document.addEventListener('DOMContentLoaded', function(){
 
   rebuildToc();
   document.addEventListener('tab:activated', function(){ rebuildToc(); });
+});
+
+// 首页跨页面汇总：扫描所有 progress key，把每张卡片渲染成 已读 N / 总 M
+document.addEventListener('DOMContentLoaded', function(){
+  var cards = document.querySelectorAll('.idx-card[data-progress-key]');
+  if(!cards.length) return;
+  function loadCount(key){
+    try {
+      var raw = localStorage.getItem(key);
+      if(!raw) return 0;
+      var obj = JSON.parse(raw) || {};
+      return Object.keys(obj).length;
+    } catch(_) { return 0; }
+  }
+  function refresh(){
+    cards.forEach(function(card){
+      var key = card.dataset.progressKey;
+      var total = parseInt(card.dataset.progressTotal, 10) || 0;
+      var done = loadCount(key);
+      var badge = card.querySelector('.idx-card-progress');
+      var text = card.querySelector('.idx-card-progress-text');
+      if(!badge || !text || total <= 0) return;
+      badge.hidden = false;
+      text.textContent = done + ' / ' + total;
+      card.classList.toggle('is-started', done > 0);
+      card.classList.toggle('is-complete', done >= total);
+    });
+  }
+  refresh();
+  window.addEventListener('storage', function(e){
+    if(e.key && e.key.indexOf('doctor-study-progress::') === 0) refresh();
+  });
 });
