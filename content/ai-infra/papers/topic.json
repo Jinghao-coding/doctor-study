@@ -13,21 +13,40 @@
       "type": "tabs",
       "id": "papers-tabs",
       "title": "论文工作",
-      "items": [
+      "groups": [
         {
-          "title": "ICDCS 2026 Maestro",
-          "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM",
-          "file": "01-icdcs-2026-maestro-llm.md"
+          "title": "一作论文",
+          "items": [
+            {
+              "title": "ICDCS 2026 Maestro",
+              "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM",
+              "file": "01-icdcs-2026-maestro-llm.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            },
+            {
+              "title": "IEEE Cluster 2026 DeepShare",
+              "description": "多租户 GPU 集群、QAD 保障、干扰感知合用",
+              "file": "02-ieee-cluster-2026-deepshare-gpu.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            }
+          ]
         },
         {
-          "title": "IEEE Cluster 2026 DeepShare",
-          "description": "多租户 GPU 集群、QAD 保障、干扰感知合用",
-          "file": "02-ieee-cluster-2026-deepshare-gpu.md"
-        },
-        {
-          "title": "关系与面试叙事",
-          "description": "互补关系、共通理念、自我介绍定位",
-          "file": "03-section-03.md"
+          "title": "面试叙事",
+          "items": [
+            {
+              "title": "关系与面试叙事",
+              "description": "互补关系、共通理念、自我介绍定位",
+              "file": "03-section-03.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 15
+            }
+          ]
         }
       ]
     }

@@ -16,72 +16,108 @@
       "type": "tabs",
       "id": "cs-basics-tabs",
       "title": "计算机基础知识",
-      "items": [
+      "groups": [
         {
-          "title": "操作系统基础",
-          "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、虚拟内存、I/O 多路复用、死锁、Signal",
-          "files": [
-            "os/01-process-thread-coroutine.md",
-            "os/02-cpu-scheduling.md",
-            "os/03-memory-oom-numa.md",
-            "os/06-virtual-memory-paging.md",
-            "os/05-io-multiplexing.md",
-            "os/07-deadlock.md",
-            "os/04-signal-stdio.md"
+          "title": "系统与硬件",
+          "items": [
+            {
+              "title": "操作系统基础",
+              "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、虚拟内存、I/O 多路复用、死锁、Signal",
+              "files": [
+                "os/01-process-thread-coroutine.md",
+                "os/02-cpu-scheduling.md",
+                "os/03-memory-oom-numa.md",
+                "os/06-virtual-memory-paging.md",
+                "os/05-io-multiplexing.md",
+                "os/07-deadlock.md",
+                "os/04-signal-stdio.md"
+              ],
+              "level": "基础",
+              "priority": 1,
+              "time": 30
+            },
+            {
+              "title": "计算机组成原理",
+              "description": "CPU/内存层次、Cache/TLB、DMA、PCIe、NUMA 拓扑",
+              "files": [
+                "computer-architecture/01-cpu-memory-hierarchy.md",
+                "computer-architecture/02-cache-tlb.md",
+                "computer-architecture/03-dma-pcie-numa.md"
+              ],
+              "level": "基础",
+              "priority": 1,
+              "time": 18
+            }
           ]
         },
         {
-          "title": "计算机组成原理",
-          "description": "CPU/内存层次、Cache/TLB、DMA、PCIe、NUMA 拓扑",
-          "files": [
-            "computer-architecture/01-cpu-memory-hierarchy.md",
-            "computer-architecture/02-cache-tlb.md",
-            "computer-architecture/03-dma-pcie-numa.md"
+          "title": "网络与容器",
+          "items": [
+            {
+              "title": "计算机网络基础",
+              "description": "TCP/UDP、握手挥手、拥塞控制、HTTP 演进、gRPC/RPC、RDMA/RoCE/IB",
+              "files": [
+                "networking/01-tcp-udp.md",
+                "networking/02-http-grpc-rpc.md",
+                "networking/03-rdma.md"
+              ],
+              "level": "基础",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "Linux 与容器基础",
+              "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s",
+              "files": [
+                "linux-container/01-env-runtime.md",
+                "linux-container/02-namespace-cgroup-rootfs.md",
+                "linux-container/03-docker-k8s-resource.md"
+              ],
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            }
           ]
         },
         {
-          "title": "计算机网络基础",
-          "description": "TCP/UDP、握手挥手、拥塞控制、HTTP 演进、gRPC/RPC、RDMA/RoCE/IB",
-          "files": [
-            "networking/01-tcp-udp.md",
-            "networking/02-http-grpc-rpc.md",
-            "networking/03-rdma.md"
-          ]
-        },
-        {
-          "title": "Linux 与容器基础",
-          "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s",
-          "files": [
-            "linux-container/01-env-runtime.md",
-            "linux-container/02-namespace-cgroup-rootfs.md",
-            "linux-container/03-docker-k8s-resource.md"
-          ]
-        },
-        {
-          "title": "Linux 内核与大模型系统",
-          "description": "NUMA、cgroups、THP、大页、I/O、零拷贝与权重加载路径",
-          "files": [
-            "linux-kernel-ai/01-numa-binding.md",
-            "linux-kernel-ai/02-cgroups-gpu-isolation.md",
-            "linux-kernel-ai/03-memory-hugepages-thp.md",
-            "linux-kernel-ai/04-io-zero-copy.md"
-          ]
-        },
-        {
-          "title": "编程语言与工程基础",
-          "description": "Binary、编译链接、动态库、ABI、C++ 系统编程",
-          "files": [
-            "programming-systems/01-binary-linking.md",
-            "programming-systems/02-cpp-systems.md"
-          ]
-        },
-        {
-          "title": "分布式与 AI Infra 基础",
-          "description": "Role/Replica/Rank、NCCL/RPC、存储链路、GPU/NPU 观测",
-          "files": [
-            "distributed-ai/01-role-replica-rank.md",
-            "distributed-ai/02-communication-storage.md",
-            "distributed-ai/03-gpu-npu-observability.md"
+          "title": "AI 视角与工程",
+          "items": [
+            {
+              "title": "Linux 内核与大模型系统",
+              "description": "NUMA、cgroups、THP、大页、I/O、零拷贝与权重加载路径",
+              "files": [
+                "linux-kernel-ai/01-numa-binding.md",
+                "linux-kernel-ai/02-cgroups-gpu-isolation.md",
+                "linux-kernel-ai/03-memory-hugepages-thp.md",
+                "linux-kernel-ai/04-io-zero-copy.md"
+              ],
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            },
+            {
+              "title": "分布式与 AI Infra 基础",
+              "description": "Role/Replica/Rank、NCCL/RPC、存储链路、GPU/NPU 观测",
+              "files": [
+                "distributed-ai/01-role-replica-rank.md",
+                "distributed-ai/02-communication-storage.md",
+                "distributed-ai/03-gpu-npu-observability.md"
+              ],
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "编程语言与工程基础",
+              "description": "Binary、编译链接、动态库、ABI、C++ 系统编程",
+              "files": [
+                "programming-systems/01-binary-linking.md",
+                "programming-systems/02-cpp-systems.md"
+              ],
+              "level": "进阶",
+              "priority": 2,
+              "time": 18
+            }
           ]
         }
       ]

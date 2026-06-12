@@ -14,51 +14,103 @@
       "type": "tabs",
       "id": "llm-inference-tabs",
       "title": "LLM 推理系统化模块",
-      "items": [
+      "groups": [
         {
-          "title": "端到端链路",
-          "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程",
-          "file": "05-e2e-pipeline.md"
+          "title": "总览与流程",
+          "items": [
+            {
+              "title": "端到端链路",
+              "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程",
+              "file": "05-e2e-pipeline.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "推理总览",
+              "description": "定义、核心概念、Prefill/Decode 区别",
+              "file": "01-prefill-decode.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 10
+            },
+            {
+              "title": "请求生命周期",
+              "description": "请求接入、调度、计算、生成、返回",
+              "file": "02-kv-attention.md",
+              "level": "基础",
+              "priority": 2,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "推理总览",
-          "description": "定义、核心概念、Prefill/Decode 区别",
-          "file": "01-prefill-decode.md"
-        },
-        {
-          "title": "请求生命周期",
-          "description": "请求接入、调度、计算、生成、返回",
-          "file": "02-kv-attention.md"
-        },
-        {
-          "title": "Prefill 阶段",
-          "description": "计算密集、TTFT、首 token 延迟",
-          "file": "03-optimization.md"
-        },
-        {
-          "title": "Decode 阶段",
-          "description": "逐 token 生成、memory-bound、TPOT",
-          "file": "04-serving-engines.md"
+          "title": "Prefill 与 Decode",
+          "items": [
+            {
+              "title": "Prefill 阶段",
+              "description": "计算密集、TTFT、首 token 延迟",
+              "file": "03-optimization.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "Decode 阶段",
+              "description": "逐 token 生成、memory-bound、TPOT",
+              "file": "04-serving-engines.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 12
+            }
+          ]
         },
         {
           "title": "KV Cache 与 Attention",
-          "description": "KV 缓存、PagedAttention、FlashAttention、GQA",
-          "file": "05-kv-cache-attention.md"
+          "items": [
+            {
+              "title": "KV Cache 与 Attention",
+              "description": "KV 缓存、PagedAttention、FlashAttention、GQA",
+              "file": "05-kv-cache-attention.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "性能指标与瓶颈",
-          "description": "TTFT、TPOT、吞吐、显存、MFU",
-          "file": "06-performance-bottlenecks.md"
+          "title": "性能与优化",
+          "items": [
+            {
+              "title": "性能指标与瓶颈",
+              "description": "TTFT、TPOT、吞吐、显存、MFU",
+              "file": "06-performance-bottlenecks.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "优化技术",
+              "description": "Batching、量化、投机解码、Prefix Cache",
+              "file": "07-optimization-techniques.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            }
+          ]
         },
         {
-          "title": "优化技术",
-          "description": "Batching、量化、投机解码、Prefix Cache",
-          "file": "07-optimization-techniques.md"
-        },
-        {
-          "title": "推理引擎对比",
-          "description": "AI Infra 视角 · 学习路线 · 13 题面试清单",
-          "file": "08-serving-engines.md"
+          "title": "引擎与面试",
+          "items": [
+            {
+              "title": "推理引擎对比",
+              "description": "AI Infra 视角 · 学习路线 · 13 题面试清单",
+              "file": "08-serving-engines.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 18
+            }
+          ]
         }
       ]
     }

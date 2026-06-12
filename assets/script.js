@@ -176,7 +176,9 @@ document.addEventListener('DOMContentLoaded', function(){
         var query = filter.value.trim().toLowerCase();
         buttons.forEach(function(button){
           var text = button.textContent.replace(/\s+/g, ' ').toLowerCase();
-          button.hidden = query.length > 0 && text.indexOf(query) === -1;
+          var match = !query || text.indexOf(query) !== -1;
+          button.dataset.queryHidden = match ? '' : '1';
+          button.hidden = !!button.dataset.queryHidden || !!button.dataset.levelHidden;
         });
         var active = group.querySelector('.tab-button.active');
         if(active && active.hidden){
@@ -219,8 +221,117 @@ document.addEventListener('DOMContentLoaded', function(){
       moduleResizer.addEventListener('pointerup', stopResize);
       moduleResizer.addEventListener('pointercancel', stopResize);
     }
+
+    // ===== 进度 / 级别筛选 / 分组折叠 / 上下篇 =====
+    var pageKey = (location.pathname || 'index') + '#' + (group.dataset.tabsId || 'tabs');
+    var progressKey = 'doctor-study-progress::' + pageKey;
+    var groupKey = 'doctor-study-group::' + pageKey;
+    var levelKey = 'doctor-study-level::' + pageKey;
+    var progressBar = group.querySelector('.module-progress-fill');
+    var progressText = group.querySelector('.module-progress-text');
+    var levelChips = Array.from(group.querySelectorAll('.level-chip'));
+    var detailGroups = Array.from(group.querySelectorAll('details.tab-group'));
+
+    function loadProgress(){
+      try { return JSON.parse(localStorage.getItem(progressKey) || '{}') || {}; }
+      catch(_) { return {}; }
+    }
+    function saveProgress(state){
+      localStorage.setItem(progressKey, JSON.stringify(state));
+    }
+    function syncProgress(){
+      var state = loadProgress();
+      var done = 0;
+      buttons.forEach(function(btn){
+        var mid = btn.dataset.mid;
+        var isDone = !!(mid && state[mid]);
+        btn.classList.toggle('is-done', isDone);
+        if(isDone) done++;
+      });
+      panels.forEach(function(panel){
+        var mid = panel.dataset.mid;
+        var doneBtn = panel.querySelector('.tab-done');
+        if(doneBtn){
+          var isDone = !!(mid && state[mid]);
+          doneBtn.setAttribute('aria-pressed', isDone ? 'true' : 'false');
+          var label = doneBtn.querySelector('.tab-done-label');
+          if(label) label.textContent = isDone ? '已学习' : '标记为已学习';
+        }
+      });
+      var total = buttons.length;
+      if(progressBar) progressBar.style.width = total ? (done * 100 / total) + '%' : '0%';
+      if(progressText) progressText.textContent = done + ' / ' + total;
+    }
+    function toggleDone(mid){
+      if(!mid) return;
+      var state = loadProgress();
+      if(state[mid]) delete state[mid]; else state[mid] = Date.now();
+      saveProgress(state);
+      syncProgress();
+    }
+    panels.forEach(function(panel){
+      var doneBtn = panel.querySelector('.tab-done');
+      if(doneBtn){
+        doneBtn.addEventListener('click', function(){ toggleDone(panel.dataset.mid); });
+      }
+      panel.querySelectorAll('.tab-step').forEach(function(stepBtn){
+        stepBtn.addEventListener('click', function(){
+          var target = parseInt(stepBtn.dataset.stepTarget, 10);
+          if(Number.isNaN(target)) return;
+          activate(target - 1);
+          var active = group.querySelector('.tab-button.active');
+          if(active && typeof active.scrollIntoView === 'function'){
+            active.scrollIntoView({block: 'nearest'});
+          }
+          var panelEl = group.querySelector('.tab-panel.active');
+          if(panelEl) panelEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+        });
+      });
+    });
+
+    // 级别筛选
+    function applyLevel(level){
+      levelChips.forEach(function(c){ c.classList.toggle('active', c.dataset.level === level); });
+      buttons.forEach(function(btn){
+        var l = btn.dataset.level || '';
+        var match = (level === 'all') || (l === level);
+        btn.dataset.levelHidden = match ? '' : '1';
+        applyVisibility(btn);
+      });
+      localStorage.setItem(levelKey, level);
+    }
+    function applyVisibility(btn){
+      btn.hidden = !!btn.dataset.levelHidden || !!btn.dataset.queryHidden;
+    }
+    levelChips.forEach(function(c){
+      c.addEventListener('click', function(){ applyLevel(c.dataset.level); });
+    });
+
+    // 分组折叠状态记忆
+    function loadGroupState(){
+      try { return JSON.parse(localStorage.getItem(groupKey) || '{}') || {}; }
+      catch(_) { return {}; }
+    }
+    function saveGroupState(state){ localStorage.setItem(groupKey, JSON.stringify(state)); }
+    var savedGroupState = loadGroupState();
+    detailGroups.forEach(function(d){
+      var id = d.dataset.groupId;
+      if(id && Object.prototype.hasOwnProperty.call(savedGroupState, id)){
+        if(savedGroupState[id]) d.setAttribute('open', ''); else d.removeAttribute('open');
+      }
+      d.addEventListener('toggle', function(){
+        if(!id) return;
+        var state = loadGroupState();
+        state[id] = d.open;
+        saveGroupState(state);
+      });
+    });
+
     setModuleCollapsed(group.classList.contains('module-collapsed'));
     updateCurrentTitle();
+    syncProgress();
+    var savedLevel = localStorage.getItem(levelKey);
+    if(savedLevel && levelChips.length) applyLevel(savedLevel);
   });
 });
 

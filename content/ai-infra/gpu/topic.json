@@ -18,136 +18,145 @@
       "type": "tabs",
       "id": "gpu-tabs",
       "title": "GPU 内容模块",
-      "items": [
+      "groups": [
         {
-          "title": "CPU vs GPU",
-          "description": "架构差异、为什么 GPU 适合深度学习",
-          "file": "00-cpu-vs-gpu.md"
+          "title": "硬件与互联基础",
+          "items": [
+            {
+              "title": "CPU vs GPU",
+              "description": "架构差异、为什么 GPU 适合深度学习",
+              "file": "00-cpu-vs-gpu.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 8
+            },
+            {
+              "title": "硬件基础",
+              "description": "架构、A100/H100/H200、显存带宽",
+              "file": "01-hardware.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "GPU 互联与数据路径",
+              "description": "NVLink/NVSwitch、PCIe、RDMA、GPUDirect、NUMA/NIC 亲和",
+              "file": "11-interconnect-data-paths.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 15
+            }
+          ]
         },
         {
-          "title": "硬件基础",
-          "description": "架构、A100/H100/H200、显存带宽",
-          "file": "01-hardware.md"
+          "title": "执行模型与调度",
+          "items": [
+            {
+              "title": "CUDA 执行模型",
+              "description": "GPU core、kernel launch、grid、block、thread、warp、SM",
+              "file": "06-cuda-execution-model.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "CFS vs CUDA 调度",
+              "description": "Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比",
+              "file": "12-cfs-vs-cuda-scheduling.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 18
+            },
+            {
+              "title": "Host-Device 数据拷贝",
+              "description": "H2D/D2H、pinned memory、异步拷贝、DataLoader、拷贝诊断",
+              "file": "08-host-device-copy.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            },
+            {
+              "title": "Stream 与数据拷贝",
+              "description": "CUDA stream、H2D/D2H、Pinned Memory、计算拷贝重叠",
+              "file": "08-cuda-streams-data-copy.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "GPU 互联与数据路径",
-          "description": "NVLink/NVSwitch、PCIe、RDMA、GPUDirect、NUMA/NIC 亲和",
-          "file": "11-interconnect-data-paths.md"
+          "title": "共享与隔离",
+          "items": [
+            {
+              "title": "共享方式",
+              "description": "MIG、MPS、时间片、CUDA VMM",
+              "file": "02-sharing.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            },
+            {
+              "title": "K8S GPU 共享",
+              "description": "K8S 里的 MPS、time-slicing、device-plugin 配置",
+              "file": "10-k8s-gpu-sharing.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "CUDA 执行模型",
-          "description": "GPU core、kernel launch、grid、block、thread、warp、SM",
-          "file": "06-cuda-execution-model.md"
+          "title": "性能与诊断",
+          "items": [
+            {
+              "title": "性能指标",
+              "description": "TFLOPS、显存带宽、Roofline、利用率、互联带宽",
+              "file": "03-performance-metrics.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 10
+            },
+            {
+              "title": "利用率诊断",
+              "description": "GPU-Util、SM Active、Occupancy、Warp Stall、Compute/Memory、Tensor Core",
+              "file": "07-utilization-diagnosis.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "瓶颈分类",
+              "description": "计算瓶颈、显存瓶颈、通信瓶颈的判断与优化",
+              "file": "09-bottleneck-classification.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "性能预测指标",
+              "description": "MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵",
+              "file": "04-prediction-metrics.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "CFS vs CUDA 调度",
-          "description": "Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比",
-          "file": "12-cfs-vs-cuda-scheduling.md"
-        },
-        {
-          "title": "Host-Device 数据拷贝",
-          "description": "H2D/D2H、pinned memory、异步拷贝、DataLoader、拷贝诊断",
-          "file": "08-host-device-copy.md"
-        },
-        {
-          "title": "共享方式",
-          "description": "MIG、MPS、时间片、CUDA VMM",
-          "file": "02-sharing.md"
-        },
-        {
-          "title": "K8S GPU 共享",
-          "description": "K8S 里的 MPS、time-slicing、device-plugin 配置",
-          "file": "10-k8s-gpu-sharing.md"
-        },
-        {
-          "title": "性能指标",
-          "description": "TFLOPS、显存带宽、Roofline、利用率、互联带宽",
-          "file": "03-performance-metrics.md"
-        },
-        {
-          "title": "利用率诊断",
-          "description": "GPU-Util、SM Active、Occupancy、Warp Stall、Compute/Memory、Tensor Core",
-          "file": "07-utilization-diagnosis.md"
-        },
-        {
-          "title": "Stream 与数据拷贝",
-          "description": "CUDA stream、H2D/D2H、Pinned Memory、计算拷贝重叠",
-          "file": "08-cuda-streams-data-copy.md"
-        },
-        {
-          "title": "瓶颈分类",
-          "description": "计算瓶颈、显存瓶颈、通信瓶颈的判断与优化",
-          "file": "09-bottleneck-classification.md"
-        },
-        {
-          "title": "性能预测指标",
-          "description": "MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵",
-          "file": "04-prediction-metrics.md"
-        },
-        {
-          "title": "面试体系化复习",
-          "description": "架构、指标、显存、通信、调度、排障与高频问答",
-          "file": "05-interview-guide.md"
+          "title": "面试复习",
+          "items": [
+            {
+              "title": "面试体系化复习",
+              "description": "架构、指标、显存、通信、调度、排障与高频问答",
+              "file": "05-interview-guide.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            }
+          ]
         }
       ]
-    }
-  ],
-  "sections": [
-    {
-      "title": "CPU vs GPU 架构差异",
-      "file": "00-cpu-vs-gpu.md"
-    },
-    {
-      "title": "GPU 硬件基础",
-      "file": "01-hardware.md"
-    },
-    {
-      "title": "GPU 互联与数据路径",
-      "file": "11-interconnect-data-paths.md"
-    },
-    {
-      "title": "CUDA 执行模型",
-      "file": "06-cuda-execution-model.md"
-    },
-    {
-      "title": "CFS vs CUDA 调度",
-      "file": "12-cfs-vs-cuda-scheduling.md"
-    },
-    {
-      "title": "Host-Device 数据拷贝",
-      "file": "08-host-device-copy.md"
-    },
-    {
-      "title": "GPU 共享方式",
-      "file": "02-sharing.md"
-    },
-    {
-      "title": "K8S GPU 共享",
-      "file": "10-k8s-gpu-sharing.md"
-    },
-    {
-      "title": "GPU 性能指标",
-      "file": "03-performance-metrics.md"
-    },
-    {
-      "title": "GPU 利用率诊断",
-      "file": "07-utilization-diagnosis.md"
-    },
-    {
-      "title": "CUDA Stream 与数据拷贝",
-      "file": "08-cuda-streams-data-copy.md"
-    },
-    {
-      "title": "GPU 瓶颈分类",
-      "file": "09-bottleneck-classification.md"
-    },
-    {
-      "title": "GPU 性能预测指标",
-      "file": "04-prediction-metrics.md"
-    },
-    {
-      "title": "GPU 面试体系化复习",
-      "file": "05-interview-guide.md"
     }
   ]
 }

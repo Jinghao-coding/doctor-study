@@ -443,80 +443,231 @@ def render_grid(block: dict, topic_path: Path) -> str:
     return f'<section class="component-block"><h2>{html.escape(block.get("title", "核心模块"))}</h2><div class="content-grid">{"".join(cards)}</div></section>'
 
 
-def render_tabs(block: dict, topic_path: Path) -> str:
-    items = block.get("items", [])
-    if not items:
+LEVEL_CLASSES = {
+    "基础": "level-basic",
+    "进阶": "level-mid",
+    "精通": "level-pro",
+}
+
+
+def _normalize_groups(block: dict) -> list[dict]:
+    """统一返回 groups 结构。旧的扁平 items 包成单一隐式 group。"""
+    if block.get("groups"):
+        return [
+            {"title": grp.get("title", ""), "items": grp.get("items", [])}
+            for grp in block["groups"]
+            if grp.get("items")
+        ]
+    if block.get("items"):
+        return [{"title": "", "items": block["items"]}]
+    return []
+
+
+def _render_item_chips(item: dict) -> str:
+    chips = []
+    level = item.get("level")
+    if level:
+        cls = LEVEL_CLASSES.get(level, "level-basic")
+        chips.append(f'<span class="chip chip-{cls}">{html.escape(level)}</span>')
+    priority = item.get("priority")
+    if priority:
+        try:
+            p = int(priority)
+        except (TypeError, ValueError):
+            p = 0
+        if 1 <= p <= 3:
+            stars = "★" * p + "☆" * (3 - p)
+            chips.append(f'<span class="chip chip-priority" title="优先级 {p}/3">{stars}</span>')
+    time_min = item.get("time")
+    if time_min:
+        chips.append(f'<span class="chip chip-time">⏱ {html.escape(str(time_min))} min</span>')
+    if not chips:
         return ""
-    nav = []
-    panels = []
-    group = html.escape(block.get("id", "topic-tabs"))
-    for index, item in enumerate(items):
-        tab_id = f"{group}-tab-{index + 1}"
-        panel_id = f"{group}-panel-{index + 1}"
-        active = index == 0
-        title = item.get("title", f"模块 {index + 1}")
-        desc = item.get("description", "")
-        initial = f"{index + 1:02d}"
-        body = ""
-        if item.get("file"):
-            body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
-        elif item.get("files"):
-            body = "\n".join(
-                markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
-                for file in item["files"]
+    return f'<span class="tab-chips">{"".join(chips)}</span>'
+
+
+def render_tabs(block: dict, topic_path: Path) -> str:
+    groups = _normalize_groups(block)
+    if not groups:
+        return ""
+
+    flat_items: list[dict] = []
+    for grp in groups:
+        for item in grp["items"]:
+            flat_items.append(item)
+    if not flat_items:
+        return ""
+
+    group_id = html.escape(block.get("id", "topic-tabs"))
+    nav_groups: list[str] = []
+    panels: list[str] = []
+
+    flat_index = 0
+    for grp_idx, grp in enumerate(groups):
+        nav_buttons: list[str] = []
+        for item in grp["items"]:
+            index = flat_index
+            tab_id = f"{group_id}-tab-{index + 1}"
+            panel_id = f"{group_id}-panel-{index + 1}"
+            active = index == 0
+            title = item.get("title", f"模块 {index + 1}")
+            desc = item.get("description", "")
+            initial = f"{index + 1:02d}"
+            body = ""
+            if item.get("file"):
+                body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
+            elif item.get("files"):
+                body = "\n".join(
+                    markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
+                    for file in item["files"]
+                )
+            elif item.get("text"):
+                body = markdown_to_html(item["text"])
+
+            chip_html = _render_item_chips(item)
+            mid = f"{group_id}::{index + 1}"
+            level_attr = f' data-level="{html.escape(item.get("level", ""))}"' if item.get("level") else ""
+
+            nav_buttons.append(
+                '<button class="tab-button{active}" type="button" role="tab" id="{tab_id}" '
+                'data-initial="{initial}" data-mid="{mid}"{level_attr} title="{title}" '
+                'aria-controls="{panel_id}" aria-selected="{selected}">'
+                '<span class="tab-progress" aria-hidden="true"></span>'
+                '<span class="tab-text">'
+                '<span class="tab-title">{title}</span>'
+                '<span class="tab-desc">{desc}</span>'
+                '</span>'
+                '{chip_html}'
+                '</button>'.format(
+                    active=" active" if active else "",
+                    tab_id=tab_id,
+                    panel_id=panel_id,
+                    mid=html.escape(mid),
+                    level_attr=level_attr,
+                    selected="true" if active else "false",
+                    initial=html.escape(initial),
+                    title=html.escape(title),
+                    desc=html.escape(desc),
+                    chip_html=chip_html,
+                )
             )
-        elif item.get("text"):
-            body = markdown_to_html(item["text"])
-        nav.append(
-            '<button class="tab-button{active}" type="button" role="tab" id="{tab_id}" '
-            'data-initial="{initial}" title="{title}" '
-            'aria-controls="{panel_id}" aria-selected="{selected}">'
-            '<span class="tab-title">{title}</span>'
-            '<span class="tab-desc">{desc}</span>'
-            '</button>'.format(
-                active=" active" if active else "",
-                tab_id=tab_id,
-                panel_id=panel_id,
-                selected="true" if active else "false",
-                initial=html.escape(initial),
-                title=html.escape(title),
-                desc=html.escape(desc),
+
+            # 上一篇/下一篇（按扁平顺序）
+            prev_btn = ""
+            next_btn = ""
+            if index > 0:
+                prev_title = flat_items[index - 1].get("title", f"模块 {index}")
+                prev_btn = (
+                    '<button type="button" class="tab-step tab-step-prev" data-step-target="{i}">'
+                    '<span class="tab-step-label">上一篇</span>'
+                    '<span class="tab-step-title">{title}</span>'
+                    '</button>'.format(i=index - 1 + 1, title=html.escape(prev_title))
+                )
+            if index < len(flat_items) - 1:
+                next_title = flat_items[index + 1].get("title", f"模块 {index + 2}")
+                next_btn = (
+                    '<button type="button" class="tab-step tab-step-next" data-step-target="{i}">'
+                    '<span class="tab-step-label">下一篇</span>'
+                    '<span class="tab-step-title">{title}</span>'
+                    '</button>'.format(i=index + 1 + 1, title=html.escape(next_title))
+                )
+            done_btn = (
+                '<button type="button" class="tab-done" data-mid="{mid}" aria-pressed="false">'
+                '<span class="tab-done-icon" aria-hidden="true">✓</span>'
+                '<span class="tab-done-label">标记为已学习</span>'
+                '</button>'.format(mid=html.escape(mid))
             )
-        )
-        panels.append(
-            '<article class="tab-panel{active}" role="tabpanel" id="{panel_id}" '
-            'aria-labelledby="{tab_id}" {hidden}>'
-            '<div class="tab-panel-head">'
-            '<div class="tab-panel-kicker">内容模块</div>'
-            '<h2>{title}</h2>'
+            chip_panel = chip_html.replace('class="tab-chips"', 'class="tab-panel-chips"', 1) if chip_html else ""
+
+            panels.append(
+                '<article class="tab-panel{active}" role="tabpanel" id="{panel_id}" '
+                'aria-labelledby="{tab_id}" data-mid="{mid}" {hidden}>'
+                '<div class="tab-panel-head">'
+                '<div class="tab-panel-kicker">内容模块</div>'
+                '<h2>{title}</h2>'
+                '{chip_panel}'
+                '</div>'
+                '<div class="tab-panel-body">{body}</div>'
+                '<div class="tab-panel-footer">'
+                '{done_btn}'
+                '<div class="tab-step-row">{prev_btn}{next_btn}</div>'
+                '</div>'
+                '</article>'.format(
+                    active=" active" if active else "",
+                    panel_id=panel_id,
+                    tab_id=tab_id,
+                    mid=html.escape(mid),
+                    hidden="" if active else "hidden",
+                    title=html.escape(title),
+                    chip_panel=chip_panel,
+                    body=body,
+                    done_btn=done_btn,
+                    prev_btn=prev_btn,
+                    next_btn=next_btn,
+                )
+            )
+            flat_index += 1
+
+        if grp.get("title"):
+            grp_id = f"{group_id}-grp-{grp_idx + 1}"
+            nav_groups.append(
+                '<details class="tab-group" open data-group-id="{gid}">'
+                '<summary class="tab-group-summary">'
+                '<span class="tab-group-caret" aria-hidden="true">▾</span>'
+                '<span class="tab-group-title">{title}</span>'
+                '<span class="tab-group-meta"><span class="tab-group-count">{count}</span></span>'
+                '</summary>'
+                '<div class="tab-group-items">{buttons}</div>'
+                '</details>'.format(
+                    gid=html.escape(grp_id),
+                    title=html.escape(grp["title"]),
+                    count=len(grp["items"]),
+                    buttons="".join(nav_buttons),
+                )
+            )
+        else:
+            nav_groups.append(f'<div class="tab-group tab-group-flat">{"".join(nav_buttons)}</div>')
+
+    has_levels = any(item.get("level") for item in flat_items)
+    level_filter = ""
+    if has_levels:
+        level_filter = (
+            '<div class="tabs-level-filter" role="group" aria-label="按级别筛选">'
+            '<button type="button" class="level-chip active" data-level="all">全部</button>'
+            '<button type="button" class="level-chip" data-level="基础">基础</button>'
+            '<button type="button" class="level-chip" data-level="进阶">进阶</button>'
+            '<button type="button" class="level-chip" data-level="精通">精通</button>'
             '</div>'
-            '<div class="tab-panel-body">{body}</div>'
-            '</article>'.format(
-                active=" active" if active else "",
-                panel_id=panel_id,
-                tab_id=tab_id,
-                hidden="" if active else "hidden",
-                title=html.escape(title),
-                body=body,
-            )
         )
+
     return (
-        '<section class="tabs-shell" data-tabs>'
+        '<section class="tabs-shell" data-tabs data-tabs-id="{gid}">'
         '<div class="tabs-toolbar">'
         '<button class="module-toggle" type="button" aria-pressed="false">折叠模块</button>'
         '<div class="module-current"><span>当前模块</span><strong></strong></div>'
+        '<div class="module-progress"><span class="module-progress-label">学习进度</span>'
+        '<span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span>'
+        '<span class="module-progress-text">0 / {total}</span></div>'
         '</div>'
         '<div class="tabs-nav">'
         '<div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div>'
         '<button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button>'
         '<div class="tabs-nav-head">'
-        f'<div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">{html.escape(block.get("title", "内容模块"))}</div></div>'
+        '<div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">{title}</div></div>'
         '<input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块">'
+        '{level_filter}'
         '</div>'
-        f'<div class="tabs-list" role="tablist" aria-label="{html.escape(block.get("title", "内容模块"))}">{"".join(nav)}</div>'
+        '<div class="tabs-list" role="tablist" aria-label="{title}">{groups}</div>'
         '</div>'
-        f'<div class="tabs-panels">{"".join(panels)}</div>'
+        '<div class="tabs-panels">{panels}</div>'
         "</section>"
+    ).format(
+        gid=group_id,
+        total=len(flat_items),
+        title=html.escape(block.get("title", "内容模块")),
+        level_filter=level_filter,
+        groups="".join(nav_groups),
+        panels="".join(panels),
     )
 
 

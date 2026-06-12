@@ -16,36 +16,69 @@
       "type": "tabs",
       "id": "distributed-training-tabs",
       "title": "分布式训练学习模块",
-      "items": [
+      "groups": [
         {
-          "title": "并行策略总览",
-          "description": "先看概念地图、选型路径和拓扑直觉",
-          "file": "01-principles.md"
+          "title": "并行策略",
+          "items": [
+            {
+              "title": "并行策略总览",
+              "description": "先看概念地图、选型路径和拓扑直觉",
+              "file": "01-principles.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "数据并行与梯度同步",
+              "description": "DP、DDP、AllReduce、梯度累积、通信计算重叠",
+              "file": "02-data-parallel-gradient.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "张量并行与流水线并行",
+              "description": "TP 切矩阵、PP 切层、micro-batch、bubble 计算",
+              "file": "03-tensor-pipeline.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "数据并行与梯度同步",
-          "description": "DP、DDP、AllReduce、梯度累积、通信计算重叠",
-          "file": "02-data-parallel-gradient.md"
+          "title": "显存与通信",
+          "items": [
+            {
+              "title": "ZeRO / FSDP",
+              "description": "训练状态拆分、显存计算、通信开销与选型",
+              "file": "04-zero-fsdp.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            },
+            {
+              "title": "NCCL 与通信优化",
+              "description": "集合通信、Ring/Tree、拓扑、带宽、通信瓶颈定位",
+              "file": "05-nccl-communication.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "张量并行与流水线并行",
-          "description": "TP 切矩阵、PP 切层、micro-batch、bubble 计算",
-          "file": "03-tensor-pipeline.md"
-        },
-        {
-          "title": "ZeRO / FSDP",
-          "description": "训练状态拆分、显存计算、通信开销与选型",
-          "file": "04-zero-fsdp.md"
-        },
-        {
-          "title": "NCCL 与通信优化",
-          "description": "集合通信、Ring/Tree、拓扑、带宽、通信瓶颈定位",
-          "file": "05-nccl-communication.md"
-        },
-        {
-          "title": "排障与面试计算题",
-          "description": "GPU 利用率低、hang、OOM、慢训练、经典估算题",
-          "file": "06-troubleshooting-interview.md"
+          "title": "面试与排障",
+          "items": [
+            {
+              "title": "排障与面试计算题",
+              "description": "GPU 利用率低、hang、OOM、慢训练、经典估算题",
+              "file": "06-troubleshooting-interview.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            }
+          ]
         }
       ]
     }

@@ -15,36 +15,69 @@
       "type": "tabs",
       "id": "scheduling-tabs",
       "title": "任务调度理论",
-      "items": [
+      "groups": [
         {
-          "title": "经典调度算法",
-          "description": "FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing",
-          "file": "01-classic-algorithms.md"
+          "title": "理论基础",
+          "items": [
+            {
+              "title": "经典调度算法",
+              "description": "FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing",
+              "file": "01-classic-algorithms.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "目标函数与评价指标",
+              "description": "JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价",
+              "file": "02-objectives-metrics.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "目标函数与评价指标",
-          "description": "JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价",
-          "file": "02-objectives-metrics.md"
+          "title": "公平性与批调度",
+          "items": [
+            {
+              "title": "多资源公平调度",
+              "description": "Max-Min、DRF、Elastic Quota、借用、回收与队列治理",
+              "file": "03-fairness-multiresource.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            },
+            {
+              "title": "批调度、Gang 与 Backfill",
+              "description": "Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练",
+              "file": "04-batch-gang-backfill.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "多资源公平调度",
-          "description": "Max-Min、DRF、Elastic Quota、借用、回收与队列治理",
-          "file": "03-fairness-multiresource.md"
-        },
-        {
-          "title": "批调度、Gang 与 Backfill",
-          "description": "Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练",
-          "file": "04-batch-gang-backfill.md"
-        },
-        {
-          "title": "拓扑感知调度",
-          "description": "NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置",
-          "file": "05-topology-aware-scheduling.md"
-        },
-        {
-          "title": "调度面试题精讲",
-          "description": "GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练",
-          "file": "06-scheduler-research-roadmap.md"
+          "title": "AI 集群与面试",
+          "items": [
+            {
+              "title": "拓扑感知调度",
+              "description": "NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置",
+              "file": "05-topology-aware-scheduling.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            },
+            {
+              "title": "调度面试题精讲",
+              "description": "GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练",
+              "file": "06-scheduler-research-roadmap.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 20
+            }
+          ]
         }
       ]
     }

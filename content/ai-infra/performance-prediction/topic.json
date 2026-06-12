@@ -13,31 +13,61 @@
       "type": "tabs",
       "id": "performance-prediction-tabs",
       "title": "性能预测与建模",
-      "items": [
+      "groups": [
         {
-          "title": "预测方法示例",
-          "description": "推理 vs 训练场景的预测方案对比",
-          "file": "01-examples.md"
+          "title": "方法与模型",
+          "items": [
+            {
+              "title": "预测方法示例",
+              "description": "推理 vs 训练场景的预测方案对比",
+              "file": "01-examples.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "树模型选型",
+              "description": "LightGBM/RF vs 深度学习的选择依据",
+              "file": "02-tree-models.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "树模型选型",
-          "description": "LightGBM/RF vs 深度学习的选择依据",
-          "file": "02-tree-models.md"
+          "title": "特征与评估",
+          "items": [
+            {
+              "title": "特征工程",
+              "description": "结构化特征、语义特征、硬件计数器",
+              "file": "03-features.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "评估指标",
+              "description": "MAE/MAPE/R²、AUC/F1 等回归与分类指标",
+              "file": "04-metrics.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "特征工程",
-          "description": "结构化特征、语义特征、硬件计数器",
-          "file": "03-features.md"
-        },
-        {
-          "title": "评估指标",
-          "description": "MAE/MAPE/R²、AUC/F1 等回归与分类指标",
-          "file": "04-metrics.md"
-        },
-        {
-          "title": "预测不准怎么办",
-          "description": "安全裕度、在线校准、Concept Drift",
-          "file": "05-robustness.md"
+          "title": "鲁棒性",
+          "items": [
+            {
+              "title": "预测不准怎么办",
+              "description": "安全裕度、在线校准、Concept Drift",
+              "file": "05-robustness.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 15
+            }
+          ]
         }
       ]
     }
