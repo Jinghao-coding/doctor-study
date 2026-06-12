@@ -27,11 +27,11 @@
             },
             {
               "title": "IEEE Cluster 2026 DeepShare",
-              "description": "多租户 GPU 集群、QAD 保障、干扰感知合用",
+              "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
               "file": "02-ieee-cluster-2026-deepshare-gpu.md",
               "level": "精通",
               "priority": 1,
-              "time": 25
+              "time": 40
             }
           ]
         },
