@@ -16,6 +16,19 @@
       "title": "LLM 推理系统化模块",
       "groups": [
         {
+          "title": "模块总览",
+          "items": [
+            {
+              "title": "模块总览",
+              "description": "推理系统在 AI Infra 的定位、与各模块的关系、内容地图",
+              "file": "00-module-overview.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 6
+            }
+          ]
+        },
+        {
           "title": "总览与流程",
           "items": [
             {

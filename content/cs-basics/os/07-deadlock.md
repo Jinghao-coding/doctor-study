@@ -26,7 +26,7 @@
 <div class="card card-r">
 <h3>经典死锁代码（加锁顺序不一致）</h3>
 
-```cpp
+<pre><code class="language-cpp">
 // 线程 A: lock(mutex1) -> lock(mutex2)
 // 线程 B: lock(mutex2) -> lock(mutex1)   <-- 顺序相反，可能死锁
 
@@ -34,7 +34,7 @@
 std::lock(mutex1, mutex2);            // C++ 一次性获取，避免顺序问题
 std::lock_guard<std::mutex> g1(mutex1, std::adopt_lock);
 std::lock_guard<std::mutex> g2(mutex2, std::adopt_lock);
-```
+</code></pre>
 
 </div>
 

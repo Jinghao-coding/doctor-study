@@ -1,6 +1,6 @@
 {
   "title": "GPU 硬件与资源共享",
-  "subtitle": "硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · K8S 共享 · CUDA VMM · 面试体系化复习",
+  "subtitle": "硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · K8S 共享 · CUDA VMM",
   "kicker": "AI Infra Foundation",
   "tags": [
     "gpu",
@@ -9,8 +9,7 @@
     "utilization",
     "sharing",
     "performance",
-    "prediction",
-    "interview"
+    "prediction"
   ],
   "output": "pages/ai-infra/gpu/index.html",
   "layout": [
@@ -19,6 +18,19 @@
       "id": "gpu-tabs",
       "title": "GPU 内容模块",
       "groups": [
+        {
+          "title": "模块总览",
+          "items": [
+            {
+              "title": "模块总览",
+              "description": "GPU 在 AI Infra 的定位、与各模块的关系、内容地图",
+              "file": "00-module-overview.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 6
+            }
+          ]
+        },
         {
           "title": "硬件与互联基础",
           "items": [
@@ -140,19 +152,6 @@
               "level": "精通",
               "priority": 3,
               "time": 18
-            }
-          ]
-        },
-        {
-          "title": "面试复习",
-          "items": [
-            {
-              "title": "面试体系化复习",
-              "description": "架构、指标、显存、通信、调度、排障与高频问答",
-              "file": "05-interview-guide.md",
-              "level": "精通",
-              "priority": 1,
-              "time": 25
             }
           ]
         }

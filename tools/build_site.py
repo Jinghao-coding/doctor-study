@@ -321,6 +321,8 @@ def render_side_nav(output: Path, current_output: Path) -> str:
         '</div>'
         f'{"".join(sections)}'
         '</aside>'
+        '<div class="side-resizer" role="separator" aria-orientation="vertical" '
+        'aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>'
     )
 
 
@@ -512,6 +514,11 @@ def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str) -> str:
         body = ""
         if sub.get("file"):
             body = markdown_to_html((topic_path.parent / sub["file"]).read_text(encoding="utf-8"))
+        elif sub.get("files"):
+            body = "\n".join(
+                markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
+                for file in sub["files"]
+            )
         elif sub.get("text"):
             body = markdown_to_html(sub["text"])
         desc_html = f'<span class="subtab-desc">{html.escape(desc)}</span>' if desc else ""

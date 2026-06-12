@@ -72,7 +72,23 @@ document.addEventListener('DOMContentLoaded', function(){
 document.addEventListener('DOMContentLoaded', function(){
   var sideToggle = document.querySelector('.side-toggle');
   var sideCollapse = document.querySelector('.side-collapse');
+  var appShell = document.querySelector('.app-shell');
+  var sidebar = document.querySelector('.app-sidebar');
+  var sideResizer = document.querySelector('.side-resizer');
   var navMenus = Array.from(document.querySelectorAll('.nav-menu'));
+  var sideWidthKey = 'doctor-study-sidebar-width';
+
+  function clampSideWidth(value){
+    var max = Math.min(420, Math.max(260, window.innerWidth * 0.34));
+    return Math.max(220, Math.min(max, value));
+  }
+
+  function setSideWidth(width){
+    if(!appShell) return;
+    var clamped = clampSideWidth(width);
+    appShell.style.setProperty('--app-sidebar-width', clamped + 'px');
+    try { localStorage.setItem(sideWidthKey, String(Math.round(clamped))); } catch(_) { /* 隐私模式静默 */ }
+  }
 
   function setSideCollapsed(collapsed){
     document.body.classList.toggle('side-collapsed', collapsed);
@@ -88,6 +104,38 @@ document.addEventListener('DOMContentLoaded', function(){
       setSideCollapsed(!document.body.classList.contains('side-collapsed'));
     });
   });
+
+  if(appShell && sidebar){
+    try {
+      var savedWidth = parseInt(localStorage.getItem(sideWidthKey), 10);
+      if(savedWidth) setSideWidth(savedWidth);
+    } catch(_) { /* 隐私模式静默 */ }
+  }
+
+  if(sideResizer && sidebar){
+    sideResizer.addEventListener('pointerdown', function(e){
+      if(document.body.classList.contains('side-collapsed')) return;
+      e.preventDefault();
+      document.body.classList.add('side-resizing');
+      sideResizer.setPointerCapture(e.pointerId);
+      var left = sidebar.getBoundingClientRect().left;
+
+      function onMove(moveEvent){
+        setSideWidth(moveEvent.clientX - left);
+      }
+
+      function onUp(){
+        document.body.classList.remove('side-resizing');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+      }
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    });
+  }
 
   document.addEventListener('click', function(e){
     navMenus.forEach(function(menu){

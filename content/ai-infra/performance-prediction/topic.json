@@ -15,6 +15,19 @@
       "title": "性能预测与建模",
       "groups": [
         {
+          "title": "模块总览",
+          "items": [
+            {
+              "title": "模块总览",
+              "description": "性能预测在 AI Infra 的定位、与各模块的关系、内容地图",
+              "file": "00-module-overview.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 6
+            }
+          ]
+        },
+        {
           "title": "方法与模型",
           "items": [
             {

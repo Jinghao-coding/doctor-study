@@ -22,19 +22,93 @@
           "items": [
             {
               "title": "操作系统基础",
-              "description": "进程线程协程、CPU 调度、内存/OOM/NUMA、虚拟内存、I/O 多路复用、死锁、Signal",
+              "description": "AI Infra OS 面试：并发、内存、文件 I/O、CPU 性能、网络、容器、GPU 系统层、排障",
               "files": [
                 "os/01-process-thread-coroutine.md",
                 "os/02-cpu-scheduling.md",
                 "os/03-memory-oom-numa.md",
                 "os/06-virtual-memory-paging.md",
+                "os/04-signal-stdio.md",
                 "os/05-io-multiplexing.md",
                 "os/07-deadlock.md",
-                "os/04-signal-stdio.md"
+                "os/08-ai-infra-concurrency.md",
+                "os/09-ai-infra-memory.md",
+                "os/10-ai-infra-file-io.md",
+                "os/11-ai-infra-cpu-perf.md",
+                "os/12-ai-infra-network-syscall.md",
+                "os/13-ai-infra-container-cgroup.md",
+                "os/14-ai-infra-gpu-systems.md",
+                "os/15-ai-infra-observability.md",
+                "os/16-ai-infra-os-priority-checklist.md"
+              ],
+              "subtabs": [
+                {
+                  "title": "总览与路线",
+                  "description": "OS 在 AI Infra 的定位、与各模块的关系、内容地图",
+                  "file": "os/00-os-overview.md"
+                },
+                {
+                  "title": "进程线程并发",
+                  "description": "进程 / 线程 / 协程、IPC、同步、死锁、DataLoader",
+                  "files": [
+                    "os/01-process-thread-coroutine.md",
+                    "os/07-deadlock.md",
+                    "os/08-ai-infra-concurrency.md"
+                  ]
+                },
+                {
+                  "title": "内存管理",
+                  "description": "虚拟内存、分页、TLB、mmap、COW、OOM、NUMA",
+                  "files": [
+                    "os/03-memory-oom-numa.md",
+                    "os/06-virtual-memory-paging.md",
+                    "os/09-ai-infra-memory.md"
+                  ]
+                },
+                {
+                  "title": "文件系统与 I/O",
+                  "description": "fd / inode、page cache、fsync、epoll、零拷贝、checkpoint",
+                  "files": [
+                    "os/04-signal-stdio.md",
+                    "os/05-io-multiplexing.md",
+                    "os/10-ai-infra-file-io.md"
+                  ]
+                },
+                {
+                  "title": "CPU 调度与性能",
+                  "description": "调度、上下文切换、load、iowait、perf、cache miss",
+                  "files": [
+                    "os/02-cpu-scheduling.md",
+                    "os/11-ai-infra-cpu-perf.md"
+                  ]
+                },
+                {
+                  "title": "网络与系统调用",
+                  "description": "socket、backlog、TIME_WAIT、epoll、分布式通信排查",
+                  "file": "os/12-ai-infra-network-syscall.md"
+                },
+                {
+                  "title": "容器与 cgroup",
+                  "description": "namespace、cgroup、容器 OOM、CPU throttling、/dev/shm",
+                  "file": "os/13-ai-infra-container-cgroup.md"
+                },
+                {
+                  "title": "GPU 系统层",
+                  "description": "DMA、pinned memory、NUMA、PCIe topology、GPU pipeline",
+                  "file": "os/14-ai-infra-gpu-systems.md"
+                },
+                {
+                  "title": "排障工具链",
+                  "description": "top、pidstat、iostat、strace、perf、dmesg、p99 排查",
+                  "files": [
+                    "os/15-ai-infra-observability.md",
+                    "os/16-ai-infra-os-priority-checklist.md"
+                  ]
+                }
               ],
               "level": "基础",
               "priority": 1,
-              "time": 30
+              "time": 75
             },
             {
               "title": "计算机组成原理",
