@@ -15,19 +15,6 @@
       "title": "论文工作",
       "groups": [
         {
-          "title": "模块总览",
-          "items": [
-            {
-              "title": "模块总览",
-              "description": "两篇论文在面试中的定位、互补关系、内容地图",
-              "file": "00-module-overview.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 6
-            }
-          ]
-        },
-        {
           "title": "一作论文",
           "items": [
             {

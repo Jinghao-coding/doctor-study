@@ -16,19 +16,6 @@
       "title": "LLM 推理系统化模块",
       "groups": [
         {
-          "title": "模块总览",
-          "items": [
-            {
-              "title": "模块总览",
-              "description": "推理系统在 AI Infra 的定位、与各模块的关系、内容地图",
-              "file": "00-module-overview.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 6
-            }
-          ]
-        },
-        {
           "title": "总览与流程",
           "items": [
             {
@@ -61,6 +48,35 @@
           "title": "Prefill 与 Decode",
           "items": [
             {
+              "title": "Transformer 计算分析",
+              "description": "FLOPs 推导、算术强度、compute/memory-bound 判定、现场估算",
+              "level": "进阶",
+              "priority": 1,
+              "time": 28,
+              "subtabs": [
+                {
+                  "title": "FLOPs 逐步推导",
+                  "description": "从 2MNK 推出单层 24nd²+4n²d 的完整过程",
+                  "file": "11-transformer-flops-derivation.md"
+                },
+                {
+                  "title": "分析与 Roofline",
+                  "description": "算术强度、compute/memory-bound 判定、A100 现场估算",
+                  "file": "10-transformer-flops-roofline.md"
+                },
+                {
+                  "title": "Roofline 实算：decode 为何 memory-bound",
+                  "description": "70B FP16 batch=1 三步算到 1 FLOP/byte，含 batch 放大效应",
+                  "file": "12-roofline-decode-memory-bound.md"
+                },
+                {
+                  "title": "逐算子 bound 分类速查",
+                  "description": "Transformer 各算子在 prefill/decode 的 compute/memory-bound 细分类",
+                  "file": "13-operator-bound-classification.md"
+                }
+              ]
+            },
+            {
               "title": "Prefill 阶段",
               "description": "计算密集、TTFT、首 token 延迟",
               "file": "03-optimization.md",
@@ -88,6 +104,41 @@
               "level": "进阶",
               "priority": 1,
               "time": 18
+            },
+            {
+              "title": "KV Cache 显存预算实算",
+              "description": "320KB/token 推导、GQA/MQA 缩小倍数、KV 量化 trade-off",
+              "file": "14-kv-cache-memory-budget.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 14
+            },
+            {
+              "title": "PagedAttention 图解",
+              "description": "用 SVG 示意图 + 例子讲透 block、block table、与 OS 分页类比",
+              "file": "15-pagedattention-explained.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 16
+            },
+            {
+              "title": "FlashAttention",
+              "description": "tiling+online softmax 图解 · V1/V2 与 vLLM 抢占/swapping/recomputation 深入",
+              "level": "进阶",
+              "priority": 1,
+              "time": 30,
+              "subtabs": [
+                {
+                  "title": "图解：tiling 与 online softmax",
+                  "description": "标准 attention 慢在哪、什么是 tiling、SRAM/HBM 层级、经典追问",
+                  "file": "16-flashattention-explained.md"
+                },
+                {
+                  "title": "与 vLLM 深入",
+                  "description": "FlashAttention V1/V2、复杂度对比、vLLM 抢占/swapping/recomputation",
+                  "file": "09-flashattention-vllm.md"
+                }
+              ]
             }
           ]
         },
@@ -152,6 +203,18 @@
     {
       "title": "KV Cache 与 Attention",
       "file": "05-kv-cache-attention.md"
+    },
+    {
+      "title": "KV Cache 显存预算实算",
+      "file": "14-kv-cache-memory-budget.md"
+    },
+    {
+      "title": "PagedAttention 图解",
+      "file": "15-pagedattention-explained.md"
+    },
+    {
+      "title": "FlashAttention 图解",
+      "file": "16-flashattention-explained.md"
     },
     {
       "title": "性能指标与瓶颈",

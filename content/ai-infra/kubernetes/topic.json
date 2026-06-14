@@ -25,19 +25,6 @@
       "title": "Kubernetes 面试学习",
       "groups": [
         {
-          "title": "模块总览",
-          "items": [
-            {
-              "title": "模块总览",
-              "description": "K8s 在 AI Infra 的定位、与各模块的关系、内容地图",
-              "file": "00-module-overview.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 6
-            }
-          ]
-        },
-        {
           "title": "架构与调度",
           "items": [
             {
@@ -59,10 +46,31 @@
             {
               "title": "Scheduler 内部机制",
               "description": "调度队列、scheduler cache、assumed pod、binding cycle、preemption、plugin 落点",
-              "file": "09-scheduler-internals.md",
               "level": "精通",
               "priority": 1,
-              "time": 22
+              "time": 22,
+              "subtabs": [
+                {
+                  "title": "调度路径与三个队列",
+                  "description": "调度内部路径、ActiveQ/BackoffQ/UnschedulableQ、Move request",
+                  "file": "09a-scheduler-queues.md"
+                },
+                {
+                  "title": "Cache、扩展点与抢占",
+                  "description": "概念区分、scheduler cache/assume、plugin 映射、preemption、问题定位",
+                  "file": "09b-scheduler-cache-preemption.md"
+                },
+                {
+                  "title": "性能、打分与 HA",
+                  "description": "percentageOfNodesToScore、打分插件、多 Profile、Leader Election",
+                  "file": "09c-scheduler-performance-tuning.md"
+                },
+                {
+                  "title": "自定义 Plugin 实战",
+                  "description": "三种实现方式、Framework 扩展点、GPU 拓扑感知插件代码骨架",
+                  "file": "09d-scheduler-custom-plugin.md"
+                }
+              ]
             }
           ]
         },
@@ -142,8 +150,20 @@
       "file": "02-scheduling-resource-model.md"
     },
     {
-      "title": "Scheduler 内部机制",
-      "file": "09-scheduler-internals.md"
+      "title": "Scheduler 内部机制 · 调度路径与队列",
+      "file": "09a-scheduler-queues.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · Cache 与抢占",
+      "file": "09b-scheduler-cache-preemption.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · 性能与 HA",
+      "file": "09c-scheduler-performance-tuning.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · 自定义 Plugin",
+      "file": "09d-scheduler-custom-plugin.md"
     },
     {
       "title": "Workload 与 Controller",

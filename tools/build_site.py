@@ -16,37 +16,44 @@ SITE = json.loads((CONTENT / "site.json").read_text(encoding="utf-8"))
 TRACKS = [
     {
         "key": "foundation_cards",
-        "label": "底层资源与基础",
+        "label": "计算机基础",
         "eyebrow": "Foundation",
-        "slugs": ["ai-infra/gpu", "cs-basics"],
+        "slugs": ["cs-basics", "ml-dl"],
     },
     {
         "key": "systems_cards",
-        "label": "训练推理与调度",
-        "eyebrow": "Systems",
+        "label": "AI Infra 核心系统",
+        "eyebrow": "Core Systems",
         "slugs": [
+            "ai-infra/gpu",
             "ai-infra/llm-inference",
-            "ai-infra/kubernetes",
-            "ai-infra/scheduling",
             "ai-infra/distributed-training",
+        ],
+    },
+    {
+        "key": "scheduling_cards",
+        "label": "调度与集群",
+        "eyebrow": "Scheduling",
+        "slugs": [
+            "ai-infra/scheduling",
+            "ai-infra/kubernetes",
             "ai-infra/cluster-management",
         ],
     },
     {
         "key": "interview_cards",
-        "label": "系统设计与表达",
-        "eyebrow": "Interview",
+        "label": "系统设计与方法",
+        "eyebrow": "Methods",
         "slugs": [
-            "ai-infra/performance-prediction",
             "ai-infra/system-design",
-            "ai-infra/agent",
+            "ai-infra/performance-prediction",
         ],
     },
     {
         "key": "paper_cards",
-        "label": "论文与复盘",
+        "label": "研究与表达",
         "eyebrow": "Research",
-        "slugs": ["ai-infra/papers"],
+        "slugs": ["ai-infra/papers", "ai-infra/agent"],
     },
 ]
 

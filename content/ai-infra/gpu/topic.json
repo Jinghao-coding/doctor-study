@@ -19,19 +19,6 @@
       "title": "GPU 内容模块",
       "groups": [
         {
-          "title": "模块总览",
-          "items": [
-            {
-              "title": "模块总览",
-              "description": "GPU 在 AI Infra 的定位、与各模块的关系、内容地图",
-              "file": "00-module-overview.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 6
-            }
-          ]
-        },
-        {
           "title": "硬件与互联基础",
           "items": [
             {
@@ -70,6 +57,14 @@
               "level": "基础",
               "priority": 1,
               "time": 12
+            },
+            {
+              "title": "内存模型与 Occupancy",
+              "description": "CUDA 内存模型、grid/block size 选择、occupancy、内存墙、PyTorch 自定义算子、TensorCore I/O",
+              "file": "13-cuda-memory-occupancy.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 14
             },
             {
               "title": "CFS vs CUDA 调度",

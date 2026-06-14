@@ -43,11 +43,6 @@
               ],
               "subtabs": [
                 {
-                  "title": "总览与路线",
-                  "description": "OS 在 AI Infra 的定位、与各模块的关系、内容地图",
-                  "file": "os/00-os-overview.md"
-                },
-                {
                   "title": "进程线程并发",
                   "description": "进程 / 线程 / 协程、IPC、同步、死锁、DataLoader",
                   "files": [
@@ -183,14 +178,42 @@
             },
             {
               "title": "编程语言与工程基础",
-              "description": "Binary、编译链接、动态库、ABI、C++ 系统编程",
+              "description": "Binary、编译链接、智能指针、面向对象、内存管理、C++ 系统编程",
               "files": [
                 "programming-systems/01-binary-linking.md",
-                "programming-systems/02-cpp-systems.md"
+                "programming-systems/02-cpp-systems.md",
+                "programming-systems/05-cpp-compile-smartptr.md",
+                "programming-systems/03-cpp-oop.md",
+                "programming-systems/04-cpp-memory.md"
+              ],
+              "subtabs": [
+                {
+                  "title": "编译链接与库",
+                  "description": "源码到进程、ELF、动态库、ABI、编译四阶段、智能指针、gdb 调试死锁",
+                  "files": [
+                    "programming-systems/01-binary-linking.md",
+                    "programming-systems/05-cpp-compile-smartptr.md"
+                  ]
+                },
+                {
+                  "title": "面向对象",
+                  "description": "封装继承多态、访问控制、三种继承、虚函数与虚函数表",
+                  "file": "programming-systems/03-cpp-oop.md"
+                },
+                {
+                  "title": "内存管理",
+                  "description": "内存分布、mmap 加载权重、段错误、内存泄漏检测",
+                  "file": "programming-systems/04-cpp-memory.md"
+                },
+                {
+                  "title": "C++ 系统编程",
+                  "description": "RAII、智能指针、并发、性能排查在 AI Infra 的应用",
+                  "file": "programming-systems/02-cpp-systems.md"
+                }
               ],
               "level": "进阶",
               "priority": 2,
-              "time": 18
+              "time": 30
             }
           ]
         }

@@ -1,11 +1,12 @@
 {
   "title": "编程语言与工程基础",
-  "subtitle": "Binary · 编译链接 · 动态库 · ABI · C++ 系统编程",
-  "kicker": "CS Basics",
+  "subtitle": "Binary · 编译链接 · 智能指针 · 面向对象 · 内存管理 · C++ 系统编程",
   "tags": [
     "cpp",
     "binary",
     "compiler",
+    "oop",
+    "memory",
     "systems"
   ],
   "output": "pages/cs-basics/programming-systems/index.html",
@@ -24,6 +25,21 @@
           "title": "C++ 系统编程",
           "description": "RAII、智能指针、并发、性能排查",
           "file": "02-cpp-systems.md"
+        },
+        {
+          "title": "编译链接与智能指针",
+          "description": "编译四阶段、静态/动态库、智能指针要素、gdb 调试死锁",
+          "file": "05-cpp-compile-smartptr.md"
+        },
+        {
+          "title": "面向对象",
+          "description": "封装继承多态、访问控制、三种继承、虚函数与虚函数表",
+          "file": "03-cpp-oop.md"
+        },
+        {
+          "title": "内存管理",
+          "description": "内存分布、mmap 加载权重、段错误、内存泄漏检测",
+          "file": "04-cpp-memory.md"
         }
       ]
     }

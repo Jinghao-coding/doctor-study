@@ -36,8 +36,8 @@
     <a class="idx-secondary" href="pages/ai-infra/system-design/index.html">进入系统设计题</a>
   </div>
   <div class="idx-hero-stats" aria-label="站点内容概览">
-    <div><strong>11</strong><span>学习主题</span></div>
-    <div><strong>4</strong><span>复习主线</span></div>
+    <div><strong>12</strong><span>学习主题</span></div>
+    <div><strong>5</strong><span>复习主线</span></div>
     <div><strong>QA</strong><span>面试问答</span></div>
   </div>
 </section>
@@ -60,44 +60,55 @@
   </article>
 </section>
 
-<section class="idx-track" aria-label="底层资源与计算机基础">
+<section class="idx-track" aria-label="计算机基础">
   <div class="idx-track-head">
     <span>Foundation</span>
-    <h2>底层资源与计算机基础</h2>
-    <p>先把 GPU、CPU、内存、网络、I/O 的物理路径和 Linux 抽象讲清楚。</p>
+    <h2>计算机基础</h2>
+    <p>操作系统、组成原理、网络、Linux/容器、编程工程，以及 ML/DL 八股。</p>
   </div>
   <div class="idx-track-cards">
     {{foundation_cards}}
   </div>
 </section>
 
-<section class="idx-track" aria-label="训练、推理与集群调度">
+<section class="idx-track" aria-label="AI Infra 核心系统">
   <div class="idx-track-head">
-    <span>Systems</span>
-    <h2>训练、推理与集群调度</h2>
-    <p>围绕大模型任务生命周期，理解调度器、训练并行、推理引擎和集群治理。</p>
+    <span>Core Systems</span>
+    <h2>AI Infra 核心系统</h2>
+    <p>GPU 与 CUDA、LLM 推理系统、分布式训练，覆盖大模型任务的算力与并行底座。</p>
   </div>
   <div class="idx-track-cards">
     {{systems_cards}}
   </div>
 </section>
 
-<section class="idx-track" aria-label="系统设计与工程表达">
+<section class="idx-track" aria-label="调度与集群">
   <div class="idx-track-head">
-    <span>Interview</span>
-    <h2>系统设计与工程表达</h2>
-    <p>把知识点组织成可以回答的方案：容量、调度、性能预测、Agent 工程。</p>
+    <span>Scheduling</span>
+    <h2>调度与集群</h2>
+    <p>任务调度理论、Kubernetes、GPU 集群管理，覆盖 DL/LLM/异构场景的调度。</p>
+  </div>
+  <div class="idx-track-cards">
+    {{scheduling_cards}}
+  </div>
+</section>
+
+<section class="idx-track" aria-label="系统设计与方法">
+  <div class="idx-track-head">
+    <span>Methods</span>
+    <h2>系统设计与方法</h2>
+    <p>把知识点组织成可回答的方案：系统设计题、性能预测与建模。</p>
   </div>
   <div class="idx-track-cards">
     {{interview_cards}}
   </div>
 </section>
 
-<section class="idx-track" aria-label="论文与项目复盘">
+<section class="idx-track" aria-label="研究与表达">
   <div class="idx-track-head">
     <span>Research</span>
-    <h2>论文与项目复盘</h2>
-    <p>用于沉淀论文工作、项目方案、实验结果和高频追问。</p>
+    <h2>研究与表达</h2>
+    <p>沉淀论文工作、Agent 工程方案、实验结果和高频追问。</p>
   </div>
   <div class="idx-track-cards">
     {{paper_cards}}
