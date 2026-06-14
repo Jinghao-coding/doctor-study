@@ -1,0 +1,84 @@
+{
+  "title": "Transformer 与大模型基础",
+  "subtitle": "整体架构 · Embedding/位置编码/Tokenizer · Attention · 训练稳定性 · 面试高频题",
+  "kicker": "AI Infra Foundation",
+  "tags": [
+    "transformer",
+    "attention",
+    "embedding",
+    "tokenizer",
+    "interview"
+  ],
+  "output": "pages/ai-infra/transformer/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "transformer-tabs",
+      "title": "Transformer 内容模块",
+      "groups": [
+        {
+          "title": "架构与输入",
+          "items": [
+            {
+              "title": "整体架构",
+              "description": "Encoder / Decoder、每层组件、整体数据流",
+              "file": "01-architecture.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "输入处理",
+              "description": "Tokenizer、Embedding、位置编码三件套",
+              "file": "02-input.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 15
+            }
+          ]
+        },
+        {
+          "title": "核心机制",
+          "items": [
+            {
+              "title": "Attention 机制",
+              "description": "Self-Attention、Multi-Head、手撕代码、Attention vs FFN",
+              "file": "03-attention.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 25
+            },
+            {
+              "title": "训练稳定性",
+              "description": "梯度消失/爆炸、残差、归一化、初始化、warmup",
+              "file": "04-training.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            }
+          ]
+        },
+        {
+          "title": "面试",
+          "items": [
+            {
+              "title": "面试高频题",
+              "description": "把前面知识点压缩成可背诵的问答",
+              "file": "05-interview.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {"title": "整体架构", "file": "01-architecture.md"},
+    {"title": "输入处理", "file": "02-input.md"},
+    {"title": "Attention 机制", "file": "03-attention.md"},
+    {"title": "训练稳定性", "file": "04-training.md"},
+    {"title": "面试高频题", "file": "05-interview.md"}
+  ]
+}

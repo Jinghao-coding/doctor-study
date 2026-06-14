@@ -25,6 +25,7 @@ TRACKS = [
         "label": "AI Infra 核心系统",
         "eyebrow": "Core Systems",
         "slugs": [
+            "ai-infra/transformer",
             "ai-infra/gpu",
             "ai-infra/llm-inference",
             "ai-infra/distributed-training",

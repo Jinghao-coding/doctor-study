@@ -15,6 +15,10 @@
       "href": "pages/ai-infra/gpu/index.html"
     },
     {
+      "title": "Transformer 基础",
+      "href": "pages/ai-infra/transformer/index.html"
+    },
+    {
       "title": "LLM 推理系统",
       "href": "pages/ai-infra/llm-inference/index.html"
     },
@@ -77,6 +81,19 @@
         "sharing"
       ],
       "color": "c2"
+    },
+    {
+      "title": "Transformer 与大模型基础",
+      "slug": "ai-infra/transformer",
+      "source": "content/ai-infra/transformer/topic.json",
+      "output": "pages/ai-infra/transformer/index.html",
+      "description": "Transformer 整体架构、Embedding/位置编码/Tokenizer、Self-Attention 与 Multi-Head、手撕代码、梯度稳定性与面试高频题。",
+      "tags": [
+        "transformer",
+        "attention",
+        "tokenizer"
+      ],
+      "color": "c5"
     },
     {
       "title": "LLM 推理系统",
