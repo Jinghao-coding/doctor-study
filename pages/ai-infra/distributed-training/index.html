@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>分布式训练 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781500439">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781507160">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 </head>
 <body>
@@ -16,7 +16,19 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Distributed Training</div><h1>分布式训练</h1><p class="sub">并行策略 · ZeRO/FSDP · 梯度同步 · NCCL 通信优化 · 排障面试题</p><div class="hero-tags"><span>training</span><span>parallelism</span><span>zero</span><span>fsdp</span><span>nccl</span><span>interview</span></div></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="distributed-training-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 6</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">分布式训练学习模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="分布式训练学习模块"><details class="tab-group" open data-group-id="distributed-training-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">并行策略</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="distributed-training-tabs-tab-1" data-initial="01" data-mid="distributed-training-tabs::01-principles-md" data-level="基础" title="并行策略总览" aria-controls="distributed-training-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">并行策略总览</span><span class="tab-desc">先看概念地图、选型路径和拓扑直觉</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-2" data-initial="02" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" data-level="进阶" title="数据并行与梯度同步" aria-controls="distributed-training-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">数据并行与梯度同步</span><span class="tab-desc">DP、DDP、AllReduce、梯度累积、通信计算重叠</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-3" data-initial="03" data-mid="distributed-training-tabs::03-tensor-pipeline-md" data-level="精通" title="张量并行与流水线并行" aria-controls="distributed-training-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">张量并行与流水线并行</span><span class="tab-desc">TP 切矩阵、PP 切层、micro-batch、bubble 计算</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="distributed-training-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">显存与通信</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-4" data-initial="04" data-mid="distributed-training-tabs::04-zero-fsdp-md" data-level="精通" title="ZeRO / FSDP" aria-controls="distributed-training-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">ZeRO / FSDP</span><span class="tab-desc">训练状态拆分、显存计算、通信开销与选型</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-5" data-initial="05" data-mid="distributed-training-tabs::05-nccl-communication-md" data-level="精通" title="NCCL 与通信优化" aria-controls="distributed-training-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">NCCL 与通信优化</span><span class="tab-desc">集合通信、Ring/Tree、拓扑、带宽、通信瓶颈定位</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="distributed-training-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试与排障</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-6" data-initial="06" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" data-level="精通" title="排障与面试计算题" aria-controls="distributed-training-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">排障与面试计算题</span><span class="tab-desc">GPU 利用率低、hang、OOM、慢训练、经典估算题</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="distributed-training-tabs-panel-1" aria-labelledby="distributed-training-tabs-tab-1" data-mid="distributed-training-tabs::01-principles-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>并行策略总览</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><div class="foundation-brief">
+<section class="tabs-shell" data-tabs data-tabs-id="distributed-training-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 6</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">分布式训练学习模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="分布式训练学习模块"><details class="tab-group" open data-group-id="distributed-training-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">并行策略</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="distributed-training-tabs-tab-1" data-initial="01" data-mid="distributed-training-tabs::01-principles-md" data-level="基础" title="并行策略总览" aria-controls="distributed-training-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">并行策略总览</span><span class="tab-desc">先看概念地图、选型路径和拓扑直觉</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-2" data-initial="02" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" data-level="进阶" title="数据并行与梯度同步" aria-controls="distributed-training-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">数据并行与梯度同步</span><span class="tab-desc">DP、DDP、AllReduce、梯度累积、通信计算重叠</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-3" data-initial="03" data-mid="distributed-training-tabs::03-tensor-pipeline-md" data-level="精通" title="张量并行与流水线并行" aria-controls="distributed-training-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">张量并行与流水线并行</span><span class="tab-desc">TP 切矩阵、PP 切层、micro-batch、bubble 计算</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="distributed-training-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">显存与通信</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-4" data-initial="04" data-mid="distributed-training-tabs::04-zero-fsdp-md" data-level="精通" title="ZeRO / FSDP" aria-controls="distributed-training-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">ZeRO / FSDP</span><span class="tab-desc">训练状态拆分、显存计算、通信开销与选型</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-5" data-initial="05" data-mid="distributed-training-tabs::05-nccl-communication-md" data-level="精通" title="NCCL 与通信优化" aria-controls="distributed-training-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">NCCL 与通信优化</span><span class="tab-desc">集合通信、Ring/Tree、拓扑、带宽、通信瓶颈定位</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="distributed-training-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试与排障</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="distributed-training-tabs-tab-6" data-initial="06" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" data-level="精通" title="排障与面试计算题" aria-controls="distributed-training-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">排障与面试计算题</span><span class="tab-desc">GPU 利用率低、hang、OOM、慢训练、经典估算题</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="distributed-training-tabs-panel-1" aria-labelledby="distributed-training-tabs-tab-1" data-mid="distributed-training-tabs::01-principles-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>并行策略总览</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>分布式训练并行策略的总公式是总 GPU 数由 DP、TP、PP 等维度相乘决定。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>先画并行维度，再讲通信和显存代价。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="foundation-brief">
 <h3>先把分布式训练看成四个问题</h3>
 <p>分布式训练不是“卡越多越快”，而是在多张 GPU 之间拆分数据、模型、训练状态和通信。读这一页时先建立地图：模型放不下看显存拆分，单层太大看张量并行，层数太多看流水线并行，吞吐不够再扩大数据并行。</p>
 <div class="foundation-map">
@@ -53,7 +65,7 @@
 <div class="card card-s">
 <h3>3D 并行的拓扑放置</h3>
 <p>大模型训练常见组合是 TP × PP × DP。总 GPU 数满足：</p>
-<div class="formula">Total GPUs = TP × PP × DP</div>
+<div class="formula">$$\text{Total GPUs} = TP \times PP \times DP$$</div>
 <p>放置原则比公式更重要：TP 的通信最频繁，优先限制在单节点高速互联内；PP 只在相邻 stage 传激活，通常可以跨节点；DP 每步同步梯度，频率低于 TP，可以放在最外层扩吞吐。</p>
 <table>
 <tr><th>并行维度</th><th>推荐位置</th><th>为什么</th></tr>
@@ -71,7 +83,26 @@
 <li><strong>要讲大模型训练配置</strong>：读 TP/PP 和 ZeRO/FSDP。</li>
 <li><strong>要准备面试排障</strong>：读排障与面试计算题。</li>
 </ol>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::01-principles-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::01-principles-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-2" aria-labelledby="distributed-training-tabs-tab-2" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>数据并行与梯度同步</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>分布式训练并行策略的总公式是总 GPU 数由 DP、TP、PP 等维度相乘决定。 先画并行维度，再讲通信和显存代价。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::01-principles-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::01-principles-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-2" aria-labelledby="distributed-training-tabs-tab-2" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>数据并行与梯度同步</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>机制类（含公式）</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>公式重点是梯度大小和 Ring AllReduce 每卡流量。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>数据并行：最常见、也最容易被低估的并行方式</h3>
 <p>数据并行（Data Parallelism, DP）的核心是：每张 GPU 持有一份完整模型，处理不同数据分片，每个 step 后同步梯度，保证所有副本参数一致。它的优点是实现简单、扩展直观；缺点是模型和优化器状态仍然需要每卡完整保存，通信瓶颈集中在梯度同步。</p>
 </div>
@@ -88,11 +119,11 @@
 <div class="card card-d">
 <h3>梯度同步通信量</h3>
 <p>如果模型参数量为 P，每个梯度用 FP32 表示，即 4 bytes/parameter，则一次梯度张量大小约为：</p>
-<div class="formula">Gradient Size = P × 4 bytes</div>
+<div class="formula">$$\text{Gradient Size} = P \times 4 \text{bytes}$$</div>
 <p>Ring AllReduce 中，每张卡的网络收发总量近似为：</p>
-<div class="formula">Traffic per GPU = 2 × (N - 1) / N × Gradient Size</div>
+<div class="formula">$$\text{Traffic per GPU} = 2 \times (N - 1) / N \times \text{Gradient Size}$$</div>
 <p>当 N 很大时，近似为：</p>
-<div class="formula">Traffic per GPU ≈ 2 × P × 4 bytes</div>
+<div class="formula">$$\text{Traffic per GPU} \approx 2 \times P \times 4 \text{bytes}$$</div>
 </div>
 <div class="card card-w">
 <h3>通信-计算重叠：DDP 性能的关键</h3>
@@ -110,7 +141,7 @@
 <div class="qa-a">
 <p><strong>回答思路：</strong>先说明每卡看到的数据不同，再说明梯度平均的数学意义，最后解释 AllReduce 的工程价值。</p>
 <div class="qa-section"><div class="qa-section-title">1. 每张卡的梯度不同</div><p>DP 中每张卡处理不同 mini-batch，算出的本地梯度只代表本地数据。如果直接各自更新，模型副本会逐渐发散。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. AllReduce 做全局平均</div><p>AllReduce 会把所有 GPU 的梯度求和并广播回每张卡，通常再除以 world size，得到等价于更大 batch 上的平均梯度。</p><div class="formula">g = (g₁ + g₂ + ... + gₙ) / N</div></div>
+<div class="qa-section"><div class="qa-section-title">2. AllReduce 做全局平均</div><p>AllReduce 会把所有 GPU 的梯度求和并广播回每张卡，通常再除以 world size，得到等价于更大 batch 上的平均梯度。</p><div class="formula">$$g = (g_1 + g_2 + ... + g_n) / N$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 为什么不是 Parameter Server</div><p>AllReduce 是去中心化集合通信，没有单点参数服务器瓶颈，适合 GPU 间高带宽同步。</p></div>
 <div class="qa-summary">面试口径：DP 同步的是梯度，AllReduce 让每张卡拿到全局平均梯度，从而保持模型副本一致。</div>
 </div>
@@ -119,7 +150,7 @@
 <div class="qa-q">Q: 梯度累积和增大 batch size 是一回事吗？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先讲等价条件，再讲差异和副作用。</p>
-<div class="qa-section"><div class="qa-section-title">1. 计算上接近等价</div><p>如果累积 k 个 micro-batch 后再做 optimizer step，在不考虑 BatchNorm、dropout 随机性和数值误差时，接近于把 batch size 扩大 k 倍。</p><div class="formula">Global Batch = micro_batch × gradient_accumulation_steps × data_parallel_size</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 计算上接近等价</div><p>如果累积 k 个 micro-batch 后再做 optimizer step，在不考虑 BatchNorm、dropout 随机性和数值误差时，接近于把 batch size 扩大 k 倍。</p><div class="formula">$$\text{Global Batch} = \text{micro\_batch} \times \text{gradient\_accumulation\_steps} \times \text{data\_parallel\_size}$$</div></div>
 <div class="qa-section"><div class="qa-section-title">2. 通信频率下降</div><p>累积期间可以不做 AllReduce，等 k 次 backward 后再同步一次，通信频率降低为原来的 1/k。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 收敛可能变化</div><p>有效 batch 变大后，学习率、warmup、梯度裁剪、loss scale 都可能需要重新调参。</p></div>
 <div class="qa-summary">面试口径：梯度累积是用时间换显存和通信频率，数学上接近增大 batch，但优化动态可能变化。</div>
@@ -129,12 +160,31 @@
 <div class="qa-q">Q: 一个 7B 模型做 DP 训练，8 卡，每步梯度 AllReduce 的通信量大约是多少？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>明确参数量、梯度 dtype、Ring AllReduce 公式，再代入计算。</p>
-<div class="qa-section"><div class="qa-section-title">1. 梯度大小</div><p>7B 参数，如果梯度用 FP32 保存，则梯度张量约为：</p><div class="formula">7 × 10⁹ × 4 bytes = 28 GB</div></div>
-<div class="qa-section"><div class="qa-section-title">2. Ring AllReduce 每卡流量</div><p>8 卡 Ring AllReduce 每张卡收发总量约为：</p><div class="formula">2 × (8 - 1) / 8 × 28 GB = 49 GB</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 梯度大小</div><p>7B 参数，如果梯度用 FP32 保存，则梯度张量约为：</p><div class="formula">$$7 \times 10^9 \times 4 \text{bytes} = 28 \text{GB}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">2. Ring AllReduce 每卡流量</div><p>8 卡 Ring AllReduce 每张卡收发总量约为：</p><div class="formula">$$2 \times (8 - 1) / 8 \times 28 \text{GB} = 49 \text{GB}$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 解释结果</div><p>这不是总集群流量，而是每张 GPU 网卡/互联上的近似收发量；如果网络带宽不足，这部分会成为 step time 的尾部。</p></div>
 <div class="qa-summary">面试口径：7B FP32 梯度约 28GB，8 卡 Ring AllReduce 每卡约 49GB 收发量。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">并行策略总览</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-3" aria-labelledby="distributed-training-tabs-tab-3" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>张量并行与流水线并行</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。 公式重点是梯度大小和 Ring AllReduce 每卡流量。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">并行策略总览</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-3" aria-labelledby="distributed-training-tabs-tab-3" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>张量并行与流水线并行</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>TP 看 NVLink，PP 看 bubble。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>张量并行与流水线并行：一个切层内，一个切层间</h3>
 <p>张量并行（TP）解决“单层矩阵太大或单层计算太重”的问题；流水线并行（PP）解决“层数太多、整模型放不进单卡”的问题。二者经常组合：TP 放在节点内 NVLink 域，PP 可以跨节点。</p>
 </div>
@@ -152,14 +202,14 @@
 <div class="card card-s">
 <h3>TP 的矩阵切分直觉</h3>
 <p>以线性层 <code>Y = XW</code> 为例，列并行把 W 按输出维度切成多份：</p>
-<div class="formula">W = [W₁, W₂, ..., Wₜ]</div>
-<div class="formula">Yᵢ = XWᵢ, Y = concat(Y₁, Y₂, ..., Yₜ)</div>
+<div class="formula">$$W = [W_1, W_2, ..., W_t]$$</div>
+<div class="formula">$$Y_i = XW_i, Y = \operatorname{concat}(Y_1, Y_2, ..., Y_t)$$</div>
 <p>行并行则把输入维度切分，局部结果需要 ReduceScatter 或 AllReduce 合并。</p>
 </div>
 <div class="card card-w">
 <h3>PP 的 Bubble 公式</h3>
 <p>流水线并行把 batch 切成 m 个 micro-batch，在 p 个 stage 上流动。1F1B 调度下，理想 bubble 比例可近似为：</p>
-<div class="formula">Bubble Rate = (p - 1) / (m + p - 1)</div>
+<div class="formula">$$\text{Bubble Rate} = (p - 1) / (m + p - 1)$$</div>
 <p>所以 stage 越多 bubble 越大，micro-batch 越多 bubble 越小。但 micro-batch 数受 global batch size、显存和收敛约束限制。</p>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -176,8 +226,8 @@
 <div class="qa-q">Q: Pipeline Bubble 怎么计算？如何降低？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先给公式，再解释 p 和 m 的影响，最后给工程优化手段。</p>
-<div class="qa-section"><div class="qa-section-title">1. Bubble 公式</div><p>1F1B 调度下近似：</p><div class="formula">Bubble Rate = (p - 1) / (m + p - 1)</div><p>p 是 stage 数，m 是 micro-batch 数。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 例子</div><p>如果 p=4、m=12：</p><div class="formula">Bubble Rate = 3 / (12 + 4 - 1) = 20%</div></div>
+<div class="qa-section"><div class="qa-section-title">1. Bubble 公式</div><p>1F1B 调度下近似：</p><div class="formula">$$\text{Bubble Rate} = (p - 1) / (m + p - 1)$$</div><p>p 是 stage 数，m 是 micro-batch 数。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 例子</div><p>如果 p=4、m=12：</p><div class="formula">$$\text{Bubble Rate} = 3 / (12 + 4 - 1) = 20%$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 优化方式</div><p>增加 micro-batch、减少 PP stage、使用 interleaved 1F1B、平衡每个 stage 的层数和计算量。</p></div>
 <div class="qa-summary">面试口径：PP 的核心开销是 bubble，stage 越多越差，micro-batch 越多越好，但受 batch size 和显存限制。</div>
 </div>
@@ -186,12 +236,31 @@
 <div class="qa-q">Q: 32 张 GPU，TP=8、PP=2，那么 DP 是多少？应该如何放置？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先用公式算 DP，再给拓扑放置原则。</p>
-<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><p>总 GPU 数等于三种并行度乘积：</p><div class="formula">Total GPUs = DP × TP × PP</div><div class="formula">DP = 32 / (8 × 2) = 2</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><p>总 GPU 数等于三种并行度乘积：</p><div class="formula">$$\text{Total GPUs} = DP \times TP \times PP$$</div><div class="formula">$$DP = 32 / (8 \times 2) = 2$$</div></div>
 <div class="qa-section"><div class="qa-section-title">2. 放置方式</div><p>如果每节点 8 卡，则每个 TP group 正好占一台机器；两个 PP stage 占两台机器；DP=2 表示有两条完全相同的 pipeline 副本，总共 4 台机器。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 面试补充</div><p>TP group 内通信走 NVLink，PP stage 间走 IB，DP 同步梯度频率较低，可以跨 pipeline 副本做 AllReduce。</p></div>
 <div class="qa-summary">面试口径：DP=总卡数/(TP×PP)，这个例子是 DP=2；TP 放节点内，PP/DP 才跨节点。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::03-tensor-pipeline-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-4" aria-labelledby="distributed-training-tabs-tab-4" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>ZeRO / FSDP</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。 TP 看 NVLink，PP 看 bubble。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::03-tensor-pipeline-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-4" aria-labelledby="distributed-training-tabs-tab-4" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>ZeRO / FSDP</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>机制类（含公式）</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>显存公式要按 ZeRO 阶段拆。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>ZeRO / FSDP：把训练状态从“每卡完整保存”变成“分片保存”</h3>
 <p>大模型训练的显存不仅被参数占用，还被梯度、优化器状态和激活值占用。ZeRO 和 FSDP 的核心都是将训练状态分片，降低每张 GPU 的显存压力；代价是前向/反向时需要更多通信来取回参数或同步分片。</p>
 </div>
@@ -206,7 +275,7 @@
 <tr><td>Master weights</td><td>FP32</td><td>4</td><td>混合精度训练常见</td></tr>
 </table>
 <p>常见估算会把 Adam 训练状态近似为：</p>
-<div class="formula">Training State ≈ Parameters(2B) + Gradients(4B) + Adam States(12B) = 18 bytes / parameter</div>
+<div class="formula">$$\text{Training State} \approx \text{Parameters}(2B) + \text{Gradients}(4B) + \text{Adam States}(12B) = 18 \text{bytes} / parameter$$</div>
 </div>
 <div class="card card-d">
 <h3>ZeRO 阶段对比</h3>
@@ -222,10 +291,10 @@
 <div class="qa-q">Q: 7B 模型，4 卡，用 ZeRO-1/2/3 每卡训练状态显存怎么估算？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先说明每参数字节数，再按分片对象分别计算。</p>
-<div class="qa-section"><div class="qa-section-title">1. 无 ZeRO</div><p>按每参数 18 bytes 估算：</p><div class="formula">7B × 18 bytes = 126 GB / GPU</div><p>每卡都保存完整训练状态，A100 80GB 放不下。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. ZeRO-1</div><p>只切 Adam 优化器状态，参数和梯度仍完整保存：</p><div class="formula">7B × (12 / 4 + 4 + 2) = 63 GB / GPU</div></div>
-<div class="qa-section"><div class="qa-section-title">3. ZeRO-2</div><p>切优化器状态和梯度：</p><div class="formula">7B × (12 / 4 + 4 / 4 + 2) = 42 GB / GPU</div></div>
-<div class="qa-section"><div class="qa-section-title">4. ZeRO-3</div><p>参数、梯度、优化器状态都切：</p><div class="formula">7B × (12 / 4 + 4 / 4 + 2 / 4) = 31.5 GB / GPU</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 无 ZeRO</div><p>按每参数 18 bytes 估算：</p><div class="formula">$$7B \times 18 \text{bytes} = 126 \text{GB} / \text{GPU}$$</div><p>每卡都保存完整训练状态，A100 80GB 放不下。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. ZeRO-1</div><p>只切 Adam 优化器状态，参数和梯度仍完整保存：</p><div class="formula">$$7B \times (12 / 4 + 4 + 2) = 63 \text{GB} / \text{GPU}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">3. ZeRO-2</div><p>切优化器状态和梯度：</p><div class="formula">$$7B \times (12 / 4 + 4 / 4 + 2) = 42 \text{GB} / \text{GPU}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">4. ZeRO-3</div><p>参数、梯度、优化器状态都切：</p><div class="formula">$$7B \times (12 / 4 + 4 / 4 + 2 / 4) = 31.5 \text{GB} / \text{GPU}$$</div></div>
 <div class="qa-summary">面试口径：ZeRO 的本质是分片训练状态，ZeRO-2 常是性价比甜点，ZeRO-3 显存最省但通信更重。</div>
 </div>
 </div>
@@ -248,7 +317,26 @@
 <div class="qa-section"><div class="qa-section-title">3. 适用场景</div><p>当 ZeRO-2 仍然放不下模型，或者想扩大 batch/seq_len 时，ZeRO-3/FSDP 值得使用；如果 ZeRO-2 已足够，ZeRO-3 不一定更快。</p></div>
 <div class="qa-summary">面试口径：ZeRO-3 不是免费午餐，它通过额外参数 AllGather 换取最大显存节省。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::04-zero-fsdp-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-5" aria-labelledby="distributed-training-tabs-tab-5" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>NCCL 与通信优化</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。 显存公式要按 ZeRO 阶段拆。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::04-zero-fsdp-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-5" aria-labelledby="distributed-training-tabs-tab-5" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>NCCL 与通信优化</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>通信时间粗估是流量除以有效带宽。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>NCCL：GPU 集合通信的事实标准</h3>
 <p>NCCL 负责 GPU 间高效集合通信，常见于 DDP 梯度同步、TP 层内通信、MoE expert routing 等场景。分布式训练排障里，NCCL 往往是最关键也最难定位的一层。</p>
 </div>
@@ -275,9 +363,9 @@
 <div class="card card-w">
 <h3>通信时间粗估</h3>
 <p>通信瓶颈可以用“数据量 / 有效带宽”粗估：</p>
-<div class="formula">Communication Time ≈ Traffic / Effective Bandwidth</div>
+<div class="formula">$$\text{Communication Time} \approx \frac{\text{Traffic}}{\text{Effective Bandwidth}}$$</div>
 <p>例如每卡 AllReduce 流量 49GB，有效带宽 100GB/s，则裸通信时间约：</p>
-<div class="formula">49 GB / 100 GB/s = 0.49 s</div>
+<div class="formula">$$49 \text{GB} / 100 \text{GB}/s = 0.49 s$$</div>
 <p>实际还要加上启动延迟、拓扑、协议栈、拥塞、NCCL 算法选择和通信计算重叠效果。</p>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -311,7 +399,26 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-section"><div class="qa-section-title">3. 功能开关</div><p><code>NCCL_IB_DISABLE</code>、<code>NCCL_P2P_DISABLE</code> 可用于隔离 RDMA/P2P 问题，但生产不应长期关闭高性能路径。</p></div>
 <div class="qa-summary">面试口径：NCCL 环境变量按日志、网卡选择、功能开关三类记，核心是帮助判断走了哪条通信路径。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::05-nccl-communication-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">排障与面试计算题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-6" aria-labelledby="distributed-training-tabs-tab-6" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>排障与面试计算题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。 通信时间粗估是流量除以有效带宽。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::05-nccl-communication-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">排障与面试计算题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-6" aria-labelledby="distributed-training-tabs-tab-6" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>排障与面试计算题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>分布式训练</td></tr>
+<tr><td>章节类型</td><td>排障诊断类</td></tr>
+<tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
+<tr><td>面试抓手</td><td>把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>分布式训练排障：先定位瓶颈属于哪一层</h3>
 <p>分布式训练慢或失败，不能只盯 GPU 利用率。应按链路拆分：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。</p>
 </div>
@@ -330,10 +437,10 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <h3>面试计算题套路</h3>
 <table>
 <tr><th>题型</th><th>核心公式</th><th>容易错的点</th></tr>
-<tr><td>DP 通信量</td><td><div class="formula">2 × (N - 1) / N × P × bytes</div></td><td>区分梯度大小和每卡收发量</td></tr>
-<tr><td>ZeRO 显存</td><td><div class="formula">P × (optimizer/N + grad/N + param/N)</div></td><td>不同 ZeRO 阶段分片对象不同</td></tr>
-<tr><td>PP bubble</td><td><div class="formula">(p - 1) / (m + p - 1)</div></td><td>m 是 micro-batch 数，不是 batch size</td></tr>
-<tr><td>3D 并行度</td><td><div class="formula">Total GPUs = DP × TP × PP</div></td><td>TP 通常不能跨节点随便放</td></tr>
+<tr><td>DP 通信量</td><td><div class="formula">$$2 \times (N - 1) / N \times P \times \text{bytes}$$</div></td><td>区分梯度大小和每卡收发量</td></tr>
+<tr><td>ZeRO 显存</td><td><div class="formula">$$P \times (optimizer/N + grad/N + param/N)$$</div></td><td>不同 ZeRO 阶段分片对象不同</td></tr>
+<tr><td>PP bubble</td><td><div class="formula">$$(p - 1) / (m + p - 1)$$</div></td><td>m 是 micro-batch 数，不是 batch size</td></tr>
+<tr><td>3D 并行度</td><td><div class="formula">$$\text{Total GPUs} = DP \times TP \times PP$$</div></td><td>TP 通常不能跨节点随便放</td></tr>
 </table>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -351,7 +458,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>区分 GPU-Util、SM Active、MFU 和端到端吞吐。</p>
 <div class="qa-section"><div class="qa-section-title">1. GPU-Util 不是算力利用率</div><p><code>nvidia-smi</code> 的 GPU-Util 更接近采样窗口内是否有 kernel 在跑，不代表 Tensor Core 被充分利用。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 更应看 MFU</div><p>MFU 衡量模型实际吞吐对应的 FLOPs 占硬件峰值的比例：</p><div class="formula">MFU = Actual Model FLOPs / Hardware Peak FLOPs</div></div>
+<div class="qa-section"><div class="qa-section-title">2. 更应看 MFU</div><p>MFU 衡量模型实际吞吐对应的 FLOPs 占硬件峰值的比例：</p><div class="formula">$$\mathrm{MFU} = \text{Actual Model FLOPs} / \text{Hardware Peak FLOPs}$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 高 util 低效率原因</div><p>可能是小 kernel 碎片、访存瓶颈、通信等待、精度未用 Tensor Core、batch 太小或算子 fallback。</p></div>
 <div class="qa-summary">面试口径：GPU-Util 100% 只能说明 GPU 忙，不说明忙得有效；训练效率要看 MFU、吞吐和 timeline。</div>
 </div>
@@ -360,8 +467,8 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-q">Q: 64 卡训练，TP=8、PP=4，DP 是多少？如果每节点 8 卡，需要几台机器？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>用 3D 并行乘积公式，再结合每节点 GPU 数计算机器数。</p>
-<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><div class="formula">DP = 64 / (8 × 4) = 2</div></div>
-<div class="qa-section"><div class="qa-section-title">2. 计算节点数</div><p>每节点 8 卡，总共 64 卡：</p><div class="formula">Nodes = 64 / 8 = 8</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><div class="formula">$$DP = 64 / (8 \times 4) = 2$$</div></div>
+<div class="qa-section"><div class="qa-section-title">2. 计算节点数</div><p>每节点 8 卡，总共 64 卡：</p><div class="formula">$$\text{Nodes} = 64 / 8 = 8$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 放置解释</div><p>每个 TP group 占一台机器，4 个 PP stage 占 4 台机器，一条 pipeline 用 4 台机器；DP=2 表示两条 pipeline 副本，共 8 台机器。</p></div>
 <div class="qa-summary">面试口径：DP=2，总共 8 台 8 卡机器；TP 节点内，PP 跨节点，DP 是 pipeline 副本数。</div>
 </div>
@@ -375,7 +482,14 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-section"><div class="qa-section-title">3. 碎片和峰值</div><p>如果偶发 OOM，要看 allocator fragmentation、临时 workspace、checkpoint 保存/加载时的峰值。</p></div>
 <div class="qa-summary">面试口径：状态 OOM 用 ZeRO/FSDP，activation OOM 用 checkpointing/减 batch，偶发 OOM 要看碎片和临时峰值。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article></div></section>
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。 把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article></div></section>
   </main>
 </div>
 <footer class="site-footer">
@@ -385,7 +499,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781447000"></script>
+<script src="../../../assets/script.js?v=1781510254"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
 </body>

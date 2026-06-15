@@ -1,3 +1,22 @@
+## 一句话结论
+
+PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核心价值是减少碎片和支持 continuous batching。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | LLM 推理系统 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
+| 面试抓手 | 用 OS 分页类比，但要说明 GPU attention 仍需高效访存。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>PagedAttention <strong>不是一种 attention 算法</strong>，而是 vLLM 给 KV Cache 设计的一套<strong>“虚拟内存”管理系统</strong>。它把 KV Cache 切成固定大小的小块（block），让一个请求逻辑上看到连续的 token 序列，物理显存里却可以散落在任意位置——和操作系统用分页管理内存是同一个思路。</p>
@@ -153,3 +172,20 @@
 <div class="qa-q">Q: 物理 block 不连续，attention 计算会不会变慢或出错？</div>
 <div class="qa-a"><p>不会出错：kernel 读 KV 时先查 block table 找到每个逻辑块对应的物理 block，再去取数，逻辑顺序由映射保证。性能上确实多了查表和非连续访问的开销，但服务场景的瓶颈通常是 KV Cache 容量和调度空洞，而不是单次 attention 的极限带宽，所以换来更高并发和吞吐是划算的。</p></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核心价值是减少碎片和支持 continuous batching。 用 OS 分页类比，但要说明 GPU attention 仍需高效访存。
+
+**2 分钟版：**
+
+我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

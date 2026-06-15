@@ -1269,9 +1269,14 @@ hr.div { border: none; border-top: 2px dashed var(--border); margin: 2rem 0; }
   border-radius: var(--r-md);
   padding: 0.8rem 1rem;
   margin: 0.75rem 0;
-  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
   font-size: 0.86rem;
   overflow-x: auto;
+}
+.formula .katex-display {
+  margin: 0;
+}
+.formula .katex {
+  font-size: 1.02em;
 }
 
 /* ============================================
@@ -1592,6 +1597,36 @@ body.toc-open .toc-backdrop { opacity: 1; pointer-events: auto; }
 .resource-icon { font-size: 1.2rem; }
 .resource-label { font-weight: 650; }
 .resource-desc { font-size: 0.82rem; color: var(--muted); }
+
+/* ----- Figures ----- */
+.figure {
+  margin: 1.15rem 0 1.45rem;
+  padding: clamp(0.45rem, 1.2vw, 0.9rem);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--card-solid);
+  box-shadow: var(--shadow-xs);
+  overflow-x: auto;
+}
+.figure img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(72vh, 900px);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: var(--r-md);
+  background: #fff;
+}
+.figure .caption,
+.figure figcaption {
+  margin: 0.7rem auto 0;
+  max-width: 76ch;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  text-align: center;
+}
 
 /* ----- Flow Diagrams ----- */
 .flow {
@@ -2856,6 +2891,34 @@ body.resizing-module {
   pointer-events: auto;
 }
 
+.transformer-figure {
+  margin: 1.2rem 0 1.6rem;
+  padding: clamp(0.45rem, 1.4vw, 1rem);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--card-solid), var(--soft));
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+.transformer-figure img {
+  display: block;
+  width: min(100%, 760px);
+  max-height: min(74vh, 980px);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: var(--r-md);
+  background: #fff;
+}
+.transformer-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
 @media (max-width: 760px) {
   .module-actions { width: 100%; justify-content: flex-end; }
+  .transformer-figure { padding: 0.45rem; }
+  .transformer-figure img { max-height: none; }
 }

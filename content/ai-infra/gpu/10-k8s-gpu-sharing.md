@@ -1,3 +1,17 @@
+## 一句话结论
+
+K8S 默认把 GPU 当作不可分割的扩展资源，GPU 共享要靠 NVIDIA device-plugin / GPU Operator 把物理 GPU 表达成多个可调度资源。time-slicing、MPS 和 MIG 的本质差异在隔离级别、执行方式和调度语义，不要把逻辑 slot 当成稳定的 1/N 性能。
+
+## 系统链路
+
+```flow
+GPU Operator / Device Plugin 读取共享配置
+  -> 把物理 GPU 或 MIG 实例上报给 kubelet
+  -> kube-scheduler 按扩展资源数量调度 Pod
+  -> Pod 内获得 CUDA_VISIBLE_DEVICES / GPU 访问权限
+  -> driver / MPS daemon / MIG manager 执行真实共享语义
+```
+
 <div class="card card-m">
 <h3>K8S 里的 GPU 共享：整体认知</h3>
 <p>K8S 默认把 GPU 当作<strong>不可分割的整数资源</strong>：一个容器 request <code>nvidia.com/gpu: 1</code> 就独占一整张卡。要在 K8S 里实现共享（MPS / time-slicing / MIG），靠的都是 <strong>NVIDIA k8s-device-plugin</strong>。它负责把物理 GPU "拆分"成多个可调度的资源单元，上报给 kubelet。</p>
@@ -133,3 +147,28 @@ kubectl label node gpu-node-2 \
 <div class="qa-q">Q: 共享 GPU 后，Pod 里 nvidia-smi 看到的是什么？</div>
 <div class="qa-a"><p>time-slicing 和 MPS 下,Pod 里 <code>nvidia-smi</code> 看到的是<strong>整张物理卡</strong>(同一个 UUID),显示的显存总量也是整卡的——因为它们本质是共享同一设备。这容易误导:程序如果按 nvidia-smi 的总显存来分配,在 MPS 配额或多 Pod 共存时会 OOM。相比之下 MIG 下看到的是切分后的实例(独立显存)。所以共享场景要靠应用自己控制显存用量,或依赖 MPS 的显存上限配额。</p></div>
 </div>
+
+## 常见误区
+
+| 误区 | 正确理解 |
+|---|---|
+| `replicas=4` 就是每个 Pod 固定 1/4 算力 | time-slicing 只是逻辑 slot 和时间轮转，不保证固定算力。 |
+| kube-scheduler 理解 GPU 干扰 | 默认 scheduler 只看扩展资源数量，不知道 SM、HBM、P99 抖动。 |
+| MPS 和 MIG 都是硬隔离 | MIG 是硬件切片，MPS 是共享上下文，隔离弱很多。 |
+| Pod 里看到整卡显存就可以全用 | time-slicing/MPS 下多个 Pod 共享同一卡，应用需要限制显存使用。 |
+
+## 面试回答
+
+**30 秒版：**
+
+K8S 默认把 GPU 当整数扩展资源，`nvidia.com/gpu: 1` 表示一整张卡。共享 GPU 通常靠 NVIDIA device-plugin 或 GPU Operator 配置 time-slicing、MPS 或 MIG，把物理 GPU 上报成多个逻辑资源。scheduler 只按资源数量调度，真正的共享和隔离由 driver、MPS daemon 或 MIG 硬件分区实现。time-slicing 简单但无隔离，MPS 可以并发但共享故障域，MIG 隔离强但切分粒度固定。
+
+**2 分钟版：**
+
+我会先说明 K8S 的资源模型：GPU 是 extended resource，默认不可分割。device-plugin 把 GPU 资源发现并上报给 kubelet，scheduler 只看到 `nvidia.com/gpu` 这类资源名和数量。共享时，time-slicing 通过 replicas 把一张卡复制成多个逻辑 slot；MPS 启动 MPS control daemon，让多个 CUDA 进程共享上下文并可设置一定显存/算力比例；MIG 则把支持的 GPU 做硬件切片，上报成独立实例。生产选择要看 SLA 和隔离：开发测试可以 time-slicing，可信小任务可以 MPS，强隔离多租户优先 MIG。
+
+## 关联模块
+
+- `共享方式`：理解 MIG/MPS/time-slicing 的底层取舍。
+- `Kubernetes 核心`：device plugin、extended resource、node label 和调度语义。
+- `调度与集群`：共享密度、显存碎片、干扰建模和租户配额。

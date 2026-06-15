@@ -1,3 +1,22 @@
+## 一句话结论
+
+NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 分布式训练 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
+| 面试抓手 | 通信时间粗估是流量除以有效带宽。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>NCCL：GPU 集合通信的事实标准</h3>
 <p>NCCL 负责 GPU 间高效集合通信，常见于 DDP 梯度同步、TP 层内通信、MoE expert routing 等场景。分布式训练排障里，NCCL 往往是最关键也最难定位的一层。</p>
@@ -28,9 +47,9 @@
 <div class="card card-w">
 <h3>通信时间粗估</h3>
 <p>通信瓶颈可以用“数据量 / 有效带宽”粗估：</p>
-<div class="formula">Communication Time ≈ Traffic / Effective Bandwidth</div>
+<div class="formula">$$\text{Communication Time} \approx \frac{\text{Traffic}}{\text{Effective Bandwidth}}$$</div>
 <p>例如每卡 AllReduce 流量 49GB，有效带宽 100GB/s，则裸通信时间约：</p>
-<div class="formula">49 GB / 100 GB/s = 0.49 s</div>
+<div class="formula">$$49 \text{GB} / 100 \text{GB}/s = 0.49 s$$</div>
 <p>实际还要加上启动延迟、拓扑、协议栈、拥塞、NCCL 算法选择和通信计算重叠效果。</p>
 </div>
 
@@ -68,3 +87,20 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-summary">面试口径：NCCL 环境变量按日志、网卡选择、功能开关三类记，核心是帮助判断走了哪条通信路径。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。 通信时间粗估是流量除以有效带宽。
+
+**2 分钟版：**
+
+我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

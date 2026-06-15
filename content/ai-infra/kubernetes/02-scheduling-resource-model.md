@@ -1,12 +1,55 @@
+## 一句话结论
+
+K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资源模型。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | AI Infra 场景要补 GPU extended resource 和 device plugin。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>调度与资源模型：回答“为什么 Pending”的核心模块</h3>
 <p>调度和资源模型要一起学。<strong>资源模型定义 Pod 要什么、Node 有什么；调度器决定这个 Pod 放到哪里。</strong>面试中最常见的追问是：Pod 为什么 Pending、requests/limits 如何影响调度、QoS 如何影响驱逐、GPU 这类扩展资源如何被调度。</p>
 </div>
 
+## 先看这张地图
+
+| 层次 | 你要回答的问题 | 典型字段 / 机制 | 出问题时的现象 |
+|---|---|---|---|
+| 资源需求 | Pod 需要多少 CPU、内存、GPU、PVC | `requests`、`limits`、Extended Resource、ResourceClaim | `Insufficient cpu/memory/nvidia.com/gpu` |
+| 放置约束 | Pod 允许放到哪些节点、应该靠近或远离谁 | `nodeSelector`、NodeAffinity、PodAffinity、Taint/Toleration、TopologySpread | 节点很多但都被 affinity/taint 过滤 |
+| 节点库存 | Node 真正还有多少可分配资源和设备 | Node `allocatable`、Device Plugin、DaemonSet 占用、系统预留 | 看似 8 卡机器，实际 allocatable 不足或设备不可用 |
+| 调度执行 | scheduler 如何用上述信息做过滤和打分 | Filter、Score、Reserve、Bind | Pending 事件里出现具体 plugin 失败原因 |
+
+阅读顺序建议：
+
+1. 先理解 `requests/limits/QoS`，这是调度资源模型的入口。
+2. 再理解放置约束速览，解释“资源够但为什么不能放”。
+3. GPU / DRA / Affinity 的深入实现不要在本页展开，分别转到对应专题。
+4. 最后再进入 `Scheduler 主链路` 和 `Scheduler 插件与扩展`，理解这些约束在 Framework 中挂到哪个扩展点。
+
 <div class="card card-w">
-<h3>Scheduler 内部机制 → 见"Scheduler内部机制"标签页</h3>
-<p>本模块聚焦<strong>资源模型</strong>（Pod 要什么、Node 有什么）。Scheduler 的内部运行机制（调度队列、Filter/Score 全链路、抢占、Gang Scheduling、自定义插件等）已独立为 <strong>"Scheduler内部机制"</strong> 标签页，避免内容重复。</p>
-<p>快速索引：调度队列流转 → 09 标签页"调度队列总览图"；Framework 扩展点 → 09 标签页"Plugin 扩展点与调度研究问题的映射"；抢占机制 → 09 标签页"Preemption 深入"；Gang Scheduling → 09 标签页"Gang Scheduling"。</p>
+<h3>本页边界：只讲资源模型，不讲插件实现</h3>
+<p>本页回答 <strong>Pod 要什么、Node 有什么、哪些约束会让节点不可用</strong>。Scheduler Framework 的内部队列、cache、assume、binding cycle 放在「Scheduler 主链路」；自定义 Plugin、Extender、QueueingHint、可观测性放在「Scheduler 插件与扩展」。</p>
+<table>
+<tr><th>问题类型</th><th>应该看哪里</th></tr>
+<tr><td>requests/limits、QoS、资源需求和放置约束总览</td><td>本页：调度与资源模型</td></tr>
+<tr><td>Extended Resource、Device Plugin、DRA、MIG/MPS</td><td>AI Infra：GPU / 批调度 / DRA</td></tr>
+<tr><td>NodeAffinity、PodAffinity、TaintToleration 的插件行为</td><td>Scheduler 插件与扩展 → 设计理念与经典插件</td></tr>
+<tr><td>ActiveQ/BackoffQ/UnschedulableQ、Assume、Preemption</td><td>Scheduler 主链路</td></tr>
+<tr><td>PreFilter/Filter/Score、QueueingHint、Extender、自定义插件</td><td>Scheduler 插件与扩展</td></tr>
+<tr><td>Gang、Backfill、抢占代价、队列公平</td><td>任务调度理论</td></tr>
+</table>
 </div>
 
 <div class="card card-m">
@@ -23,71 +66,16 @@
 </div>
 
 <div class="card card-s">
-<h3>Extended Resource 与 Device Plugin</h3>
-<p>扩展资源是 Kubernetes 资源模型中的“自定义整数资源”，Device Plugin 是最常见的节点侧上报机制。两者关系可以理解为：<strong>Device Plugin 负责发现和注册设备，Extended Resource 负责在 Pod spec 和 Node allocatable 中表达可调度数量。</strong></p>
+<h3>放置约束速览：资源够也可能 Pending</h3>
+<p>本页只保留调度资源模型视角：Pod 除了要资源，还会声明“能去哪里、应该靠近谁、要不要均匀分布、能不能容忍节点排斥”。这些约束最终会映射到 scheduler 的 Filter / Score 插件。</p>
 <table>
-<tr><th>环节</th><th>发生什么</th><th>关键点</th></tr>
-<tr><td>资源注册</td><td>Device Plugin 通过 kubelet 注册资源名，例如 <code>nvidia.com/gpu</code></td><td>资源名必须带域名前缀，避免和原生资源冲突</td></tr>
-<tr><td>库存暴露</td><td>kubelet 把数量写入 Node <code>capacity</code> / <code>allocatable</code></td><td>scheduler 看到的是整数数量，不是每张卡的详细属性</td></tr>
-<tr><td>Pod 申请</td><td>Pod 在 <code>resources.limits</code> 中申请，例如 <code>nvidia.com/gpu: 1</code></td><td>GPU 等扩展资源一般要求 requests 与 limits 相等</td></tr>
-<tr><td>节点选择</td><td>scheduler 根据资源数量过滤节点</td><td>默认不理解显存、型号、NVLink、NUMA 等设备属性</td></tr>
-<tr><td>设备交付</td><td>Pod 到节点后 kubelet 调用 Device Plugin <code>Allocate</code></td><td>具体 device node、环境变量、mount 在节点侧注入容器</td></tr>
+<tr><th>机制</th><th>解决什么问题</th><th>深入位置</th></tr>
+<tr><td>nodeSelector / Node Affinity</td><td>Pod 选择什么样的节点，例如 GPU 型号、机房、磁盘类型</td><td>Scheduler 插件与扩展 → 设计理念与经典插件</td></tr>
+<tr><td>Pod Affinity / Anti-Affinity</td><td>Pod 和已有 Pod 靠近或远离，例如靠近 cache、分散同服务副本</td><td>Scheduler 插件与扩展 → 设计理念与经典插件</td></tr>
+<tr><td>Topology Spread Constraints</td><td>控制副本在 zone、node、rack 等拓扑域内均匀分布</td><td>本页保留核心语义</td></tr>
+<tr><td>Taint / Toleration</td><td>节点拒绝普通 Pod，Pod 显式声明自己能容忍</td><td>本页保留核心语义；插件行为见经典插件</td></tr>
 </table>
-<p><code>nvidia.com/a100</code>、<code>nvidia.com/v100</code> 也可以通过 Device Plugin 实现，但本质是把“型号”编码进资源名。当还要表达显存、MIG profile、PCIe/SXM、NUMA、NVLink、健康状态时，资源名和 label 组合会迅速爆炸。</p>
-</div>
-
-<div class="card card-w">
-<h3>DRA 与传统资源模型的边界</h3>
-<p>DRA 不是把 <code>resources.requests</code> 简单增强成更复杂的字段，而是引入 <code>resource.k8s.io</code> API，用 <code>ResourceClaim</code> 表达需求、用 <code>ResourceSlice</code> 发布设备库存、用 <code>DeviceClass</code> 抽象设备类别。传统 Extended Resource 适合“资源名 + 整数数量”，DRA 更适合“设备属性 + 容量 + 拓扑 + 共享关系”。</p>
-<table>
-<tr><th>维度</th><th>Device Plugin / Extended Resource</th><th>DRA</th></tr>
-<tr><td>资源表达</td><td>资源名 + 整数数量</td><td>结构化设备属性、容量、拓扑、选择条件</td></tr>
-<tr><td>调度可见性</td><td>scheduler 主要看到数量</td><td>scheduler 可基于 ResourceSlice 做设备级匹配</td></tr>
-<tr><td>适合场景</td><td>同质 GPU、简单整卡分配</td><td>异构 GPU/NPU/DPU、MIG、拓扑、共享设备</td></tr>
-<tr><td>复杂度</td><td>简单成熟，生态广</td><td>能力强，但依赖 API 版本和 DRA driver 生态</td></tr>
-</table>
-</div>
-
-<div class="card card-m">
-<h3>Node Affinity / Anti-Affinity 与 Pod Affinity / Anti-Affinity</h3>
-<p>这里有三组概念容易混：<strong>Node Affinity、Node Anti-Affinity、Pod Affinity / Pod Anti-Affinity</strong>。一句话区分：</p>
-<p><strong>Node Affinity / Anti-Affinity：Pod 和节点之间的关系。Pod Affinity / Anti-Affinity：Pod 和 Pod 之间的关系。</strong></p>
-</div>
-
-<div class="card card-s">
-<h3>Node Affinity：Pod 对节点有偏好</h3>
-<p>Node Affinity 解决的是：<strong>这个 Pod 应该去什么样的机器上？</strong>它是比 nodeSelector 更强大的节点选择机制，支持软约束（preferred）和硬约束（required），以及基于节点标签的复杂表达式。</p>
-<table>
-<tr><th>类型</th><th>行为</th><th>典型场景</th></tr>
-<tr><td>requiredDuringSchedulingIgnoredDuringExecution</td><td>硬约束，Pod 必须调度到满足条件的节点，否则 Pending</td><td>必须是 A100 节点、必须在北京机房</td></tr>
-<tr><td>preferredDuringSchedulingIgnoredDuringExecution</td><td>软约束，优先调度到满足条件的节点，但不强制</td><td>最好在 SSD 节点、最好在北京机房（但上海也可以）</td></tr>
-</table>
-<div class="qa-section"><div class="qa-section-title">IgnoredDuringExecution 的含义</div><p>调度时会检查这个规则；Pod 已经运行后，如果节点标签变化了，Kubernetes 默认不会因为这个规则再把 Pod 驱逐掉。这是设计选择：避免运行时驱逐造成服务中断。如果需要运行时驱逐，用 Taint 的 NoExecute 效果。</p></div>
-<div class="qa-section"><div class="qa-section-title">Node Anti-Affinity</div><p>Kubernetes 里严格说没有一个和 <code>nodeAffinity</code> 同级的字段叫 <code>nodeAntiAffinity</code>，但可以通过 <code>nodeAffinity</code> 里的 <code>NotIn</code>、<code>DoesNotExist</code> 等表达"不要去某些节点"。例如：不要调度到 V100 节点、不要调度到 spot 节点。</p></div>
-</div>
-
-<div class="card card-d">
-<h3>Pod Affinity / Anti-Affinity：Pod 之间的关系</h3>
-<p>Pod Affinity 解决的是：<strong>这个 Pod 希望和哪些已有 Pod 放近一点？</strong>判断对象不是节点标签，而是<strong>已有 Pod 的标签</strong>。Pod Anti-Affinity 则相反：不希望和某些 Pod 放得太近。</p>
-<table>
-<tr><th>类型</th><th>判断对象</th><th>典型场景</th></tr>
-<tr><td>Pod Affinity</td><td>已有 Pod 的标签</td><td>训练任务靠近数据缓存 Pod（降低延迟）；Worker 靠近 Parameter Server</td></tr>
-<tr><td>Pod Anti-Affinity</td><td>已有 Pod 的标签</td><td>同服务副本不要在同一节点（高可用）；两个大 GPU 任务不要在同一台机器（避免资源竞争）</td></tr>
-</table>
-<div class="qa-section"><div class="qa-section-title">topologyKey 是什么？</div><p>Pod Affinity / Anti-Affinity 中 <code>topologyKey</code> 表示"靠近"或"远离"是按什么范围来定义的：<code>kubernetes.io/hostname</code> 表示同一节点，<code>topology.kubernetes.io/zone</code> 表示同一可用区，<code>rack</code> 表示同一机架。</p></div>
-<div class="qa-section"><div class="qa-section-title">性能影响</div><p>Pod Affinity/Anti-Affinity 需要在调度时扫描大量 Pod，大规模集群中可能显著增加调度延迟。建议限制 <code>topologyKey</code> 的粒度，避免在超大集群中使用跨节点的 Pod Anti-Affinity。</p></div>
-</div>
-
-<div class="card card-w">
-<h3>Node Affinity 和 Pod Affinity 的区别（面试核心）</h3>
-<table>
-<tr><th>类型</th><th>判断对象</th><th>例子</th></tr>
-<tr><td>Node Affinity</td><td>节点的标签</td><td>我要去 A100 节点</td></tr>
-<tr><td>Node Anti-Affinity</td><td>节点的标签</td><td>我不要去 spot 节点</td></tr>
-<tr><td>Pod Affinity</td><td>已有 Pod 的标签</td><td>我要靠近 redis Pod</td></tr>
-<tr><td>Pod Anti-Affinity</td><td>已有 Pod 的标签</td><td>我不要和同服务副本在同一节点</td></tr>
-</table>
-<p>一句话：<strong>Node Affinity 看节点标签，Pod Affinity 看已有 Pod 标签。</strong>硬约束（required）主要在 Filter 阶段起作用，不满足就直接过滤掉节点；软偏好（preferred）主要在 Score 阶段起作用，满足偏好的节点得分更高。</p>
+<div class="qa-summary">本页记入口即可：资源不足看 requests/allocatable；资源够但不能放，通常看 Affinity、Taint、Topology Spread、PVC/ResourceClaim 和自定义插件。</div>
 </div>
 
 <div class="card card-d">
@@ -194,3 +182,20 @@
 <div class="qa-summary">面试口径：Taint 是节点说"不"，Toleration 是 Pod 说"我可以"。两者配合实现节点隔离和专用节点池。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资源模型。 AI Infra 场景要补 GPU extended resource 和 device plugin。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

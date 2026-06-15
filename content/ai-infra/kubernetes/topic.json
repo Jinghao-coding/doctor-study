@@ -37,18 +37,18 @@
             },
             {
               "title": "调度与资源模型",
-              "description": "Scheduling Framework、requests/limits、QoS、抢占、Extended Resource",
+              "description": "requests/limits、QoS、资源需求、放置约束速览、Pending 排查入口",
               "file": "02-scheduling-resource-model.md",
               "level": "进阶",
               "priority": 1,
               "time": 18
             },
             {
-              "title": "Scheduler 内部机制",
-              "description": "调度队列、scheduler cache、assumed pod、binding cycle、preemption、plugin 落点",
+              "title": "Scheduler 主链路",
+              "description": "调度队列、scheduler cache、assumed pod、binding cycle、preemption",
               "level": "精通",
               "priority": 1,
-              "time": 22,
+              "time": 20,
               "subtabs": [
                 {
                   "title": "调度路径与三个队列",
@@ -66,9 +66,48 @@
                   "file": "09c-scheduler-performance-tuning.md"
                 },
                 {
+                  "title": "源码阅读路径",
+                  "description": "Lark 文档提炼：Run、scheduleOne、schedulePod、findNodesThatFitPod、bindingCycle",
+                  "file": "09i-scheduler-source-reading.md"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Scheduler 插件与扩展",
+          "items": [
+            {
+              "title": "插件开发与扩展点",
+              "description": "Framework Plugin、Extender、多 Scheduler、Hook 选择与代码骨架",
+              "level": "精通",
+              "priority": 1,
+              "time": 26,
+              "subtabs": [
+                {
                   "title": "自定义 Plugin 实战",
                   "description": "三种实现方式、Framework 扩展点、GPU 拓扑感知插件代码骨架",
                   "file": "09d-scheduler-custom-plugin.md"
+                },
+                {
+                  "title": "扩展点设计差异",
+                  "description": "PreFilter vs Filter / PreScore vs Score、Plugin 多 Hook 结构、源码目录地图、编译期接口校验",
+                  "file": "09e-extension-points-design.md"
+                },
+                {
+                  "title": "QueueingHint 与 Move Request",
+                  "description": "1.28 Beta / 1.32 GA、EnqueueExtensions、惊群问题、Move Request 触发链路",
+                  "file": "09f-queueing-hint-move-request.md"
+                },
+                {
+                  "title": "Scheduler 可观测性",
+                  "description": "kube-scheduler-simulator、Diagnosis/FitError、Prometheus metrics 与 SLO 阈值",
+                  "file": "09g-scheduler-observability.md"
+                },
+                {
+                  "title": "设计理念与经典插件",
+                  "description": "六维设计矩阵、Affinity、TaintToleration、NodeResourcesFit、Extender HTTP 通信",
+                  "file": "09h-design-philosophy-classic-plugins.md"
                 }
               ]
             }
@@ -162,8 +201,28 @@
       "file": "09c-scheduler-performance-tuning.md"
     },
     {
+      "title": "Scheduler 内部机制 · 源码阅读路径",
+      "file": "09i-scheduler-source-reading.md"
+    },
+    {
       "title": "Scheduler 内部机制 · 自定义 Plugin",
       "file": "09d-scheduler-custom-plugin.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · 扩展点设计差异",
+      "file": "09e-extension-points-design.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · QueueingHint 与 Move Request",
+      "file": "09f-queueing-hint-move-request.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · 可观测性",
+      "file": "09g-scheduler-observability.md"
+    },
+    {
+      "title": "Scheduler 内部机制 · 设计理念与经典插件",
+      "file": "09h-design-philosophy-classic-plugins.md"
     },
     {
       "title": "Workload 与 Controller",

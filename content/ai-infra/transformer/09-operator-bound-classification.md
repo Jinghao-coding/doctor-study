@@ -1,3 +1,22 @@
+## 一句话结论
+
+Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Transformer 与大模型基础 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。 |
+| 面试抓手 | 按算子分类，避免“一句话说全模型 compute-bound”。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 判断一个算子是 compute-bound 还是 memory-bound，核心看算术强度：
 
 $$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$
@@ -69,3 +88,20 @@ $$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$
 <div class="qa-q">Q: 为什么长上下文 decode 越来越慢？</div>
 <div class="qa-a"><p>不是单 token 计算复杂度爆炸，而是 decode attention 是 memory-bound 的，每生成一个新 token 都要从 HBM 读一遍历史 KV cache。上下文越长，KV cache 越大，每步读取量线性增长，所以越来越慢。优化方向是降 KV cache 带宽/容量压力：PagedAttention、KV cache 量化、MQA/GQA、FlashAttention 等。</p></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。 按算子分类，避免“一句话说全模型 compute-bound”。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

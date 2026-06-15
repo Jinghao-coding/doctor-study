@@ -1,3 +1,22 @@
+## 一句话结论
+
+请求生命周期要把 API 接入、tokenization、调度、prefill、decode、stream 返回和缓存释放串成一条链。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | LLM 推理系统 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
+| 面试抓手 | 回答时不要只讲模型 forward，要把引擎调度和 KV cache 管理一起讲。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 ## 请求生命周期
 
 一次 LLM 推理请求不是“直接进模型然后输出文本”，而是经过接入、排队、调度、计算、采样和返回等多个环节。理解这条链路，才能判断 TTFT、TPOT、吞吐和显存问题分别发生在哪里。
@@ -61,3 +80,20 @@ Stream Response | detokenize 后通过 SSE/WebSocket/HTTP 返回
 | 并发上不去 | KV Cache、显存、调度 | 看显存余量、block 碎片、最大 batch |
 | GPU 利用率低 | Decode memory-bound | 看 MFU、HBM 带宽、batch size |
 | P99 抖动大 | 长 prompt 阻塞、抢占、换出 | 看 chunked prefill、优先级调度 |
+
+## 面试回答
+
+**30 秒版：**
+
+请求生命周期要把 API 接入、tokenization、调度、prefill、decode、stream 返回和缓存释放串成一条链。 回答时不要只讲模型 forward，要把引擎调度和 KV cache 管理一起讲。
+
+**2 分钟版：**
+
+我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

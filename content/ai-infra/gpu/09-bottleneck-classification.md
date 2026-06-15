@@ -1,11 +1,32 @@
-<div class="card card-m">
-<h3>GPU 三大瓶颈分类</h3>
-<p>GPU 性能问题最终都可以归到三类瓶颈：<strong>计算瓶颈</strong>、<strong>显存瓶颈</strong>、<strong>通信瓶颈</strong>。判断属于哪一类，决定了优化方向完全不同。</p>
-</div>
+## 一句话结论
 
-<div class="card card-s">
-<h3>计算瓶颈（Compute-bound）</h3>
-<p><strong>定义</strong>：GPU 的计算单元（CUDA Core / Tensor Core）是瓶颈，计算请求已满，但数据供给充足。</p>
+GPU 慢不能只说“利用率低”或“显存满”，要先分类：计算瓶颈看 Tensor Core/CUDA Core 是否打满，显存瓶颈看 HBM 带宽和访存 stall，通信瓶颈看 NCCL/memcpy/拓扑等待。分类决定优化方向，方向错了会越调越慢。
+
+## 诊断入口
+
+```flow
+业务指标异常
+  -> nvidia-smi / DCGM 看 GPU-Util、显存、功耗、PCIe/NVLink
+  -> Nsight Systems 看 timeline：kernel / memcpy / NCCL / 空洞 / 同步
+  -> Nsight Compute 看热点 kernel：compute、memory、occupancy、stall
+  -> 扩展性实验：单卡、多卡、不同 batch、不同 seq_len 对比
+```
+
+## 指标解释
+
+| 瓶颈类型 | 主要证据 | 常见误判 |
+|---|---|---|
+| Compute-bound | Compute Throughput 高、Tensor Core Util 高、Roofline 靠近 compute roof | 只看 GPU-Util 高就说 compute-bound |
+| Memory-bandwidth-bound | Memory Throughput 高、Long Scoreboard 高、Roofline 落在 memory roof | 把显存容量不足和显存带宽不足混为一谈 |
+| Memory-capacity-bound | OOM、batch/seq_len/并发受限、KV cache 放不下 | 只看显存占用高就说带宽瓶颈 |
+| Communication-bound | NCCL/memcpy 占比高、多卡扩展效率差、拓扑敏感 | 通信 kernel 也会让 GPU-Util 高，容易误判为计算忙 |
+
+## 排查路径
+
+### 计算瓶颈（Compute-bound）
+
+**定义**：GPU 的计算单元（CUDA Core / Tensor Core）是瓶颈，计算请求已满，但数据供给充足。
+
 <table>
 <tr><th>特征</th><th>表现</th></tr>
 <tr><td>Compute Throughput</td><td>高，接近硬件峰值</td></tr>
@@ -13,19 +34,20 @@
 <tr><td>SM Active</td><td>高</td></tr>
 <tr><td>Roofline 位置</td><td>落在 Compute Roof 附近</td></tr>
 </table>
-<p><strong>典型场景</strong>：大矩阵乘法（GEMM）、大 batch 的卷积、大 batch 的 prefill 阶段 Attention。</p>
-<p><strong>优化方向</strong>：</p>
-<ul>
-<li>使用 Tensor Core（确保 dtype、shape 对齐）</li>
-<li>降低精度（FP16/BF16/FP8/INT8）</li>
-<li>优化 tile 大小和指令 mix</li>
-<li>投机解码（用小模型生成候选，大模型并行验证）</li>
-</ul>
-</div>
 
-<div class="card card-w">
-<h3>显存瓶颈（Memory-bound）</h3>
-<p><strong>定义</strong>：GPU 的显存带宽是瓶颈，计算单元在等数据，大量时间花在 HBM 读写上。</p>
+典型场景：大矩阵乘法（GEMM）、大 batch 的卷积、大 batch 的 prefill 阶段 Attention。
+
+优化方向：
+
+- 使用 Tensor Core，确保 dtype、shape 和 layout 对齐。
+- 降低精度，例如 FP16/BF16/FP8/INT8。
+- 优化 tile 大小和指令 mix。
+- 对 decode 类任务考虑 speculative decoding，用小模型生成候选，大模型并行验证。
+
+### 显存带宽瓶颈（Memory-bandwidth-bound）
+
+**定义**：GPU 的显存带宽是瓶颈，计算单元在等数据，大量时间花在 HBM 读写上。
+
 <table>
 <tr><th>特征</th><th>表现</th></tr>
 <tr><td>Memory Throughput</td><td>高，接近 HBM 带宽峰值</td></tr>
@@ -33,54 +55,60 @@
 <tr><td>Long Scoreboard Stall</td><td>高</td></tr>
 <tr><td>Roofline 位置</td><td>落在 Memory Roof（斜线区域）</td></tr>
 </table>
-<p><strong>典型场景</strong>：LLM decode 阶段、Elementwise 算子、LayerNorm、Softmax、Embedding lookup、Gather/Scatter、小 batch 推理。</p>
-<p><strong>为什么 LLM decode 是显存瓶颈</strong>：每生成一个 token，需要从 HBM 加载全部模型权重（几十 GB），但只做极少量计算。算术强度约 2 FLOPs/Byte，远低于 A100 的 Ridge Point 153，所以必然 memory-bound。</p>
-<p><strong>优化方向</strong>：</p>
-<ul>
-<li>提高算术强度：增大 batch size、融合算子</li>
-<li>减少 HBM 读写：FlashAttention（分块+重计算）、shared memory 数据复用</li>
-<li>压缩数据量：KV cache 量化、权重 INT8/FP8 量化</li>
-<li>改善访问模式：memory coalescing、提高 L2 cache hit rate</li>
-<li>PagedAttention：按需分配 KV cache 物理页，减少显存浪费</li>
-</ul>
-</div>
 
-<div class="card card-r">
-<h3>显存容量瓶颈（Memory Capacity-bound）</h3>
-<p>和带宽瓶颈不同，<strong>容量瓶颈</strong>是指显存不够放——放不下模型权重、KV cache 或足够的 batch 数据。</p>
-<p><strong>典型表现</strong>：OOM（Out of Memory）、被迫降低 batch size / seq_len、KV cache 容量不足导致并发请求数受限。</p>
-<p><strong>优化方向</strong>：</p>
-<ul>
-<li>张量并行：模型分片到多卡</li>
-<li>量化：FP16→INT8→INT4 减少权重和 KV cache 占用</li>
-<li>ZeRO / FSDP：切分参数、梯度、优化器状态</li>
-<li>Offload：不活跃数据放到 CPU/NVMe</li>
-<li>PagedAttention + KV cache 压缩：显存超配 + 按需分配</li>
-</ul>
-</div>
+典型场景：LLM decode 阶段、elementwise 算子、LayerNorm、Softmax、Embedding lookup、Gather/Scatter、小 batch 推理。
 
-<div class="card card-s">
-<h3>通信瓶颈（Communication-bound）</h3>
-<p><strong>定义</strong>：GPU 间的数据同步和传输成为瓶颈，GPU 时间花在等待通信完成上。</p>
+为什么 LLM decode 常是显存瓶颈：每生成一个 token，需要从 HBM 加载大量模型权重和 KV cache，但新增 token 的计算量相对少，算术强度低，容易落在 Roofline 的 memory-bound 区域。
+
+优化方向：
+
+- 提高算术强度：增大 batch size、融合算子。
+- 减少 HBM 读写：FlashAttention、shared memory 数据复用、算子融合。
+- 压缩数据量：KV cache 量化、权重量化。
+- 改善访问模式：memory coalescing、提高 L2 cache hit rate。
+- 用 PagedAttention 按需分配 KV cache 物理页，减少显存浪费。
+
+### 显存容量瓶颈（Memory-capacity-bound）
+
+容量瓶颈是指显存不够放，放不下模型权重、KV cache、activation、optimizer state 或足够的 batch 数据。它和带宽瓶颈不同：容量问题首先表现为 OOM 或并发受限，带宽问题表现为算子在等数据。
+
+典型表现：
+
+- OOM。
+- 被迫降低 batch size、sequence length 或并发请求数。
+- KV cache 容量不足导致 decode 阶段可服务请求数受限。
+
+优化方向：
+
+- 张量并行：模型分片到多卡。
+- 量化：FP16 到 INT8/INT4，减少权重和 KV cache 占用。
+- ZeRO / FSDP：切分参数、梯度、优化器状态。
+- Offload：不活跃数据放到 CPU/NVMe。
+- PagedAttention + KV cache 压缩：显存超配 + 按需分配。
+
+### 通信瓶颈（Communication-bound）
+
+**定义**：GPU 间的数据同步和传输成为瓶颈，GPU 时间花在等待通信完成上。
+
 <table>
 <tr><th>特征</th><th>表现</th></tr>
 <tr><td>NCCL 时间占比</td><td>高（Nsight Systems timeline 上 NCCL 占比大）</td></tr>
 <tr><td>GPU-Util</td><td>可能高（通信 kernel 在跑），但 SM Active 可能低</td></tr>
 <tr><td>扩展效率</td><td>多卡吞吐远低于线性扩展</td></tr>
 </table>
-<p><strong>典型场景</strong>：大规模张量并行的 all-reduce、流水线并行的跨卡激活传递、跨节点训练的梯度同步、KV cache 跨卡/跨节点迁移。</p>
-<p><strong>优化方向</strong>：</p>
-<ul>
-<li>通信与计算重叠：NCCL 和 kernel 在不同 stream 上并行</li>
-<li>梯度压缩 / 量化：减少通信数据量</li>
-<li>拓扑优化：NVLink 全互联 > NVSwitch > PCIe > IB</li>
-<li>减少通信次数：梯度累积、增大 bucket size</li>
-<li>Ring Attention / 序列并行：减少跨卡通信量</li>
-</ul>
-</div>
 
-<div class="card card-w">
-<h3>如何快速判断属于哪种瓶颈？</h3>
+典型场景：大规模张量并行 all-reduce、流水线并行跨卡激活传递、跨节点训练梯度同步、KV cache 跨卡/跨节点迁移。
+
+优化方向：
+
+- 通信与计算重叠：NCCL 和 kernel 在不同 stream 上并行。
+- 梯度压缩或量化：减少通信数据量。
+- 拓扑优化：优先利用 NVLink/NVSwitch，再考虑 PCIe/RDMA。
+- 减少通信次数：梯度累积、增大 bucket size。
+- Ring Attention / 序列并行：减少跨卡通信量。
+
+## 典型现象
+
 <table>
 <tr><th>判断方法</th><th>计算瓶颈</th><th>显存瓶颈</th><th>通信瓶颈</th></tr>
 <tr><td>nvidia-smi</td><td>GPU-Util 高，Power 高</td><td>GPU-Util 可能不高，Memory Util 高</td><td>GPU-Util 可能高但吞吐低</td></tr>
@@ -90,8 +118,7 @@
 <tr><td>扩展性测试</td><td>单卡和多卡都慢</td><td>单卡和多卡都慢</td><td>单卡快，多卡反而慢</td></tr>
 </table>
 
-<div class="qa-summary">排查顺序：先用 nvidia-smi 看有没有活 → Nsight Systems 看谁占时间 → Nsight Compute 看单个 kernel 瓶颈在哪 → 扩展性测试判断是否通信瓶颈。</div>
-</div>
+排查顺序：先用 `nvidia-smi` 看有没有活，再用 Nsight Systems 看谁占时间，然后用 Nsight Compute 看单个 kernel 瓶颈在哪，最后用扩展性测试判断是否通信瓶颈。
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: GPU-Util 100% 但推理 QPS 很低，怎么排查？</div>
@@ -102,3 +129,20 @@
 <div class="qa-q">Q: 计算瓶颈和显存瓶颈能同时存在吗？</div>
 <div class="qa-a"><p>在同一个 kernel 上通常不会——Roofline 模型里一个点要么在斜线区域（memory-bound），要么在水平区域（compute-bound）。但在端到端场景中，不同 kernel 可以是不同瓶颈：prefill 阶段 compute-bound，decode 阶段 memory-bound，某些小算子 launch-bound。所以优化时需要针对不同阶段不同策略，这也是为什么推理引擎会把 prefill 和 decode 分开调度。</p></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+我会先把 GPU 性能问题分成计算、显存和通信三类。计算瓶颈看 Tensor Core/CUDA Core 是否接近峰值；显存带宽瓶颈看 HBM throughput、Long Scoreboard 和 Roofline 位置；显存容量瓶颈看 OOM、batch/seq_len/并发是否受限；通信瓶颈看 Nsight Systems 里 NCCL/memcpy 占比和多卡扩展效率。不同瓶颈的优化方向完全不同，不能只看 GPU-Util。
+
+**2 分钟版：**
+
+系统排查时我先确认业务指标，比如 step time、QPS、TTFT/TPOT。然后用 `nvidia-smi` 或 DCGM 做粗筛，看 GPU 是否有活、显存是否接近上限、功耗和链路计数是否异常。第二步用 Nsight Systems 看 timeline，判断时间主要花在 kernel、memcpy、NCCL 还是 CPU 等待。第三步对热点 kernel 用 Nsight Compute，看 compute throughput、memory throughput、SM Active、occupancy 和 warp stall。最后结合 workload 阶段判断：prefill 常偏 compute-bound，decode 常偏 memory-bound，多卡训练常偏 communication-bound，数据加载慢则是 input pipeline 问题。
+
+## 关联模块
+
+- `性能指标`：Roofline、TFLOPS、HBM 带宽是分类基础。
+- `利用率诊断`：从 GPU-Util 继续深入到 SM Active、Occupancy、Warp Stall。
+- `GPU 互联与数据路径`：通信瓶颈必须结合 PCIe/NVLink/RDMA/NUMA。
+- `LLM 推理系统`：prefill/decode 的瓶颈类型不同。

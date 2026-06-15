@@ -1,3 +1,22 @@
+## 一句话结论
+
+任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 任务调度理论 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
+| 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>多资源公平：调度方向的核心基本功</h3>
 <p>GPU 集群不是单资源系统。一个训练任务同时消耗 GPU、CPU、内存、网络、存储带宽和拓扑位置。多资源公平要解决的问题是：当不同租户的资源需求形态不同，系统如何定义"公平"。</p>
@@ -174,7 +193,7 @@
 <tr><td>系统抖动</td><td>大量任务被杀和重启造成控制面压力</td><td>分批抢占、限速、队列级回收</td></tr>
 </table>
 <p>工程上常用一个简化打分：释放资源价值越高越适合抢，占用资源越少但 checkpoint 很旧的任务不一定适合抢。</p>
-<div class="formula">preemption_score = release_value / (checkpoint_age + restart_cost + disruption_penalty)</div>
+<div class="formula">$$\text{preemption\_score} = \text{release\_value} / (\text{checkpoint\_age} + \text{restart\_cost} + \text{disruption\_penalty})$$</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -245,3 +264,20 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"公平性不是均分，而是在多维资源空间里让每个用户的瓶颈资源都不吃亏。DRF 解决了定义问题，Elastic Quota + QAD 解决了工程实现问题，异构 GPU 和拓扑是 GPU 集群特有的延伸。"</p></div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+
+**2 分钟版：**
+
+我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

@@ -1,3 +1,22 @@
+## 一句话结论
+
+AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度、Kueue/Volcano 和 DRA。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | 把 K8S 抽象和 GPU 物理资源语义连接起来。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>AI Infra：GPU / 批调度 / DRA 总览</h3>
 <p>AI Infra 场景下，Kubernetes 的核心问题从“跑一个无状态服务”扩展为：<strong>如何接入 GPU/NPU 等异构硬件，如何让分布式训练一组 Pod 同时拿到资源，如何表达显存、拓扑、MIG、NVLink、NUMA 等复杂约束。</strong></p>
@@ -22,6 +41,20 @@
 <tr><td>kube-scheduler</td><td>根据 Pod requests/limits 和 Node allocatable 做过滤与打分</td><td>默认不理解 GPU 型号、显存、NVLink、NUMA 等设备内部属性</td></tr>
 <tr><td>Container Runtime</td><td>根据 kubelet 传入的设备信息把 GPU device node、环境变量、mount 注入容器</td><td>常和 NVIDIA Container Toolkit、CDI 等运行时机制配合</td></tr>
 </table>
+</div>
+
+<div class="card card-s">
+<h3>Extended Resource 与 Device Plugin</h3>
+<p>扩展资源是 Kubernetes 资源模型中的“自定义整数资源”，Device Plugin 是最常见的节点侧上报机制。两者关系可以理解为：<strong>Device Plugin 负责发现和注册设备，Extended Resource 负责在 Pod spec 和 Node allocatable 中表达可调度数量。</strong></p>
+<table>
+<tr><th>环节</th><th>发生什么</th><th>关键点</th></tr>
+<tr><td>资源注册</td><td>Device Plugin 通过 kubelet 注册资源名，例如 <code>nvidia.com/gpu</code></td><td>资源名必须带域名前缀，避免和原生资源冲突</td></tr>
+<tr><td>库存暴露</td><td>kubelet 把数量写入 Node <code>capacity</code> / <code>allocatable</code></td><td>scheduler 看到的是整数数量，不是每张卡的详细属性</td></tr>
+<tr><td>Pod 申请</td><td>Pod 在 <code>resources.limits</code> 中申请，例如 <code>nvidia.com/gpu: 1</code></td><td>GPU 等扩展资源一般要求 requests 与 limits 相等</td></tr>
+<tr><td>节点选择</td><td>scheduler 根据资源数量过滤节点</td><td>默认不理解显存、型号、NVLink、NUMA 等设备属性</td></tr>
+<tr><td>设备交付</td><td>Pod 到节点后 kubelet 调用 Device Plugin <code>Allocate</code></td><td>具体 device node、环境变量、mount 在节点侧注入容器</td></tr>
+</table>
+<p><code>nvidia.com/a100</code>、<code>nvidia.com/v100</code> 也可以通过 Device Plugin 实现，但本质是把“型号”编码进资源名。当还要表达显存、MIG profile、PCIe/SXM、NUMA、NVLink、健康状态时，资源名和 label 组合会迅速爆炸。</p>
 </div>
 
 <div class="card card-d">
@@ -218,6 +251,18 @@ data:
 <tr><td>ResourceClaimTemplate</td><td>volumeClaimTemplates</td><td>为每个 Pod 自动生成相似但独立的 claim</td></tr>
 <tr><td>ResourceSlice</td><td>设备库存分片</td><td>DRA driver 发布设备列表、属性、容量、拓扑和可访问节点</td></tr>
 <tr><td>Pod resourceClaims</td><td>Pod 引用 PVC</td><td>Pod 声明要使用哪些 ResourceClaim</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>DRA 与传统资源模型的边界</h3>
+<p>DRA 不是把 <code>resources.requests</code> 简单增强成更复杂的字段，而是引入 <code>resource.k8s.io</code> API，用 <code>ResourceClaim</code> 表达需求、用 <code>ResourceSlice</code> 发布设备库存、用 <code>DeviceClass</code> 抽象设备类别。传统 Extended Resource 适合“资源名 + 整数数量”，DRA 更适合“设备属性 + 容量 + 拓扑 + 共享关系”。</p>
+<table>
+<tr><th>维度</th><th>Device Plugin / Extended Resource</th><th>DRA</th></tr>
+<tr><td>资源表达</td><td>资源名 + 整数数量</td><td>结构化设备属性、容量、拓扑、选择条件</td></tr>
+<tr><td>调度可见性</td><td>scheduler 主要看到数量</td><td>scheduler 可基于 ResourceSlice 做设备级匹配</td></tr>
+<tr><td>适合场景</td><td>同质 GPU、简单整卡分配</td><td>异构 GPU/NPU/DPU、MIG、拓扑、共享设备</td></tr>
+<tr><td>复杂度</td><td>简单成熟，生态广</td><td>能力强，但依赖 API 版本和 DRA driver 生态</td></tr>
 </table>
 </div>
 
@@ -421,3 +466,20 @@ kubectl get pods -A | grep -i dra
 <div class="qa-summary">面试口径：迁移 DRA 要隔离节点池、灰度验证资源申请和设备交付链路，不能一上来混用同一批设备。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度、Kueue/Volcano 和 DRA。 把 K8S 抽象和 GPU 物理资源语义连接起来。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

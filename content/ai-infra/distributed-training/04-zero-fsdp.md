@@ -1,3 +1,22 @@
+## 一句话结论
+
+ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 分布式训练 |
+| 章节类型 | 机制类（含公式） |
+| 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
+| 面试抓手 | 显存公式要按 ZeRO 阶段拆。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>ZeRO / FSDP：把训练状态从“每卡完整保存”变成“分片保存”</h3>
 <p>大模型训练的显存不仅被参数占用，还被梯度、优化器状态和激活值占用。ZeRO 和 FSDP 的核心都是将训练状态分片，降低每张 GPU 的显存压力；代价是前向/反向时需要更多通信来取回参数或同步分片。</p>
@@ -14,7 +33,7 @@
 <tr><td>Master weights</td><td>FP32</td><td>4</td><td>混合精度训练常见</td></tr>
 </table>
 <p>常见估算会把 Adam 训练状态近似为：</p>
-<div class="formula">Training State ≈ Parameters(2B) + Gradients(4B) + Adam States(12B) = 18 bytes / parameter</div>
+<div class="formula">$$\text{Training State} \approx \text{Parameters}(2B) + \text{Gradients}(4B) + \text{Adam States}(12B) = 18 \text{bytes} / parameter$$</div>
 </div>
 
 <div class="card card-d">
@@ -32,10 +51,10 @@
 <div class="qa-q">Q: 7B 模型，4 卡，用 ZeRO-1/2/3 每卡训练状态显存怎么估算？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先说明每参数字节数，再按分片对象分别计算。</p>
-<div class="qa-section"><div class="qa-section-title">1. 无 ZeRO</div><p>按每参数 18 bytes 估算：</p><div class="formula">7B × 18 bytes = 126 GB / GPU</div><p>每卡都保存完整训练状态，A100 80GB 放不下。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. ZeRO-1</div><p>只切 Adam 优化器状态，参数和梯度仍完整保存：</p><div class="formula">7B × (12 / 4 + 4 + 2) = 63 GB / GPU</div></div>
-<div class="qa-section"><div class="qa-section-title">3. ZeRO-2</div><p>切优化器状态和梯度：</p><div class="formula">7B × (12 / 4 + 4 / 4 + 2) = 42 GB / GPU</div></div>
-<div class="qa-section"><div class="qa-section-title">4. ZeRO-3</div><p>参数、梯度、优化器状态都切：</p><div class="formula">7B × (12 / 4 + 4 / 4 + 2 / 4) = 31.5 GB / GPU</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 无 ZeRO</div><p>按每参数 18 bytes 估算：</p><div class="formula">$$7B \times 18 \text{bytes} = 126 \text{GB} / \text{GPU}$$</div><p>每卡都保存完整训练状态，A100 80GB 放不下。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. ZeRO-1</div><p>只切 Adam 优化器状态，参数和梯度仍完整保存：</p><div class="formula">$$7B \times (12 / 4 + 4 + 2) = 63 \text{GB} / \text{GPU}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">3. ZeRO-2</div><p>切优化器状态和梯度：</p><div class="formula">$$7B \times (12 / 4 + 4 / 4 + 2) = 42 \text{GB} / \text{GPU}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">4. ZeRO-3</div><p>参数、梯度、优化器状态都切：</p><div class="formula">$$7B \times (12 / 4 + 4 / 4 + 2 / 4) = 31.5 \text{GB} / \text{GPU}$$</div></div>
 <div class="qa-summary">面试口径：ZeRO 的本质是分片训练状态，ZeRO-2 常是性价比甜点，ZeRO-3 显存最省但通信更重。</div>
 </div>
 </div>
@@ -61,3 +80,20 @@
 <div class="qa-summary">面试口径：ZeRO-3 不是免费午餐，它通过额外参数 AllGather 换取最大显存节省。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。 显存公式要按 ZeRO 阶段拆。
+
+**2 分钟版：**
+
+我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

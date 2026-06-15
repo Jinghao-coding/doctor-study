@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function(){
       navMenus.forEach(function(menu){ menu.removeAttribute('open'); });
     }
   });
-  setSideCollapsed(document.body.classList.contains('side-collapsed'));
+  setSideCollapsed(true);
 });
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     });
 
-    setModuleCollapsed(group.classList.contains('module-collapsed'));
+    setModuleCollapsed(false);
     updateCurrentTitle();
     syncProgress();
     var savedLevel = localStorage.getItem(levelKey);
@@ -530,10 +530,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function collectHeadings(){
     var activePanel = wrap.querySelector('.tab-panel.active');
-    var scope = activePanel || wrap;
-    var selector = activePanel ? '.tab-panel-body > h3, .tab-panel-body > h4, .tab-panel-body > .card > h3, .tab-panel-body > .card > h4' : 'h2, h3';
+    var activeSubPanel = activePanel ? activePanel.querySelector('.subtab-panel.active') : null;
+    var scope = activeSubPanel || activePanel || wrap;
+    var selector = activePanel ? 'h2, h3, h4' : 'h2, h3';
     var allHeadings = Array.from(scope.querySelectorAll(selector)).filter(function(heading){
-      return heading.textContent.trim().length > 0;
+      if(heading.textContent.trim().length === 0) return false;
+      if(heading.closest('[hidden]')) return false;
+      if(heading.closest('.tab-panel-head') || heading.closest('.tab-panel-footer')) return false;
+      if(activePanel && heading.closest('.subtabs-nav')) return false;
+      if(activeSubPanel && heading.closest('.subtab-panel') !== activeSubPanel) return false;
+      return true;
     });
     if(activePanel) return allHeadings;
     var h2Headings = allHeadings.filter(function(heading){
@@ -689,6 +695,7 @@ document.addEventListener('DOMContentLoaded', function(){
         p.classList.toggle('active', on);
         if(on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
       });
+      document.dispatchEvent(new CustomEvent('tab:activated', {detail: {group: box}}));
     });
   });
 });

@@ -1,18 +1,231 @@
+## 一句话结论
+
+一次 Pod 调度要按端到端链路讲：API Server 保存未绑定 Pod，scheduler 通过队列和插件链选择 Node 并写回绑定结果，目标 Node 的 kubelet 再真正启动容器。队列机制解释 Pod 为什么会在 ActiveQ、BackoffQ、UnschedulableQ 之间流转。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | 先讲 Watch Pod → Queue → Filter → Score → Bind → Kubelet Run，再补三队列和事件唤醒。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
 </div>
 
 <div class="card card-s">
-<h3>一次调度的内部路径</h3>
-<ol>
-<li><strong>入队：</strong>未绑定 Pod 先进入 scheduling queue。它能不能立刻被调度，取决于优先级、退避状态、历史失败原因和集群事件。</li>
-<li><strong>取快照：</strong>scheduler 从 cache 生成本轮调度使用的 NodeInfo snapshot，避免调度过程中反复访问 API Server。</li>
-<li><strong>Scheduling Cycle：</strong>执行 QueueSort、PreFilter、Filter、PostFilter、PreScore、Score、NormalizeScore，选出目标节点。</li>
-<li><strong>Assume：</strong>在 scheduler cache 中假定 Pod 已经占用目标节点资源，防止后续 Pod 看到过时资源。</li>
-<li><strong>Binding Cycle：</strong>执行 Reserve、Permit、PreBind、Bind、PostBind。绑定阶段可以与后续调度周期并行。</li>
-<li><strong>状态回滚：</strong>Reserve、Permit 或 Bind 后续失败时，需要通过 Unreserve 或 cache 过期释放临时占用。</li>
-</ol>
+<h3>一次 Pod 调度的端到端路径</h3>
+<p>这部分不要只背“Filter、Score、Bind”三个词。面试官如果继续追问，会看你是否知道 <strong>Pod 创建、scheduler 决策、API Server 持久化、kubelet 执行</strong> 是四段不同职责。</p>
+<div class="figure">
+<img src="../../../resources/images/k8s-scheduler/09-pod-scheduling-e2e.svg" alt="Kubernetes 一次 Pod 调度端到端路径" loading="lazy">
+<p class="caption">从 Pod 创建到 kubelet 启动容器：scheduler 负责选 Node 并写回绑定结果，kubelet 负责在目标 Node 上真正创建 Pod。</p>
+</div>
+<pre><code class="language-text">用户/控制器创建 Pod
+  ↓
+API Server 写入 etcd（Pod.spec.nodeName 为空）
+  ↓
+Scheduler 监听到未调度 Pod
+  ↓
+调度队列 Scheduling Queue
+  ↓
+PreFilter
+  ↓
+Filter：筛选可用 Node
+  ↓
+PostFilter：必要时抢占
+  ↓
+Score：给 Node 打分
+  ↓
+NormalizeScore / Reserve
+  ↓
+Permit：可选等待/拒绝
+  ↓
+PreBind
+  ↓
+Bind：写入 Pod.spec.nodeName
+  ↓
+API Server 持久化绑定结果
+  ↓
+目标 Node 上的 kubelet 监听到该 Pod
+  ↓
+kubelet 拉镜像、创建容器、启动 Pod</code></pre>
+</div>
+
+<div class="card card-m">
+<h3>1. Pod 创建与待调度状态</h3>
+<p>用户或控制器创建 Pod，例如 <code>kubectl apply -f pod.yaml</code>。如果 Pod 没有指定 <code>spec.nodeName</code>，它就是一个待调度 Pod。</p>
+<pre><code class="language-yaml">spec:
+  nodeName: ""</code></pre>
+<p>API Server 会把 Pod 对象写入 etcd。此时调度还没有发生，集群里只是多了一个“期望被运行、但还没选 Node”的对象。</p>
+</div>
+
+<div class="card card-d">
+<h3>2. Scheduler 发现 Pod 并进入队列</h3>
+<p><code>kube-scheduler</code> 通过 informer / watch 机制监听 API Server，重点关注 <code>Pod.spec.nodeName</code> 为空的 Pod。它们会进入 scheduler 内部的调度队列。</p>
+<table>
+<tr><th>队列</th><th>作用</th><th>一句话</th></tr>
+<tr><td><code>activeQ</code></td><td>当前可以尝试调度的 Pod</td><td>现在试试</td></tr>
+<tr><td><code>backoffQ</code></td><td>之前失败，等待退避时间结束的 Pod</td><td>过会儿再试</td></tr>
+<tr><td><code>unschedulableQ</code></td><td>当前没有可行节点，等待集群状态变化的 Pod</td><td>等条件变了再试</td></tr>
+</table>
+<p>调度器会不断从 <code>activeQ</code> 中取出一个 Pod，开始一次 <strong>Scheduling Cycle</strong>。</p>
+</div>
+
+<div class="card card-s">
+<h3>3. Scheduling Cycle：选择 Node</h3>
+<p>一次调度主要分成两个大阶段：<strong>Scheduling Cycle 负责选择 Node，Binding Cycle 负责把结果写回 API Server。</strong>Scheduling Cycle 的目标是为当前 Pod 找到一个最合适的 Node。</p>
+<table>
+<tr><th>阶段</th><th>做什么</th><th>面试抓手</th></tr>
+<tr><td>PreFilter</td><td>提前计算后续过滤会用的信息，例如资源请求、PVC、亲和性、拓扑约束、端口需求</td><td>能算一次的，不要在每个 Node 上重复算</td></tr>
+<tr><td>Filter</td><td>遍历候选 Node，判断每个 Node 能不能运行这个 Pod</td><td>回答“能不能放”</td></tr>
+<tr><td>PostFilter</td><td>Filter 没有可行节点时执行，典型动作是抢占</td><td>失败后的补救，不是常规打分</td></tr>
+<tr><td>PreScore / Score</td><td>给可行节点打分，选出最优 Node</td><td>回答“放哪里最好”</td></tr>
+<tr><td>NormalizeScore</td><td>把插件分数归一化到统一范围</td><td>不同插件分数才能加权汇总</td></tr>
+<tr><td>Reserve</td><td>在调度器内部先预留资源</td><td>防止并发调度重复占用同一资源</td></tr>
+<tr><td>Permit</td><td>可选地允许、拒绝或等待</td><td>Gang Scheduling 常用</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>4. Filter：筛选可用 Node</h3>
+<p>Filter 会得到一批可行节点，例如 <code>feasibleNodes = [node-a, node-c, node-f]</code>。如果为空，就说明当前 Pod 暂时无法调度。</p>
+<table>
+<tr><th>过滤条件</th><th>例子</th><th>失败后常见现象</th></tr>
+<tr><td>资源是否足够</td><td>Node 剩余 CPU / Memory / GPU 是否满足 Pod requests</td><td><code>Insufficient cpu</code>、<code>Insufficient memory</code>、<code>Insufficient nvidia.com/gpu</code></td></tr>
+<tr><td>NodeSelector / NodeAffinity</td><td>Pod 要求 <code>disk=ssd</code> 或必须是 A100 节点</td><td>节点很多但标签不匹配</td></tr>
+<tr><td>Taints / Tolerations</td><td>Node 有 <code>dedicated=gpu:NoSchedule</code>，Pod 没有 toleration</td><td>被 <code>TaintToleration</code> 插件过滤</td></tr>
+<tr><td>PodAffinity / AntiAffinity</td><td>必须靠近某类 Pod，或不能和同服务副本同节点</td><td>拓扑域或已有 Pod 分布不满足</td></tr>
+<tr><td>Volume 约束</td><td>PV 是否能挂载到该 Node，volume zone 是否匹配</td><td>PVC / VolumeBinding 相关 FailedScheduling</td></tr>
+<tr><td>HostPort 冲突</td><td>Pod 使用 <code>hostPort: 8080</code></td><td>目标 Node 已有 Pod 占用相同端口</td></tr>
+</table>
+</div>
+
+<div class="card card-r">
+<h3>5. PostFilter：调度失败后的抢占</h3>
+<p>如果 Filter 阶段没有任何 Node 可用，会进入 PostFilter。最典型的动作是 <strong>Preemption</strong>：当前高优先级 Pod 调度不上时，尝试驱逐某些低优先级 Pod 腾出资源。</p>
+<pre><code class="language-text">找到一些候选 Node
+  ↓
+模拟删除低优先级 Pod
+  ↓
+判断当前 Pod 是否可以放上去
+  ↓
+选出最合适的抢占目标
+  ↓
+设置 nominatedNodeName</code></pre>
+<p>注意：抢占不是立刻完成绑定，而是先让低优先级 Pod 进入删除流程；目标资源真正释放后，Pod 才有机会重新调度成功。</p>
+</div>
+
+<div class="card card-d">
+<h3>6. Score：给可行节点打分</h3>
+<p>如果 Filter 后存在多个可行 Node，调度器会进入 Score 阶段。每个打分插件会给 Node 一个分数，通常归一化到 <code>0 ~ 100</code>，最终加权求和。</p>
+<pre><code class="language-text">finalScore(node) =
+  pluginA_score * weightA +
+  pluginB_score * weightB +
+  pluginC_score * weightC</code></pre>
+<table>
+<tr><th>打分维度</th><th>作用</th></tr>
+<tr><td>资源分布策略</td><td><code>LeastAllocated</code> 倾向空闲节点，<code>MostAllocated</code> 倾向装箱，<code>RequestedToCapacityRatio</code> 支持自定义利用率曲线</td></tr>
+<tr><td>镜像本地性</td><td>Node 上已有镜像时得分更高，减少镜像拉取时间</td></tr>
+<tr><td>亲和性偏好</td><td><code>preferredDuringSchedulingIgnoredDuringExecution</code> 这类软约束影响打分，不决定能不能调度</td></tr>
+<tr><td>拓扑分布</td><td>尽量让副本分散到不同 Node / Zone / Region，减少单点风险</td></tr>
+</table>
+<p>如果多个 Node 同分，调度器会做一定的随机化或稳定选择，避免热点集中。</p>
+</div>
+
+<div class="card card-s">
+<h3>7. Reserve、Permit、PreBind 与 Bind</h3>
+<table>
+<tr><th>阶段</th><th>作用</th><th>失败处理</th></tr>
+<tr><td>Reserve</td><td>选出目标 Node 后，在 scheduler 内部先为这个 Pod 预留资源</td><td>后续失败时执行 <code>Unreserve</code> 释放预留状态</td></tr>
+<tr><td>Permit</td><td>可选阶段，可以允许绑定、拒绝绑定或等待一段时间</td><td>等待超时或拒绝时触发回滚</td></tr>
+<tr><td>PreBind</td><td>绑定前处理，例如 volume binding、外部插件最终校验、自定义资源准备</td><td>失败则不会进入 Bind</td></tr>
+<tr><td>Bind</td><td>向 API Server 发起绑定请求，把 Pod 更新为 <code>spec.nodeName = selected-node</code></td><td>失败后进入调度失败处理</td></tr>
+<tr><td>PostBind</td><td>绑定成功后的通知型动作，例如记录事件、异步上报</td><td>通常不影响 Pod 已经绑定的事实</td></tr>
+</table>
+<p>关键点：<strong>Reserve / Assume 解决 scheduler 本地并发一致性，Bind 解决 API Server 中的持久化状态。</strong></p>
+</div>
+
+<div class="card card-m">
+<h3>8. kubelet 发现并启动 Pod</h3>
+<p>API Server 接收到绑定请求后，会更新 Pod 对象并写入 etcd。此时 Pod 对象变成：</p>
+<pre><code class="language-yaml">spec:
+  nodeName: node-a</code></pre>
+<p>目标 Node 上的 kubelet 会监听 <code>spec.nodeName == 当前节点名</code> 的 Pod。发现新 Pod 后，它进入 <code>SyncPod</code> 流程：</p>
+<pre><code class="language-text">获取 PodSpec
+  ↓
+创建 Pod sandbox
+  ↓
+调用 CNI 配置网络
+  ↓
+挂载 volume
+  ↓
+拉取镜像
+  ↓
+通过 CRI 调用 container runtime
+  ↓
+创建容器
+  ↓
+启动容器
+  ↓
+上报 Pod 状态</code></pre>
+<p>如果使用 containerd，路径大致是 <code>kubelet → CRI → containerd → runc / kata / gVisor</code>。</p>
+</div>
+
+<div class="card card-w">
+<h3>职责边界：Scheduler 不负责起容器</h3>
+<table>
+<tr><th>组件</th><th>职责</th></tr>
+<tr><td>kube-scheduler</td><td>决定 Pod 放到哪个 Node</td></tr>
+<tr><td>API Server</td><td>保存 Pod 对象和绑定结果</td></tr>
+<tr><td>etcd</td><td>持久化集群状态</td></tr>
+<tr><td>kubelet</td><td>在目标 Node 上真正创建和运行 Pod</td></tr>
+<tr><td>container runtime</td><td>创建容器进程</td></tr>
+<tr><td>CNI</td><td>配置 Pod 网络</td></tr>
+<tr><td>CSI / volume plugin</td><td>挂载存储</td></tr>
+</table>
+<div class="qa-summary">一句话：Scheduler 只负责“选机器”，不负责“起容器”；容器真正启动是在 kubelet 侧完成的。</div>
+</div>
+
+<div class="card card-d">
+<h3>源码口径的简化路径</h3>
+<pre><code class="language-text">ScheduleOne
+  ↓
+NextPod
+  ↓
+SchedulingCycle
+  ↓
+PreFilter
+  ↓
+Filter
+  ↓
+PostFilter if needed
+  ↓
+Score
+  ↓
+SelectHost
+  ↓
+Reserve
+  ↓
+Permit
+  ↓
+BindingCycle
+  ↓
+PreBind
+  ↓
+Bind
+  ↓
+PostBind</code></pre>
+<p>最核心的是：<strong>Filter 判断能不能放，Score 判断放哪里最好，Bind 把结果写回 API Server。</strong></p>
+<div class="qa-summary">记忆版：Watch Pod → Queue → Filter → Score → Bind → Kubelet Run。</div>
 </div>
 
 <div class="card card-d">
@@ -144,3 +357,24 @@
 </table>
 <div class="qa-summary">队列性能优化不是“多重试几次”，而是“在正确事件发生后，只唤醒可能变得可调度的 Pod”。</div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+Scheduler 监听 API Server 中未绑定 Node 的 Pod，把它放入调度队列；从 ActiveQ 取出后进入 Scheduling Cycle，先 PreFilter 整理约束，再 Filter 筛掉不可用 Node，Score 给可用 Node 打分，选出目标 Node 后 Reserve / Permit / PreBind / Bind，把 <code>spec.nodeName</code> 写回 API Server。随后目标 Node 上的 kubelet watch 到这个 Pod，负责拉镜像、配置网络和启动容器。Scheduler 只负责选机器，不负责起容器。
+
+**2 分钟版：**
+
+我会从 Pod 创建讲起。用户或控制器创建 Pod 后，API Server 把它写入 etcd；如果 <code>spec.nodeName</code> 为空，它就是待调度 Pod。kube-scheduler 通过 informer/watch 发现它，把它放进 scheduling queue。队列里有 ActiveQ、BackoffQ 和 UnschedulableQ，分别表示现在可以试、失败后过会儿再试、等集群状态变化再试。
+
+真正调度时，scheduler 从 ActiveQ 取一个 Pod 进入 Scheduling Cycle。PreFilter 先把 Pod 的资源请求、PVC、Affinity、TopologySpread、端口等约束整理到 CycleState；Filter 遍历候选 Node，判断资源、标签、污点、亲和性、volume、hostPort 等硬约束；如果没有可行节点，PostFilter 可能触发抢占；如果有多个可行节点，Score 和 NormalizeScore 根据资源分布、镜像本地性、软亲和性和拓扑分布打分，选出最高分 Node。选中后 Reserve / Assume 先在 scheduler 本地占位，Permit 可用于 gang scheduling 等等待场景，PreBind 做绑定前处理，Bind 把结果写回 API Server。
+
+绑定完成后，Pod 对象有了 <code>spec.nodeName</code>。目标节点上的 kubelet watch 到属于自己的 Pod，进入 SyncPod：准备 volume、创建 sandbox、调用 CNI 配网络、拉镜像、通过 CRI 调 containerd / runc 创建并启动容器，最后回写 Pod 状态。所以职责边界是：scheduler 负责选 Node 和绑定，kubelet 负责在节点上真正运行 Pod。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

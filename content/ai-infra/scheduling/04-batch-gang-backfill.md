@@ -1,3 +1,22 @@
+## 一句话结论
+
+任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 任务调度理论 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
+| 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>批调度：训练任务和普通在线服务的分水岭</h3>
 <p>分布式训练、HPC 和大规模批任务通常不是单 Pod 独立运行，而是一组进程共同完成一个 job。批调度关注的不只是单个 Pod 能否放下，还包括一组 Pod 是否能同时启动、是否会造成资源碎片、是否会让大作业长期排队。</p>
@@ -191,7 +210,7 @@ for job in queue.after(head):
 <tr><td>资源碎片</td><td>当前放置不会破坏大块资源</td><td>当前放置会打散完整 8 卡节点</td></tr>
 <tr><td>预测置信度</td><td>不知道未来资源何时释放</td><td>能可靠预测 reservation window</td></tr>
 </table>
-<div class="formula">schedule_now if waiting_cost &gt; performance_loss + fragmentation_cost</div>
+<div class="formula">$$\text{schedule now if } \text{waiting\_cost} > \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
 <p>工程实现通常不是精确求解，而是设阈值：拓扑质量分数达到阈值就运行；等待超过超时时间就降级；高优任务可以抢占或预留。</p>
 </div>
 
@@ -240,8 +259,8 @@ for job in queue.after(head):
 
 <h4>抢占决策的打分函数</h4>
 <p>一个简化的代价感知抢占打分函数：</p>
-<p><code>preemption_score(victim) = release_value(victim) / (checkpoint_age(victim) + restart_cost(victim))</code></p>
-<p>选择 preemption_score 最高的牺牲者。直觉：释放资源量越大越好，回滚损失和重启成本越小越好。</p>
+<p><code>\text{preemption\_score}(victim) = \text{release\_value}(victim) / (\text{checkpoint\_age}(victim) + \text{restart\_cost}(victim))</code></p>
+<p>选择 \text{preemption\_score} 最高的牺牲者。直觉：释放资源量越大越好，回滚损失和重启成本越小越好。</p>
 <p><strong>手动推演</strong>：需要释放 4 张 GPU。</p>
 <ul>
 <li>任务 X：占 8 GPU（同节点 NVLink），运行 20 小时，1 小时前 checkpoint，重启需 30 分钟。score = 8 / (1 + 0.5) = 5.33</li>
@@ -423,7 +442,7 @@ for job in queue.after(head):
 <div class="qa-section"><div class="qa-section-title">回答框架</div>
 <ol>
 <li><strong>先说为什么训练抢占和普通 Pod 抢占不同</strong>：训练抢占有沉没成本（进度损失）、重启成本（模型加载+NCCL 重建）、拓扑成本（好的位置被让出来了）。</li>
-<li><strong>再说代价感知抢占</strong>：不是简单看优先级，而是看 release_value / (checkpoint_age + restart_cost)。选这个比值最高的牺牲者。</li>
+<li><strong>再说代价感知抢占</strong>：不是简单看优先级，而是看 \text{release\_value} / (\text{checkpoint\_age} + \text{restart\_cost})。选这个比值最高的牺牲者。</li>
 <li><strong>然后说优雅抢占</strong>：给任务优雅期做 checkpoint，超时后强制终止。</li>
 <li><strong>最后说弹性训练</strong>：如果任务支持弹性，可以缩减 world size 而不是杀掉，释放部分 GPU 但训练继续。</li>
 </ol>
@@ -431,3 +450,20 @@ for job in queue.after(head):
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"训练任务的抢占不是简单的优先级排序，而是代价优化问题。好的抢占策略选择'最值得杀'的牺牲者——释放资源多、进度损失少、重启成本低。"</p></div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+
+**2 分钟版：**
+
+我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

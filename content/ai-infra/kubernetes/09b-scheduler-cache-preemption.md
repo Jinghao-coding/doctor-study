@@ -1,3 +1,22 @@
+## 一句话结论
+
+scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | 不要只讲算法，必须讲缓存状态和绑定路径。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>调度问题定位：区分 Pod 属性、调度阶段和调度机制</h3>
 <p>在分析 Kubernetes Scheduler 时，需要区分三类概念，<strong>这三类概念不能混在一起</strong>：</p>
@@ -96,3 +115,20 @@
 <div class="qa-q">Q: Scheduler Extender、Scheduler Plugin、多个 scheduler 怎么选？</div>
 <div class="qa-a"><p>新能力优先用 Scheduling Framework Plugin，因为它能接入完整生命周期和 scheduler cache；Extender 更像外部 HTTP 过滤/打分，延迟和一致性控制较弱；多个 scheduler 适合业务强隔离，但要避免不同 scheduler 同时竞争同一批资源造成策略冲突。</p></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。 不要只讲算法，必须讲缓存状态和绑定路径。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

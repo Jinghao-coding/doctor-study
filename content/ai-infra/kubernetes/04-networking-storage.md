@@ -1,3 +1,22 @@
+## 一句话结论
+
+K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | 按 CNI、Service、DNS、Ingress、PV/PVC/CSI 讲。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>网络与存储：Pod 能不能被访问，数据能不能挂上</h3>
 <p>网络和存储经常一起出现在排障题里。Pod 启动不仅要调度成功，还要 CNI 分配网络、CSI 挂载卷；服务访问不仅要 Pod Running，还要 readiness、EndpointSlice、Service 转发和 DNS 都正常。</p>
@@ -275,3 +294,20 @@
 <div class="qa-summary">面试口径：PVC Pending 按“PVC Events → StorageClass/CSI → WaitForFirstConsumer → Pod 调度拓扑 → 底层存储”排查。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。 按 CNI、Service、DNS、Ingress、PV/PVC/CSI 讲。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

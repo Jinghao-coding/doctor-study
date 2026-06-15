@@ -1,3 +1,22 @@
+## 一句话结论
+
+数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 分布式训练 |
+| 章节类型 | 机制类（含公式） |
+| 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
+| 面试抓手 | 公式重点是梯度大小和 Ring AllReduce 每卡流量。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>数据并行：最常见、也最容易被低估的并行方式</h3>
 <p>数据并行（Data Parallelism, DP）的核心是：每张 GPU 持有一份完整模型，处理不同数据分片，每个 step 后同步梯度，保证所有副本参数一致。它的优点是实现简单、扩展直观；缺点是模型和优化器状态仍然需要每卡完整保存，通信瓶颈集中在梯度同步。</p>
@@ -17,11 +36,11 @@
 <div class="card card-d">
 <h3>梯度同步通信量</h3>
 <p>如果模型参数量为 P，每个梯度用 FP32 表示，即 4 bytes/parameter，则一次梯度张量大小约为：</p>
-<div class="formula">Gradient Size = P × 4 bytes</div>
+<div class="formula">$$\text{Gradient Size} = P \times 4 \text{bytes}$$</div>
 <p>Ring AllReduce 中，每张卡的网络收发总量近似为：</p>
-<div class="formula">Traffic per GPU = 2 × (N - 1) / N × Gradient Size</div>
+<div class="formula">$$\text{Traffic per GPU} = 2 \times (N - 1) / N \times \text{Gradient Size}$$</div>
 <p>当 N 很大时，近似为：</p>
-<div class="formula">Traffic per GPU ≈ 2 × P × 4 bytes</div>
+<div class="formula">$$\text{Traffic per GPU} \approx 2 \times P \times 4 \text{bytes}$$</div>
 </div>
 
 <div class="card card-w">
@@ -41,7 +60,7 @@
 <div class="qa-a">
 <p><strong>回答思路：</strong>先说明每卡看到的数据不同，再说明梯度平均的数学意义，最后解释 AllReduce 的工程价值。</p>
 <div class="qa-section"><div class="qa-section-title">1. 每张卡的梯度不同</div><p>DP 中每张卡处理不同 mini-batch，算出的本地梯度只代表本地数据。如果直接各自更新，模型副本会逐渐发散。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. AllReduce 做全局平均</div><p>AllReduce 会把所有 GPU 的梯度求和并广播回每张卡，通常再除以 world size，得到等价于更大 batch 上的平均梯度。</p><div class="formula">g = (g₁ + g₂ + ... + gₙ) / N</div></div>
+<div class="qa-section"><div class="qa-section-title">2. AllReduce 做全局平均</div><p>AllReduce 会把所有 GPU 的梯度求和并广播回每张卡，通常再除以 world size，得到等价于更大 batch 上的平均梯度。</p><div class="formula">$$g = (g_1 + g_2 + ... + g_n) / N$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 为什么不是 Parameter Server</div><p>AllReduce 是去中心化集合通信，没有单点参数服务器瓶颈，适合 GPU 间高带宽同步。</p></div>
 <div class="qa-summary">面试口径：DP 同步的是梯度，AllReduce 让每张卡拿到全局平均梯度，从而保持模型副本一致。</div>
 </div>
@@ -51,7 +70,7 @@
 <div class="qa-q">Q: 梯度累积和增大 batch size 是一回事吗？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先讲等价条件，再讲差异和副作用。</p>
-<div class="qa-section"><div class="qa-section-title">1. 计算上接近等价</div><p>如果累积 k 个 micro-batch 后再做 optimizer step，在不考虑 BatchNorm、dropout 随机性和数值误差时，接近于把 batch size 扩大 k 倍。</p><div class="formula">Global Batch = micro_batch × gradient_accumulation_steps × data_parallel_size</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 计算上接近等价</div><p>如果累积 k 个 micro-batch 后再做 optimizer step，在不考虑 BatchNorm、dropout 随机性和数值误差时，接近于把 batch size 扩大 k 倍。</p><div class="formula">$$\text{Global Batch} = \text{micro\_batch} \times \text{gradient\_accumulation\_steps} \times \text{data\_parallel\_size}$$</div></div>
 <div class="qa-section"><div class="qa-section-title">2. 通信频率下降</div><p>累积期间可以不做 AllReduce，等 k 次 backward 后再同步一次，通信频率降低为原来的 1/k。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 收敛可能变化</div><p>有效 batch 变大后，学习率、warmup、梯度裁剪、loss scale 都可能需要重新调参。</p></div>
 <div class="qa-summary">面试口径：梯度累积是用时间换显存和通信频率，数学上接近增大 batch，但优化动态可能变化。</div>
@@ -62,9 +81,26 @@
 <div class="qa-q">Q: 一个 7B 模型做 DP 训练，8 卡，每步梯度 AllReduce 的通信量大约是多少？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>明确参数量、梯度 dtype、Ring AllReduce 公式，再代入计算。</p>
-<div class="qa-section"><div class="qa-section-title">1. 梯度大小</div><p>7B 参数，如果梯度用 FP32 保存，则梯度张量约为：</p><div class="formula">7 × 10⁹ × 4 bytes = 28 GB</div></div>
-<div class="qa-section"><div class="qa-section-title">2. Ring AllReduce 每卡流量</div><p>8 卡 Ring AllReduce 每张卡收发总量约为：</p><div class="formula">2 × (8 - 1) / 8 × 28 GB = 49 GB</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 梯度大小</div><p>7B 参数，如果梯度用 FP32 保存，则梯度张量约为：</p><div class="formula">$$7 \times 10^9 \times 4 \text{bytes} = 28 \text{GB}$$</div></div>
+<div class="qa-section"><div class="qa-section-title">2. Ring AllReduce 每卡流量</div><p>8 卡 Ring AllReduce 每张卡收发总量约为：</p><div class="formula">$$2 \times (8 - 1) / 8 \times 28 \text{GB} = 49 \text{GB}$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 解释结果</div><p>这不是总集群流量，而是每张 GPU 网卡/互联上的近似收发量；如果网络带宽不足，这部分会成为 step time 的尾部。</p></div>
 <div class="qa-summary">面试口径：7B FP32 梯度约 28GB，8 卡 Ring AllReduce 每卡约 49GB 收发量。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。 公式重点是梯度大小和 Ring AllReduce 每卡流量。
+
+**2 分钟版：**
+
+我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

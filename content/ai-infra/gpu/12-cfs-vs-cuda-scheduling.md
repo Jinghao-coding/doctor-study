@@ -1,4 +1,4 @@
-## 先给结论
+## 一句话结论
 
 Linux CFS 和 CUDA thread/block 调度都叫“调度”，但它们解决的是完全不同层次的问题。
 
@@ -7,6 +7,8 @@ Linux CFS 和 CUDA thread/block 调度都叫“调度”，但它们解决的是
 **CUDA thread block 调度主要由 GPU 硬件完成**，调度对象是 kernel grid 中的 block，也叫 CTA。GPU 把 block 分配到 SM 上执行；block 一旦驻留在某个 SM 上，通常会运行到完成。SM 内部再通过 warp scheduler 在多个 ready warp 之间切换，以隐藏访存和执行延迟。
 
 **CUDA Stream/Event 又是另一层**。它们不是 kernel 内部 thread 的调度器，而是 CUDA 程序员用来表达任务级异步执行和依赖关系的工具。
+
+## 系统链路
 
 ```flow
 Linux CFS | OS 决定哪个进程/线程拿到 CPU 时间片

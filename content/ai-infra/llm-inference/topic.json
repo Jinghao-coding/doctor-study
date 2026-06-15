@@ -48,35 +48,6 @@
           "title": "Prefill 与 Decode",
           "items": [
             {
-              "title": "Transformer 计算分析",
-              "description": "FLOPs 推导、算术强度、compute/memory-bound 判定、现场估算",
-              "level": "进阶",
-              "priority": 1,
-              "time": 28,
-              "subtabs": [
-                {
-                  "title": "FLOPs 逐步推导",
-                  "description": "从 2MNK 推出单层 24nd²+4n²d 的完整过程",
-                  "file": "11-transformer-flops-derivation.md"
-                },
-                {
-                  "title": "分析与 Roofline",
-                  "description": "算术强度、compute/memory-bound 判定、A100 现场估算",
-                  "file": "10-transformer-flops-roofline.md"
-                },
-                {
-                  "title": "Roofline 实算：decode 为何 memory-bound",
-                  "description": "70B FP16 batch=1 三步算到 1 FLOP/byte，含 batch 放大效应",
-                  "file": "12-roofline-decode-memory-bound.md"
-                },
-                {
-                  "title": "逐算子 bound 分类速查",
-                  "description": "Transformer 各算子在 prefill/decode 的 compute/memory-bound 细分类",
-                  "file": "13-operator-bound-classification.md"
-                }
-              ]
-            },
-            {
               "title": "Prefill 阶段",
               "description": "计算密集、TTFT、首 token 延迟",
               "file": "03-optimization.md",

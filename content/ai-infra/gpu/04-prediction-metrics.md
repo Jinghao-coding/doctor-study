@@ -1,3 +1,26 @@
+## 一句话结论
+
+GPU 性能预测的核心是把硬件、模型和部署策略转成可解释特征，再预测 step time、MFU、peak memory、communication time 等标签。面试里要强调：GPU 指标不是孤立监控项，而是模型性能、调度决策和容量规划的输入。
+
+## 核心概念
+
+| 类别 | 输入特征 X | 输出标签 Y | 预测价值 |
+|---|---|---|---|
+| 算法 | FLOPs、shape、batch、sequence length、activation memory | 单步计算时间、MFU | 描述 workload 本身有多少活 |
+| 硬件 | Peak FLOPS、HBM bandwidth、SM 数、NVLink/PCIe | 跨卡迁移后的吞吐和瓶颈类型 | 支持跨 GPU 型号泛化 |
+| 部署 | TP/PP/DP、micro batch、gradient accumulation、并行拓扑 | communication time、bubble、扩展效率 | 支持自动并行和调度决策 |
+| 运行时 | GPU-Util、SM Active、Occupancy、memory util、power | 实际效率、异常检测、性能回归 | 校准预测模型和发现漂移 |
+
+## 系统链路
+
+```flow
+模型结构 / 输入 shape / batch
+  -> FLOPs、activation memory、arithmetic intensity
+  -> 结合 GPU spec、显存带宽、互联拓扑、并行策略
+  -> 预测 step time、MFU、peak active memory、communication time
+  -> 反馈给调度、容量规划、自动并行和性能回归检测
+```
+
 <div class="card card-m">
 <h3>性能预测视角：特征与标签映射</h3>
 <p>在 MLSys 性能预测研究中，GPU 指标不是孤立的数字，而是构建预测模型的核心素材。整个指标体系可以按"输入特征维（静态属性）"和"输出标签维（动态运行时表现）"划分，形成完整的预测闭环。</p>
@@ -36,7 +59,10 @@
 <div class="qa-section"><div class="qa-section-title">MFU（Model FLOPs Utilization，模型算力利用率）—— 输出标签 Y</div>
 <p><strong>规范定义</strong>：在实际训练中，GPU 每秒实际输出的有效模型算力占其硬件理论峰值算力的比例。</p>
 <p><strong>数学公式</strong>：</p>
-<div class="formula">MFU = (模型单步理论计算量 FLOPs × 每秒实际吞吐量 Samples/s) / GPU 硬件理论峰值算力 FLOPS</div>
+<div class="formula">$$
+\mathrm{MFU}
+= \frac{\mathrm{ModelFLOPs}_{\mathrm{step}} \times \mathrm{Throughput}_{\mathrm{samples/s}}}{\mathrm{PeakFLOPS}_{\mathrm{GPU}}}
+$$</div>
 <p><strong>物理含义</strong>：大模型时代衡量分布式训练效率的黄金标准。它最硬核的地方在于：彻底剔除了为了省显存而进行的"激活值重计算（Recomputation）"带来的虚假硬件繁忙（HFU）。只承认最终盖在大楼里的砖，不承认建了拆、拆了建的返工。<br>
 <strong>科研应用</strong>：分布式策略搜索（Auto-Parallelism）的最佳预测目标。预测出 MFU 随 3D 并行拓扑变化的曲线，能直接指导系统挑选出最优的部署方案。</p></div>
 
@@ -67,7 +93,10 @@
 
 <div class="qa-section"><div class="qa-section-title">GPU Utilization（GPU 计算利用率）—— 辅助特征 X / 标签 Y</div>
 <p><strong>规范定义</strong>：在给定采样周期内（如 1 秒），GPU 的内核引擎至少有一个活动内核在执行的时间比例。</p>
-<div class="formula">GPU_Util = T(any_kernel_active) / T(sample) × 100%</div>
+<div class="formula">$$
+\mathrm{GPUUtil}
+= \frac{T_{\mathrm{any\ kernel\ active}}}{T_{\mathrm{sample}}} \times 100\%
+$$</div>
 <p><strong>物理含义</strong>：时间维度的"有无"占空比，不代表并发度。哪怕 120 个 SM 中只有 1 个 SM 在跑一个微小的算子，其余 119 个全在闲置，GPU-Util 依然是 100%。<br>
 <strong>科研应用</strong>：单独预测 GPU-Util 缺乏物理和数学单调性（学术价值低）。但可作为集群调度中预测进程是否死锁（Util 100% 但功耗极低）的特征。</p></div>
 
@@ -228,6 +257,32 @@
 </div>
 </div>
 </div>
+
+## 常见误区
+
+| 误区 | 正确理解 |
+|---|---|
+| 只预测 GPU-Util 就能做性能预测 | GPU-Util 粒度太粗，容易被小 kernel 或通信 kernel 欺骗。 |
+| Step Time 比 MFU 更稳定 | Step Time 是绝对时间，受硬件、通信、数据加载叠加影响，MFU 更适合作为归一化效率标签。 |
+| 特征越多越好 | 特征要有物理含义，否则容易过拟合且难以跨硬件泛化。 |
+| 只用静态特征就够 | 实际系统需要运行时指标校准，例如 SM Active、memory util、communication time。 |
+
+## 面试回答
+
+**30 秒版：**
+
+GPU 性能预测一般把特征分成算法、硬件和部署三类。算法特征包括 FLOPs、shape、batch、activation memory；硬件特征包括 peak FLOPS、HBM bandwidth、SM 数和互联带宽；部署特征包括 TP/PP/DP、micro batch 和通信拓扑。输出标签可以是 step time、MFU、peak active memory、communication time。MFU、peak memory 和 communication time 通常比单独 GPU-Util 更有预测价值。
+
+**2 分钟版：**
+
+我会先建立一个物理可解释的预测链路：模型和输入决定 FLOPs、访存量和激活显存；GPU spec 决定 compute roof、memory roof 和互联 roof；并行策略决定每张卡分到多少计算、显存和通信。预测器可以是解析公式、机器学习模型或混合模型，输出 step time、MFU、peak memory 和通信时间。工程上还要用 DCGM、Nsight 或训练日志持续校准，因为真实系统会受数据加载、kernel 选择、通信拥塞、重计算和调度干扰影响。
+
+## 关联模块
+
+- `性能指标`：提供 TFLOPS、HBM、Roofline 等基础指标定义。
+- `利用率诊断`：解释 GPU-Util、SM Active、Occupancy 的可预测性边界。
+- `分布式训练`：并行策略和通信时间是 step time 预测的关键部分。
+- `调度与集群`：预测结果可用于 bin packing、准入控制和性能回归检测。
 
 <div class="card card-d">
 <h3>官方参考</h3>

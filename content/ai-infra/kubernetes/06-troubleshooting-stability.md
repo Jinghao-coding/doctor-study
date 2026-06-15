@@ -1,3 +1,22 @@
+## 一句话结论
+
+K8S 排障要从状态、事件、日志、资源、网络、节点和控制面逐层收敛。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Kubernetes 核心 |
+| 章节类型 | 排障诊断类 |
+| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
+| 面试抓手 | 先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>故障排查总方法：从症状反推链路</h3>
 <p>Kubernetes 排障不要一上来背命令，而要按链路拆：<strong>API 对象是否存在 → 调度是否成功 → kubelet 是否执行 → 网络/存储是否就绪 → 应用是否健康 → 控制器是否持续修正。</strong></p>
@@ -254,3 +273,20 @@
 <div class="qa-summary">面试口径：偶发超时优先看 DNS（5s 这个数字几乎就是签名）、conntrack 容量、MTU 一致性，再看 kube-proxy 模式。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+K8S 排障要从状态、事件、日志、资源、网络、节点和控制面逐层收敛。 先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。
+
+**2 分钟版：**
+
+我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

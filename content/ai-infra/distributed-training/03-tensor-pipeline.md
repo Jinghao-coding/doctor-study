@@ -1,3 +1,22 @@
+## 一句话结论
+
+张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 分布式训练 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
+| 面试抓手 | TP 看 NVLink，PP 看 bubble。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>张量并行与流水线并行：一个切层内，一个切层间</h3>
 <p>张量并行（TP）解决“单层矩阵太大或单层计算太重”的问题；流水线并行（PP）解决“层数太多、整模型放不进单卡”的问题。二者经常组合：TP 放在节点内 NVLink 域，PP 可以跨节点。</p>
@@ -18,15 +37,15 @@
 <div class="card card-s">
 <h3>TP 的矩阵切分直觉</h3>
 <p>以线性层 <code>Y = XW</code> 为例，列并行把 W 按输出维度切成多份：</p>
-<div class="formula">W = [W₁, W₂, ..., Wₜ]</div>
-<div class="formula">Yᵢ = XWᵢ, Y = concat(Y₁, Y₂, ..., Yₜ)</div>
+<div class="formula">$$W = [W_1, W_2, ..., W_t]$$</div>
+<div class="formula">$$Y_i = XW_i, Y = \operatorname{concat}(Y_1, Y_2, ..., Y_t)$$</div>
 <p>行并行则把输入维度切分，局部结果需要 ReduceScatter 或 AllReduce 合并。</p>
 </div>
 
 <div class="card card-w">
 <h3>PP 的 Bubble 公式</h3>
 <p>流水线并行把 batch 切成 m 个 micro-batch，在 p 个 stage 上流动。1F1B 调度下，理想 bubble 比例可近似为：</p>
-<div class="formula">Bubble Rate = (p - 1) / (m + p - 1)</div>
+<div class="formula">$$\text{Bubble Rate} = (p - 1) / (m + p - 1)$$</div>
 <p>所以 stage 越多 bubble 越大，micro-batch 越多 bubble 越小。但 micro-batch 数受 global batch size、显存和收敛约束限制。</p>
 </div>
 
@@ -45,8 +64,8 @@
 <div class="qa-q">Q: Pipeline Bubble 怎么计算？如何降低？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先给公式，再解释 p 和 m 的影响，最后给工程优化手段。</p>
-<div class="qa-section"><div class="qa-section-title">1. Bubble 公式</div><p>1F1B 调度下近似：</p><div class="formula">Bubble Rate = (p - 1) / (m + p - 1)</div><p>p 是 stage 数，m 是 micro-batch 数。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 例子</div><p>如果 p=4、m=12：</p><div class="formula">Bubble Rate = 3 / (12 + 4 - 1) = 20%</div></div>
+<div class="qa-section"><div class="qa-section-title">1. Bubble 公式</div><p>1F1B 调度下近似：</p><div class="formula">$$\text{Bubble Rate} = (p - 1) / (m + p - 1)$$</div><p>p 是 stage 数，m 是 micro-batch 数。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. 例子</div><p>如果 p=4、m=12：</p><div class="formula">$$\text{Bubble Rate} = 3 / (12 + 4 - 1) = 20%$$</div></div>
 <div class="qa-section"><div class="qa-section-title">3. 优化方式</div><p>增加 micro-batch、减少 PP stage、使用 interleaved 1F1B、平衡每个 stage 的层数和计算量。</p></div>
 <div class="qa-summary">面试口径：PP 的核心开销是 bubble，stage 越多越差，micro-batch 越多越好，但受 batch size 和显存限制。</div>
 </div>
@@ -56,9 +75,26 @@
 <div class="qa-q">Q: 32 张 GPU，TP=8、PP=2，那么 DP 是多少？应该如何放置？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>先用公式算 DP，再给拓扑放置原则。</p>
-<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><p>总 GPU 数等于三种并行度乘积：</p><div class="formula">Total GPUs = DP × TP × PP</div><div class="formula">DP = 32 / (8 × 2) = 2</div></div>
+<div class="qa-section"><div class="qa-section-title">1. 计算 DP</div><p>总 GPU 数等于三种并行度乘积：</p><div class="formula">$$\text{Total GPUs} = DP \times TP \times PP$$</div><div class="formula">$$DP = 32 / (8 \times 2) = 2$$</div></div>
 <div class="qa-section"><div class="qa-section-title">2. 放置方式</div><p>如果每节点 8 卡，则每个 TP group 正好占一台机器；两个 PP stage 占两台机器；DP=2 表示有两条完全相同的 pipeline 副本，总共 4 台机器。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 面试补充</div><p>TP group 内通信走 NVLink，PP stage 间走 IB，DP 同步梯度频率较低，可以跨 pipeline 副本做 AllReduce。</p></div>
 <div class="qa-summary">面试口径：DP=总卡数/(TP×PP)，这个例子是 DP=2；TP 放节点内，PP/DP 才跨节点。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。 TP 看 NVLink，PP 看 bubble。
+
+**2 分钟版：**
+
+我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

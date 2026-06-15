@@ -1,3 +1,22 @@
+## 一句话结论
+
+FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩阵不落 HBM。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | LLM 推理系统 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
+| 面试抓手 | 讲清标准 attention 慢在 IO，不是数学结果变了。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>FlashAttention <strong>不减少 attention 的计算量（FLOPs 一点没少，甚至略增）</strong>，它减少的是 GPU 显存（HBM）的读写次数。因为标准 attention 是 <strong>memory-bound</strong>——瓶颈在搬数据而不是算数据，所以“少搬数据”比“少算”更能加速。它是<strong>精确</strong>的，结果和标准 attention 完全一致，不是近似。</p>
@@ -135,7 +154,7 @@
 <h3>面试经典追问（区分“背答案”和“真懂”的试金石）</h3>
 <div class="qa-summary">追问：“FlashAttention 实际 FLOPs 比标准 Attention 还高（反向传播要重计算），为什么反而更快？”</div>
 <p>标准答法：<strong>因为 attention 是 memory-bound 操作，瓶颈在数据搬运量而不是计算量。</strong>FlashAttention 用少量额外计算，换来大幅减少的 HBM 读写；在 memory-bound 场景下，这笔买卖是划算的。</p>
-<p>能这样回答，说明你真正理解了 <strong>Roofline 模型</strong>的思维：compute-bound 的操作想办法提高计算效率，memory-bound 的操作想办法减少数据搬运。AI Infra 里绝大部分优化，本质都是先用 Roofline 分析瓶颈，再对症下药（Roofline 细节见「Transformer 计算分析」tab）。</p>
+<p>能这样回答，说明你真正理解了 <strong>Roofline 模型</strong>的思维：compute-bound 的操作想办法提高计算效率，memory-bound 的操作想办法减少数据搬运。AI Infra 里绝大部分优化，本质都是先用 Roofline 分析瓶颈，再对症下药。更完整的 FLOPs 推导、算术强度和逐算子 bound 分类已经迁到「Transformer 与大模型基础」里的「计算分析」分组。</p>
 </div>
 
 <div class="card card-m">
@@ -173,3 +192,20 @@
 <div class="qa-q">Q: online softmax 为什么能让 attention 增量计算？</div>
 <div class="qa-a"><p>普通 softmax 要先看到一整行分数才能算分母（所有 exp 之和）和最大值。online softmax 维护“当前见过的最大值”和“当前累计分母”，每来一个新块就按数值稳定的方式更新这两个量，并对已累加的输出做相应 rescale。这样不需要先凑齐整行，就能一块一块累加出和标准 softmax 完全相同的结果——这是中间矩阵不必落 HBM 的数学前提。</p></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩阵不落 HBM。 讲清标准 attention 慢在 IO，不是数学结果变了。
+
+**2 分钟版：**
+
+我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

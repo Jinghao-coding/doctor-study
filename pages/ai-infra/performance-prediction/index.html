@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>性能预测与建模 · doctor-study</title>
-<link rel="stylesheet" href="../../../assets/style.css?v=1781500439">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781507160">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 </head>
 <body>
@@ -16,7 +16,19 @@
   <main class="wrap">
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">ML for Systems</div><h1>性能预测与建模</h1><p class="sub">树模型选型 · 特征工程 · 评估指标 · 防御机制</p><div class="hero-tags"><span>prediction</span><span>ml-for-systems</span><span>tree-models</span></div></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="performance-prediction-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 5</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">性能预测与建模</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="性能预测与建模"><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">方法与模型</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="performance-prediction-tabs-tab-1" data-initial="01" data-mid="performance-prediction-tabs::01-examples-md" data-level="基础" title="预测方法示例" aria-controls="performance-prediction-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">预测方法示例</span><span class="tab-desc">推理 vs 训练场景的预测方案对比</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-2" data-initial="02" data-mid="performance-prediction-tabs::02-tree-models-md" data-level="基础" title="树模型选型" aria-controls="performance-prediction-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">树模型选型</span><span class="tab-desc">LightGBM/RF vs 深度学习的选择依据</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">特征与评估</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-3" data-initial="03" data-mid="performance-prediction-tabs::03-features-md" data-level="进阶" title="特征工程" aria-controls="performance-prediction-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">特征工程</span><span class="tab-desc">结构化特征、语义特征、硬件计数器</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-4" data-initial="04" data-mid="performance-prediction-tabs::04-metrics-md" data-level="进阶" title="评估指标" aria-controls="performance-prediction-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">评估指标</span><span class="tab-desc">MAE/MAPE/R²、AUC/F1 等回归与分类指标</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">鲁棒性</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-5" data-initial="05" data-mid="performance-prediction-tabs::05-robustness-md" data-level="精通" title="预测不准怎么办" aria-controls="performance-prediction-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">预测不准怎么办</span><span class="tab-desc">安全裕度、在线校准、Concept Drift</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="performance-prediction-tabs-panel-1" aria-labelledby="performance-prediction-tabs-tab-1" data-mid="performance-prediction-tabs::01-examples-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测方法示例</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><div class="card card-s">
+<section class="tabs-shell" data-tabs data-tabs-id="performance-prediction-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 5</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">性能预测与建模</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="性能预测与建模"><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">方法与模型</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="performance-prediction-tabs-tab-1" data-initial="01" data-mid="performance-prediction-tabs::01-examples-md" data-level="基础" title="预测方法示例" aria-controls="performance-prediction-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">预测方法示例</span><span class="tab-desc">推理 vs 训练场景的预测方案对比</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-2" data-initial="02" data-mid="performance-prediction-tabs::02-tree-models-md" data-level="基础" title="树模型选型" aria-controls="performance-prediction-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">树模型选型</span><span class="tab-desc">LightGBM/RF vs 深度学习的选择依据</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">特征与评估</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-3" data-initial="03" data-mid="performance-prediction-tabs::03-features-md" data-level="进阶" title="特征工程" aria-controls="performance-prediction-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">特征工程</span><span class="tab-desc">结构化特征、语义特征、硬件计数器</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-4" data-initial="04" data-mid="performance-prediction-tabs::04-metrics-md" data-level="进阶" title="评估指标" aria-controls="performance-prediction-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">评估指标</span><span class="tab-desc">MAE/MAPE/R²、AUC/F1 等回归与分类指标</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="performance-prediction-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">鲁棒性</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="performance-prediction-tabs-tab-5" data-initial="05" data-mid="performance-prediction-tabs::05-robustness-md" data-level="精通" title="预测不准怎么办" aria-controls="performance-prediction-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">预测不准怎么办</span><span class="tab-desc">安全裕度、在线校准、Concept Drift</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="performance-prediction-tabs-panel-1" aria-labelledby="performance-prediction-tabs-tab-1" data-mid="performance-prediction-tabs::01-examples-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测方法示例</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>性能预测例子要说明预测目标是什么、输入特征是什么、结果如何服务调度或容量规划。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>性能预测与建模</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕树模型与深度模型选择、特征工程、评价指标、鲁棒性和在线校准建立 ML-for-Systems 答案。</td></tr>
+<tr><td>面试抓手</td><td>不要只讲模型，要讲系统决策如何使用预测。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-s">
 <table>
 <tr><th>维度</th><th>推理场景</th><th>训练场景</th></tr>
 <tr><td>预测目标</td><td>输出 token 长度</td><td>作业执行时间</td></tr>
@@ -27,7 +39,26 @@
 <tr><td>冷启动</td><td>per-role → 全局 fallback</td><td>≥ 50 历史样本后有效</td></tr>
 <tr><td>更新策略</td><td>post-execution profiling + EWMA</td><td>周期性再训练 + EMA 平滑</td></tr>
 </table>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::01-examples-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::01-examples-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">树模型选型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-2" aria-labelledby="performance-prediction-tabs-tab-2" data-mid="performance-prediction-tabs::02-tree-models-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>树模型选型</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><div class="card card-m">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>性能预测例子要说明预测目标是什么、输入特征是什么、结果如何服务调度或容量规划。 不要只讲模型，要讲系统决策如何使用预测。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个知识点在 性能预测与建模 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::01-examples-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::01-examples-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">树模型选型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-2" aria-labelledby="performance-prediction-tabs-tab-2" data-mid="performance-prediction-tabs::02-tree-models-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>树模型选型</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>树模型适合结构化特征、小样本、低延迟和可解释场景，深度模型适合大数据复杂非线性。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>性能预测与建模</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕树模型与深度模型选择、特征工程、评价指标、鲁棒性和在线校准建立 ML-for-Systems 答案。</td></tr>
+<tr><td>面试抓手</td><td>把 RF/LightGBM 与深度模型的工程取舍讲清楚。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-m">
 <h3>树模型 vs 深度学习的选择依据</h3>
 <table>
 <tr><th>考虑因素</th><th>树模型（LightGBM/RF）</th><th>深度学习</th></tr>
@@ -42,7 +73,26 @@
 <li>推理场景：per-role 可能只有几百条训练数据；推理延迟必须 &lt; 15ms（在调度路径上）；需要特征重要性分析证明哪些特征有用</li>
 <li>训练场景：推理 &lt; 1ms 才能不影响调度延迟（总预算 50ms）；硬件计数器是结构化特征，树模型天然擅长</li>
 </ul>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::02-tree-models-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::02-tree-models-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">预测方法示例</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">特征工程</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-3" aria-labelledby="performance-prediction-tabs-tab-3" data-mid="performance-prediction-tabs::03-features-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>特征工程</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><div class="card card-w">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>树模型适合结构化特征、小样本、低延迟和可解释场景，深度模型适合大数据复杂非线性。 把 RF/LightGBM 与深度模型的工程取舍讲清楚。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个知识点在 性能预测与建模 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::02-tree-models-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::02-tree-models-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">预测方法示例</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">特征工程</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-3" aria-labelledby="performance-prediction-tabs-tab-3" data-mid="performance-prediction-tabs::03-features-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>特征工程</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>特征工程决定性能预测上限，要把 workload、硬件、拓扑、运行时和历史画像分层。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>性能预测与建模</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕树模型与深度模型选择、特征工程、评价指标、鲁棒性和在线校准建立 ML-for-Systems 答案。</td></tr>
+<tr><td>面试抓手</td><td>特征必须有物理含义，不能只堆指标。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-w">
 <h3>推理输出长度预测特征</h3>
 <table>
 <tr><th>类别</th><th>特征</th><th>信号</th></tr>
@@ -65,7 +115,26 @@
 <tr><td>请求资源量（GPU 数、CPU、内存）</td><td>Pod spec</td></tr>
 <tr><td>数据集大小</td><td>作业元数据</td></tr>
 </table>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::03-features-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::03-features-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">树模型选型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">评估指标</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-4" aria-labelledby="performance-prediction-tabs-tab-4" data-mid="performance-prediction-tabs::04-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>评估指标</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><div class="card card-s">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>特征工程决定性能预测上限，要把 workload、硬件、拓扑、运行时和历史画像分层。 特征必须有物理含义，不能只堆指标。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个知识点在 性能预测与建模 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::03-features-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::03-features-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">树模型选型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">评估指标</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-4" aria-labelledby="performance-prediction-tabs-tab-4" data-mid="performance-prediction-tabs::04-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>评估指标</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>预测评估要区分回归和分类指标，MAPE/MAE/RMSE/R2/AUC/F1 各有适用边界。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>性能预测与建模</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕树模型与深度模型选择、特征工程、评价指标、鲁棒性和在线校准建立 ML-for-Systems 答案。</td></tr>
+<tr><td>面试抓手</td><td>指标要服务调度决策，而不只是离线分数好看。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-s">
 <h3>回归评估指标</h3>
 <table>
 <tr><th>指标</th><th>公式/含义</th><th>适用场景</th></tr>
@@ -83,7 +152,26 @@
 <tr><td>Recall</td><td>实际为正的里面被预测为正的比例</td><td>避免假阴性</td></tr>
 <tr><td>F1</td><td>Precision 和 Recall 的调和平均</td><td>不均衡分类</td></tr>
 </table>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::04-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::04-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">特征工程</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">预测不准怎么办</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-5" aria-labelledby="performance-prediction-tabs-tab-5" data-mid="performance-prediction-tabs::05-robustness-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测不准怎么办</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><div class="card card-r">
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>预测评估要区分回归和分类指标，MAPE/MAE/RMSE/R2/AUC/F1 各有适用边界。 指标要服务调度决策，而不只是离线分数好看。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个知识点在 性能预测与建模 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::04-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::04-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">特征工程</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">预测不准怎么办</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="performance-prediction-tabs-panel-5" aria-labelledby="performance-prediction-tabs-tab-5" data-mid="performance-prediction-tabs::05-robustness-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>预测不准怎么办</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>线上预测系统必须处理概念漂移、冷启动、长尾误差和安全裕度。</p>
+<h2>复习定位</h2>
+<table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>性能预测与建模</td></tr>
+<tr><td>章节类型</td><td>机制类</td></tr>
+<tr><td>解决问题</td><td>围绕树模型与深度模型选择、特征工程、评价指标、鲁棒性和在线校准建立 ML-for-Systems 答案。</td></tr>
+<tr><td>面试抓手</td><td>回答时要讲校准、回退和监控。</td></tr>
+</table>
+<h2>阅读路径</h2>
+<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
+<div class="card card-r">
 <h3>四层防御机制</h3>
 <table>
 <tr><th>层次</th><th>推理场景</th><th>训练场景</th></tr>
@@ -112,7 +200,14 @@
 <div class="qa-q">Q: 为什么 MAPE ~30% 的预测精度能接受？</div>
 <div class="qa-a"><p>三个原因：(1) 预测用于<strong>排序</strong>而非精确计时——只要排序大致正确，SJF 效果就好。(2) 实际作业运行时间跨度大（分钟到小时），30% 的误差在排序上影响有限。(3) 有退化保护——预测完全不准时退化为 FIFO，不会比基线差。类似的，Backfill scheduling 中 SLURM 的运行时间估计误差常超过 100%，但依然有效。</p></div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::05-robustness-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::05-robustness-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">评估指标</span></button></div></div></article></div></section>
+</div>
+<h2>面试回答</h2>
+<p><strong>30 秒版：</strong></p>
+<p>线上预测系统必须处理概念漂移、冷启动、长尾误差和安全裕度。 回答时要讲校准、回退和监控。</p>
+<p><strong>2 分钟版：</strong></p>
+<p>我会先说明这个知识点在 性能预测与建模 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<h2>关联模块</h2>
+<ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="performance-prediction-tabs::05-robustness-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="performance-prediction-tabs::05-robustness-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">评估指标</span></button></div></div></article></div></section>
   </main>
 </div>
 <footer class="site-footer">
@@ -122,7 +217,7 @@
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1781447000"></script>
+<script src="../../../assets/script.js?v=1781510254"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
 </body>

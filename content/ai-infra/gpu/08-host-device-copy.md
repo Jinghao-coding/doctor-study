@@ -1,3 +1,27 @@
+## 一句话结论
+
+H2D/D2H 拷贝是 CPU 内存和 GPU 显存之间的数据搬运，常见性能问题不是“有拷贝”本身，而是拷贝频繁、小而碎、触发同步、无法和计算重叠，或者多 GPU 通信绕回 CPU。优化主线是少拷贝、批量拷贝、异步拷贝、拷贝计算重叠。
+
+## 诊断入口
+
+```flow
+GPU timeline 有空洞或 step time 抖动
+  -> 看 DataLoader / CPU preprocessing / I/O
+  -> 看 Nsight Systems 的 Memcpy HtoD / DtoH / stream sync
+  -> 查 PyTorch 里的 .item() / .cpu() / .numpy() / aten::to
+  -> 看 pinned memory、non_blocking、prefetch、stream 重叠是否生效
+  -> 多 GPU 场景检查是否绕 CPU，优先 NCCL / NVLink / GPUDirect
+```
+
+## 指标解释
+
+| 现象 | 可能原因 | 典型证据 |
+|---|---|---|
+| GPU-Util 低且 timeline 有空洞 | DataLoader、CPU preprocessing 或 H2D 太慢 | kernel 之间有大空洞、HtoD 前 CPU 等待 |
+| CPU 线程频繁阻塞 | D2H 或显式同步 | `cudaStreamSynchronize`、`.item()`、`Memcpy DtoH` |
+| 拷贝很多但带宽低 | 大量小 tensor 小拷贝 | timeline 上许多短小 memcpy |
+| 多 GPU 扩展差 | 数据绕回 CPU 或拓扑差 | PCIe 流量异常、NCCL 路径不理想 |
+
 <div class="card card-m">
 <h3>Host-to-Device / Device-to-Host Copy 是什么</h3>
 <div class="qa-summary">本节只回答“数据为什么要在 CPU 和 GPU 之间搬、哪些操作会触发搬运、如何减少和诊断搬运”。CUDA stream 的异步队列和多缓冲流水线放在下一节。</div>
@@ -203,3 +227,19 @@ kernel 之间的大空洞</code></pre>
 <div class="qa-summary">一句话：少拷贝、批量拷贝、异步拷贝、拷贝计算重叠，避免 GPU -> CPU -> GPU 来回搬。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+Host 指 CPU 侧，Device 指 GPU 侧。H2D 是把数据从 CPU 内存拷到 GPU 显存，例如训练 batch 输入；D2H 是把 GPU 结果拷回 CPU，例如 `.cpu()`、`.numpy()`、`.item()`、日志和后处理。优化时先减少不必要的 D2H，再用 pinned memory、`non_blocking=True`、DataLoader prefetch 和 CUDA stream 让 H2D 与计算重叠，多 GPU 场景尽量走 NCCL/NVLink/GPUDirect，避免 GPU 到 CPU 再到 GPU。
+
+**2 分钟版：**
+
+我会先看拷贝是不是端到端瓶颈。Nsight Systems 里如果 kernel 之间有空洞、Memcpy HtoD/DtoH 很多，或者 CPU 侧频繁 `cudaStreamSynchronize`，就要查数据搬运。训练里 H2D 通常不可避免，但可以通过 pinned memory、non_blocking copy、prefetch、多 worker 和 persistent workers 隐藏；D2H 更要谨慎，`.item()`、`.cpu()`、`.numpy()`、打印 GPU tensor 都可能触发同步。推理里要减少小请求小 tensor 拷贝，批量化输入输出，后处理尽量留在 GPU。多卡场景要避免 Host 中转，优先使用 NCCL、P2P copy、NVLink/NVSwitch 和 GPUDirect RDMA。
+
+## 关联模块
+
+- `Stream 与异步流水线`：用 stream/event 和多缓冲把拷贝与计算重叠。
+- `利用率诊断`：timeline 空洞、memcpy 和同步是 H2D/D2H 瓶颈证据。
+- `GPU 互联与数据路径`：理解 PCIe、NVLink、GPUDirect RDMA 的路径差异。

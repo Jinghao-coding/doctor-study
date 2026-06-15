@@ -59,6 +59,43 @@
           ]
         },
         {
+          "title": "计算分析",
+          "items": [
+            {
+              "title": "FLOPs 逐步推导",
+              "description": "从矩阵乘 2MNK 推出单层 Transformer 计算量",
+              "file": "06-flops-derivation.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            },
+            {
+              "title": "Roofline 分析",
+              "description": "算术强度、机器平衡点、compute-bound / memory-bound 判定",
+              "file": "07-roofline-analysis.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 16
+            },
+            {
+              "title": "Decode 为何 Memory-bound",
+              "description": "70B FP16 batch=1 decode 的 FLOPs、访存量和算术强度实算",
+              "file": "08-decode-memory-bound.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            },
+            {
+              "title": "逐算子 Bound 分类",
+              "description": "QKV、FFN、Softmax、Norm、KV cache 在 prefill/decode 的瓶颈分类",
+              "file": "09-operator-bound-classification.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            }
+          ]
+        },
+        {
           "title": "面试",
           "items": [
             {
@@ -68,6 +105,14 @@
               "level": "精通",
               "priority": 1,
               "time": 20
+            },
+            {
+              "title": "可视化资源",
+              "description": "Transformer Explainer 交互式可视化与本站复习路径",
+              "file": "10-visual-explainer.md",
+              "level": "基础",
+              "priority": 2,
+              "time": 10
             }
           ]
         }
@@ -79,6 +124,11 @@
     {"title": "输入处理", "file": "02-input.md"},
     {"title": "Attention 机制", "file": "03-attention.md"},
     {"title": "训练稳定性", "file": "04-training.md"},
-    {"title": "面试高频题", "file": "05-interview.md"}
+    {"title": "FLOPs 逐步推导", "file": "06-flops-derivation.md"},
+    {"title": "Roofline 分析", "file": "07-roofline-analysis.md"},
+    {"title": "Decode 为何 Memory-bound", "file": "08-decode-memory-bound.md"},
+    {"title": "逐算子 Bound 分类", "file": "09-operator-bound-classification.md"},
+    {"title": "面试高频题", "file": "05-interview.md"},
+    {"title": "可视化资源", "file": "10-visual-explainer.md"}
   ]
 }

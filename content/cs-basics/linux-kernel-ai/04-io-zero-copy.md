@@ -1,3 +1,22 @@
+## 一句话结论
+
+大模型权重加载为什么是系统瓶颈？ 是 Linux Kernel for AI Infra 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | Linux Kernel for AI Infra |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
+| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 ## 大模型权重加载为什么是系统瓶颈？
 
 大模型权重可能是几十 GB、几百 GB，甚至 TB 级分片。加载路径涉及：
@@ -363,3 +382,20 @@ I/O 方面，传统 `read` 路径通常是磁盘 DMA 到 page cache，再 CPU co
 <div class="qa-q">Q: mmap、Direct I/O、sendfile 在大模型系统中分别适合哪里？</div>
 <div class="qa-a"><p><code>mmap</code> 适合只读大权重文件、按需加载和多进程共享 page cache；Direct I/O 适合大文件顺序读取、应用自己做缓存且不希望污染 page cache 的场景；<code>sendfile</code> 适合模型权重分发、checkpoint 文件传输或静态文件服务，因为它优化的是文件到 socket 的路径。真正把权重加载进 GPU HBM 时，通常还需要 CPU 侧解析和 H2D 拷贝，sendfile 不是最终一步的主要优化。</p><div class="qa-summary">面试口径：mmap 优化文件到地址空间，Direct I/O 优化缓存控制，sendfile 优化文件到网络。</div></div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+04 io zero copy 是 Linux Kernel for AI Infra 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+
+**2 分钟版：**
+
+我会先说明这个知识点在 Linux Kernel for AI Infra 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
+- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
+- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
+- `系统设计题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

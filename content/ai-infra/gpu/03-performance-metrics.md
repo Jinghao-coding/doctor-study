@@ -1,3 +1,18 @@
+## 一句话结论
+
+GPU 性能指标要按“算力、显存、利用率、互联、能耗”五条线理解，再用 Roofline 把 kernel 归类为 compute-bound 或 memory-bound。面试中最重要的判断是：不要把理论 TFLOPS、GPU-Util 或显存占用单独当成“性能好”的证据。
+
+## 核心概念
+
+| 指标族 | 代表指标 | 回答什么问题 | 常见误区 |
+|---|---|---|---|
+| 算力 | TFLOPS、TOPS、Tensor Core Util | 计算单元的理论上限和实际吞吐 | 理论峰值不等于模型实际速度 |
+| 显存带宽 | HBM GB/s、Memory Throughput | 数据能否及时喂给计算单元 | 显存容量和显存带宽不是一回事 |
+| 显存容量 | VRAM used、peak active memory | 模型、激活、KV cache 能不能放下 | 显存占用高不代表 GPU 利用率高 |
+| 利用率 | GPU-Util、SM Active、Occupancy | 时间上是否有活、空间上是否铺满 | GPU-Util 高不代表忙得有效 |
+| 互联 | PCIe、NVLink、IB/RDMA、NCCL 时间 | 多卡和跨机通信是否拖慢 | 单卡指标无法解释多卡扩展效率 |
+| 能耗 | Power、tokens/J、TFLOPS/W | 成本、供电、散热和能效 | 只看吞吐不看 TCO |
+
 <div class="card card-m">
 <h3>GPU 性能指标全景</h3>
 <p>GPU 性能优化不要只看一个指标。面试中最好按“算力、显存、利用率、互联、能耗”五条线回答，然后用 Roofline 判断瓶颈。</p>
@@ -326,6 +341,23 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 </div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+GPU 性能指标不能只看 GPU-Util。我的回答会分五类：算力看 TFLOPS 和 Tensor Core 是否用上，显存看 HBM 带宽和容量，利用率看 GPU-Util、SM Active、Occupancy 和 Warp Stall，互联看 PCIe/NVLink/RDMA/NCCL，成本看功耗和 tokens/J。最后用 Roofline 把 kernel 放到计算屋顶或内存屋顶下面，判断优化方向。
+
+**2 分钟版：**
+
+我会先把 workload 拆成 FLOPs、访存量和通信量。理论上，算力峰值给出 compute roof，HBM 带宽给出 memory roof，二者和 arithmetic intensity 一起决定 Roofline 上限。实际运行时，如果 compute throughput 高、Tensor Core 利用率高，说明可能 compute-bound；如果 memory throughput 高、Long Scoreboard 高，说明可能 memory-bound；如果 Nsight Systems 里 NCCL/memcpy 占比高，说明可能通信或拷贝瓶颈。GPU-Util 只是采样周期内有没有 kernel，不能说明 SM 是否铺满，也不能说明 Tensor Core 是否有效工作。
+
+## 关联模块
+
+- `利用率诊断`：把 GPU-Util 深挖到 SM Active、Occupancy、Warp Stall。
+- `瓶颈分类`：把指标组合映射到 compute-bound、memory-bound、communication-bound。
+- `GPU 互联与数据路径`：解释 PCIe、NVLink、RDMA 对多卡性能的影响。
+- `性能预测指标`：把这些指标进一步转成特征和标签。
 
 <div class="card card-d">
 <h3>官方参考</h3>

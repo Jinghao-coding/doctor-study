@@ -1,3 +1,19 @@
+## 一句话结论
+
+CUDA 执行模型的核心链路是：CPU Host 发起 kernel launch，CUDA runtime 创建 grid，grid 拆成 block，block 被调度到 SM 上，block 内 thread 被组织成 warp，SM 以 warp 为单位发射指令并用多 warp 并发隐藏延迟。
+
+## 系统链路
+
+```flow
+CPU Host
+  -> kernel<<<gridDim, blockDim>>>(args)
+  -> Grid：一次 launch 的全部 block
+  -> Block：调度到 SM 的基本任务包
+  -> Thread：程序员看到的逻辑并行单元
+  -> Warp：硬件调度的 thread 组，通常 32 个 thread
+  -> SM：执行 block、调度 warp、使用 CUDA Core/Tensor Core/HBM
+```
+
 <div class="card card-w">
 <h3>先建立一张脑图：从一次 kernel launch 到 GPU 硬件执行</h3>
 <p>这一页不要先背表格。你可以先记住一条主线：CPU 端发起一次 <code>kernel launch</code>，CUDA runtime 把它描述成一个 <code>grid</code>；grid 里面有很多 <code>block</code>；block 里面有很多 <code>thread</code>；GPU 硬件把 block 分配到不同的 <code>SM</code> 上执行；SM 内部再把 thread 按 <code>warp</code> 组织和调度。CUDA 官方文档把 CUDA 描述为 NVIDIA 的并行计算平台和编程模型，用来让程序利用 GPU 的计算能力[[CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html)]。</p>
@@ -287,3 +303,29 @@ thread31 -> a[99999]</code></pre>
 <p>我会按执行链路分层分析。第一看 launch 配置：grid/block 是否足够让 SM 吃满；第二看 warp 层面：是否有严重分支发散、访存是否连续；第三看 SM 资源：register 和 shared memory 是否限制 occupancy；第四看内存层级：是否频繁访问 HBM、是否可以用 shared memory 做复用；第五看计算路径：是否用上 Tensor Core、shape 是否适合高性能 kernel；最后看端到端是否被 CPU 数据准备、kernel launch overhead 或多卡通信拖慢。</p>
 </div>
 </div>
+
+## 常见误区
+
+| 误区 | 正确理解 |
+|---|---|
+| kernel launch 等于启动一个线程 | 一次 launch 会创建一个 grid，包含大量 block/thread。 |
+| grid/block/thread 是硬件实体 | 它们是 CUDA 逻辑层级，SM/CUDA Core/Tensor Core 才是硬件资源。 |
+| thread 是硬件实际独立调度单位 | NVIDIA GPU 通常以 warp 为单位调度，warp 内 thread 分支不同会降低效率。 |
+| block 可以跨多个 SM 执行 | 一个 block 在运行期间通常驻留在一个 SM 上。 |
+| occupancy 越高越好 | occupancy 是诊断指标，不是最终性能目标。 |
+
+## 面试回答
+
+**30 秒版：**
+
+CUDA kernel 由 CPU Host 发起，一次 kernel launch 会创建一个 grid。grid 由多个 block 组成，block 由多个 thread 组成。GPU 会把 block 调度到 SM 上执行，thread 在硬件上通常按 warp 组织，一个 warp 通常是 32 个 thread。SM 的 warp scheduler 会选择 ready warp 发射指令，通过多个 warp 驻留来隐藏访存延迟。
+
+**2 分钟版：**
+
+我会从软件层级和硬件层级对应关系讲。软件上，程序员写 kernel，通过 `kernel<<<gridDim, blockDim>>>()` 指定 grid 和 block；每个 thread 用 `blockIdx`、`blockDim`、`threadIdx` 计算自己处理的数据下标。硬件上，block 被调度到 SM，一个 SM 可以驻留多个 block；block 内 thread 被切成 warp，warp scheduler 在 ready warp 之间切换。性能优化也沿着这条链路展开：grid/block 要足够铺满 SM，block size 要考虑 warp、register 和 shared memory，warp 内要减少分支发散和非连续访存，矩阵算子要尽量用 Tensor Core。
+
+## 关联模块
+
+- `CUDA 内存模型与 Occupancy`：继续看 block size、register、shared memory 对 occupancy 的影响。
+- `利用率诊断`：用 SM Active、Occupancy、Warp Stall 验证执行模型是否高效。
+- `Stream 与异步流水线`：区分 kernel 内部调度和 kernel 之间的 stream 调度。

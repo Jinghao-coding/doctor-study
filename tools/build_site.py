@@ -142,6 +142,9 @@ def render_flow(lines: list[str]) -> str:
 def render_code_block(lines: list[str], lang: str) -> str:
     if lang.lower() == "flow":
         return render_flow(lines)
+    if lang.lower() in {"math", "latex", "tex"}:
+        formula = "\n".join(lines).strip()
+        return f'<div class="formula">$$\n{html.escape(formula)}\n$$</div>'
     class_attr = f' class="language-{html.escape(lang)}"' if lang else ""
     return f"<pre><code{class_attr}>" + html.escape("\n".join(lines)) + "</code></pre>"
 

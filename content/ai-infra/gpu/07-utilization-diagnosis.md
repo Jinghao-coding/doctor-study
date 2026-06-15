@@ -1,3 +1,29 @@
+## 一句话结论
+
+GPU 利用率诊断不能停在 `nvidia-smi` 的 `GPU-Util`。推荐链路是：GPU-Util 看时间上有没有 kernel，SM Active 看活有没有铺满 SM，Occupancy 看 SM 里 warp 是否足够，Warp Stall 看 warp 为什么发不出去，Compute/Memory Throughput 看瓶颈类型，最后用业务吞吐和延迟判断“忙得是否有效”。
+
+## 诊断入口
+
+```flow
+业务慢或 GPU 看起来异常
+  -> nvidia-smi / DCGM 粗看 GPU-Util、显存、功耗、温度、进程
+  -> Nsight Systems 看 timeline：空洞、Memcpy、同步、NCCL、CPU 等待
+  -> Nsight Compute 看热点 kernel：SM Active、Occupancy、Warp Stall、Throughput
+  -> 结合业务指标：step time、tokens/sec、QPS、TTFT、TPOT、P99
+```
+
+## 指标解释
+
+| 指标 | 能说明什么 | 不能说明什么 |
+|---|---|---|
+| GPU-Util | 采样窗口里 GPU 是否有 kernel 在跑 | 不能说明 SM 是否铺满、Tensor Core 是否用上 |
+| memory.used | 显存容量占用 | 不能说明 GPU 是否在计算 |
+| SM Active | SM 空间覆盖度 | 不能说明每个 SM 内 warp 是否足够 |
+| Occupancy | SM 内 active warp 是否够多 | 不是越高越好，不等于性能 |
+| Warp Stall | warp 为什么不能发射 | 需要结合访存、同步、依赖和代码结构解释 |
+| Compute / Memory Throughput | 瓶颈更像算力还是显存带宽 | 不能解释 CPU、I/O、通信等待 |
+| Tensor Core Util | AI 矩阵算力是否用起来 | 只对 GEMM/Conv/Attention 等相关 |
+
 <div class="card card-w">
 <h3>先记住一句话：GPU-Util 高，不等于 GPU 真正用得好</h3>
 <p>判断一个 GPU “利用率高不高”，不要只看 <code>nvidia-smi</code> 里的 <code>GPU-Util</code>。它只能告诉你采样窗口里 GPU 时间上是否有 kernel 在跑，但不能告诉你 SM 是否铺满、warp 是否真的能发射、Tensor Core 是否用起来、瓶颈到底在计算还是显存。<code>nvidia-smi</code> 本身定位是 NVIDIA System Management Interface，用于监控和管理 NVIDIA GPU，并支持查询 GPU、显存、功耗、温度、时钟等系统级信息[[nvidia-smi Documentation](https://docs.nvidia.com/deploy/nvidia-smi/index.html)]。</p>
@@ -247,15 +273,20 @@ SM Active 高
 Tensor Pipe / Tensor Core Util 低</code></pre><p>如果 workload 是 GEMM、Conv 或 Attention，需要检查 FP16/BF16/TF32 是否开启，shape 是否对齐，是否使用高性能库，是否 fallback 到普通 CUDA kernel，batch size 是否太小。</p></div>
 </div>
 
-<div class="card card-w">
-<h3>面试推荐回答：如何判断 GPU 利用率高不高？</h3>
-<p>可以这样回答：</p>
-<blockquote>我不会只看 <code>nvidia-smi</code> 的 GPU-Util，因为它只是表示采样窗口内 GPU 上是否有 kernel 在执行的时间比例。要判断 GPU 是否真正被充分使用，我会分层看。首先看 GPU-Util、显存、功耗，判断 GPU 时间上是否有活；然后用 Nsight Systems 看 timeline，确认 GPU 有没有空洞、CPU 是否喂得上、kernel launch 和 memcpy 是否阻塞；再用 Nsight Compute 看 kernel 级指标，包括 SM Active、Achieved Occupancy、Warp Stall、Compute Throughput、Memory Throughput。如果是深度学习 workload，还要看 Tensor Core Utilization。最后结合业务指标，比如训练 tokens/sec、samples/sec，或者推理 QPS、latency、tokens/sec，判断 GPU 忙得是否有效。</blockquote>
-<div class="qa-summary">短版：nvidia-smi 看是否忙；Nsight Systems 看是否连续；Nsight Compute 看为什么慢；业务指标看忙得值不值。</div>
-</div>
+## 面试回答
 
-<div class="card card-w">
-<h3>最后记忆版：一条链路背下来</h3>
+**30 秒版：**
+
+我不会只看 `nvidia-smi` 的 GPU-Util，因为它只是采样窗口内 GPU 上是否有 kernel 在执行的时间比例。判断 GPU 是否真正被充分使用，我会先看 GPU-Util、显存、功耗做粗筛，再用 Nsight Systems 看 timeline 有没有空洞、memcpy、同步和 NCCL，最后用 Nsight Compute 看 SM Active、Achieved Occupancy、Warp Stall、Compute Throughput、Memory Throughput 和 Tensor Core Util。最终还要结合 tokens/sec、step time、QPS、P99 判断 GPU 忙得是否有效。
+
+**2 分钟版：**
+
+我会按从粗到细的漏斗排查。第一层，GPU-Util 低说明 GPU 时间上没活，可能是数据加载、CPU preprocessing、batch 太小或请求量不足；GPU-Util 高只能说明有活，不能说明高效。第二层，看 SM Active，如果低，说明 kernel 没铺满 SM，常见于 grid 太小或 batch 太小。第三层看 occupancy 和 eligible warps，如果 active warp 很多但 eligible warp 少，说明大部分 warp 在等。第四层看 stall reason 和 throughput，Long Scoreboard 多通常是等 HBM，Tensor Core Util 低可能是 dtype/shape/kernel 没用上矩阵硬件。最后用业务指标收口，避免优化了一个看起来忙但对吞吐和延迟没帮助的指标。
+
+短版：`nvidia-smi` 看是否忙；Nsight Systems 看是否连续；Nsight Compute 看为什么慢；业务指标看忙得值不值。
+
+## 排查路径
+
 <pre><code>GPU-Util：
   时间上有没有 kernel。
 
@@ -285,4 +316,10 @@ Power / Clock / Thermal：
 
 业务指标：
   GPU 忙，是否真的换来了 tokens/sec、samples/sec、QPS 和低延迟。</code></pre>
-</div>
+
+## 关联模块
+
+- `性能指标`：理解 GPU-Util、SM Active、Occupancy、Roofline 的定义。
+- `瓶颈分类`：把诊断指标组合翻译成 compute/memory/communication 瓶颈。
+- `Host-Device 数据拷贝`：timeline 空洞和 memcpy 往往来自 H2D/D2H。
+- `CUDA 内存模型与 Occupancy`：解释 occupancy 受 block size、寄存器和 shared memory 影响。

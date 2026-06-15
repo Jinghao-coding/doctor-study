@@ -1,3 +1,22 @@
+## 一句话结论
+
+任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | 任务调度理论 |
+| 章节类型 | 系统类 |
+| 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
+| 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>调度面试题精讲：直接回答问题，不讲路线图</h3>
 <p>这一页只解决一个问题：面试官问到 AI Infra / GPU 集群调度时，应该怎么理解、怎么回答、怎么展开。每个问题都按“核心概念 → 标准回答 → 设计落点 → 常见追问”的方式组织。</p>
@@ -60,7 +79,7 @@
 <tr><td>系统抖动</td><td>大量 Pod 删除/重建冲击 API Server 和调度器</td><td>分批抢占、抢占限速、冷却时间</td></tr>
 <tr><td>用户体验</td><td>低优用户训练频繁被打断</td><td>抢占次数上限、aging、可抢占队列说明</td></tr>
 </table>
-<div class="formula">victim_score = release_value / (checkpoint_age + restart_cost + disruption_penalty)</div>
+<div class="formula">$$\text{victim\_score} = \text{release\_value} / (\text{checkpoint\_age} + \text{restart\_cost} + \text{disruption\_penalty})$$</div>
 <p><strong>面试展开：</strong>先判断高优任务需要释放哪些资源，再找能释放目标资源且代价最低的 victim；抢占前尽量发优雅退出信号让任务保存 checkpoint，超时后再强制终止。</p>
 </div>
 
@@ -134,7 +153,7 @@
 <tr><td>优先级</td><td>高优/交互式任务</td><td>低优/best-effort 任务</td></tr>
 <tr><td>预测置信度</td><td>不知道何时有更好资源</td><td>能预测某批资源很快释放</td></tr>
 </table>
-<div class="formula">schedule_now if waiting_cost &gt; performance_loss + fragmentation_cost</div>
+<div class="formula">$$\text{schedule now if } \text{waiting\_cost} > \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
 <p><strong>标准回答：</strong>我会给每个候选 placement 计算拓扑质量和碎片代价；如果当前 placement 的性能损失和碎片代价小于继续等待的成本，就立即运行；否则做 reservation，并允许短任务 backfill。</p>
 </div>
 
@@ -168,3 +187,20 @@
 <div class="qa-summary">架构图要体现“队列公平 + gang 准入 + 拓扑放置 + 运行时恢复”，不要只画一个 scheduler 方框。</div>
 </div>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+
+**2 分钟版：**
+
+我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

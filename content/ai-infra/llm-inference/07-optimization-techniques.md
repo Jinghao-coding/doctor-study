@@ -1,3 +1,22 @@
+## 一句话结论
+
+推理优化是多层组合：batching 提升吞吐，量化降显存和带宽，投机解码降 decode 步数，prefix cache 复用公共前缀。
+
+## 复习定位
+
+| 维度 | 内容 |
+|---|---|
+| 所属模块 | LLM 推理系统 |
+| 章节类型 | 机制类 |
+| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
+| 面试抓手 | 回答时说明每种优化改善哪个指标、牺牲什么。 |
+
+## 阅读路径
+
+1. 先记住本节的一句话结论，避免从细节开始散。
+2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
+3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
+
 <div class="card card-m">
 <h3>优化技术：用显存、带宽和调度换延迟/吞吐</h3>
 <p>LLM 推理优化不是单一技巧，而是围绕三类资源做权衡：算力、显存和调度队列。高频优化包括 batching、KV cache 管理、量化、投机解码、prefix cache、并行切分和 prefill/decode 分离。</p>
@@ -18,7 +37,7 @@
 <div class="card card-d">
 <h3>量化显存收益</h3>
 <p>权重显存可以粗略估算为：</p>
-<div class="formula">Weight Memory = Parameters × bytes_per_parameter</div>
+<div class="formula">$$\text{Weight Memory} = \text{Parameters} \times \text{bytes\_per\_parameter}$$</div>
 <p>例如 70B 模型，BF16 权重约 140GB；INT8 约 70GB；INT4 约 35GB。实际还要加 scale、zero point、KV cache 和 workspace。</p>
 </div>
 
@@ -90,3 +109,20 @@
 <li>vLLM internals 资料：解释 waiting/running 队列、SchedulerOutput、KV block pool 和 continuous batching 的具体机制。</li>
 </ul>
 </div>
+
+## 面试回答
+
+**30 秒版：**
+
+推理优化是多层组合：batching 提升吞吐，量化降显存和带宽，投机解码降 decode 步数，prefix cache 复用公共前缀。 回答时说明每种优化改善哪个指标、牺牲什么。
+
+**2 分钟版：**
+
+我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
+- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
+- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
+- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。
