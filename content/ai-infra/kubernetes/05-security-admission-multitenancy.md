@@ -86,6 +86,46 @@
 <div class="qa-summary">面试口径：Quota 控总量，LimitRange 控单体；多租户集群通常两者都要配。</div>
 </div>
 
+<div class="card card-d">
+<h3>ResourceQuota 基础机制</h3>
+<p><code>ResourceQuota</code> 是 namespace 级资源总量约束。它发生在 API Server 的 admission 阶段：当新建或更新对象会导致 namespace 超过配额时，请求会被直接拒绝。</p>
+<table>
+<tr><th>维度</th><th>说明</th><th>例子</th></tr>
+<tr><td>作用范围</td><td>单个 namespace</td><td>team-a namespace 最多 10 张 GPU</td></tr>
+<tr><td>统计对象</td><td>对象数量、requests、limits、PVC、Service 等</td><td><code>pods</code>、<code>requests.cpu</code>、<code>limits.memory</code></td></tr>
+<tr><td>统计时机</td><td>API 写入前的 admission</td><td>超额时对象不会被创建</td></tr>
+<tr><td>统计语义</td><td>看声明值，不看实时使用量</td><td>Pod 实际只用 1 CPU，也按 request 计入 quota</td></tr>
+<tr><td>扩展资源</td><td>支持 GPU/NPU 等 extended resource</td><td><code>requests.nvidia.com/gpu: "10"</code></td></tr>
+</table>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-a-quota
+  namespace: team-a
+spec:
+  hard:
+    pods: "100"
+    requests.cpu: "200"
+    requests.memory: 800Gi
+    limits.cpu: "400"
+    limits.memory: 1200Gi
+    requests.nvidia.com/gpu: "10"
+    persistentvolumeclaims: "20"</code></pre>
+<div class="qa-summary">关键边界：ResourceQuota 是“拒绝超额创建”的 admission 机制，不是“超过后排队等待”的调度机制。</div>
+</div>
+
+<div class="card card-w">
+<h3>ResourceQuota 常见坑</h3>
+<table>
+<tr><th>问题</th><th>原因</th><th>处理方式</th></tr>
+<tr><td>用户不写 requests，Pod 创建被拒</td><td>namespace 有 quota 时，缺失 request 可能无法统计</td><td>配合 LimitRange 设置默认 request/limit</td></tr>
+<tr><td>超过 GPU 配额后任务直接失败</td><td>ResourceQuota 是 admission 拒绝，不是队列系统</td><td>需要 Kueue / Volcano / AIJob Queue Controller 做排队</td></tr>
+<tr><td>Pod 实际使用很低但 quota 满了</td><td>quota 统计 requests，不看实时利用率</td><td>优化 request，或引入借用/回收机制</td></tr>
+<tr><td>只限制 CPU/Memory，GPU 被抢光</td><td>没有把 extended resource 纳入 quota</td><td>添加 <code>requests.nvidia.com/gpu</code> 等扩展资源配额</td></tr>
+<tr><td>对象数量过多导致控制面压力</td><td>只限制资源量，没限制 object count</td><td>限制 pods、services、secrets、configmaps、PVC 数量</td></tr>
+</table>
+</div>
+
 <div class="card card-r">
 <h3>安全题常见误区</h3>
 <ul>
@@ -234,6 +274,23 @@
 <div class="qa-section"><div class="qa-section-title">3. 公平性</div><p>用 PriorityClass、DRF、quota borrowing/reclaim 等机制，让关键任务有保障，普通任务不被长期饿死。</p></div>
 <div class="qa-section"><div class="qa-section-title">4. 利用率</div><p>空闲 GPU 可以借用给低优任务；高优任务到来时通过抢占、重排或 checkpoint 恢复释放资源。</p></div>
 <div class="qa-summary">面试口径：多租户 GPU 集群要同时做权限隔离、配额公平、空闲借用和高优任务回收，不能只靠 namespace。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ResourceQuota 为什么不能实现“超过 10 张 GPU 后排队”？</div>
+<div class="qa-a">
+<p>因为 ResourceQuota 是 API Server admission 阶段的硬拒绝机制。对象一旦会导致 namespace 超过 quota，API Server 直接拒绝创建，不会把这个任务保存成“等待中”的对象，也不会让 scheduler 以后自动再试。</p>
+<div class="qa-section"><div class="qa-section-title">正确做法</div><p>如果业务语义是“允许继续提交，但超过 10 张 GPU 后排队”，应该引入任务级队列，例如 Kueue、Volcano，或者自研 <code>AIJob + AIQueue + Queue Controller</code>。排队发生在 Pod 创建前，准入后再创建 Pod。</p></div>
+<div class="qa-summary">面试口径：ResourceQuota 管硬上限，Queue 管等待；不要用 quota 代替队列。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 ResourceQuota 通常要配合 LimitRange？</div>
+<div class="qa-a">
+<p>ResourceQuota 统计 namespace 总量，很多统计项依赖 Pod 的 requests / limits。如果用户不写 requests，系统可能无法准确计入 quota，或者对象被拒绝。LimitRange 可以为容器设置默认 request/limit，也可以限制单个容器的最小/最大资源，保证 quota 有可统计的输入。</p>
+<div class="qa-summary">面试口径：LimitRange 给单体对象设默认值和上下限，ResourceQuota 再管 namespace 总量，两者配合才完整。</div>
 </div>
 </div>
 
