@@ -76,6 +76,32 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 </table>
 </div>
 
+<div class="card card-s">
+<h3>调度失败状态：不是所有 Pending 都一样</h3>
+<p>面试官问 Pod 为什么 Pending 时，不要只答“资源不够”。scheduler 内部会区分失败类型，这决定了后续是等待事件、退避重试、记录错误，还是进入抢占。</p>
+<table>
+<tr><th>状态</th><th>含义</th><th>后续处理</th><th>例子</th></tr>
+<tr><td><code>Unschedulable</code></td><td>当前没有满足条件的节点，但未来集群状态变化可能解决</td><td>进入失败处理，等待 QueueingHint / Move request 唤醒</td><td>资源暂时不足、PodAntiAffinity 暂时不满足</td></tr>
+<tr><td><code>UnschedulableAndUnresolvable</code></td><td>普通事件很难让它变可调度，通常是硬约束本身不可能满足</td><td>减少无效重试，等待更强的配置变化</td><td>nodeSelector 指向不存在的标签、硬约束写错</td></tr>
+<tr><td><code>Error</code></td><td>插件或内部执行异常，不是业务资源约束</td><td>记录 error，按失败路径处理并暴露事件/日志</td><td>插件读取 cache 失败、外部 extender 返回错误</td></tr>
+<tr><td><code>FitError</code></td><td>没有 feasible node 时聚合出的调度失败结果</td><td>转成 FailedScheduling 事件，里面包含各插件失败原因</td><td><code>0/100 nodes are available</code></td></tr>
+</table>
+<div class="qa-summary">排查口径：Pending 先看 FailedScheduling 事件，再看是哪个 Plugin 产生了哪类 Status；不要把配置错误、资源不足和插件异常混成一类。</div>
+</div>
+
+<div class="card card-d">
+<h3>Assume / Reserve / Bind：三个“占用”不是一回事</h3>
+<p>这张表是面试里解释调度一致性的关键。scheduler 的本地状态、插件状态和 API Server 持久化状态是三层不同状态。</p>
+<table>
+<tr><th>阶段</th><th>写哪里</th><th>解决什么问题</th><th>失败如何恢复</th></tr>
+<tr><td>Assume</td><td>scheduler cache</td><td>Bind 还没完成前，先让后续调度周期看到资源已被占用，避免过度分配</td><td>Bind 失败或超时后 Forget assumed Pod</td></tr>
+<tr><td>Reserve</td><td>插件自己的内存账本或状态</td><td>预留插件特有资源，例如 GPU 拓扑、MIG slot、PodGroup 名额</td><td>后续失败时调用 <code>Unreserve</code></td></tr>
+<tr><td>Bind</td><td>API Server / etcd</td><td>把最终结果持久化为 <code>spec.nodeName</code> 或 Binding 对象</td><td>失败后走调度失败路径，已 Reserve 的状态要回滚</td></tr>
+<tr><td>PostBind</td><td>通常是事件、日志或外部通知</td><td>绑定成功后的通知，不再改变放置决策</td><td>一般不影响 Pod 已经绑定的事实</td></tr>
+</table>
+<div class="qa-summary">一句话：Assume 是 scheduler 本地先占位，Reserve 是插件状态先占位，Bind 是把结果写进 API Server。</div>
+</div>
+
 <div class="card card-m">
 <h3>Plugin 扩展点与调度研究问题的映射</h3>
 <table>
@@ -98,6 +124,17 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 <li><strong>不可抢占约束：</strong>nodeSelector 不匹配、PVC 约束不满足、硬亲和性不满足，抢占也解决不了。</li>
 <li><strong>训练任务代价：</strong>AI 训练抢占要考虑 checkpoint 新鲜度、已运行时间、重启成本和 gang 语义。</li>
 </ul>
+</div>
+
+<div class="card card-w">
+<h3>抢占四问：面试官最常追</h3>
+<table>
+<tr><th>问题</th><th>回答抓手</th></tr>
+<tr><td>抢占是不是直接杀 Pod？</td><td>不是。scheduler 选择 victim 后，低优 Pod 进入优雅删除流程；高优 Pod 通常先记录 <code>nominatedNodeName</code>，等待资源真正释放。</td></tr>
+<tr><td>为什么抢占后高优 Pod 还 Pending？</td><td>victim 有 termination grace period；PDB 可能限制驱逐；同时集群状态可能变化，原 nominated node 未必最终可用。</td></tr>
+<tr><td><code>preemptionPolicy: Never</code> 是什么？</td><td>这个 Pod 可以有高 priority 参与排序，但不会主动抢占别人，适合高优但不想破坏其他任务的工作负载。</td></tr>
+<tr><td>什么问题抢占也解决不了？</td><td>硬约束不匹配，例如 nodeAffinity 写错、PVC zone 不匹配、GPU 型号不存在、Taint 不容忍、端口冲突不可通过删除低优 Pod 解决。</td></tr>
+</table>
 </div>
 
 <div class="card card-w">

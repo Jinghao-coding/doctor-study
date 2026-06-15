@@ -115,7 +115,7 @@
 </div>
 
 <div class="qa-section"><div class="qa-section-title">Filter 核心代码骨架</div>
-<pre><code>func (p *GPUTopologyPlugin) Filter(
+<pre><code class="language-go">func (p *GPUTopologyPlugin) Filter(
     ctx context.Context,
     state *framework.CycleState,
     pod *v1.Pod,
@@ -155,7 +155,7 @@
 </div>
 
 <div class="qa-section"><div class="qa-section-title">Score 核心代码骨架</div>
-<pre><code>func (p *GPUTopologyPlugin) Score(
+<pre><code class="language-go">func (p *GPUTopologyPlugin) Score(
     ctx context.Context,
     state *framework.CycleState,
     pod *v1.Pod,
@@ -188,7 +188,7 @@
 </div>
 
 <div class="qa-section"><div class="qa-section-title">KubeSchedulerConfiguration 配置示例</div>
-<pre><code>apiVersion: kubescheduler.config.k8s.io/v1
+<pre><code class="language-yaml">apiVersion: kubescheduler.config.k8s.io/v1
 kind: KubeSchedulerConfiguration
 profiles:
   - schedulerName: gpu-scheduler
@@ -219,271 +219,314 @@ profiles:
 </div>
 
 <div class="card card-m">
-<h3>案例：感知共置干扰的预测调度插件</h3>
-<p>面试官常追问的一个开放题："如果让你做一个预测调度器，能预测<strong>任务运行时间</strong>，又能预测<strong>多任务共置时的干扰程度</strong>，你怎么落到 Kubernetes Scheduler Framework 里？" 这道题考的是<strong>把预测结果变成调度决策的工程链路</strong>，不是模型本身。下面给出可以直接答的工程方案，关键在于讲清四件事：</p>
-<ol>
-<li><strong>预测值存在哪</strong>：模型不能跑在 scheduler 热路径上 → 必须有"在哪生产、在哪存储、scheduler 在哪读"的明确链路。</li>
-<li><strong>QueueSort 在算什么</strong>：基于 Pod 上的哪个字段排序、为什么不能只按运行时间排。</li>
-<li><strong>Filter 在过滤什么</strong>：节点级的预测值从哪来、什么场景返回 Unschedulable。</li>
-<li><strong>干扰是怎么感知的</strong>：信号是 DCGM 还是 cgroup？是节点上报还是 scheduler 拉？</li>
-</ol>
+<h3>案例：AIJob 驱动的预测调度插件</h3>
+<p>面试官常追问："如果让你做一个预测调度器，既预测任务运行时间，又预测多个任务共置时的干扰程度，你怎么落到 Kubernetes Scheduler Framework 里？" 推荐统一回答成 <strong>AIJob CRD + AIJob Operator + Scheduler Plugin</strong> 三层架构：AIJob 表达深度学习任务，AIJob Operator 管生命周期和预测子控制器，scheduler plugin 只读辅助 CRD。</p>
+<table>
+<tr><th>层次</th><th>组件</th><th>职责</th><th>边界</th></tr>
+<tr><td>任务表达层</td><td><code>AIJob</code> CRD</td><td>表达模型、batch size、replica、GPU 需求、checkpoint、共置容忍度</td><td>不直接做节点选择</td></tr>
+<tr><td>节点采集层</td><td>DCGM Exporter / Node GPU Collector</td><td>采集 SM、HBM、PCIe/NVLink、显存、进程级 GPU memory、训练 step time</td><td>只采集和暴露指标，不做调度决策</td></tr>
+<tr><td>任务控制面</td><td>AIJob Operator</td><td>创建 PodGroup / Pods，维护任务状态，并通过预测子控制器写 <code>PredictionResult</code> 与 <code>NodeGpuProfile</code></td><td>不在 scheduler 进程内运行模型</td></tr>
+<tr><td>调度热路径</td><td>Predictive Scheduler Plugin</td><td>通过 Informer 本地缓存 CRD，在 QueueSort / Filter / Score / Reserve 中查表决策</td><td>Filter / Score 绝不发 RPC，不拉 Prometheus</td></tr>
+</table>
+<div class="qa-summary">核心边界：AIJob Operator 负责"任务生命周期 + 预测状态生产"；scheduler plugin 负责"读取预测状态并做放置决策"。</div>
 </div>
 
 <div class="card card-s">
-<h3>① 系统总览：训练在外、推理可选、读取必须本地</h3>
-<p>scheduler 调度周期 P99 必须 &lt; 100ms，所以模型训练 / 推理一般都不能塞进 plugin。标准做法是<strong>三层数据流</strong>：</p>
-
-<pre><code>[ 节点 ]                       [ 控制面 ]                          [ Scheduler 进程内 ]
- DCGM Exporter                 PredictorService (CRD controller)    Plugin (in-tree)
- ─ SM utilization              ─ 离线训练 runtime / interference     ─ Informer 监听 CRD / Pod annotation
- ─ HBM bandwidth               ─ 在线推理 (gRPC, 100ms 超时)          ─ 写入 Plugin local cache
- ─ NVLink/PCIe counters        ─ 把预测结果写回:                      ─ Filter/Score/QueueSort 仅查 cache
- ─ 进程级 GPU memory             • Pod annotation                     ─ μs 级延迟
-                                 • 自定义 CRD: PredictionResult       ─ 模型不可用时 fallback 到默认值
-                                 • Node annotation (节点画像)
-</code></pre>
-
+<h3>① 控制面数据流：统一走 CRD</h3>
+<p>这条链路避免了大对象写入 Pod annotation，也让预测结果有独立生命周期、状态、GC 和权限控制。</p>
 <table>
-<tr><th>层</th><th>组件</th><th>职责</th><th>不做什么</th></tr>
-<tr><td>数据采集层</td><td>每节点 DCGM Exporter + 自定义 collector</td><td>采集 SM 利用率、HBM 带宽、NVLink/PCIe 流量、显存 / 进程粒度 GPU memory</td><td>不做预测，只上报</td></tr>
-<tr><td>预测控制面</td><td>独立 Deployment：<code>predictor-service</code></td><td>1) 从 Prometheus 拉历史 → 训练模型 2) gRPC 在线推理 3) 把结果回写到 Pod annotation 或 CRD</td><td>不在 scheduler 进程里跑模型；不影响调度延迟</td></tr>
-<tr><td>调度热路径</td><td>scheduler plugin（编译进 kube-scheduler）</td><td>通过 Informer 监听 CRD / annotation，写本地 map；调度时只查 map，永不阻塞 RPC</td><td>绝对不在 Filter/Score 里调用 gRPC</td></tr>
+<tr><th>步骤</th><th>动作</th><th>产物</th></tr>
+<tr><td>1. 提交任务</td><td>用户提交 <code>AIJob</code>，声明模型、GPU、replica、checkpoint、共置容忍度</td><td>AIJob 对象</td></tr>
+<tr><td>2. 采集</td><td>节点侧 DCGM Exporter 暴露 GPU counter，训练框架暴露 throughput / step time</td><td>Prometheus / TSDB 中的历史样本</td></tr>
+<tr><td>3. 建模</td><td>AIJob Operator 的预测子控制器周期训练 runtime 模型和共置 retention 矩阵</td><td>模型文件、特征版本、job-signature 聚类</td></tr>
+<tr><td>4. 写 CRD</td><td>AIJob Operator 为 AIJob 写 <code>PredictionResult</code>，为节点写 <code>NodeGpuProfile</code></td><td>结构化预测状态</td></tr>
+<tr><td>5. 本地缓存</td><td>Scheduler Plugin 在初始化时建立 Informer</td><td><code>jobUID → PredictionResult</code>、<code>nodeName → NodeGpuProfile</code></td></tr>
+<tr><td>6. 调度决策</td><td>QueueSort / PreFilter / Filter / Score / Reserve 只查本地 map</td><td>微秒级读路径</td></tr>
 </table>
-<div class="qa-summary">关键边界：<strong>scheduler plugin 永远不调模型</strong>。预测结果就像 Pod 的 label/annotation 一样，是<strong>事先准备好的数据</strong>，plugin 只读不写。</div>
 </div>
 
 <div class="card card-d">
-<h3>② 预测值落地：写在哪、读在哪</h3>
-<p>这是面试里最容易被追问的细节。给出两个具体的数据落点：</p>
-
-<h4>方案 A：用 Pod annotation（轻量、无需 CRD）</h4>
-
-<pre><code>metadata:
-  annotations:
-    predictor.io/runtime-seconds: "3600"          # 预测运行时间
-    predictor.io/runtime-confidence: "0.85"        # 置信度
-    predictor.io/job-signature: "resnet50-bs256-fp16-v2"  # 用于查节点干扰画像
-    predictor.io/interference-tolerance: "0.9"     # 这个任务能接受的最低 retention
-</code></pre>
-
-<p>predictor-service 在 Pod 进入 Pending 后 watch 到事件，给 Pod patch 这些 annotation。scheduler plugin 在 PreFilter 里读取。</p>
-
-<h4>方案 B：自定义 CRD <code>PredictionResult</code>（适合复杂模型）</h4>
-
-<pre><code>apiVersion: scheduling.predictor.io/v1
-kind: PredictionResult
+<h3>② CRD 设计：AIJob、PredictionResult 与 NodeGpuProfile</h3>
+<pre><code class="language-yaml">apiVersion: scheduling.predictor.io/v1
+kind: AIJob
 metadata:
-  name: pod-resnet50-xxx
+  name: resnet50-train
   namespace: train
 spec:
-  podRef: {name: resnet50-xxx, uid: 1234}
+  framework: pytorch
+  replicas:
+    workers: 8
+  resources:
+    gpu:
+      count: 8
+      type: A100
+  workload:
+    model: resnet50
+    batchSize: 256
+    precision: fp16
+  scheduling:
+    queue: research
+    minAvailable: 8
+    allowColocation: true
+    minRetention: 0.90
+  checkpoint:
+    enabled: true
+    intervalSeconds: 600
 status:
+  phase: Pending
+  predictionRef:
+    name: pred-resnet50-train</code></pre>
+
+<pre><code class="language-yaml">apiVersion: scheduling.predictor.io/v1
+kind: PredictionResult
+metadata:
+  name: pred-resnet50-train
+  namespace: train
+spec:
+  jobRef:
+    kind: AIJob
+    name: resnet50-train
+    uid: "aijob-uid-1234"
+status:
+  jobSignature: "resnet50-bs256-fp16"
   predictedRuntimeSeconds: 3600
-  confidence: 0.85
-  interferenceProfile:           # 和节点上常见 job-signature 共置时的预测 retention
-    "bert-large":  {retention: 0.92, slowdown: 1.08}
-    "gpt2-medium": {retention: 0.78, slowdown: 1.28}
-    "llama-7b":    {retention: 0.55, slowdown: 1.81}
-  nodeProfile:                   # 节点已有任务的干扰画像（可选: 节点级 CRD）
-    nodeName: gpu-node-42
-    coLocatedJobs: ["bert-large", "gpt2-medium"]
-    aggregatedSlowdownIfAdd: 1.35
-</code></pre>
+  confidence: 0.86
+  minRetention: 0.90
+  interferenceProfile:
+    bert-large:
+      retention: 0.92
+      slowdown: 1.08
+    gpt2-medium:
+      retention: 0.78
+      slowdown: 1.28</code></pre>
+
+<pre><code class="language-yaml">apiVersion: scheduling.predictor.io/v1
+kind: NodeGpuProfile
+metadata:
+  name: gpu-node-42
+status:
+  nodeName: gpu-node-42
+  gpuUtilization: 0.62
+  hbmBandwidthUtilization: 0.48
+  colocatedJobSignatures:
+    - bert-large
+    - gpt2-medium
+  avgRetentionIfAdd: 0.84
+  updatedAt: "2026-06-15T15:00:00Z"</code></pre>
 
 <table>
-<tr><th>选型</th><th>优势</th><th>劣势</th><th>典型场景</th></tr>
-<tr><td>annotation</td><td>无需 CRD；scheduler 直接通过 PodInformer 拿到</td><td>大对象会污染 etcd；无法独立生命周期</td><td>简单运行时间预测</td></tr>
-<tr><td>独立 CRD</td><td>结构化字段、可独立 Watch、可独立 GC</td><td>需要写 CRD controller、Informer</td><td>多模型组合 / 干扰矩阵</td></tr>
+<tr><th>对象</th><th>谁写</th><th>谁读</th><th>生命周期</th></tr>
+<tr><td><code>AIJob</code></td><td>用户 / 平台</td><td>AIJob Operator、Scheduler Plugin</td><td>训练任务生命周期</td></tr>
+<tr><td><code>PredictionResult</code></td><td>AIJob Operator 的预测子控制器</td><td>Scheduler Plugin</td><td>跟随 AIJob 创建和删除，可 ownerReference 绑定 AIJob</td></tr>
+<tr><td><code>NodeGpuProfile</code></td><td>AIJob Operator / Node collector controller</td><td>Scheduler Plugin</td><td>跟随 Node，周期更新状态</td></tr>
 </table>
-<div class="qa-summary">无论选哪种，<strong>plugin 的 Init 阶段都必须建立 Informer</strong>：annotation 走 SharedInformer 监听 Pod；CRD 走 Dynamic Informer 监听 PredictionResult。Filter/Score 时只从本地 store 读，绝不发起远程调用。</div>
 </div>
 
 <div class="card card-m">
-<h3>③ 各扩展点职责（含代码骨架）</h3>
+<h3>③ PredictionResult 的生命周期与消费路径</h3>
+<p><code>PredictionResult</code> 不是用户手写的主资源，而是 AIJob Operator 为调度器准备的辅助状态。它的核心作用是把“深度学习任务画像”转换成 scheduler plugin 能低延迟读取的结构化字段。</p>
+<table>
+<tr><th>阶段</th><th>什么时候发生</th><th>谁做</th><th>结果怎么被感知</th></tr>
+<tr><td>创建</td><td>AIJob 创建后，Operator 第一次 Reconcile，解析 spec 中的模型、batch size、GPU、replica、checkpoint、共置容忍度</td><td>AIJob Operator 的预测子控制器</td><td>创建 <code>PredictionResult</code>，并把 <code>AIJob.status.predictionRef</code> 指过去</td></tr>
+<tr><td>初始预测</td><td>AIJob 还没运行时，基于历史任务、模型画像和资源请求估计 runtime / retention</td><td>预测子控制器</td><td>更新 <code>PredictionResult.status</code>，scheduler plugin 的 Informer 收到 update</td></tr>
+<tr><td>调度消费</td><td>Pod 进入调度队列并执行 QueueSort / PreFilter / Filter / Score</td><td>Scheduler Plugin</td><td>从本地 cache 按 <code>jobUID</code> 读取，不访问 API Server，不调模型</td></tr>
+<tr><td>运行中校准</td><td>Pod 绑定后，训练框架上报 step time，DCGM 上报 GPU counters</td><td>AIJob Operator / metric collector</td><td>异步修正 <code>PredictionResult.status.confidence</code>、runtime 或 retention</td></tr>
+<tr><td>完成回收</td><td>AIJob Succeeded / Failed / Deleted</td><td>AIJob Operator</td><td>把真实 runtime / throughput 写入训练样本；通过 ownerReference GC PredictionResult</td></tr>
+</table>
 
-<h4>QueueSort：决定"先调谁"</h4>
+<div class="qa-section"><div class="qa-section-title">用户怎么使用它</div>
+<p>用户通常不直接创建 <code>PredictionResult</code>，只提交 <code>AIJob</code>。如果要排查，可以通过 <code>kubectl get/describe predictionresult</code> 看预测运行时间、置信度、共置风险和更新时间。它更像 PVC 的绑定状态：用户关心结果，但不手写细节。</p>
+</div>
 
-<p>QueueSort 比较两个 Pod 的优先级，决定 ActiveQ 出队顺序。<strong>关键点：runtime 不是排序的最高维度</strong>，必须先看 PriorityClass 和租户公平性，否则会饿死长任务。</p>
+<div class="qa-section"><div class="qa-section-title">调度器怎么使用它</div>
+<p>Scheduler Plugin 在初始化时建立 Informer，把 <code>PredictionResult</code> 放进本地索引，例如 <code>jobUID → PredictionResult</code>。调度时从 Pod ownerReference / label 找到所属 AIJob，再查本地 cache。这样 QueueSort / Filter / Score 都是内存读取，不会阻塞调度周期。</p>
+</div>
 
-<pre><code>func (pl *PredictivePlugin) Less(p1, p2 *framework.QueuedPodInfo) bool {
-    // 1. 优先级：硬规则
+<pre><code class="language-go">func (r *AIJobReconciler) reconcilePrediction(ctx context.Context, job *aiv1.AIJob) error {
+    // 1. 从 AIJob spec 提取任务画像：模型、batch size、GPU、replica、checkpoint。
+    features := buildFeatures(job.Spec)
+
+    // 2. 调用预测模块；这是控制面异步逻辑，不在 scheduler 热路径。
+    pred := r.predictor.Predict(ctx, features)
+
+    // 3. Upsert PredictionResult，并通过 ownerReference 绑定 AIJob 生命周期。
+    result := buildPredictionResult(job, pred)
+    if err := controllerutil.SetControllerReference(job, result, r.Scheme); err != nil {
+        return err
+    }
+    return r.Client.Status().Update(ctx, result)
+}</code></pre>
+
+<div class="qa-summary">一句话：PredictionResult 在 AIJob 创建后的 Reconcile 中产生，运行中异步校准；用户用它排查预测状态，scheduler plugin 用它做本地查表决策。</div>
+</div>
+
+<div class="card card-m">
+<h3>④ 各扩展点职责与 Go 骨架</h3>
+<p>下面代码只展示关键路径。真实实现中还需要错误处理、metrics、并发保护、feature gate 和配置化权重。</p>
+
+<h4>QueueSort：预测运行时间只做第三排序键</h4>
+<pre><code class="language-go">func (pl *PredictivePlugin) Less(p1, p2 *framework.QueuedPodInfo) bool {
+    // 1. PriorityClass 仍然是第一优先级，避免预测策略破坏 K8s 语义。
     if *p1.Pod.Spec.Priority != *p2.Pod.Spec.Priority {
         return *p1.Pod.Spec.Priority &gt; *p2.Pod.Spec.Priority
     }
-    // 2. 租户公平性：欠资源越多越优先（QAD = Quota Allocation Deviation）
+
+    // 2. 租户公平性第二优先级，QAD 越低表示越需要补偿资源。
     qad1 := pl.fairness.QAD(p1.Pod.Namespace)
     qad2 := pl.fairness.QAD(p2.Pod.Namespace)
     if qad1 != qad2 {
-        return qad1 &gt; qad2
+        return qad1 &lt; qad2
     }
-    // 3. 预测运行时间：短任务优先（SJF），从 annotation 读
-    rt1 := readPredictedRuntime(p1.Pod)  // 读 predictor.io/runtime-seconds
-    rt2 := readPredictedRuntime(p2.Pod)
+
+    // 3. 运行时间预测来自 AIJob 对应的 PredictionResult，本地 cache 读取。
+    rt1 := pl.predStore.RuntimeSeconds(jobUID(p1.Pod))
+    rt2 := pl.predStore.RuntimeSeconds(jobUID(p2.Pod))
     if rt1 != rt2 {
-        return rt1 &lt; rt2  // 短的先调
+        return rt1 &lt; rt2
     }
-    // 4. 提交时间：兜底
+
+    // 4. 最后用入队时间打破平局，避免不稳定排序。
     return p1.Timestamp.Before(p2.Timestamp)
-}
-</code></pre>
+}</code></pre>
 
-<h4>PreFilter：把 Pod 侧预测值写入 CycleState（每周期算一次）</h4>
-
-<pre><code>func (pl *PredictivePlugin) PreFilter(ctx context.Context, state *framework.CycleState,
-    pod *v1.Pod) (*framework.PreFilterResult, *framework.Status) {
-
-    pred := pl.predCache.Get(pod.UID)  // 从本地 Informer cache 读
+<h4>PreFilter：把 CRD 预测值写入 CycleState</h4>
+<pre><code class="language-go">func (pl *PredictivePlugin) PreFilter(
+    ctx context.Context,
+    state *framework.CycleState,
+    pod *v1.Pod,
+) (*framework.PreFilterResult, *framework.Status) {
+    pred := pl.predStore.GetByJobUID(jobUID(pod))
     if pred == nil {
-        // fallback：模型未就绪时给保守值
-        pred = &amp;Prediction{Runtime: defaultRuntime, Tolerance: 1.0}
+        // 冷启动兜底：AIJob 还没有 PredictionResult 时走保守策略。
+        pred = conservativePrediction(pod)
     }
-    state.Write(stateKey, &amp;PodPredictionState{
-        Runtime:        pred.Runtime,
-        Tolerance:      pred.Tolerance,
-        JobSignature:   pred.JobSignature,
+
+    // CycleState 只在本次 scheduling cycle 内有效，避免后续阶段重复查 CRD cache。
+    state.Write(stateKeyPrediction, &amp;PodPredictionState{
+        RuntimeSeconds:      pred.RuntimeSeconds,
+        JobSignature:        pred.JobSignature,
+        MinRetention:        pred.MinRetention,
         InterferenceProfile: pred.InterferenceProfile,
     })
     return nil, framework.NewStatus(framework.Success)
-}
-</code></pre>
+}</code></pre>
 
-<h4>Filter：硬约束 —— 节点上的共置预测干扰超过容忍线就拒绝</h4>
+<h4>Filter：共置干扰超过阈值就拒绝节点</h4>
+<pre><code class="language-go">func (pl *PredictivePlugin) Filter(
+    ctx context.Context,
+    state *framework.CycleState,
+    pod *v1.Pod,
+    nodeInfo *framework.NodeInfo,
+) *framework.Status {
+    pred := readPredictionState(state)
+    nodeName := nodeInfo.Node().Name
+    nodeProfile := pl.nodeProfileStore.Get(nodeName)
 
-<p><strong>关键：Filter 不调模型</strong>。它从 CycleState（Pod 侧）+ NodeInfo（节点侧已有任务）查表算 retention。节点侧"已有哪些 job_signature"通过 NodeInfo.Pods 遍历得到。</p>
-
-<pre><code>func (pl *PredictivePlugin) Filter(ctx context.Context, state *framework.CycleState,
-    pod *v1.Pod, nodeInfo *framework.NodeInfo) *framework.Status {
-
-    s, _ := state.Read(stateKey)
-    podPred := s.(*PodPredictionState)
-
-    // 1. 收集该节点已有任务的 job-signature
-    coLocatedSigs := make([]string, 0)
-    for _, p := range nodeInfo.Pods {
-        if sig := p.Pod.Annotations["predictor.io/job-signature"]; sig != "" {
-            coLocatedSigs = append(coLocatedSigs, sig)
-        }
+    // 节点画像缺失时走保守策略：Guaranteed 任务拒绝共置，BestEffort 可降级打分。
+    if nodeProfile == nil &amp;&amp; isGuaranteed(pod) {
+        return framework.NewStatus(framework.Unschedulable, "missing NodeGpuProfile")
     }
 
-    // 2. 查表：本任务和这些已有任务共置后的 retention
-    //    InterferenceProfile 是预测控制面提前算好写入 Pod 的二元矩阵
-    minRetention := 1.0
-    for _, sig := range coLocatedSigs {
-        if entry, ok := podPred.InterferenceProfile[sig]; ok {
-            if entry.Retention &lt; minRetention {
-                minRetention = entry.Retention
-            }
-        }
+    retention := minPredictedRetention(pred, nodeProfile.ColocatedJobSignatures)
+    if retention &lt; pred.MinRetention {
+        return framework.NewStatus(
+            framework.Unschedulable,
+            fmt.Sprintf("predicted retention %.2f below threshold %.2f", retention, pred.MinRetention),
+        )
     }
+    return framework.NewStatus(framework.Success)
+}</code></pre>
 
-    // 3. 硬阈值判断
-    if minRetention &lt; podPred.Tolerance {
-        return framework.NewStatus(framework.Unschedulable,
-            fmt.Sprintf("predicted retention %.2f &lt; tolerance %.2f on node %s",
-                minRetention, podPred.Tolerance, nodeInfo.Node().Name))
-    }
-    return nil
-}
-</code></pre>
+<h4>Score：在可行节点里选择更低干扰、更好装箱的节点</h4>
+<pre><code class="language-go">func (pl *PredictivePlugin) Score(
+    ctx context.Context,
+    state *framework.CycleState,
+    pod *v1.Pod,
+    nodeName string,
+) (int64, *framework.Status) {
+    pred := readPredictionState(state)
+    nodeProfile := pl.nodeProfileStore.Get(nodeName)
 
-<h4>PreScore + Score：在可行节点里挑最优</h4>
+    // interferenceScore 越高表示共置越安全。
+    retention := minPredictedRetention(pred, nodeProfile.ColocatedJobSignatures)
+    interferenceScore := int64(retention * 100)
 
-<p>PreScore 把候选节点的实时 GPU counters（DCGM exporter 通过 Node annotation 或独立 NodeMetric CRD 暴露）批量加载到 CycleState；Score 查表算分。</p>
+    // MostAllocated 风格：优先填补已有 GPU 利用率较高但仍安全的节点。
+    binPackScore := int64(nodeProfile.GPUUtilization * 100)
+    topologyScore := pl.topology.Score(pod, nodeName)
 
-<pre><code>func (pl *PredictivePlugin) Score(ctx context.Context, state *framework.CycleState,
-    pod *v1.Pod, nodeName string) (int64, *framework.Status) {
+    score := interferenceScore*5 + binPackScore*2 + topologyScore*3
+    return normalize(score), framework.NewStatus(framework.Success)
+}</code></pre>
 
-    podPred := readPodState(state)
-    nodeFeat := pl.nodeCache.Get(nodeName)  // 来自 NodeMetric CRD / DCGM annotation
-
-    // 综合三个信号：干扰小 / 装箱紧凑 / 拓扑亲和
-    interferenceScore := 100 - int64((1.0 - nodeFeat.AvgRetention) * 100)
-    binPackScore     := int64(nodeFeat.GPUUtilization * 100)  // MostAllocated 风格
-    topoScore        := pl.topology.Score(pod, nodeName)
-
-    final := interferenceScore*5 + binPackScore*2 + topoScore*3  // 权重可配置
-    return final, nil
-}
-</code></pre>
-
-<h4>Reserve / Unreserve：维护共置账本</h4>
-
-<p>scheduler 内置 cache 只跟踪整数资源（cpu/memory/extended）。MIG slot、MPS share、共置 job-signature 集合这些<strong>插件特有的状态</strong>必须在 Reserve 时落入插件自己的账本（map nodeName → set&lt;jobSignature&gt;），Bind 失败由 Unreserve 回滚。</p>
-
-<pre><code>func (pl *PredictivePlugin) Reserve(ctx context.Context, state *framework.CycleState,
-    pod *v1.Pod, nodeName string) *framework.Status {
-    pl.ledger.Add(nodeName, pod.UID, podJobSignature(pod))
-    return nil
+<h4>Reserve / Unreserve：维护插件自己的共置账本</h4>
+<pre><code class="language-go">func (pl *PredictivePlugin) Reserve(
+    ctx context.Context,
+    state *framework.CycleState,
+    pod *v1.Pod,
+    nodeName string,
+) *framework.Status {
+    pred := readPredictionState(state)
+    // scheduler cache 只知道整数资源；共置 signature 账本由插件自己维护。
+    pl.ledger.Add(nodeName, pod.UID, pred.JobSignature)
+    return framework.NewStatus(framework.Success)
 }
 
-func (pl *PredictivePlugin) Unreserve(ctx context.Context, state *framework.CycleState,
-    pod *v1.Pod, nodeName string) {
+func (pl *PredictivePlugin) Unreserve(
+    ctx context.Context,
+    state *framework.CycleState,
+    pod *v1.Pod,
+    nodeName string,
+) {
+    // Bind / Permit / PreBind 失败时必须回滚，避免后续 Pod 看到假的共置状态。
     pl.ledger.Remove(nodeName, pod.UID)
-}
-</code></pre>
+}</code></pre>
 </div>
 
 <div class="card card-d">
-<h3>④ 干扰信号怎么感知（端到端链路）</h3>
-
-<pre><code>[ Pod 进程 ]
-  └─ NVIDIA driver / cgroup
-        ↓ DCGM 采样 (1s 粒度)
-[ Node ] DCGM Exporter (DaemonSet)
-  └─ 暴露 metric: dcgm_sm_active, dcgm_fb_used, dcgm_pcie_tx_bytes ...
-        ↓ Prometheus scrape
-[ Cluster ] Prometheus / VictoriaMetrics
-        ↓ predictor-service 拉数据
-[ Predictor ] 训练干扰矩阵 InterferenceProfile[sig_a][sig_b] = retention
-        ↓ 写回 Pod annotation 或 PredictionResult CRD
-[ Scheduler ] Plugin Informer 监听 → 本地 cache → Filter/Score 查表
-</code></pre>
-
+<h3>⑤ 干扰信号怎么形成闭环</h3>
 <table>
-<tr><th>层</th><th>信号来源</th><th>典型字段</th><th>采样频率</th></tr>
-<tr><td>硬件/驱动</td><td>NVIDIA DCGM</td><td>SM activity、HBM 带宽、PCIe Tx/Rx、NVLink utilization、显存占用</td><td>每秒</td></tr>
-<tr><td>cgroup / 容器</td><td>kubelet cAdvisor</td><td>每容器 CPU、内存、IO（不含 GPU 内部细节）</td><td>每 10 秒</td></tr>
-<tr><td>应用</td><td>训练框架自带 metric（如 step time、tokens/s）</td><td>实际 throughput、step latency</td><td>每 step</td></tr>
-<tr><td>聚合</td><td>Prometheus + recording rules</td><td>按 namespace × job-signature 聚合的平均 SM、retention</td><td>每分钟</td></tr>
+<tr><th>阶段</th><th>输入</th><th>输出</th><th>为什么不放在 scheduler 内</th></tr>
+<tr><td>单跑画像</td><td>任务单独运行时的 throughput、step time、GPU counters</td><td>job-signature 的 baseline</td><td>需要历史窗口和聚合计算</td></tr>
+<tr><td>共置画像</td><td>两个 job-signature 共置时的 throughput 变化</td><td>retention / slowdown 矩阵</td><td>需要离线统计和异常值清洗</td></tr>
+<tr><td>在线更新</td><td>Pod 绑定后的真实 runtime、实际 retention、驱逐事件</td><td>更新 PredictionResult / 训练样本</td><td>异步闭环，不能阻塞调度</td></tr>
+<tr><td>调度使用</td><td>本地 Informer cache 中的 CRD 状态</td><td>QueueSort / Filter / Score 决策</td><td>热路径只查内存，保证 P99</td></tr>
 </table>
-
-<p><strong>"干扰画像"如何形成：</strong>predictor-service 离线扫历史 Prometheus，找出"任务 A 单跑 throughput vs 任务 A 与 B 共置时 throughput"，比值就是 retention。把所有 (sig_a, sig_b) 对存成矩阵，新任务进来时查这个矩阵就能预测它在某个节点上的干扰。</p>
-
-<div class="qa-summary">面试要点：干扰**不是 scheduler 实时测的**，而是**离线训练 + 在线查表**。scheduler 看到的永远是预先算好的数字，调度路径上没有任何 GPU profiling 调用。</div>
+<div class="qa-summary">面试要点：干扰不是 scheduler 实时测的，而是 Operator 用历史和在线反馈维护 CRD；scheduler 看到的是已经算好的结构化状态。</div>
 </div>
 
 <div class="card card-w">
-<h3>⑤ 30 秒 / 2 分钟 / 追问应答</h3>
-
+<h3>⑥ 30 秒 / 2 分钟 / 追问应答</h3>
 <h4>30 秒</h4>
-<p>预测调度器拆三层：节点 DCGM 采集 → 控制面 predictor-service 训练并把结果写回 Pod annotation 或 PredictionResult CRD → scheduler plugin 通过 Informer 缓存到本地。<strong>QueueSort</strong> 按 priority &gt; 租户公平性 &gt; 预测运行时间排序；<strong>PreFilter</strong> 把 Pod 预测值写入 CycleState；<strong>Filter</strong> 用"本任务 vs 节点已有任务"的预测 retention 卡硬阈值；<strong>PreScore + Score</strong> 综合干扰、装箱、拓扑打分；<strong>Reserve/Unreserve</strong> 维护 MIG/MPS/共置账本。模型推理永远不在调度热路径里跑。</p>
+<p>我会把预测调度器拆成 AIJob Operator 和 Scheduler Plugin 两部分。用户提交 <code>AIJob</code>，Operator 负责展开 PodGroup / Pods、管理 checkpoint 和任务状态，同时预测子控制器从 Prometheus / DCGM / 训练框架指标中训练 runtime 和 interference 模型，并把结果写入 <code>PredictionResult</code> 和 <code>NodeGpuProfile</code>。Scheduler Plugin 只用 Informer 把这些 CRD 缓存在本地：QueueSort 用预测运行时间做第三排序键，Filter 用共置 retention 做硬阈值，Score 在可行节点里选择干扰更小、装箱更好的节点，Reserve / Unreserve 维护插件自己的共置账本。</p>
 
 <h4>2 分钟</h4>
-<p>整个系统三层：(1) 每个节点跑 DCGM Exporter 把 SM、HBM、PCIe 等 GPU counter 暴露给 Prometheus；(2) predictor-service（独立 Deployment）做两件事：从 Prometheus 拉历史训练 runtime / interference 模型，再用 gRPC 在线推理把预测结果写回 Pod annotation 或自定义 PredictionResult CRD；(3) scheduler plugin 在 Init 时建立 Informer 监听这些 annotation/CRD，把结果缓存到内存 map，调度路径上只查 map。</p>
-<p>QueueSort 决定"先调谁"，但短任务优先不能压过 priority 和租户公平性，所以排序是"priority &gt; QAD &gt; predicted runtime &gt; submitTime"。PreFilter 从本地 cache 读出 Pod 的 predicted runtime、tolerance、interference profile 写入 CycleState。Filter 遍历节点上的已有 Pod 拿 job-signature，从 InterferenceProfile 里查到 retention，低于 tolerance 就返回 Unschedulable —— 注意这里是查表，不是调模型。PreScore 加载节点 GPU counters（来自 NodeMetric CRD），Score 综合 interference / bin packing / topology 打分。Reserve 把这次调度结果加入插件自己维护的"node → job-signature 集合"账本，下个 Pod 的 Filter 才能读到正确的"已有任务"。Bind 失败用 Unreserve 回滚。</p>
-<p>干扰感知是离线训练 + 在线查表的混合：predictor-service 扫描历史 Prometheus 算出 (sig_a, sig_b) → retention 矩阵；调度时根据节点上已有任务的 sig 直接查矩阵。任务结束后 PostBind 触发样本回收 controller 把实际 runtime 和 throughput 写回训练集，闭环校准。</p>
+<p>整体链路是：用户提交 AIJob；AIJob Operator 把它转换成 PodGroup / Pods，并维护任务状态；节点侧 DCGM Exporter 和训练框架暴露 GPU counters、step time、throughput；Operator 的预测子控制器周期拉取历史样本，训练运行时间模型和 job-signature 之间的 retention 矩阵；对每个 AIJob 生成 <code>PredictionResult</code>，对每个 GPU 节点维护 <code>NodeGpuProfile</code>。scheduler plugin 初始化时建立 Informer，把这些 CRD 放进本地 cache。</p>
+<p>调度时，QueueSort 先看 PriorityClass，再看租户公平性，最后才看 predicted runtime，避免短任务优先饿死长任务。PreFilter 从本地 cache 读取当前 Pod 所属 AIJob 的 PredictionResult 写入 CycleState。Filter 读取 NodeGpuProfile 和节点上已共置任务的 signature，预测 retention 低于阈值就返回 Unschedulable。Score 对可行节点综合 interference、bin packing 和 topology 打分。Reserve 把本次 Pod 的 signature 写入插件账本，Bind 失败通过 Unreserve 回滚。</p>
+<p>这套设计的核心是热路径隔离：模型训练、推理、样本回收全部在 Operator 异步做；scheduler 只做内存查表和轻量计算，因此不会把 Filter / Score 放大成 RPC 风暴。</p>
 
 <h4>面试官可能追问</h4>
 <table>
 <tr><th>追问</th><th>回答抓手</th></tr>
-<tr><td>为什么不在 Filter 里直接 gRPC 调模型？</td><td>Filter 是节点级并行热路径，5000 节点会被放大成 5000 次 RPC；scheduler 周期 P99 必须 &lt; 100ms。所以模型推理一律提前在 predictor-service 里完成、写回 annotation/CRD，plugin 只查表。</td></tr>
-<tr><td>预测不准怎么办？</td><td>三道防线：① tolerance 字段设安全 margin（默认 0.9） ② 在 PostBind 后用 NodeProblemDetector 监控真实 retention，超阈值触发驱逐 ③ predictor 训练集闭环（PostBind 收 runtime、controller 收 throughput）。</td></tr>
-<tr><td>新任务（cold start）没有预测怎么办？</td><td>plugin 在 PreFilter 用 fallback：runtime 用 namespace 历史中位数；interference 假设 retention=1.0（最保守，等价于不加权重）。同时 predictor-service 在 Pod 跑起来 5 分钟后用 online inference 反写。</td></tr>
-<tr><td>InterferenceProfile 矩阵会不会太大？</td><td>job-signature 是聚类后的标签（resnet50-bs256-fp16），生产里一般几百个；矩阵 O(n²) 也只有几万项；只在 predictor-service 全量保存，写回 Pod 时只挑当前节点上存在的 sig。</td></tr>
-<tr><td>怎么证明这个插件有效？</td><td>核心指标四组：① 调度延迟（plugin_execution_duration P99 &lt; 10ms） ② JCT / queue waiting time 同比下降 ③ 集群 GPU 利用率上升、SLO violation 不上升 ④ ablation：分别关掉 runtime SJF、interference Filter、interference Score 看回退。</td></tr>
+<tr><td>为什么用 AIJob，而不是只有 PredictionResult？</td><td>AIJob 表达训练任务语义：模型、batch size、replica、GPU、checkpoint、minAvailable、共置容忍度。PredictionResult 只是 AIJob 的调度辅助状态。</td></tr>
+<tr><td>为什么不用 Pod annotation？</td><td>预测结果是结构化状态，可能包含 runtime、confidence、干扰矩阵、版本和更新时间；CRD 可独立 watch、GC、鉴权和演进，不污染 Pod 对象。</td></tr>
+<tr><td>为什么不在 Filter 里直接 gRPC 调模型？</td><td>Filter 是节点级并行热路径，节点数越多 RPC 越多；scheduler P99 必须稳定，所以只读 Informer 本地 cache。</td></tr>
+<tr><td>预测不准怎么办？</td><td>用 confidence 和安全 margin；低置信度走保守策略；PostBind 后回收真实 runtime 和 retention；SLO 破坏时驱逐低优共置伙伴。</td></tr>
+<tr><td>冷启动没有 PredictionResult 怎么办？</td><td>Guaranteed 任务保守拒绝高风险共置；BestEffort 可用 namespace / AIJob 类型历史中位数和默认 retention；同时 AIJob Operator 尽快补齐 CRD。</td></tr>
+<tr><td>怎么证明有效？</td><td>看调度延迟、JCT、waiting time、GPU 利用率、SLO violation、实际 retention；做 ablation：去掉 runtime 排序、去掉 interference Filter、去掉 interference Score。</td></tr>
 </table>
-<div class="qa-summary">收束：<strong>运行时间预测决定"先调谁"（QueueSort），共置干扰预测决定"能不能放 + 放哪里"（Filter + Score）；预测一律在 scheduler 外算好写回 Pod/CRD，plugin 通过 Informer 缓存只读不算。Reserve/Unreserve 维护插件特有的共置账本。</strong></div>
+<div class="qa-summary">收束：预测运行时间决定“先调谁”，共置干扰预测决定“能不能放和放哪里”；预测值统一由 Operator 写 CRD，scheduler plugin 只通过 Informer 本地缓存读取。</div>
 </div>
 
 ## 面试回答
 
 **30 秒版：**
 
-自定义调度逻辑优先用 Scheduling Framework Plugin，复杂系统再考虑 extender 或独立 scheduler。基础例子可以讲 GPU 拓扑感知 Filter/Score；如果面试官追问预测调度器，就把运行时间预测放到 QueueSort，把共置干扰预测放到 PreScore / Filter / Score，把资源账本放到 Reserve / Unreserve。
+自定义调度逻辑优先用 Scheduling Framework Plugin，复杂系统再考虑 extender 或独立 scheduler。基础例子可以讲 GPU 拓扑感知 Filter/Score；如果面试官追问预测调度器，就说 AIJob Operator 负责管理任务和预测状态，scheduler plugin 只读 Informer 本地缓存，把运行时间预测放到 QueueSort，把共置干扰预测放到 Filter / Score，把插件账本放到 Reserve / Unreserve。
 
 **2 分钟版：**
 
-我会先说明自定义调度逻辑有 Framework Plugin、Extender 和独立 Scheduler 三种方式。AI Infra 里的 GPU 拓扑、预测调度、共置干扰判断都在 scheduler 热路径上，所以优先选 Framework Plugin。普通拓扑感知插件可以实现 PreFilter / Filter / Score / Reserve；预测调度器则进一步把运行时间预测用于 QueueSort 和抢占成本，把共置干扰预测用于 Filter 的硬阈值和 Score 的软打分。模型训练、样本回收和在线校准放在 scheduler 外部，plugin 通过本地 cache 或 annotation 读取结果，避免拖慢调度周期。最后用 Reserve / Unreserve 保证 GPU 共置账本和 scheduler assumed state 一致，并用 plugin latency、JCT、GPU 利用率、SLO violation 和实际 slowdown 验证效果。
+我会先说明自定义调度逻辑有 Framework Plugin、Extender 和独立 Scheduler 三种方式。AI Infra 里的 GPU 拓扑、预测调度、共置干扰判断都在 scheduler 热路径上，所以优先选 Framework Plugin。普通拓扑感知插件可以实现 PreFilter / Filter / Score / Reserve；预测调度器则进一步拆成 AIJob Operator 和 Scheduler Plugin：AIJob CRD 表达训练任务，Operator 创建 PodGroup / Pods、维护 checkpoint 和任务状态，并写 PredictionResult / NodeGpuProfile；Plugin 通过 Informer 本地缓存读取结果。运行时间预测用于 QueueSort 和抢占成本，共置干扰预测用于 Filter 的硬阈值和 Score 的软打分。最后用 Reserve / Unreserve 保证 GPU 共置账本和 scheduler assumed state 一致，并用 plugin latency、JCT、GPU 利用率、SLO violation 和实际 slowdown 验证效果。
 
 ## 关联模块
 

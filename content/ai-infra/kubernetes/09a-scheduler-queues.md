@@ -22,6 +22,21 @@
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
 </div>
 
+<div class="card card-d">
+<h3>Scheduler 主链路高频面试问题索引</h3>
+<p>复习时不要按文件顺序硬背。面试官通常按问题追问，先定位问题类型，再展开对应链路。</p>
+<table>
+<tr><th>面试官问法</th><th>先答什么</th><th>深挖入口</th></tr>
+<tr><td>一个 Pod 如何被调度到 Node？</td><td>Watch Pod → Queue → Filter → Score → Bind → Kubelet Run</td><td>本节端到端路径</td></tr>
+<tr><td>Pod 一定会进入 ActiveQ 吗？</td><td>不一定，SchedulingGates / PreEnqueue 可能在入队前挡住</td><td>本节 PreEnqueue 补充</td></tr>
+<tr><td>Pod 为什么 Pending？</td><td>先看 FailedScheduling，再按 Filter 失败插件分类</td><td>资源模型 + Diagnosis / FitError</td></tr>
+<tr><td>scheduler 为什么需要 cache？</td><td>避免每次调度访问 API Server，并支持 Assume 防止过度分配</td><td>Cache、扩展点与抢占</td></tr>
+<tr><td>高优 Pod 调度不上怎么办？</td><td>没有 feasible node 时 PostFilter 触发抢占，但抢占不等于立刻运行</td><td>Preemption 深入</td></tr>
+<tr><td>大集群 scheduler 怎么优化？</td><td>减少候选节点、控制重试、优化插件耗时、用 QueueingHint 精确唤醒</td><td>性能、打分与 HA + QueueingHint</td></tr>
+<tr><td>自定义调度逻辑写哪里？</td><td>先判断是排序、过滤、打分、预留还是绑定前等待</td><td>Scheduler 插件与扩展</td></tr>
+</table>
+</div>
+
 <div class="card card-s">
 <h3>一次 Pod 调度的端到端路径</h3>
 <p>这部分不要只背“Filter、Score、Bind”三个词。面试官如果继续追问，会看你是否知道 <strong>Pod 创建、scheduler 决策、API Server 持久化、kubelet 执行</strong> 是四段不同职责。</p>
@@ -78,6 +93,18 @@ kubelet 拉镜像、创建容器、启动 Pod</code></pre>
 <tr><td><code>unschedulableQ</code></td><td>当前没有可行节点，等待集群状态变化的 Pod</td><td>等条件变了再试</td></tr>
 </table>
 <p>调度器会不断从 <code>activeQ</code> 中取出一个 Pod，开始一次 <strong>Scheduling Cycle</strong>。</p>
+</div>
+
+<div class="card card-w">
+<h3>补充：Pod 不一定立刻进入 ActiveQ</h3>
+<p>新版 Kubernetes 里，Pod 进入正常调度队列前还可能被 <strong>SchedulingGates</strong> 或 <strong>PreEnqueue</strong> 拦住。这个点经常用来区分“只会背 Filter/Score”和“理解现代 scheduler”的候选人。</p>
+<table>
+<tr><th>机制</th><th>发生位置</th><th>解决什么问题</th><th>面试口径</th></tr>
+<tr><td><code>spec.schedulingGates</code></td><td>Pod 入队前</td><td>外部控制器还没准备好前，不让 Pod 进入调度队列</td><td>有 gate 的 Pod 不会进入正常调度循环，避免无效 Filter/Score</td></tr>
+<tr><td><code>PreEnqueue</code></td><td>Queue 前的扩展点</td><td>插件可以在入队前判断 Pod 是否值得进入 ActiveQ</td><td>它比 PreFilter 更早，目标是减少无效入队</td></tr>
+<tr><td>QueueingHint</td><td>调度失败后重新入队</td><td>判断某个集群事件是否真的可能让 Pod 变得可调度</td><td>它解决 UnschedulableQ 的惊群唤醒问题</td></tr>
+</table>
+<div class="qa-summary">收束句：不是所有 Pod 都马上进 ActiveQ；入队前有 gates，失败后有 QueueingHint，目的都是减少无效调度周期。</div>
 </div>
 
 <div class="card card-s">

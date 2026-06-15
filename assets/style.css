@@ -1028,6 +1028,32 @@ pre code {
   font-weight: 400;
 }
 
+pre[class*="language-"],
+pre[class*="language-"] code,
+code[class*="language-"] {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  text-shadow: none;
+}
+
+pre[class*="language-"] {
+  background: var(--soft);
+  color: var(--txt);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.1rem 1.2rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  box-shadow: var(--shadow-xs);
+}
+
+pre[class*="language-"] code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
 /* ============================================
    QA BLOCKS
    ============================================ */
