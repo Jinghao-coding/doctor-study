@@ -1,8 +1,4 @@
-## 先给结论
-
-**NVLink/NVSwitch 是单机 GPU-GPU 的高速通道；PCIe 是 CPU、GPU、NIC、NVMe 等设备之间的通用 I/O 总线；RDMA/InfiniBand/RoCE 是跨服务器通信通道。**
-
-在 8 卡 H100/A100 训练服务器里，**单机内优先走 NVLink/NVSwitch，跨机优先走 GPUDirect RDMA，经由 NIC 和网络交换机传输**。理解这三者，不是为了背硬件名词，而是为了回答一个 AI Infra 的核心问题：同样是“8 张 GPU”，为什么放置位置不同，训练吞吐和延迟会差很多？
+在 8 卡 H100/A100 训练服务器里，**单机内 GPU-GPU 通信优先走 NVLink/NVSwitch，跨机优先走 GPUDirect RDMA，PCIe 则承担 CPU、GPU、NIC、NVMe 之间的通用 I/O**。理解这三者不是为了背硬件名词，而是为了回答一个 AI Infra 的核心问题：同样是「8 张 GPU」，为什么放置位置不同，训练吞吐和延迟会差很多？
 
 ```flow
 单机内 GPU-GPU | 优先走 NVLink / NVSwitch，高带宽、低延迟

@@ -19,7 +19,7 @@
       "title": "GPU 内容模块",
       "groups": [
         {
-          "title": "硬件与互联基础",
+          "title": "总览与硬件直觉",
           "items": [
             {
               "title": "CPU vs GPU",
@@ -48,7 +48,7 @@
           ]
         },
         {
-          "title": "执行模型与调度",
+          "title": "CUDA 执行与内存模型",
           "items": [
             {
               "title": "CUDA 执行模型",
@@ -67,33 +67,33 @@
               "time": 14
             },
             {
-              "title": "CFS vs CUDA 调度",
-              "description": "Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比",
-              "file": "12-cfs-vs-cuda-scheduling.md",
-              "level": "精通",
-              "priority": 3,
-              "time": 18
-            },
-            {
               "title": "Host-Device 数据拷贝",
-              "description": "H2D/D2H、pinned memory、异步拷贝、DataLoader、拷贝诊断",
+              "description": "H2D/D2H 路径、pinned memory、DataLoader、D2H 同步与拷贝诊断",
               "file": "08-host-device-copy.md",
               "level": "进阶",
               "priority": 2,
               "time": 12
             },
             {
-              "title": "Stream 与数据拷贝",
-              "description": "CUDA stream、H2D/D2H、Pinned Memory、计算拷贝重叠",
+              "title": "Stream 与异步流水线",
+              "description": "CUDA stream、event、异步队列、计算/拷贝重叠与多缓冲流水线",
               "file": "08-cuda-streams-data-copy.md",
               "level": "进阶",
               "priority": 2,
               "time": 12
+            },
+            {
+              "title": "CFS vs CUDA 调度",
+              "description": "Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比",
+              "file": "12-cfs-vs-cuda-scheduling.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 18
             }
           ]
         },
         {
-          "title": "共享与隔离",
+          "title": "资源共享与 K8S 隔离",
           "items": [
             {
               "title": "共享方式",
@@ -114,7 +114,7 @@
           ]
         },
         {
-          "title": "性能与诊断",
+          "title": "性能诊断与瓶颈判断",
           "items": [
             {
               "title": "性能指标",
@@ -147,6 +147,19 @@
               "level": "精通",
               "priority": 3,
               "time": 18
+            }
+          ]
+        },
+        {
+          "title": "面试收束与关联",
+          "items": [
+            {
+              "title": "GPU 面试收束",
+              "description": "30 秒/2 分钟回答模板、排查路径、与 LLM/K8S/训练/调度的关联",
+              "file": "14-interview-wrap-up.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 15
             }
           ]
         }

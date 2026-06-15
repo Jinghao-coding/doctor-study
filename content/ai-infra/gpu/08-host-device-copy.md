@@ -1,5 +1,6 @@
 <div class="card card-m">
 <h3>Host-to-Device / Device-to-Host Copy 是什么</h3>
+<div class="qa-summary">本节只回答“数据为什么要在 CPU 和 GPU 之间搬、哪些操作会触发搬运、如何减少和诊断搬运”。CUDA stream 的异步队列和多缓冲流水线放在下一节。</div>
 <p><strong>Host-to-device copy（H2D）</strong> 是把数据从 CPU 内存拷贝到 GPU 显存；<strong>device-to-host copy（D2H）</strong> 是把数据从 GPU 显存拷贝回 CPU 内存。</p>
 <table>
 <tr><th>术语</th><th>含义</th><th>典型资源</th><th>方向</th><th>常见场景</th></tr>

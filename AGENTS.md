@@ -6,6 +6,11 @@
 
 新 agent 进入项目后，应把本项目视为一个静态学习站点，而不是普通手写 HTML 项目。内容源在 `content/`，HTML 页面由 `tools/build_site.py` 生成。
 
+新 agent 进入项目后必须先读：
+
+1. `AGENTS.md`：项目操作手册。
+2. `content/STYLE_GUIDE.md`：Markdown 内容写作模板和章节类型规范。
+
 ## 快速启动
 
 ```bash
@@ -39,6 +44,7 @@ source .venv/bin/activate
 
 - `AGENTS.md`：本操作手册，新 agent 进入项目后先读这里。
 - `content/`：唯一优先编辑的内容源，按 `domain/topic/*.md` 拆分知识点。
+- `content/STYLE_GUIDE.md`：Markdown 内容写作规范，新建或重写内容时必须遵循。
 - `content/site.json`：站点导航和首页主题卡片配置。
 - `content/**/topic.json`：单个主题页的标题、摘要、输出路径和章节顺序。
 - `templates/`：HTML 模板，不要把具体学习内容写在这里。
@@ -523,8 +529,9 @@ git diff --stat
 ## Agent 标准工作流
 
 1. 先读 `AGENTS.md` 和 `content/site.json`。
-2. 判断需求属于新增主题、新增章节、修改内容、删除内容、样式调整还是构建发布。
-3. 定位并编辑 `content/`、`templates/`、`assets/` 或 `tools/` 中的最小必要文件。
-4. 运行 `uv run python tools/build_site.py`。
-5. 检查生成页面、内部链接和 `git status --short`。
-6. 用简短总结告诉用户改了什么、如何预览、是否需要 commit / push。
+2. 涉及内容新增、重写、重组或 Markdown 格式统一时，先读 `content/STYLE_GUIDE.md`。
+3. 判断需求属于新增主题、新增章节、修改内容、删除内容、样式调整还是构建发布。
+4. 定位并编辑 `content/`、`templates/`、`assets/` 或 `tools/` 中的最小必要文件。
+5. 运行 `uv run python tools/build_site.py`。
+6. 检查生成页面、内部链接和 `git status --short`。
+7. 用简短总结告诉用户改了什么、如何预览、是否需要 commit / push。

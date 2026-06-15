@@ -1,5 +1,6 @@
 <div class="card card-m">
 <h3>Host-to-Device / Device-to-Host 数据拷贝</h3>
+<div class="qa-summary">本节关注“如何用 stream/event 把拷贝、kernel 和 CPU 准备组织成异步流水线”。H2D/D2H 的触发场景和 DataLoader 诊断见上一节。</div>
 <p>GPU 有自己的显存（HBM），CPU 也有自己的内存（DDR）。数据在两者之间搬运，就是 H2D（Host to Device）和 D2H（Device to Host）拷贝。</p>
 
 <h3>为什么数据拷贝重要？</h3>

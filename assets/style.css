@@ -794,11 +794,20 @@ p { margin: 0.6rem 0; color: var(--txt); line-height: 1.75; }
 .idx-hero-stats span { margin-top: 0.2rem; color: var(--muted); font-size: 0.8rem; font-weight: 500; }
 
 /* Lanes */
-.idx-lanes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3.5rem; }
-.idx-lanes article { padding: 1.4rem; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--card-solid); }
+.idx-lanes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; margin-bottom: 3.5rem; }
+.idx-lanes article { min-height: 100%; padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--card-solid); }
 .idx-lanes span { display: inline-flex; align-items: center; justify-content: center; width: 1.9rem; height: 1.9rem; border-radius: 8px; background: var(--bg-2); color: var(--muted); font-size: 0.78rem; font-weight: 700; }
 .idx-lanes h3 { margin: 0.9rem 0 0.4rem; color: var(--txt); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
 .idx-lanes p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+.idx-lane-links {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--txt-2);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
 
 /* Module tracks */
 .idx-track { margin-bottom: 2.75rem; }
@@ -2667,11 +2676,12 @@ body.resizing-module {
   .app-sidebar,
   .side-resizer,
   .tabs-nav { top: 4.7rem; }
+  .idx-lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
   .idx-track-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .idx-lanes { grid-template-columns: 1fr; }
+  .idx-lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .idx-footer-panel { align-items: flex-start; flex-direction: column; }
   .idx-shortcuts { justify-content: flex-start; min-width: 0; }
   .tab-panel { padding: 1.1rem; border-radius: var(--r-xl); }
@@ -2749,6 +2759,7 @@ body.resizing-module {
   .idx-topbar-inner { gap: 0.5rem; }
   .idx-home-nav { gap: 0.15rem; }
   .idx-hero-stats { gap: 1.25rem; }
+  .idx-lanes { grid-template-columns: 1fr; }
   .idx-lanes article { min-height: auto; }
   .idx-track-cards { grid-template-columns: 1fr; }
   .idx-footer-panel { padding-top: 1.25rem; }

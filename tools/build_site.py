@@ -17,24 +17,28 @@ TRACKS = [
     {
         "key": "foundation_cards",
         "label": "计算机基础",
+        "short_label": "基础",
         "eyebrow": "Foundation",
-        "slugs": ["cs-basics", "ml-dl"],
+        "description": "操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。",
+        "slugs": ["cs-basics"],
     },
     {
         "key": "systems_cards",
         "label": "AI Infra 核心系统",
+        "short_label": "核心系统",
         "eyebrow": "Core Systems",
+        "description": "从 Transformer、GPU/CUDA 到算力资源模型，建立大模型系统最核心的硬件与模型执行直觉。",
         "slugs": [
             "ai-infra/transformer",
             "ai-infra/gpu",
-            "ai-infra/llm-inference",
-            "ai-infra/distributed-training",
         ],
     },
     {
         "key": "scheduling_cards",
         "label": "调度与集群",
+        "short_label": "调度集群",
         "eyebrow": "Scheduling",
+        "description": "任务调度理论、Kubernetes 与 GPU 集群管理，覆盖多租户、拓扑、队列和稳定性治理。",
         "slugs": [
             "ai-infra/scheduling",
             "ai-infra/kubernetes",
@@ -42,19 +46,24 @@ TRACKS = [
         ],
     },
     {
-        "key": "interview_cards",
-        "label": "系统设计与方法",
-        "eyebrow": "Methods",
+        "key": "serving_training_cards",
+        "label": "推理 / 训练 / 性能",
+        "short_label": "推理训练",
+        "eyebrow": "Serving & Training",
+        "description": "LLM 推理、分布式训练与性能预测建模，聚焦吞吐、延迟、显存、通信和容量判断。",
         "slugs": [
-            "ai-infra/system-design",
+            "ai-infra/llm-inference",
+            "ai-infra/distributed-training",
             "ai-infra/performance-prediction",
         ],
     },
     {
-        "key": "paper_cards",
-        "label": "研究与表达",
-        "eyebrow": "Research",
-        "slugs": ["ai-infra/papers", "ai-infra/agent"],
+        "key": "interview_expression_cards",
+        "label": "论文项目与面试表达",
+        "short_label": "项目表达",
+        "eyebrow": "Projects & Interview",
+        "description": "论文工作、系统设计题和 Agent 工程表达，服务自我介绍、项目深挖和综合方案题。",
+        "slugs": ["ai-infra/papers", "ai-infra/system-design", "ai-infra/agent"],
     },
 ]
 
@@ -269,9 +278,11 @@ def render_top_nav(output: Path) -> str:
         if not topics:
             continue
         links = "".join(topic_link(topic) for topic in topics)
+        label = html.escape(track.get("short_label", track["label"]))
+        full_label = html.escape(track["label"])
         menus.append(
             '<details class="nav-menu">'
-            f'<summary>{html.escape(track["label"])}</summary>'
+            f'<summary title="{full_label}">{label}</summary>'
             f'<div class="nav-menu-panel">{links}</div>'
             '</details>'
         )
@@ -296,7 +307,8 @@ def render_side_nav(output: Path, current_output: Path) -> str:
         topics = topics_in_track(track)
         if not topics:
             continue
-        group_name = track["label"]
+        group_name = track.get("short_label", track["label"])
+        group_title = track["label"]
         links = []
         for topic in topics:
             active = (ROOT / topic["output"]).resolve() == current_output.resolve()
@@ -316,7 +328,7 @@ def render_side_nav(output: Path, current_output: Path) -> str:
             )
         sections.append(
             '<div class="side-section">'
-            f'<div class="side-section-title">{html.escape(group_name)}</div>'
+            f'<div class="side-section-title" title="{html.escape(group_title)}">{html.escape(group_name)}</div>'
             f'{"".join(links)}'
             '</div>'
         )
@@ -805,6 +817,72 @@ def _topic_progress_meta(topic: dict) -> tuple[str, int]:
     return progress_key, total
 
 
+def _render_home_nav() -> str:
+    links = [
+        '<a href="#study-tracks">5 条主线</a>',
+        '<a href="pages/cs-basics/index.html">计算机基础</a>',
+        '<a href="pages/ai-infra/gpu/index.html">GPU</a>',
+        '<a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>',
+        '<a href="pages/ai-infra/papers/index.html">论文项目</a>',
+    ]
+    return "\n".join(links)
+
+
+def _render_home_lanes() -> str:
+    lanes = []
+    for index, track in enumerate(TRACKS, 1):
+        topics = topics_in_track(track)
+        topic_titles = " / ".join(topic["title"] for topic in topics)
+        lanes.append(
+            '<article>'
+            f'<span>{index:02d}</span>'
+            f'<h3>{html.escape(track["label"])}</h3>'
+            f'<p>{html.escape(track.get("description", ""))}</p>'
+            f'<div class="idx-lane-links">{html.escape(topic_titles)}</div>'
+            '</article>'
+        )
+    return "\n".join(lanes)
+
+
+def _render_home_tracks(card_template: str) -> str:
+    sections = []
+    for track in TRACKS:
+        cards = "\n\n".join(topic_card_from_template(topic, card_template) for topic in topics_in_track(track))
+        if not cards:
+            continue
+        sections.append(
+            '<section class="idx-track" aria-label="{label}">'
+            '<div class="idx-track-head">'
+            '<span>{eyebrow}</span>'
+            '<h2>{label}</h2>'
+            '<p>{description}</p>'
+            '</div>'
+            '<div class="idx-track-cards">'
+            '{cards}'
+            '</div>'
+            '</section>'.format(
+                label=html.escape(track["label"]),
+                eyebrow=html.escape(track.get("eyebrow", "")),
+                description=html.escape(track.get("description", "")),
+                cards=cards,
+            )
+        )
+    return "\n\n".join(sections)
+
+
+def topic_card_from_template(topic: dict, card_template: str) -> str:
+    tags = "".join(f"<span>{html.escape(tag)}</span>" for tag in topic.get("tags", []))
+    progress_key, progress_total = _topic_progress_meta(topic)
+    card = card_template.replace("{{color}}", html.escape(topic.get("color", "c1")))
+    card = card.replace("{{href}}", html.escape(topic["output"]))
+    card = card.replace("{{title}}", html.escape(topic["title"]))
+    card = card.replace("{{description}}", html.escape(topic.get("description", "")))
+    card = card.replace("{{tags}}", tags)
+    card = card.replace("{{progress_key}}", html.escape(progress_key))
+    card = card.replace("{{progress_total}}", str(progress_total))
+    return card
+
+
 def render_topic(topic_path: Path) -> Path:
     topic = json.loads(topic_path.read_text(encoding="utf-8"))
     output = ROOT / topic["output"]
@@ -829,30 +907,17 @@ def render_index() -> Path:
     output = ROOT / "index.html"
     card_template = (TEMPLATES / "topic-card.html").read_text(encoding="utf-8")
 
-    def topic_card(topic: dict) -> str:
-        tags = "".join(f"<span>{html.escape(tag)}</span>" for tag in topic.get("tags", []))
-        progress_key, progress_total = _topic_progress_meta(topic)
-        card = card_template.replace("{{color}}", html.escape(topic.get("color", "c1")))
-        card = card.replace("{{href}}", html.escape(topic["output"]))
-        card = card.replace("{{title}}", html.escape(topic["title"]))
-        card = card.replace("{{description}}", html.escape(topic.get("description", "")))
-        card = card.replace("{{tags}}", tags)
-        card = card.replace("{{progress_key}}", html.escape(progress_key))
-        card = card.replace("{{progress_total}}", str(progress_total))
-        return card
-
     topics = SITE.get("topics", [])
-    cards = [topic_card(topic) for topic in topics]
-    grouped_cards = {
-        track["key"]: "\n\n".join(topic_card(topic) for topic in topics_in_track(track))
-        for track in TRACKS
-    }
+    cards = [topic_card_from_template(topic, card_template) for topic in topics]
     template = (TEMPLATES / "index.html").read_text(encoding="utf-8")
     page = template.replace("{{title}}", html.escape(SITE["title"]))
     page = page.replace("{{subtitle}}", html.escape(SITE.get("subtitle", "")))
     page = page.replace("{{topic_cards}}", "\n\n".join(cards))
-    for key, value in grouped_cards.items():
-        page = page.replace("{{" + key + "}}", value)
+    page = page.replace("{{home_nav}}", _render_home_nav())
+    page = page.replace("{{track_count}}", str(len(TRACKS)))
+    page = page.replace("{{topic_count}}", str(len(topics)))
+    page = page.replace("{{home_lanes}}", _render_home_lanes())
+    page = page.replace("{{home_tracks}}", _render_home_tracks(card_template))
     page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))
     page = page.replace("{{script_path}}", asset_link(output, "assets/script.js"))
     output.write_text(page, encoding="utf-8")

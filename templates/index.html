@@ -15,10 +15,7 @@
       <strong>doctor-study</strong>
     </a>
     <nav class="idx-home-nav" aria-label="首页快捷入口">
-      <a href="pages/ai-infra/gpu/index.html">GPU</a>
-      <a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>
-      <a href="pages/cs-basics/index.html">计算机基础</a>
-      <a href="pages/ai-infra/agent/index.html">AI Agent</a>
+      {{home_nav}}
     </nav>
   </div>
 </header>
@@ -36,84 +33,17 @@
     <a class="idx-secondary" href="pages/ai-infra/system-design/index.html">进入系统设计题</a>
   </div>
   <div class="idx-hero-stats" aria-label="站点内容概览">
-    <div><strong>12</strong><span>学习主题</span></div>
-    <div><strong>5</strong><span>复习主线</span></div>
+    <div><strong>{{topic_count}}</strong><span>学习主题</span></div>
+    <div><strong>{{track_count}}</strong><span>复习主线</span></div>
     <div><strong>QA</strong><span>面试问答</span></div>
   </div>
 </section>
 
-<section class="idx-lanes" aria-label="推荐学习路径">
-  <article>
-    <span>01</span>
-    <h3>先建立资源路径直觉</h3>
-    <p>看 GPU、PCIe / NVLink、RDMA、NUMA，理解数据真正从哪里走。</p>
-  </article>
-  <article>
-    <span>02</span>
-    <h3>再补系统调度底层</h3>
-    <p>串起 CFS、cgroups、内存管理、I/O、K8s Scheduler 与 GPU 设备分配。</p>
-  </article>
-  <article>
-    <span>03</span>
-    <h3>最后落到面试方案</h3>
-    <p>把训练平台、推理服务、KV Cache、Agent 工程组织成可讲清的架构答案。</p>
-  </article>
+<section class="idx-lanes" id="study-tracks" aria-label="5 条复习主线">
+  {{home_lanes}}
 </section>
 
-<section class="idx-track" aria-label="计算机基础">
-  <div class="idx-track-head">
-    <span>Foundation</span>
-    <h2>计算机基础</h2>
-    <p>操作系统、组成原理、网络、Linux/容器、编程工程，以及 ML/DL 八股。</p>
-  </div>
-  <div class="idx-track-cards">
-    {{foundation_cards}}
-  </div>
-</section>
-
-<section class="idx-track" aria-label="AI Infra 核心系统">
-  <div class="idx-track-head">
-    <span>Core Systems</span>
-    <h2>AI Infra 核心系统</h2>
-    <p>GPU 与 CUDA、LLM 推理系统、分布式训练，覆盖大模型任务的算力与并行底座。</p>
-  </div>
-  <div class="idx-track-cards">
-    {{systems_cards}}
-  </div>
-</section>
-
-<section class="idx-track" aria-label="调度与集群">
-  <div class="idx-track-head">
-    <span>Scheduling</span>
-    <h2>调度与集群</h2>
-    <p>任务调度理论、Kubernetes、GPU 集群管理，覆盖 DL/LLM/异构场景的调度。</p>
-  </div>
-  <div class="idx-track-cards">
-    {{scheduling_cards}}
-  </div>
-</section>
-
-<section class="idx-track" aria-label="系统设计与方法">
-  <div class="idx-track-head">
-    <span>Methods</span>
-    <h2>系统设计与方法</h2>
-    <p>把知识点组织成可回答的方案：系统设计题、性能预测与建模。</p>
-  </div>
-  <div class="idx-track-cards">
-    {{interview_cards}}
-  </div>
-</section>
-
-<section class="idx-track" aria-label="研究与表达">
-  <div class="idx-track-head">
-    <span>Research</span>
-    <h2>研究与表达</h2>
-    <p>沉淀论文工作、Agent 工程方案、实验结果和高频追问。</p>
-  </div>
-  <div class="idx-track-cards">
-    {{paper_cards}}
-  </div>
-</section>
+{{home_tracks}}
 
 <footer class="idx-footer-panel">
   <div>
