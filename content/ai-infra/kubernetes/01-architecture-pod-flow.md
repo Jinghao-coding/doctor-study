@@ -19,76 +19,10 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 
 <div class="card card-s">
 <h3>Kubernetes 架构图</h3>
-<svg viewBox="0 0 920 520" role="img" aria-label="Kubernetes 架构图">
-  <defs>
-    <marker id="k8sArchArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="#64748b" />
-    </marker>
-  </defs>
-
-  <rect x="30" y="30" width="860" height="190" rx="18" fill="#eef6ff" stroke="#8bbcf6" />
-  <text x="60" y="65" font-size="18" font-weight="700" fill="#1d4ed8">Control Plane</text>
-
-  <rect x="365" y="82" width="190" height="62" rx="12" fill="#ffffff" stroke="#3b82f6" stroke-width="1.6" />
-  <text x="420" y="108" font-size="14" font-weight="700" fill="#1e3a8a">API Server</text>
-  <text x="390" y="130" font-size="11" fill="#475569">唯一直接读写 etcd 的入口</text>
-
-  <rect x="80" y="95" width="150" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="135" y="127" font-size="14" fill="#1e3a8a">etcd</text>
-
-  <rect x="305" y="165" width="150" height="42" rx="10" fill="#ffffff" stroke="#93c5fd" />
-  <text x="332" y="191" font-size="13" fill="#1e3a8a">Scheduler</text>
-
-  <rect x="495" y="165" width="190" height="42" rx="10" fill="#ffffff" stroke="#93c5fd" />
-  <text x="528" y="191" font-size="13" fill="#1e3a8a">Controller Manager</text>
-
-  <rect x="700" y="95" width="145" height="55" rx="12" fill="#ffffff" stroke="#93c5fd" />
-  <text x="725" y="119" font-size="13" fill="#1e3a8a">kubectl /</text>
-  <text x="725" y="138" font-size="13" fill="#1e3a8a">clients</text>
-
-  <path d="M230 122 L365 113" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M365 119 L230 130" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M772 122 L555 113" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M390 165 L425 144" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M530 165 L500 144" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-
-  <rect x="30" y="285" width="395" height="185" rx="18" fill="#f0fdf4" stroke="#86efac" />
-  <text x="60" y="320" font-size="18" font-weight="700" fill="#15803d">Worker Node A</text>
-  <rect x="70" y="342" width="115" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="103" y="370" font-size="13" fill="#166534">kubelet</text>
-  <rect x="210" y="342" width="150" height="45" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="232" y="370" font-size="13" fill="#166534">containerd / CRI</text>
-  <rect x="70" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="101" y="429" font-size="12" fill="#166534">CNI</text>
-  <rect x="174" y="405" width="105" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="195" y="429" font-size="12" fill="#166534">kube-proxy</text>
-  <rect x="295" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#86efac" />
-  <text x="328" y="429" font-size="12" fill="#166534">Pods</text>
-
-  <rect x="495" y="285" width="395" height="185" rx="18" fill="#f5f3ff" stroke="#c4b5fd" />
-  <text x="525" y="320" font-size="18" font-weight="700" fill="#6d28d9">Worker Node B</text>
-  <rect x="535" y="342" width="115" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="568" y="370" font-size="13" fill="#5b21b6">kubelet</text>
-  <rect x="675" y="342" width="150" height="45" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="697" y="370" font-size="13" fill="#5b21b6">containerd / CRI</text>
-  <rect x="535" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="566" y="429" font-size="12" fill="#5b21b6">CNI</text>
-  <rect x="639" y="405" width="105" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="660" y="429" font-size="12" fill="#5b21b6">kube-proxy</text>
-  <rect x="760" y="405" width="90" height="38" rx="10" fill="#ffffff" stroke="#c4b5fd" />
-  <text x="793" y="429" font-size="12" fill="#5b21b6">Pods</text>
-
-  <path d="M420 144 C360 235 130 245 128 342" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M500 144 C560 235 592 245 592 342" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M185 364 L210 364" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M285 387 L340 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M128 387 L115 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M650 364 L675 364" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M750 387 L805 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-  <path d="M592 387 L580 405" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#k8sArchArrow)" />
-
-  <text x="65" y="500" font-size="12" fill="#64748b">关键点：Scheduler、Controller Manager、kubelet 都通过 API Server 协作；etcd 只保存状态，不直接驱动节点。</text>
-</svg>
+<div class="figure">
+<img src="../../../resources/images/k8s-scheduler/kubernetes-components-official.svg" alt="Kubernetes 官方组件架构图" loading="lazy">
+<p class="caption">Kubernetes 官方文档组件图：控制面通过 API Server 协调集群状态，节点侧由 kubelet、kube-proxy 和容器运行时执行工作负载。</p>
+</div>
 </div>
 
 <div class="card card-m">
@@ -132,12 +66,114 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 </table>
 </div>
 
+<div class="card card-s">
+<h3>控制面与数据面组件高频追问</h3>
+<table>
+<tr><th>组件</th><th>面试官问法</th><th>回答抓手</th></tr>
+<tr><td>API Server</td><td>为什么它是唯一直接访问 etcd 的组件？</td><td>统一认证鉴权、准入、版本转换、乐观并发和 watch 分发；其他组件通过 API Server 解耦。</td></tr>
+<tr><td>etcd</td><td>resourceVersion 和 watch 有什么关系？</td><td>resourceVersion 是对象版本和 watch 起点；watch 太旧会遇到 compacted，需要重新 list。</td></tr>
+<tr><td>Scheduler</td><td>Filter / Score / Reserve / Permit / Bind 怎么区分？</td><td>Filter 判断能不能放，Score 判断放哪里更好，Reserve 本地预留，Permit 等待或拒绝，Bind 写回 API Server。</td></tr>
+<tr><td>Controller Manager</td><td>什么是 reconcile？</td><td>比较期望状态和实际状态，持续创建、更新、删除对象，让系统最终一致。</td></tr>
+<tr><td>kubelet</td><td>kubelet 如何调用 CRI / CNI / CSI？</td><td>CRI 管容器运行时，CNI 配 Pod 网络，CSI / volume manager 挂载存储；kubelet 编排本节点执行。</td></tr>
+<tr><td>containerd</td><td>containerd、runc、shim、pause 容器分别是什么？</td><td>containerd 是高层 runtime，runc 创建 OCI 容器，shim 托管容器进程，pause 持有 Pod 共享 namespace。</td></tr>
+</table>
+</div>
+
+<div class="card card-d">
+<h3>Container Runtime / containerd 面试速查</h3>
+<p>containerd 相关问题通常不是问“会不会用 Docker”，而是问清 <strong>kubelet → CRI → containerd → shim → runc</strong> 这条节点侧执行链路，以及 Pod sandbox / pause 容器为什么存在。</p>
+<table>
+<tr><th>问题</th><th>一句话答案</th><th>排障关键词</th></tr>
+<tr><td>CRI 是什么？</td><td>Kubernetes 定义的容器运行时接口，kubelet 通过 CRI gRPC 调用运行时。</td><td><code>crictl</code>、runtime endpoint</td></tr>
+<tr><td>containerd 和 runc 区别？</td><td>containerd 管镜像、快照、容器生命周期；runc 是 OCI low-level runtime，真正创建 Linux 容器。</td><td>OCI bundle、snapshotter</td></tr>
+<tr><td>pause 容器是什么？</td><td>Pod sandbox 的基础容器，先启动并持有 Pod 的 network / IPC 等共享 namespace。</td><td>Pod IP、sandbox</td></tr>
+<tr><td>containerd-shim 做什么？</td><td>托管容器进程，转发 stdio / exit status，让 containerd 重启后容器仍可继续运行。</td><td>shim 进程、僵尸进程</td></tr>
+<tr><td>镜像怎么拉？</td><td>kubelet 通过 CRI 调 PullImage，containerd 解析 manifest、拉 layer、校验 digest、写入 content store。</td><td>ImagePullBackOff、registry、Secret</td></tr>
+<tr><td>CNI 谁调用？</td><td>kubelet 创建 Pod sandbox 时通过 CRI 触发 runtime 侧配置网络；containerd CRI plugin 会调用 CNI 插件。</td><td>ContainerCreating、CNI config</td></tr>
+<tr><td>Docker 镜像还能跑吗？</td><td>能。移除 dockershim 不等于不能跑 Docker 构建的镜像；镜像遵循 OCI/Docker image spec。</td><td>dockershim removed、OCI</td></tr>
+</table>
+</div>
+
 <div class="card card-m">
 
 <h3>架构与 Pod 主链路高频问答</h3>
 
 <p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
 
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: API Server 为什么通常是唯一直接访问 etcd 的组件？</div>
+<div class="qa-a">
+<p>因为 API Server 是 Kubernetes 的统一状态入口。它集中处理认证、鉴权、准入、默认值、版本转换、对象校验、乐观并发和 watch 分发。如果 controller、scheduler、kubelet 都直接读写 etcd，权限、版本兼容、并发控制和审计都会失控。</p>
+<div class="qa-summary">面试口径：etcd 是状态存储，不是组件协作总线；组件协作通过 API Server 和 watch 完成。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Controller Manager 的 reconcile 到底是什么意思？</div>
+<div class="qa-a">
+<p>reconcile 是控制器把实际状态拉回期望状态的循环。以 Deployment 为例，用户声明 replicas=3，Deployment Controller 确保 ReplicaSet 存在，ReplicaSet Controller 确保有 3 个 Pod。Pod 被删、节点故障、状态变化时，controller 会再次对比 spec 和 status，并执行修正动作。</p>
+<div class="qa-summary">面试口径：reconcile = watch 变化 + 对比期望/实际 + 幂等修正，目标是最终一致，不是同步阻塞执行。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: kubelet 如何调用 CRI / CNI / CSI？</div>
+<div class="qa-a">
+<p>kubelet watch 到绑定到本节点的 Pod 后，进入 SyncPod。它先通过 volume manager / CSI 准备卷，再通过 CRI 调用 containerd 创建 Pod sandbox。创建 sandbox 时 runtime 侧会调用 CNI 配置网络，随后 kubelet 继续通过 CRI 拉镜像、创建并启动业务容器。</p>
+<pre><code class="language-text">kubelet
+  → CSI / volume manager 准备 volume
+  → CRI RunPodSandbox
+  → containerd CRI plugin 调 CNI 配网络
+  → CRI PullImage / CreateContainer / StartContainer
+  → containerd-shim / runc 创建容器进程</code></pre>
+<div class="qa-summary">面试口径：kubelet 是节点编排者；CRI 管容器，CNI 管网络，CSI 管存储。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: containerd、runc、containerd-shim 分别负责什么？</div>
+<div class="qa-a">
+<p><code>containerd</code> 是高层容器运行时，负责镜像拉取、content store、snapshot、容器生命周期和 CRI 服务。<code>runc</code> 是 OCI low-level runtime，负责根据 OCI spec 真正创建 Linux 容器。<code>containerd-shim</code> 位于 containerd 和容器进程之间，托管容器进程、收集退出状态和 stdio，让 containerd daemon 重启时容器不必一起退出。</p>
+<div class="qa-summary">面试口径：containerd 管生命周期和镜像，runc 负责创建容器，shim 负责把容器进程和 containerd 解耦。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: pause 容器 / Pod sandbox 是什么？为什么需要它？</div>
+<div class="qa-a">
+<p>Pod 不是单个容器，而是一组共享网络等 namespace 的容器。pause 容器是 Pod sandbox 的基础容器，它先启动，持有 Pod 的 network namespace、Pod IP 和部分共享 namespace。业务容器启动时加入这个 sandbox。这样业务容器重启时，Pod 的网络身份可以保持稳定。</p>
+<div class="qa-summary">面试口径：pause 容器是 Pod 的 namespace 锚点；它让 Pod 里的多个容器共享同一个网络身份。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ImagePullBackOff 和 ErrImagePull 怎么排查？</div>
+<div class="qa-a">
+<p>先看 Pod Events 里的具体错误：镜像名/tag 是否存在、registry 是否可达、imagePullSecret 是否正确、节点 DNS/代理是否正常、证书是否可信。再到节点侧用 <code>crictl pull</code> 或查看 containerd 日志确认 runtime 能否拉取。</p>
+<pre><code class="language-bash">kubectl describe pod &lt;pod&gt;
+kubectl get secret -n &lt;ns&gt;
+crictl pull &lt;image&gt;
+journalctl -u containerd</code></pre>
+<div class="qa-summary">面试口径：ImagePullBackOff 是 kubelet 拉镜像失败后的退避状态；根因通常在镜像名、权限、网络、证书或 registry。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ContainerCreating 卡住通常看哪里？</div>
+<div class="qa-a">
+<p>ContainerCreating 表示已经调度到节点，但节点侧执行还没完成。排查顺序是：Pod Events → kubelet 日志 → containerd 日志 → CNI 日志 / 配置 → CSI mount → 镜像拉取。常见原因包括 CNI 分配 IP 失败、CSI 挂载超时、sandbox 创建失败、镜像拉取慢、节点磁盘压力。</p>
+<div class="qa-summary">面试口径：Pending 偏调度侧，ContainerCreating 偏节点执行侧；重点看 kubelet、runtime、CNI、CSI。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kubernetes 移除 dockershim 后，Docker 镜像还能跑吗？</div>
+<div class="qa-a">
+<p>能。dockershim 移除的是 kubelet 直接对接 Docker Engine 的内置适配层，不是移除 Docker 镜像格式。只要镜像符合 OCI / Docker image spec，containerd 和 CRI-O 都可以拉取和运行。变化在节点运行时链路：kubelet 通过 CRI 直接对接 containerd，而不是 kubelet → dockershim → Docker Engine。</p>
+<div class="qa-summary">面试口径：dockershim removed 不等于 Docker image 不能用；镜像格式兼容，运行时链路变了。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

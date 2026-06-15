@@ -167,8 +167,16 @@
               "time": 20
             },
             {
+              "title": "Operator 与 CRD",
+              "description": "CRD、Operator、controller-runtime、Reconcile、Finalizer、OwnerReference、Status Conditions",
+              "file": "08a-operator-crd.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
               "title": "扩展与工程化",
-              "description": "CRD、Operator、controller-runtime、Helm、Kustomize、GitOps、ArgoCD/Flux",
+              "description": "Helm、Kustomize、GitOps、ArgoCD/Flux、渐进式发布、扩展点选型",
               "file": "08-extension-engineering.md",
               "level": "精通",
               "priority": 2,

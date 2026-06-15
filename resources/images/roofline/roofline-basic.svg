@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Roofline model diagram</title>
+  <desc id="desc">Roofline model showing memory bandwidth roof, compute roof, ridge point, memory-bound region and compute-bound region.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .axis{stroke:#334155;stroke-width:2.2;marker-end:url(#arrow)}
+      .grid{stroke:#e2e8f0;stroke-width:1}
+      .label{font:600 15px Inter,Arial,sans-serif;fill:#0f172a}
+      .small{font:13px Inter,Arial,sans-serif;fill:#475569}
+      .roof{stroke:#2563eb;stroke-width:4;fill:none}
+      .mem{stroke:#f59e0b;stroke-width:4;fill:none}
+      .point{fill:#ef4444;stroke:#991b1b;stroke-width:1.5}
+      .box{fill:#ffffff;stroke:#cbd5e1;stroke-width:1.4;rx:12}
+      .region{fill:#f8fafc;stroke:#e2e8f0;stroke-width:1.2;rx:14}
+    </style>
+  </defs>
+  <rect width="900" height="560" fill="#ffffff"/>
+  <text x="54" y="48" style="font:800 24px Inter,Arial,sans-serif;fill:#0f172a">Roofline Model</text>
+  <text x="54" y="74" class="small">Attainable Performance = min(Peak Compute, Memory Bandwidth x Arithmetic Intensity)</text>
+
+  <line x1="110" y1="455" x2="815" y2="455" class="axis"/>
+  <line x1="110" y1="455" x2="110" y2="105" class="axis"/>
+  <text x="335" y="512" class="label">Arithmetic Intensity (FLOPs / Byte)</text>
+  <text x="20" y="282" transform="rotate(-90 20 282)" class="label">Performance (FLOPs / s)</text>
+
+  <line x1="190" y1="455" x2="190" y2="120" class="grid"/>
+  <line x1="320" y1="455" x2="320" y2="120" class="grid"/>
+  <line x1="450" y1="455" x2="450" y2="120" class="grid"/>
+  <line x1="580" y1="455" x2="580" y2="120" class="grid"/>
+  <line x1="710" y1="455" x2="710" y2="120" class="grid"/>
+  <line x1="110" y1="380" x2="815" y2="380" class="grid"/>
+  <line x1="110" y1="305" x2="815" y2="305" class="grid"/>
+  <line x1="110" y1="230" x2="815" y2="230" class="grid"/>
+  <line x1="110" y1="155" x2="815" y2="155" class="grid"/>
+
+  <rect x="140" y="330" width="235" height="82" class="region"/>
+  <text x="160" y="360" class="label">Memory-bound</text>
+  <text x="160" y="384" class="small">Low arithmetic intensity</text>
+  <text x="160" y="404" class="small">Optimize data movement</text>
+
+  <rect x="585" y="150" width="220" height="82" class="region"/>
+  <text x="605" y="180" class="label">Compute-bound</text>
+  <text x="605" y="204" class="small">High arithmetic intensity</text>
+  <text x="605" y="224" class="small">Optimize compute throughput</text>
+
+  <path d="M110 455 L452 155" class="mem"/>
+  <path d="M452 155 L805 155" class="roof"/>
+  <circle cx="452" cy="155" r="6" class="point"/>
+  <text x="418" y="132" class="label">Ridge Point</text>
+
+  <circle cx="240" cy="342" r="7" class="point"/>
+  <text x="254" y="347" class="small">LayerNorm / Softmax</text>
+  <circle cx="660" cy="180" r="7" class="point"/>
+  <text x="674" y="185" class="small">Large GEMM</text>
+
+  <rect x="535" y="295" width="285" height="116" class="box"/>
+  <text x="555" y="326" class="label">How to read</text>
+  <text x="555" y="352" class="small">Below slanted roof: memory bandwidth limit</text>
+  <text x="555" y="376" class="small">Below flat roof: compute peak limit</text>
+  <text x="555" y="400" class="small">AI = FLOPs / Bytes</text>
+
+  <text x="126" y="478" class="small">low</text>
+  <text x="764" y="478" class="small">high</text>
+  <text x="72" y="450" class="small">low</text>
+  <text x="70" y="130" class="small">high</text>
+</svg>

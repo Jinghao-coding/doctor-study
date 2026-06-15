@@ -413,16 +413,16 @@ class MultiHeadAttention(nn.Module):
 </table>
 <h2>阅读路径</h2>
 <ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
-<div class="card card-d">
-<h3>Roofline：判断瓶颈在算力还是带宽</h3>
-<p>一个计算任务的耗时，要么受限于<strong>算力</strong>（每秒能做多少浮点运算），要么受限于<strong>带宽</strong>（每秒能搬多少数据）。判断靠<strong>算术强度</strong>：</p>
-<p>$$\text{算术强度} = \frac{\text{计算量 (FLOPs)}}{\text{数据搬运量 (Bytes)}}$$</p>
+<div class="card card-m">
+<h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
+<p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>
 <table>
-<tr><th>判定</th><th>条件</th><th>瓶颈</th><th>优化方向</th></tr>
-<tr><td>compute-bound</td><td>算术强度 &gt; 机器平衡点</td><td>算力</td><td>TensorCore、低精度、提高利用率</td></tr>
-<tr><td>memory-bound</td><td>算术强度 &lt; 机器平衡点</td><td>带宽</td><td>kernel fusion、量化、增大 batch</td></tr>
+<tr><th>概念</th><th>本页用法</th></tr>
+<tr><td>算术强度</td><td>判断一个 Transformer kernel 的数据复用程度</td></tr>
+<tr><td>机器平衡点</td><td>A100 约 156 FLOPs/Byte，低于它通常更偏 memory-bound</td></tr>
+<tr><td>优化方向</td><td>memory-bound 优先减少 HBM 读写；compute-bound 优先提高 Tensor Core 利用率</td></tr>
 </table>
-<p>机器平衡点 = 峰值算力 ÷ 峰值带宽。算术强度高于它卡算力，低于它卡带宽。</p>
+<div class="qa-summary">跳转记忆：模型公式和通用图看性能预测；Transformer 具体算子分类看本页。</div>
 </div>
 <div class="card card-d">
 <h3>哪些操作 compute-bound，哪些 memory-bound</h3>
@@ -446,13 +446,20 @@ class MultiHeadAttention(nn.Module):
 <div class="qa-q">Q: 怎么判断一个 kernel 是 compute-bound 还是 memory-bound？</div>
 <div class="qa-a"><p>算它的算术强度（FLOPs ÷ 访存 bytes），和机器平衡点（峰值算力 ÷ 峰值带宽）比较。高于平衡点就是 compute-bound，低于就是 memory-bound。比如 A100 平衡点 ≈ 312 TFLOPS / 2 TB/s ≈ 156 FLOP/byte，而 batch=1 decode 算术强度约为 1，远低于平衡点，是典型 memory-bound。</p></div>
 </div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Roofline 模型在面试中怎么完整回答？</div>
+<div class="qa-a">
+<p>我会先定义横轴和纵轴：横轴是算术强度 <code>FLOPs/Byte</code>，纵轴是实际性能 <code>FLOPs/s</code>。然后给公式：可达性能上限等于 <code>min(峰值算力, 峰值带宽 × 算术强度)</code>。图上斜线是 memory roof，水平线是 compute roof，交点 ridge point 是机器平衡点。如果 kernel 落在斜线区域，优化方向是减少访存、提高数据复用、融合算子；如果落在水平线区域，优化方向是提高 Tensor Core 利用率、优化 tile、使用低精度或减少 FLOPs。</p>
+<div class="qa-summary">一句话：Roofline 用 FLOPs/Byte 判断 kernel 是缺数据还是缺算力。</div>
+</div>
+</div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
 <p>Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。 公式必须讲 FLOPs、bytes 和 ridge point。</p>
 <p><strong>2 分钟版：</strong></p>
 <p>我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
 <h2>关联模块</h2>
-<ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::07-roofline-analysis-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-7" aria-labelledby="transformer-tabs-tab-7" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 为何 Memory-bound</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ul><li><code>性能预测与建模 / Roofline Model</code>：完整 Roofline 公式、图、硬件 ridge point 和 VGG/MobileNet 例子。</li><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::07-roofline-analysis-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-7" aria-labelledby="transformer-tabs-tab-7" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 为何 Memory-bound</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。</p>
 <h2>复习定位</h2>
 <table>

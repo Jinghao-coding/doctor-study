@@ -236,6 +236,20 @@ K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂�
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Ingress Controller 和 Service Mesh 有什么区别？</div>
+<div class="qa-a">
+<p>Ingress Controller 主要解决南北向入口流量：外部 HTTP/HTTPS 请求如何根据 host/path 进入集群并路由到 Service。Service Mesh 主要解决东西向服务间通信治理：mTLS、重试、超时、熔断、流量拆分、可观测性和零信任。</p>
+<table>
+<tr><th>维度</th><th>Ingress Controller</th><th>Service Mesh</th></tr>
+<tr><td>主要流量方向</td><td>外部 → 集群</td><td>服务 ↔ 服务</td></tr>
+<tr><td>核心能力</td><td>入口路由、TLS 终止、host/path 转发</td><td>mTLS、流量治理、熔断、重试、可观测性</td></tr>
+<tr><td>典型实现</td><td>Nginx、Traefik、HAProxy、Envoy Gateway</td><td>Istio、Linkerd、Consul Connect</td></tr>
+</table>
+<div class="qa-summary">面试口径：Ingress 管入口，Service Mesh 管服务间治理；两者可以共存，不是简单替代关系。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 写了 NetworkPolicy 但没生效，怎么排查？</div>
 <div class="qa-a">
 <p><strong>回答思路：</strong>从 CNI 是否支持开始往下找，依次看 selector、方向、DNS。</p>

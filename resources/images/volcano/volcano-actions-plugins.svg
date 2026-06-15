@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 600" role="img" aria-labelledby="title desc">
+  <title id="title">Volcano actions and plugins flow</title>
+  <desc id="desc">Volcano scheduling cycle with OpenSession, plugins registering functions, actions executing in sequence, and CloseSession.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#cbd5e1;stroke-width:1.8;rx:16}
+      .session{fill:#eff6ff;stroke:#3b82f6}
+      .plugin{fill:#f5f3ff;stroke:#8b5cf6}
+      .action{fill:#ecfdf5;stroke:#10b981}
+      .cache{fill:#fffbeb;stroke:#f59e0b}
+      .title{font:800 24px Inter,Arial,sans-serif;fill:#0f172a}
+      .label{font:700 16px Inter,Arial,sans-serif;fill:#111827}
+      .small{font:13px Inter,Arial,sans-serif;fill:#475569}
+      .arrow{fill:none;stroke:#334155;stroke-width:2.1;marker-end:url(#arrow)}
+      .soft{fill:none;stroke:#64748b;stroke-width:1.7;stroke-dasharray:6 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1120" height="600" fill="#ffffff"/>
+  <text x="42" y="48" class="title">Volcano 调度周期：Action 决定流程，Plugin 决定算法</text>
+
+  <rect x="60" y="100" width="210" height="120" class="box cache"/>
+  <text x="86" y="136" class="label">Cache Snapshot</text>
+  <text x="86" y="164" class="small">Jobs / Queues / Nodes</text>
+  <text x="86" y="186" class="small">PodGroup / TaskInfo</text>
+
+  <rect x="350" y="88" width="250" height="144" class="box session"/>
+  <text x="376" y="124" class="label">OpenSession</text>
+  <text x="376" y="152" class="small">create scheduling context</text>
+  <text x="376" y="174" class="small">Session.Jobs</text>
+  <text x="376" y="196" class="small">Session.Queues</text>
+
+  <rect x="695" y="78" width="330" height="164" class="box plugin"/>
+  <text x="721" y="114" class="label">Plugins OnSessionOpen</text>
+  <text x="721" y="142" class="small">gang registers permit / valid predicates</text>
+  <text x="721" y="164" class="small">drf registers ordering / share functions</text>
+  <text x="721" y="186" class="small">priority / binpack register scoring</text>
+  <text x="721" y="208" class="small">functions saved into Session</text>
+
+  <rect x="75" y="345" width="150" height="86" class="box action"/>
+  <text x="106" y="380" class="label">enqueue</text>
+  <text x="96" y="406" class="small">Pending → Inqueue</text>
+
+  <rect x="270" y="345" width="150" height="86" class="box action"/>
+  <text x="304" y="380" class="label">allocate</text>
+  <text x="292" y="406" class="small">assign resources</text>
+
+  <rect x="465" y="345" width="150" height="86" class="box action"/>
+  <text x="504" y="380" class="label">backfill</text>
+  <text x="490" y="406" class="small">fill fragments</text>
+
+  <rect x="660" y="345" width="150" height="86" class="box action"/>
+  <text x="704" y="380" class="label">reclaim</text>
+  <text x="688" y="406" class="small">queue fairness</text>
+
+  <rect x="855" y="345" width="150" height="86" class="box action"/>
+  <text x="900" y="380" class="label">preempt</text>
+  <text x="884" y="406" class="small">priority victims</text>
+
+  <rect x="350" y="500" width="250" height="62" class="box session"/>
+  <text x="382" y="536" class="label">CloseSession</text>
+  <text x="382" y="555" class="small">flush status / cleanup</text>
+
+  <path class="arrow" d="M270 160 C300 160 320 160 350 160"/>
+  <path class="arrow" d="M600 160 C635 160 660 160 695 160"/>
+  <path class="arrow" d="M860 242 C860 292 735 312 150 345"/>
+  <path class="arrow" d="M225 388 L270 388"/>
+  <path class="arrow" d="M420 388 L465 388"/>
+  <path class="arrow" d="M615 388 L660 388"/>
+  <path class="arrow" d="M810 388 L855 388"/>
+  <path class="arrow" d="M930 431 C930 505 645 530 600 530"/>
+  <path class="soft" d="M860 242 C700 300 380 300 345 345"/>
+  <text x="435" y="300" class="small">Actions call functions registered by plugins in Session</text>
+
+  <text x="74" y="552" class="small">Action = when to do; Plugin = how to do; Session = shared context.</text>
+</svg>

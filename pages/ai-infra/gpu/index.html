@@ -1409,80 +1409,14 @@ kubectl label node gpu-node-2 \
 </div>
 <div class="card card-d">
 <h3>Roofline 模型：判断 kernel 是缺算力还是缺数据</h3>
-
-<p><strong>Roofline 模型</strong>是一个用来判断程序 / kernel 性能瓶颈的模型。它最常用于回答一个问题：</p>
-<blockquote>一个 kernel 慢，到底是 <strong>算力不够 compute-bound</strong>，还是 <strong>数据搬运不够快 memory-bound</strong>？</blockquote>
-
-<div class="qa-summary">一句话：Roofline 模型用"计算强度"和"实际性能"把 kernel 画到图上，看它被算力屋顶限制，还是被内存带宽屋顶限制。</div>
-
-<div class="qa-section"><div class="qa-section-title">Roofline 图长什么样？</div>
-<p>Roofline 图有两个坐标轴：X 轴是 Arithmetic Intensity（计算强度，单位 FLOPs/Byte），Y 轴是 Performance（实际计算性能，单位 FLOPs/s）。图上用两个"屋顶"限制程序性能：Memory Roof 是内存带宽屋顶（斜线），Compute Roof 是峰值算力屋顶（水平线）。Roofline 是一种简化的可视化性能模型，用来判断程序受 memory bandwidth 还是 arithmetic bandwidth / compute peak 限制[[Nsight Compute Profiling Guide](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html)]。</p>
-<pre><code>性能 FLOPS/s
-  ^
-  |
-  |                  ───────────────  Compute Roof
-  |                 /
-  |                /
-  |               /
-  |              /
-  |_____________/____________________&gt; Arithmetic Intensity
-              Ridge Point</code></pre>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">Arithmetic Intensity 是什么？</div>
-<p>计算强度定义为：<strong>Arithmetic Intensity = 总计算量 / 总数据搬运量 = FLOPs / Bytes</strong>。它回答的是：每搬运 1 byte 数据，能做多少次计算？例如 AI = 2 FLOPs/Byte，意思是每从内存搬 1 byte 数据，大约做 2 次浮点计算。计算强度低（比如 elementwise add，每个元素只做一次加法但要读两个数、写一个数），通常更容易 memory-bound；计算强度高（比如大矩阵乘，同一批数据被重复计算很多次），更可能 compute-bound。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">Roofline 的核心公式</div>
-<div class="formula-box">
-<div><strong>Attainable Performance = min(Peak Compute Performance, Peak Memory Bandwidth × Arithmetic Intensity)</strong></div>
-<div>实际可达到性能 ≤ min(算力峰值, 内存带宽 × 计算强度)</div>
-</div>
-<p>两个限制：</p>
-<ul>
-<li><strong>Compute Roof</strong>：硬件峰值算力，比如 A100 FP16 Tensor Core 峰值 312 TFLOPS。不管 kernel 多优秀，理论上不可能超过这个峰值。</li>
-<li><strong>Memory Roof</strong>：峰值显存带宽 × 计算强度。比如显存带宽 2 TB/s，计算强度 10 FLOPs/Byte，理论上限 = 2 TB/s × 10 = 20 TFLOPS。即使 GPU 峰值算力是 300 TFLOPS，这个 kernel 也可能只能到 20 TFLOPS，因为数据喂不上。</li>
-</ul>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">Ridge Point 是什么？</div>
-<p>Roofline 图中斜线和水平线相交的点叫 Ridge Point（也叫 Machine Balance Point）。它表示要摆脱内存带宽瓶颈，至少需要多高的计算强度。</p>
-<div class="formula-box">
-<div><strong>Ridge Point = Peak Compute Performance / Peak Memory Bandwidth</strong></div>
-</div>
-<p>例如 Peak Compute = 312 TFLOPS，Peak Memory Bandwidth = 2 TB/s，则 Ridge Point = 312 / 2 = 156 FLOPs/Byte。意思是：如果某 kernel 的 Arithmetic Intensity 低于 156 FLOPs/Byte，它更可能 memory-bound；如果高于 156 FLOPs/Byte，它才有机会 compute-bound。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">怎么判断 memory-bound 还是 compute-bound？</div>
-<p>看 kernel 点落在 Roofline 图的哪里：</p>
+<p>完整的 Roofline 模型定义、公式和图已经统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只保留 GPU 指标视角：Roofline 用来把 kernel 的 FLOPs、Bytes、实际吞吐和硬件峰值放在一张图里，判断瓶颈是算力、显存带宽还是其他因素。</p>
 <table>
-<tr><th>情况</th><th>特征</th><th>含义</th><th>优化方向</th></tr>
-<tr><td>计算强度低，落在斜线区域</td><td>Performance 被 Memory Roof 限制</td><td><strong>memory-bound / bandwidth-bound</strong>：kernel 主要在等数据</td><td>减少 global memory 读写、提高 cache 命中、使用 shared memory 做数据复用、memory coalescing、融合算子、改善数据布局</td></tr>
-<tr><td>计算强度高，落在水平线区域</td><td>Performance 被 Compute Roof 限制</td><td><strong>compute-bound</strong>：数据复用已经比较好，瓶颈在计算单元吞吐</td><td>使用 Tensor Core、更合适 dtype（FP16/BF16/TF32/INT8）、优化矩阵 shape 和 tile、提高指令吞吐、避免 warp stall</td></tr>
+<tr><th>要看什么</th><th>指标来源</th><th>说明</th></tr>
+<tr><td>Arithmetic Intensity</td><td>FLOPs / Bytes</td><td>低于 ridge point 通常偏 memory-bound</td></tr>
+<tr><td>Achieved FLOP/s</td><td>Nsight Compute / profiler</td><td>距离 compute roof 有多远</td></tr>
+<tr><td>Memory Throughput</td><td>Nsight / DCGM</td><td>是否接近 HBM roof</td></tr>
+<tr><td>Roofline 位置</td><td>Nsight Compute Roofline chart</td><td>判断优化方向：减少访存还是提高计算吞吐</td></tr>
 </table>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">一个简单例子</div>
-<p>假设某 GPU：Peak Compute = 100 TFLOPS，Peak Memory Bandwidth = 2 TB/s，则 Ridge Point = 50 FLOPs/Byte。</p>
-<p><strong>Kernel A</strong>：Arithmetic Intensity = 5 FLOPs/Byte → Memory Roof = 2 TB/s × 5 = 10 TFLOPS → Attainable Performance = min(100, 10) = <strong>10 TFLOPS</strong>（memory-bound，即使优化也很难超过 10 TFLOPS）。</p>
-<p><strong>Kernel B</strong>：Arithmetic Intensity = 100 FLOPs/Byte → Memory Roof = 2 TB/s × 100 = 200 TFLOPS → Attainable Performance = min(100, 200) = <strong>100 TFLOPS</strong>（compute-bound）。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">放到深度学习里怎么理解？</div>
-<p>常见算子的 Roofline 位置大概是：</p>
-<table>
-<tr><th>算子</th><th>计算强度</th><th>常见瓶颈</th></tr>
-<tr><td>Elementwise Add / ReLU</td><td>低</td><td>memory-bound</td></tr>
-<tr><td>LayerNorm</td><td>偏低</td><td>memory-bound / latency-bound</td></tr>
-<tr><td>Softmax</td><td>偏低到中等</td><td>memory-bound / latency-bound</td></tr>
-<tr><td>Embedding / Gather</td><td>很低</td><td>memory-bound / memory latency</td></tr>
-<tr><td>Small GEMM</td><td>中等</td><td>可能 launch / memory / compute 都有</td></tr>
-<tr><td>Large GEMM</td><td>高</td><td>compute-bound，常看 Tensor Core</td></tr>
-<tr><td>Conv</td><td>中高</td><td>通常可接近 compute-bound</td></tr>
-<tr><td>Attention</td><td>取决于实现</td><td>naive 可能 memory-bound，FlashAttention 提高数据复用</td></tr>
-</table>
-<p>为什么 FlashAttention 快？一个 Roofline 视角是：它减少了 HBM 读写，提高了数据复用，因此提高了 arithmetic intensity，让 attention 更少受 memory roof 限制。</p>
-</div>
 
 <div class="qa-section"><div class="qa-section-title">Roofline 和 GPU Utilization 的关系</div>
 <p><code>nvidia-smi GPU-Util</code> 只能告诉你 GPU 上有没有 kernel 在跑，Roofline 更进一步问：这个 kernel 的性能离硬件理论上限有多远？它是被内存带宽限制还是被计算峰值限制？所以 <strong>GPU Utilization 高不代表接近 Roofline</strong>。可能出现 GPU-Util = 100% 但 kernel 在 Roofline 图上离屋顶很远，原因可能是访存不合并、cache miss、occupancy 低、warp stall、Tensor Core 没用上、指令依赖、分支发散、kernel 太小等。</p>
@@ -1496,71 +1430,11 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 <p>然后在 Nsight Compute UI 里看 Roofline 图，它通常会展示 arithmetic intensity、achieved FLOP/s、memory roof、compute roof、kernel 点位，以及 FP32 / FP64 / Tensor Core 等不同 roof。也可以手动估算：Arithmetic Intensity = FLOPs / Bytes，Achieved Performance = FLOPs / Kernel Time，Memory Bandwidth Used = Bytes / Kernel Time，然后对比硬件峰值。</p>
 </div>
 
-<div class="qa-section"><div class="qa-section-title">Naive Roofline 数学表达</div>
-<p>如果要用更形式化的数学公式表示：</p>
-<div class="formula-box">
-<div><strong>P<sub>max</sub> = min(P<sub>peak</sub>, I × b<sub>max</sub>)</strong></div>
-</div>
-<p>其中：</p>
-<ul>
-<li><strong>P<sub>max</sub></strong>：浮点操作性能上限（操作数/秒）</li>
-<li><strong>P<sub>peak</sub></strong>：芯片可用的峰值浮点性能（操作数/秒）</li>
-<li><strong>b<sub>max</sub></strong>：芯片可用的峰值内存带宽（字节/秒）</li>
-<li><strong>I</strong>：计算强度（操作数/字节）= 总浮点操作数 / 总内存访问量</li>
-</ul>
-<p>水平和斜线的组合为该模型命名为 "Roofline model"。可以形象理解为：计算强度是触及屋顶的一根柱子——如果触及平坦部分，说明 compute-bound；触及斜屋顶部分，说明 memory-bound。更多推导细节可参考[[深入理解 roofline 模型]](https://www.armcvai.cn/2024-09-15/roofline-summary.html)。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">V100 / A100 / H100 硬件参数与 OI 对照表</div>
-<p>不同 GPU 的 Ridge Point（OI）差异很大，这直接影响 kernel 处于 memory-bound 还是 compute-bound 的判断阈值：</p>
-<table>
-<tr><th>GPU</th><th>显存</th><th>CUDA 核心数</th><th>FP16 Tensor Core</th><th>FP32</th><th>最大内存带宽</th><th>Tensor OI（FP16）</th></tr>
-<tr><td>V100-SXM</td><td>16 GB</td><td>5120</td><td>125 TFLOPS</td><td>15.7 TFLOPS</td><td>900 GB/s</td><td>138</td></tr>
-<tr><td>A100-SXM</td><td>40 / 80 GB</td><td>6912</td><td>312 TFLOPS</td><td>19.5 TFLOPS</td><td>2039 GB/s</td><td>153</td></tr>
-<tr><td>H100-SXM</td><td>80 GB</td><td>8192</td><td>989 TFLOPS</td><td>60 TFLOPS</td><td>3350 GB/s</td><td>295</td></tr>
-</table>
-<p>注意：V100 PCle 的 ops:byte ratio 在 40（L2 缓存）到 124.4（HBM）之间，取决于数据来源（片内 vs 片外）。A100 的 ops:byte ratio 是 208，这意味着每访问 1 字节内存时，GPU 可以完成 208 次浮点运算[[深入理解 roofline 模型]](https://www.armcvai.cn/2024-09-15/roofline-summary.html)。如果计算的 OI 低于 208，程序性能会受到内存带宽的限制。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">矩阵乘法的 Roofline 分析</div>
-<p>矩阵乘法 C = A × B，其中 A ∈ R^{M×K}，B ∈ R^{K×N}，C ∈ R^{M×N}，数据类型为 FP16。其最小内存访问代价 MAC = MK + KN + MN。</p>
-<div class="formula-box">
-<div><strong>OI<sub>matmul</sub> = 2MNK / (MK + KN + MN)</strong></div>
-<div><strong>Ridge Point<sub>A100</sub> = 312 / 2.03 ≈ 153</strong></div>
-</div>
-<p>在 A100-SXM 上运行矩阵乘法时，如果 OI<sub>matmul</sub> 低于 153，则处于内存受限；反之则计算受限。</p>
-<p><strong>实例推演：</strong>一个 Linear 层权重为 512×1024，输入为 1024×4096，则：</p>
-<pre><code class="language-text">Arithmetic Intensity = 2 × 512 × 1024 × 4096 / [2 × (512×1024 + 1024×4096 + 512×4096)]
-                    ≈ 315 FLOPs/Byte</code></pre>
-<p>315 > 124.4（V100 PCle 的 OI），因此该矩阵乘法在 V100 上受算术限制，GPU 将被充分利用[[深入理解 roofline 模型]](https://www.armcvai.cn/2024-09-15/roofline-summary.html)。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">LLM 推理的 Roofline 分析：Prefill 与 Decode 的瓶颈完全不同</div>
-<p>LLM 推理中，一次前向传播对每个 token 和每个模型参数约需 2 次浮点运算。在非长上下文场景（context_length < 1024，batch_size = 1）下，随着输入 prompt 长度增加，操作强度呈线性增长：</p>
-<table>
-<tr><th>阶段</th><th>seq_len</th><th>典型 OI</th><th>瓶颈</th><th>原因</th></tr>
-<tr><td>Prefill</td><td>较大（>200）</td><td>≈ 2 × seq_len（如 400+）</td><td><strong>compute-bound</strong></td><td>每个 token 的计算量随 seq_len 线性增长，远超 Ridge Point</td></tr>
-<tr><td>Decode</td><td>固定 = 1</td><td>≈ 2</td><td><strong>memory-bound</strong></td><td>每生成一个 token 只做少量计算，但需要加载全部模型权重</td></tr>
-</table>
-<p>一个关键直觉：以 A100 为例，ops:byte ratio 是 208。计算 1 个 token 的 KV 值的计算强度约为 1，而计算 208 个 token 的 KV 值的计算强度则是 208。这意味着 <strong>计算 1 个 token 和计算 208 个 token 的时间几乎相同</strong>——因为低于 208 时，受内存带宽限制，内存加载时间主导性能；达到 208 时，才转为算力受限[[深入理解 roofline 模型]](https://www.armcvai.cn/2024-09-15/roofline-summary.html)。</p>
-<p>这也可以解释为什么 prefill 和 decode 的瓶颈不同，以及为什么可以将它们分开调度到不同节点上。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">AI 应用性能优化策略总结</div>
-<p>Roofline 模型最终指导的优化方向可以归纳为：</p>
-<ul>
-<li><strong>AI 推理时间取决于主要因素</strong>：内存读写时间 和 数学计算时间，而非次要因素（网络带宽、磁盘读写）。</li>
-<li><strong>两个区域，两条策略</strong>：硬件不变的前提下，memory-bound 时减少内存访问代价 MAC（如融合算子、共享内存、数据复用）；compute-bound 时减少浮点运算次数 FLOPs 或提高计算效率（如 Tensor Core、更优 dtype、更优 tile）。</li>
-<li><strong>实际推理时间 = max(内存读取时间, 数学计算时间)</strong>：取决于哪个更长。当处于内存受限时，内存读取时间长；当处于算力受限时，数学计算时间长。</li>
-</ul>
-<p>更多 Roofline 模型的深入分析、论文引用和实际案例，可以参考[[深入理解 roofline 模型]](https://www.armcvai.cn/2024-09-15/roofline-summary.html)。</p>
-</div>
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 什么是 Roofline 模型？面试怎么回答？</div>
 <div class="qa-a">
-<p>Roofline 模型是一个用来分析程序性能上限和瓶颈的可视化模型。它的横轴是 arithmetic intensity（FLOPs per Byte），表示每搬运一个字节能做多少计算；纵轴是实际性能（FLOPs/s）。图上有两个屋顶：一个是由显存带宽决定的 memory roof（斜线），另一个是由硬件峰值算力决定的 compute roof（水平线）。一个 kernel 的性能上限等于 <code>min(峰值算力, 内存带宽 × 计算强度)</code>。如果 kernel 落在斜线区域，说明 memory-bound；如果落在水平区域，说明 compute-bound。它可以帮助我们判断优化方向：memory-bound 就优化访存和数据复用，compute-bound 就优化计算吞吐、Tensor Core、并行度等。</p>
-<div class="qa-summary">Roofline = 两个屋顶 + 一个点。Memory Roof = 带宽 × 计算强度，Compute Roof = 峰值算力。点在斜线下 memory-bound，在横线下 compute-bound。一句话：用 FLOPs/Byte 判断 kernel 是缺数据，还是缺算力。</div>
+<p>Roofline 模型完整解释统一看 <strong>性能预测与建模 / Roofline Model</strong>。在 GPU 指标页里，我会把它作为诊断工具：先估 FLOPs 和 Bytes，算 Arithmetic Intensity，再和硬件 ridge point 比较，判断热点 kernel 是 memory-bound 还是 compute-bound。</p>
+<div class="qa-summary">本页只记用途：Roofline 把 GPU 性能指标收敛成“缺数据还是缺算力”。</div>
 </div>
 </div>
 

@@ -20,10 +20,36 @@
             {
               "title": "调度框架",
               "description": "Volcano、YuniKorn、Kueue 与批调度能力",
-              "file": "01-frameworks.md",
               "level": "基础",
               "priority": 1,
-              "time": 15
+              "time": 28,
+              "subtabs": [
+                {
+                  "title": "框架总览",
+                  "description": "默认 K8s 缺口、框架选型地图、面试回答套路",
+                  "file": "01a-framework-overview.md"
+                },
+                {
+                  "title": "Volcano",
+                  "description": "架构、Queue、PodGroup、VolcanoJob、Gang、生命周期策略",
+                  "file": "01b-volcano.md"
+                },
+                {
+                  "title": "Kueue",
+                  "description": "LocalQueue、ClusterQueue、ResourceFlavor、Workload、准入排队",
+                  "file": "01c-kueue.md"
+                },
+                {
+                  "title": "YuniKorn / Run:ai",
+                  "description": "层级队列、Application 调度、商业 GPU 虚拟化平台",
+                  "file": "01d-yunikorn-runai.md"
+                },
+                {
+                  "title": "自研队列设计",
+                  "description": "原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller",
+                  "file": "01e-native-k8s-queue-design.md"
+                }
+              ]
             },
             {
               "title": "多租户管理",
@@ -74,8 +100,24 @@
   ],
   "sections": [
     {
-      "title": "GPU 集群调度框架",
-      "file": "01-frameworks.md"
+      "title": "GPU 集群调度框架总览",
+      "file": "01a-framework-overview.md"
+    },
+    {
+      "title": "Volcano",
+      "file": "01b-volcano.md"
+    },
+    {
+      "title": "Kueue",
+      "file": "01c-kueue.md"
+    },
+    {
+      "title": "YuniKorn / Run:ai",
+      "file": "01d-yunikorn-runai.md"
+    },
+    {
+      "title": "自研队列设计",
+      "file": "01e-native-k8s-queue-design.md"
     },
     {
       "title": "多租户管理",

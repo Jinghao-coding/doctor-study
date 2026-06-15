@@ -73,6 +73,19 @@
 </table>
 </div>
 
+<div class="card card-s">
+<h3>ResourceQuota 与 LimitRange 的区别</h3>
+<p>这两个对象经常一起出现，但治理层级不同：<strong>ResourceQuota 管 namespace 总量，LimitRange 管单个 Pod / Container 的范围和默认值。</strong></p>
+<table>
+<tr><th>维度</th><th>ResourceQuota</th><th>LimitRange</th></tr>
+<tr><td>作用范围</td><td>namespace 总量</td><td>单个 Pod / Container / PVC</td></tr>
+<tr><td>解决问题</td><td>防止一个租户占光 namespace 资源</td><td>防止单个对象不写 request 或申请过大</td></tr>
+<tr><td>典型限制</td><td>CPU/Memory 总 requests、Pod 数、PVC 数、GPU 扩展资源总量</td><td>每个容器 request/limit 的最小、最大、默认值</td></tr>
+<tr><td>失败表现</td><td>创建对象时被 admission 拒绝，提示 exceeded quota</td><td>对象字段不满足范围或被自动填默认值</td></tr>
+</table>
+<div class="qa-summary">面试口径：Quota 控总量，LimitRange 控单体；多租户集群通常两者都要配。</div>
+</div>
+
 <div class="card card-r">
 <h3>安全题常见误区</h3>
 <ul>

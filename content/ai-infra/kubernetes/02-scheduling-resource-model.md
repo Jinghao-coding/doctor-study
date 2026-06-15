@@ -33,10 +33,11 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 
 阅读顺序建议：
 
-1. 先理解 `requests/limits/QoS`，这是调度资源模型的入口。
-2. 再理解放置约束速览，解释“资源够但为什么不能放”。
-3. GPU / DRA / Affinity 的深入实现不要在本页展开，分别转到对应专题。
-4. 最后再进入 `Scheduler 主链路` 和 `Scheduler 插件与扩展`，理解这些约束在 Framework 中挂到哪个扩展点。
+1. 先理解 `requests/limits`：这是 Pod 资源声明和调度判断入口。
+2. 再理解 `QoS`：它是由 CPU/Memory requests/limits 推导出的驱逐等级，不是调度资源本身。
+3. 再理解放置约束速览，解释“资源够但为什么不能放”。
+4. GPU / DRA / Affinity 的深入实现不要在本页展开，分别转到对应专题。
+5. 最后再进入 `Scheduler 主链路` 和 `Scheduler 插件与扩展`，理解这些约束在 Framework 中挂到哪个扩展点。
 
 <div class="card card-w">
 <h3>本页边界：只讲资源模型，不讲插件实现</h3>
@@ -53,16 +54,38 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 </div>
 
 <div class="card card-m">
-<h3>Requests / Limits / QoS</h3>
+<h3>Resource Requests / Limits：资源声明与运行时上限</h3>
+<p><code>requests</code> 和 <code>limits</code> 是 Pod / Container 的资源声明。它们首先回答的是：<strong>调度时预留多少资源，运行时最多允许用多少资源。</strong></p>
 <table>
-<tr><th>概念</th><th>影响范围</th><th>关键结论</th></tr>
-<tr><td>requests</td><td>调度、资源预留、HPA 部分指标</td><td>scheduler 主要根据 requests 判断节点是否放得下</td></tr>
-<tr><td>limits</td><td>运行时限制</td><td>CPU limit 可能 throttling，内存超过 limit 通常 OOMKilled</td></tr>
-<tr><td>Guaranteed</td><td>驱逐优先级最低</td><td>每个容器 CPU/Memory requests 等于 limits 且都设置</td></tr>
-<tr><td>Burstable</td><td>中等驱逐优先级</td><td>至少设置了一个 request，但不完全满足 Guaranteed</td></tr>
-<tr><td>BestEffort</td><td>最先被驱逐</td><td>没有设置 CPU/Memory requests 和 limits</td></tr>
+<tr><th>概念</th><th>影响范围</th><th>关键结论</th><th>常见误区</th></tr>
+<tr><td><code>requests</code></td><td>调度、资源预留、HPA 部分指标</td><td>scheduler 主要根据 requests 判断节点是否放得下</td><td>不是实时使用量；Pod 用得少也会按 request 占调度容量</td></tr>
+<tr><td><code>limits</code></td><td>运行时限制</td><td>CPU limit 可能 throttling，内存超过 limit 通常 OOMKilled</td><td>limits 不是调度依据；内存 limit 过低会直接影响稳定性</td></tr>
 </table>
-<p>面试中要强调：<strong>调度看 requests，不是看实时使用量；驱逐看 QoS、优先级和资源压力。</strong></p>
+<div class="qa-summary">面试口径：调度看 requests，不是看实时使用量；limits 主要管运行时上限，CPU 超限是 throttling，内存超限通常是 OOMKilled。</div>
+</div>
+
+<div class="card card-w">
+<h3>QoS：由 requests / limits 推导出的驱逐等级</h3>
+<p>QoS 不是一个用户随便填写的字段，而是 kubelet 根据 CPU / Memory 的 requests 和 limits 推导出的等级。它主要影响节点资源压力下的<strong>驱逐优先级</strong>，而不是决定调度器能不能把 Pod 放到节点上。</p>
+<table>
+<tr><th>QoS 等级</th><th>判定条件</th><th>驱逐倾向</th><th>典型场景</th></tr>
+<tr><td>Guaranteed</td><td>每个容器 CPU/Memory requests 等于 limits 且都设置</td><td>驱逐优先级最低</td><td>核心在线服务、强 SLO 服务</td></tr>
+<tr><td>Burstable</td><td>至少设置了一个 CPU/Memory request，但不完全满足 Guaranteed</td><td>中等驱逐优先级</td><td>大多数普通服务</td></tr>
+<tr><td>BestEffort</td><td>没有设置 CPU/Memory requests 和 limits</td><td>最先被驱逐</td><td>临时任务、低优实验、开发测试</td></tr>
+</table>
+<div class="qa-summary">面试口径：QoS 看的是 CPU/Memory requests/limits 组合；驱逐还会结合 PriorityClass、资源压力和实际使用量。</div>
+</div>
+
+<div class="card card-s">
+<h3>Requests / Limits 与 QoS 的关系</h3>
+<table>
+<tr><th>问题</th><th>看什么</th><th>一句话</th></tr>
+<tr><td>Pod 能不能调度到某个节点？</td><td>Pod requests vs Node allocatable</td><td>调度阶段主要看 requests</td></tr>
+<tr><td>容器运行中最多能用多少？</td><td>limits</td><td>运行时由 cgroup / runtime 限制</td></tr>
+<tr><td>节点压力下谁先被赶走？</td><td>QoS + PriorityClass + 实际资源压力</td><td>QoS 是驱逐排序的重要输入</td></tr>
+<tr><td>GPU request/limit 怎么理解？</td><td>Extended Resource</td><td>普通 GPU 扩展资源通常 requests = limits，按整数设备调度</td></tr>
+</table>
+<div class="qa-summary">收束：requests/limits 是输入字段，QoS 是推导结果；调度主要看 requests，驱逐主要看 QoS、优先级和资源压力。</div>
 </div>
 
 <div class="card card-s">

@@ -29,6 +29,14 @@ GPU 集群管理这一节需要服务面试复习：先给结论，再把链路�
 
 <h4>1. Volcano：K8S 原生批调度器</h4>
 <p><strong>定位</strong>：CNCF 孵化项目，K8S 原生的批处理调度器，专为 AI/ML 场景设计。</p>
+<div class="figure">
+<img src="../../../resources/images/volcano/volcano-arch.png" alt="Volcano 架构图" loading="lazy">
+<p class="caption">Volcano 架构图：在 Kubernetes 之上增加 batch scheduler、controller、admission 和 Job / Queue / PodGroup 等 CRD。</p>
+</div>
+<div class="figure">
+<img src="../../../resources/images/volcano/volcano-arch2.png" alt="Volcano 调度器组件图" loading="lazy">
+<p class="caption">Volcano 调度链路：通过 CRD 扩展 K8s 资源对象，再由 scheduler / controller / admission 协同完成批调度。</p>
+</div>
 <p><strong>核心架构</strong>：三个核心 CRD + 一个调度引擎：</p>
 <ul>
 <li><strong>PodGroup</strong>：定义一组 Pod 的 Gang 语义。关键字段 <code>minMember</code>——至少要同时启动多少个 Pod，任务才算"就绪"。如果集群资源不够同时启动 minMember 个 Pod，所有 Pod 都处于 Pending，不会出现"启动了 3/8 个 worker，剩下 5 个卡在 Pending 导致 NCCL 超时"的情况。</li>
@@ -44,6 +52,76 @@ GPU 集群管理这一节需要服务面试复习：先给结论，再把链路�
 </ol>
 <p><strong>支持的调度策略</strong>：通过 <code>plugins</code> 配置，可组合使用——<code>gang</code>（Gang scheduling）、<code>drf</code>（主导资源公平）、<code>proportion</code>（按比例分配）、<code>priority</code>（优先级）、<code>sla</code>（等待时间加权）。</p>
 <p><strong>怎么理解 PodGroup</strong>：像一个"旅行团的最低成团人数"。一个 8 人团，至少 8 人都买票才出发。如果只有 5 个人到，大巴不开——因为 5 个人去了也没法完成旅行计划（对应 NCCL 需要所有 rank 才能建环）。</p>
+
+<div class="card card-s">
+<h3>Volcano 安装与最小 Demo</h3>
+<p>Volcano 通常通过 Helm 部署。面试里不需要背命令，但要知道部署后会有 scheduler、controller、admission 组件，以及 Queue / PodGroup / Job 等 CRD。</p>
+<pre><code class="language-bash">helm repo add volcano-sh https://volcano-sh.github.io/helm-charts
+helm repo update
+helm upgrade --install volcano volcano-sh/volcano \
+  --version 1.12.0 \
+  -n volcano-system \
+  --create-namespace
+
+kubectl get all -n volcano-system
+kubectl get crd | grep volcano</code></pre>
+<p>使用 Volcano 特性的 Job 需要指定 <code>schedulerName: volcano</code>。如果指定 <code>default-scheduler</code>，Pod 会回到默认调度器，无法使用 Volcano 的 Gang、Queue、Fair-share、Preemption 等能力。</p>
+</div>
+
+<div class="card card-d">
+<h3>Volcano 三大核心对象关系</h3>
+<div class="figure">
+<img src="../../../resources/images/volcano/volcano-core-crd.png" alt="Volcano Queue PodGroup VolcanoJob 关系图" loading="lazy">
+<p class="caption">Queue 是资源池，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
+</div>
+<table>
+<tr><th>对象</th><th>一句话</th><th>关键字段</th><th>面试重点</th></tr>
+<tr><td>Queue</td><td>多租户资源队列</td><td><code>weight</code>、<code>capability</code>、<code>deserved</code>、<code>reclaimable</code></td><td>资源隔离、弹性借用、reclaim</td></tr>
+<tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>All-or-Nothing，避免 partial allocation</td></tr>
+<tr><td>VolcanoJob</td><td>批作业抽象，包含多个 task</td><td><code>schedulerName</code>、<code>minAvailable</code>、<code>tasks</code>、<code>policies</code>、<code>plugins</code>、<code>queue</code></td><td>多角色训练任务、生命周期策略</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>Queue：多租户资源管理</h3>
+<table>
+<tr><th>字段</th><th>作用</th><th>面试解释</th></tr>
+<tr><td><code>weight</code></td><td>按比例分配资源</td><td>适合资源软约束，空闲时可以动态共享</td></tr>
+<tr><td><code>deserved</code></td><td>队列期望应得资源</td><td>表达 fair-share / deserved resource</td></tr>
+<tr><td><code>capability</code></td><td>队列可用资源硬上限</td><td>防止某队列超用整个集群</td></tr>
+<tr><td><code>reclaimable</code></td><td>资源是否可被回收</td><td>空闲借用和高优队列回收的基础</td></tr>
+</table>
+<p>Queue 状态通常会体现 allocated、deserved、capability 等资源信息。面试要强调：Queue 不是普通 FIFO 队列，而是多租户资源治理对象。</p>
+</div>
+
+<div class="card card-s">
+<h3>PodGroup：Gang Scheduling 的落地对象</h3>
+<table>
+<tr><th>字段</th><th>作用</th><th>设错的后果</th></tr>
+<tr><td><code>minMember</code></td><td>至少多少个 Pod 同时满足才允许启动</td><td>太低会 partial allocation，太高会长期 Pending</td></tr>
+<tr><td><code>minResources</code></td><td>整体最小资源需求</td><td>可以提前判断集群是否可能满足</td></tr>
+<tr><td><code>priorityClassName</code></td><td>PodGroup 优先级</td><td>影响抢占和排队顺序</td></tr>
+<tr><td><code>queue</code></td><td>归属资源队列</td><td>影响配额和公平性</td></tr>
+</table>
+<p>VolcanoJob 会自动创建 PodGroup；K8s 原生工作负载也可以通过 PodGroup 享受 Gang 语义。</p>
+</div>
+
+<div class="card card-d">
+<h3>VolcanoJob：批作业与生命周期策略</h3>
+<div class="figure">
+<img src="../../../resources/images/volcano/vcjob-status.png" alt="VolcanoJob 状态流转" loading="lazy">
+<p class="caption">VolcanoJob 状态包括 pending、running、restarting、completing、completed、failed、terminating 等。</p>
+</div>
+<table>
+<tr><th>字段</th><th>作用</th><th>面试关注点</th></tr>
+<tr><td><code>schedulerName</code></td><td>指定调度器</td><td>保持 <code>volcano</code> 才能使用高级策略</td></tr>
+<tr><td><code>minAvailable</code></td><td>Job 正常运行所需最少 Pod 数</td><td>类似 Gang 的最低可运行条件</td></tr>
+<tr><td><code>tasks</code></td><td>定义多角色 Pod 模板</td><td>PS / Worker / Master / Launcher 等角色</td></tr>
+<tr><td><code>policies</code></td><td>生命周期策略</td><td>PodFailed、PodPending、TaskCompleted 等事件触发动作</td></tr>
+<tr><td><code>plugins</code></td><td>任务级插件</td><td>如 ssh、svc、env，为分布式任务提供互信和服务发现</td></tr>
+<tr><td><code>maxRetry</code></td><td>最大重试次数</td><td>故障恢复和失败终止的边界</td></tr>
+</table>
+</div>
 
 <h4>2. Yunikorn：多租户资源管理器</h4>
 <p><strong>定位</strong>：Apache 项目，源自 YARN 设计理念，支持 K8S 和 YARN 双调度，强项是层级队列和应用感知调度。</p>
@@ -150,6 +228,43 @@ GPU 集群管理这一节需要服务面试复习：先给结论，再把链路�
 </ol></div>
 <div class="qa-section"><div class="qa-section-title">局限性</div><p>(1) <strong>配额是静态 min/max</strong>：不支持连续保障度信号（如 QAD ≥ 0.95），配额弹性不够灵活。(2) <strong>没有干扰感知合用</strong>：多个任务共享 GPU 时无法感知性能干扰。(3) <strong>不做运行时间预测</strong>：无法基于预测做更优的排序或 backfill。(4) <strong>抢占是简单优先级抢占</strong>：不考虑沉没成本（checkpoint 年龄、已运行时间），可能抢占一个训练了 20 小时的任务。(5) <strong>Gang 调度的 Partial Allocation 问题</strong>：当资源不够一个完整的 Gang 时，所有资源闲置等待，无法做 backfill。</p></div>
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"Volcano 解决了 K8S 做 GPU 批调度的核心缺失——Gang + Queue，但它的配额和抢占模型偏简单。在需要弹性配额、代价感知抢占、运行时间预测等能力时，需要从 Scheduling Framework 原生构建。"</p></div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Queue、PodGroup、VolcanoJob 三者是什么关系？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">一句话</div><p><strong>Queue 管资源池，PodGroup 管 Gang 调度单元，VolcanoJob 管批作业结构和生命周期。</strong></p></div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 可以使用哪个租户资源池；PodGroup 决定这组 Pod 是否满足 minMember / minResources，可以 all-or-nothing 启动；VolcanoJob 自己则定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
+<div class="qa-summary">面试口径：Queue 是租户资源视角，PodGroup 是调度原子性视角，VolcanoJob 是用户提交的批作业视角。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Volcano 为什么能避免分布式训练 partial allocation？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">问题</div><p>默认 kube-scheduler 逐 Pod 调度，可能先启动部分 worker，剩余 worker Pending。对 DDP / MPI / NCCL 来说，这些已启动 worker 不能真正工作，GPU 会空转，甚至多个 Job 互相占住部分资源形成死锁。</p></div>
+<div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达 all-or-nothing 语义。只有当一组 Pod 至少满足最小成员数和资源需求时，才允许整体进入运行，否则整组等待。</p></div>
+<div class="qa-summary">面试口径：Volcano 的 Gang 语义把“单 Pod 能不能跑”提升成“整个 Job 能不能一起跑”，避免部分 worker 白占 GPU。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Queue 的 capability、deserved、weight、reclaimable 怎么理解？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">capability</div><p>硬上限，队列最多能占多少资源，防止单队列占满集群。</p></div>
+<div class="qa-section"><div class="qa-section-title">deserved / weight</div><p>deserved 表达队列应得资源量；weight 更像比例权重，用于资源按比例分配。</p></div>
+<div class="qa-section"><div class="qa-section-title">reclaimable</div><p>表示队列借出去或被超用的资源是否可被回收。资源紧张时，系统可以从超额队列回收资源给保障不足队列。</p></div>
+<div class="qa-summary">面试口径：capability 是上限，deserved/weight 是公平份额，reclaimable 决定借用资源能不能被回收。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: VolcanoJob 的 policies 和 plugins 有什么价值？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">policies</div><p>policies 定义生命周期事件到动作的映射，例如 PodFailed 后 RestartJob，PodPending 超过 10 分钟后 AbortJob，TaskCompleted 后 CompleteJob。它让批任务有比原生 Job 更强的状态机。</p></div>
+<div class="qa-section"><div class="qa-section-title">plugins</div><p>plugins 提供分布式任务运行所需的辅助能力，例如 ssh 互信、svc 服务发现、env 环境变量注入。这样 TensorFlow / MPI / MindSpore 等多角色任务可以更容易启动。</p></div>
+<div class="qa-summary">面试口径：policies 管故障和生命周期动作，plugins 管分布式作业运行时辅助能力。</div>
 </div>
 </div>
 

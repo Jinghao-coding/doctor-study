@@ -14,8 +14,8 @@ kube-scheduler 的设计理念是**可扩展性 + 效率优先 + 声明式 API +
 ## K8s 整体架构定位
 
 <div class="figure">
-<img src="../../../resources/images/k8s-scheduler/01-k8s-architecture.png" alt="Kubernetes 整体架构" loading="lazy">
-<p class="caption">scheduler 是控制面四大组件之一（API Server / etcd / controller-manager / scheduler）。它通过 watch API Server 获取 Pod 和 Node 状态，决策结果通过 Bind API 写回 etcd。</p>
+<img src="../../../resources/images/k8s-scheduler/kubernetes-components-official.svg" alt="Kubernetes 官方组件架构图" loading="lazy">
+<p class="caption">scheduler 是控制面组件之一。它通过 API Server 获取未调度 Pod 和 Node 状态，决策结果通过 Bind API 写回 API Server。</p>
 </div>
 
 ## 设计理念六维矩阵

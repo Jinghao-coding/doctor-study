@@ -68,6 +68,29 @@ K8S 排障要从状态、事件、日志、资源、网络、节点和控制面�
 </table>
 </div>
 
+<div class="card card-s">
+<h3>Pod Phase、重启策略与镜像策略速查</h3>
+<table>
+<tr><th>对象/字段</th><th>常见值</th><th>面试抓手</th></tr>
+<tr><td>Pod Phase</td><td>Pending / Running / Succeeded / Failed / Unknown</td><td>Phase 是 Pod 总体状态，不等同于单个容器状态</td></tr>
+<tr><td>Container State</td><td>Waiting / Running / Terminated</td><td>CrashLoopBackOff、ImagePullBackOff 属于 Waiting reason</td></tr>
+<tr><td><code>restartPolicy</code></td><td>Always / OnFailure / Never</td><td>Deployment 通常 Always；Job 常用 OnFailure / Never</td></tr>
+<tr><td><code>imagePullPolicy</code></td><td>Always / IfNotPresent / Never</td><td><code>:latest</code> 默认 Always；生产建议固定 tag 或 digest</td></tr>
+</table>
+<div class="qa-summary">面试口径：Pod Phase 看整体，Container State 看容器细节；重启策略控制退出后是否重启，镜像策略控制启动前是否拉镜像。</div>
+</div>
+
+<div class="card card-m">
+<h3>Probe 三件套</h3>
+<table>
+<tr><th>Probe</th><th>作用</th><th>失败后行为</th></tr>
+<tr><td><code>readinessProbe</code></td><td>判断能否接流量</td><td>从 Service endpoints 移除，不重启容器</td></tr>
+<tr><td><code>livenessProbe</code></td><td>判断是否需要自愈重启</td><td>kubelet 重启容器</td></tr>
+<tr><td><code>startupProbe</code></td><td>给慢启动应用更长启动窗口</td><td>成功前延迟 liveness/readiness 生效</td></tr>
+</table>
+<div class="qa-summary">面试口径：readiness 管流量，liveness 管重启，startup 保护慢启动。</div>
+</div>
+
 <div class="card card-m">
 <h3>稳定性治理：HPA / VPA / PDB / drain</h3>
 <table>
