@@ -1,0 +1,342 @@
+content/cs-basics/os/11-ai-infra-cpu-perf.md
+  s_87d9eb75eb4f48::t_491b48c172cfde 3
+  s_87d9eb75eb4f48::t_1d8a182eb236d1 61
+  s_87d9eb75eb4f48::t_717d29fd7d6d75 65
+content/cs-basics/networking/02-http-grpc-rpc.md
+  s_87d9eb75eb4f48::t_fb25c2f174e0ee 3
+  s_87d9eb75eb4f48::t_35b4416195aefa 22,26
+content/cs-basics/os/12-ai-infra-network-syscall.md
+  s_87d9eb75eb4f48::t_3f1c4fb59ddf04 61
+  s_87d9eb75eb4f48::t_3133e59cc7ef09 3
+  s_87d9eb75eb4f48::t_5cc096410f725c 65
+content/ai-infra/kubernetes/09b-scheduler-cache-preemption.md
+  s_87d9eb75eb4f48::t_2263a62068a554 158
+content/cs-basics/linux-container/03-docker-k8s-resource.md
+  s_87d9eb75eb4f48::t_cfcbd92868904e 21,25
+  s_87d9eb75eb4f48::t_2d4bc4e00c34db 3
+content/ai-infra/performance-prediction/03-features.md
+  s_87d9eb75eb4f48::t_d8223f6870bdff 43,47
+content/cs-basics/computer-architecture/03-dma-pcie-numa.md
+  s_87d9eb75eb4f48::t_0c6d206ef7dfed 32,36
+  s_87d9eb75eb4f48::t_52f945aa4d7398 3
+content/ai-infra/distributed-training/01-principles.md
+  s_87d9eb75eb4f48::t_bd7aa67d77ada2 83
+content/ai-infra/cluster-management/05-fault-tolerance.md
+  s_87d9eb75eb4f48::t_74da94e9aa32db 3
+  s_87d9eb75eb4f48::t_05a8eda29e6508 432
+  s_87d9eb75eb4f48::t_9050147358a5ef 436
+content/ai-infra/performance-prediction/02-tree-models.md
+  s_87d9eb75eb4f48::t_2596beefba0ff7 35,39
+content/ai-infra/kubernetes/09c-scheduler-performance-tuning.md
+  s_87d9eb75eb4f48::t_9e4429951a8b9a 91
+content/cs-basics/computer-architecture/01-cpu-memory-hierarchy.md
+  s_87d9eb75eb4f48::t_f7899ed7dcc6b1 3
+  s_87d9eb75eb4f48::t_8cdd5c5d003144 22,26
+content/ai-infra/llm-inference/09-flashattention-vllm.md
+  s_87d9eb75eb4f48::t_3c9b1b36ba277f 86
+content/cs-basics/programming-systems/04-cpp-memory.md
+  s_87d9eb75eb4f48::t_21fe472321484c 3
+  s_87d9eb75eb4f48::t_b68b68d2b2bd3e 76,80
+content/cs-basics/linux-kernel-ai/02-cgroups-gpu-isolation.md
+  s_87d9eb75eb4f48::t_1b5c19cd2489dc 3
+content/ai-infra/distributed-training/04-zero-fsdp.md
+  s_87d9eb75eb4f48::t_b18e8d52ecc244 86
+content/ai-infra/scheduling/01-classic-algorithms.md
+  s_87d9eb75eb4f48::t_85e0b2aeb1e4f6 3
+  s_87d9eb75eb4f48::t_e14d096b318219 215
+  s_87d9eb75eb4f48::t_a38889c2f7c3b0 219
+content/ai-infra/papers/02c-impl-details.md
+  s_87d9eb75eb4f48::t_0666a62caf4500 3
+  s_87d9eb75eb4f48::t_942a52bd478044 194,198
+content/ai-infra/scheduling/05-topology-aware-scheduling.md
+  s_87d9eb75eb4f48::t_b16f32ef7fc79a 248
+  s_87d9eb75eb4f48::t_de205a7bde96c9 3
+  s_87d9eb75eb4f48::t_f8d794ee0222d2 244
+content/ai-infra/llm-inference/14-kv-cache-memory-budget.md
+  s_87d9eb75eb4f48::t_e20e819c4c5305 97
+content/ai-infra/papers/02a-overview.md
+  s_87d9eb75eb4f48::t_f3ccb1234e572a 325,329
+  s_87d9eb75eb4f48::t_b30545c30aba2c 3
+content/ai-infra/transformer/01-architecture.md
+  s_87d9eb75eb4f48::t_30a5d6013be22d 92,96
+content/ai-infra/transformer/08-decode-memory-bound.md
+  s_87d9eb75eb4f48::t_27cd617dbfbf55 111
+content/cs-basics/linux-container/02-namespace-cgroup-rootfs.md
+  s_87d9eb75eb4f48::t_d1c2d7aeb7d3f7 22,26
+  s_87d9eb75eb4f48::t_90bf1bc121e03d 3
+content/ai-infra/llm-inference/02-request-lifecycle.md
+  s_87d9eb75eb4f48::t_2d8cb532ff8cbb 86
+content/cs-basics/os/10-ai-infra-file-io.md
+  s_87d9eb75eb4f48::t_007ae2028d753d 81
+  s_87d9eb75eb4f48::t_a18f3b0184d30c 77
+  s_87d9eb75eb4f48::t_7fd2e6c1a353d6 3
+pages/ai-infra/cluster-management/index.html
+  s_87d9eb75eb4f48::t_250677a70dcf39 57-60
+  s_87d9eb75eb4f48::t_df064db1a5233a 88-91
+pages/ai-infra/agent/index.html
+  s_87d9eb75eb4f48::t_397479710a1e80 129,131,205,207,275,277,385,387
+content/ai-infra/transformer/02-input.md
+  s_87d9eb75eb4f48::t_dbe951ea0e9505 65,69
+pages/ai-infra/transformer/index.html
+  s_87d9eb75eb4f48::t_397479710a1e80 78,80,137,139,259,261,311,313,392,448,521,598,699,701
+content/cs-basics/linux-kernel-ai/03-memory-hugepages-thp.md
+  s_87d9eb75eb4f48::t_4bd51bb5bf6670 3
+content/ai-infra/papers/02e-faq-paper.md
+  s_87d9eb75eb4f48::t_7ce01888c0484f 3
+  s_87d9eb75eb4f48::t_bb6666ecc5eddb 92,96
+content/cs-basics/os/07-deadlock.md
+  s_87d9eb75eb4f48::t_d06d7f3ae95fa8 83
+  s_87d9eb75eb4f48::t_495a5a69a41d1f 87
+  s_87d9eb75eb4f48::t_e35cbd7091118c 3
+content/ai-infra/agent/04-agent-interview.md
+  s_87d9eb75eb4f48::t_32a30f043563ee 123,127
+content/ai-infra/llm-inference/16-flashattention-explained.md
+  s_87d9eb75eb4f48::t_5dbf5728fa659a 198
+content/cs-basics/linux-container/01-env-runtime.md
+  s_87d9eb75eb4f48::t_8190c0746109e0 21,25
+  s_87d9eb75eb4f48::t_fce4aba3f08242 3
+content/ai-infra/llm-inference/04-decode.md
+  s_87d9eb75eb4f48::t_6b793c8759ec2e 68
+content/cs-basics/networking/03-rdma.md
+  s_87d9eb75eb4f48::t_1a7164660a9a40 3
+  s_87d9eb75eb4f48::t_3f4bb6a4306d8c 34,38
+content/cs-basics/programming-systems/01-binary-linking.md
+  s_87d9eb75eb4f48::t_3dea0c612df7f3 3
+  s_87d9eb75eb4f48::t_7ee2e91d3fd8ea 21,25
+content/ai-infra/system-design/02-multi-tenant-gpu-scheduler.md
+  s_87d9eb75eb4f48::t_31695f863de56f 3
+  s_87d9eb75eb4f48::t_e543651963598a 180,184
+content/ai-infra/kubernetes/06-troubleshooting-stability.md
+  s_87d9eb75eb4f48::t_9358e93ad554dd 302
+content/ai-infra/scheduling/02-objectives-metrics.md
+  s_87d9eb75eb4f48::t_60fa93c07ce419 222
+  s_87d9eb75eb4f48::t_88ccd323a6c08a 218
+  s_87d9eb75eb4f48::t_8798ffb5a501b3 3
+content/ai-infra/agent/01-agent-concepts.md
+  s_87d9eb75eb4f48::t_40ae2d86789928 120,124
+content/ai-infra/transformer/06-flops-derivation.md
+  s_87d9eb75eb4f48::t_085b0a2d99f7f1 135
+content/ai-infra/performance-prediction/01-examples.md
+  s_87d9eb75eb4f48::t_443f4a84e6568e 31,35
+content/ai-infra/kubernetes/02-scheduling-resource-model.md
+  s_87d9eb75eb4f48::t_ad3799844fc7e8 211
+content/ai-infra/scheduling/06-scheduler-research-roadmap.md
+  s_87d9eb75eb4f48::t_4e37081a87b45d 193
+  s_87d9eb75eb4f48::t_d6cb56d24977e8 3
+  s_87d9eb75eb4f48::t_de4ce0b334e2d0 189
+content/cs-basics/os/05-io-multiplexing.md
+  s_87d9eb75eb4f48::t_5830571c4e06e3 87
+  s_87d9eb75eb4f48::t_2c69a77fb8ef98 3
+  s_87d9eb75eb4f48::t_3d0e2aa9e02210 91
+content/cs-basics/programming-systems/02-cpp-systems.md
+  s_87d9eb75eb4f48::t_9f52518c7ff762 3
+  s_87d9eb75eb4f48::t_34a75233740bbc 21,25
+content/cs-basics/os/06-virtual-memory-paging.md
+  s_87d9eb75eb4f48::t_13f8115ed72048 3
+  s_87d9eb75eb4f48::t_d8d7d59dc4629c 78
+  s_87d9eb75eb4f48::t_a1fddf90adfd45 74
+content/ai-infra/kubernetes/03-workload-controller.md
+  s_87d9eb75eb4f48::t_b66143aa6df17b 394
+pages/ai-infra/system-design/index.html
+  s_87d9eb75eb4f48::t_397479710a1e80 124,295,297
+  s_87d9eb75eb4f48::t_250677a70dcf39 21,84,86,89,119,121,300,358,360
+content/cs-basics/networking/01-tcp-udp.md
+  s_87d9eb75eb4f48::t_2e3cce953154c4 86,90
+  s_87d9eb75eb4f48::t_320b4504fbc745 3
+content/ai-infra/papers/02b-architecture.md
+  s_87d9eb75eb4f48::t_1e87f63f431a52 3
+  s_87d9eb75eb4f48::t_188bb8ec438c91 151,155
+content/cs-basics/os/13-ai-infra-container-cgroup.md
+  s_87d9eb75eb4f48::t_0aee679bd95f5c 61
+  s_87d9eb75eb4f48::t_a1a5d1ffb04dc4 65
+  s_87d9eb75eb4f48::t_ef474c8aba7b7e 3
+content/ai-infra/llm-inference/topic.json
+  s_87d9eb75eb4f48::t_0cffd326a9ee3e 61
+  s_87d9eb75eb4f48::t_b096c68420b38b 53
+  s_87d9eb75eb4f48::t_bdbb8f3890f979 24
+  s_87d9eb75eb4f48::t_9c73d0927eac49 40
+content/ai-infra/llm-inference/15-pagedattention-explained.md
+  s_87d9eb75eb4f48::t_8d78dfa84923b2 178
+content/cs-basics/os/04-signal-stdio.md
+  s_87d9eb75eb4f48::t_6b7a20733e26a7 3
+  s_87d9eb75eb4f48::t_e62e7c1c47d95e 27
+  s_87d9eb75eb4f48::t_92c5d8d02cee95 23
+content/ai-infra/scheduling/03-fairness-multiresource.md
+  s_87d9eb75eb4f48::t_2eadb2b16e5616 3
+  s_87d9eb75eb4f48::t_272f2e1576737e 266
+  s_87d9eb75eb4f48::t_520806ce947918 270
+content/ai-infra/performance-prediction/05-robustness.md
+  s_87d9eb75eb4f48::t_866543aa83148f 50,54
+content/ai-infra/kubernetes/01-architecture-pod-flow.md
+  s_87d9eb75eb4f48::t_d04cea50ecab38 209
+  s_87d9eb75eb4f48::t_4a736ddc5c9081 20-23
+content/ai-infra/llm-inference/00-e2e-pipeline.md
+  s_87d9eb75eb4f48::t_650fe6c2848d40 98
+content/cs-basics/linux-kernel-ai/04-io-zero-copy.md
+  s_87d9eb75eb4f48::t_fe0f6704f1e7c7 388
+  s_87d9eb75eb4f48::t_f3d5ebdd63be21 384
+  s_87d9eb75eb4f48::t_779696bd68b176 3
+content/ai-infra/transformer/05-interview.md
+  s_87d9eb75eb4f48::t_508123912b3a79 117,121
+content/ai-infra/system-design/04-kv-cache-system.md
+  s_87d9eb75eb4f48::t_d182178c1c0ffc 3
+  s_87d9eb75eb4f48::t_c5769d70d9bcdc 38,42
+content/ai-infra/transformer/04-training.md
+  s_87d9eb75eb4f48::t_df88fc5ff5eacc 58,62
+content/ai-infra/transformer/09-operator-bound-classification.md
+  s_87d9eb75eb4f48::t_abb4ba2a307ec9 94
+content/ai-infra/performance-prediction/04-metrics.md
+  s_87d9eb75eb4f48::t_e533bc64f42a74 38,42
+content/ai-infra/llm-inference/07-optimization-techniques.md
+  s_87d9eb75eb4f48::t_521e8bcd114f31 115
+content/ai-infra/kubernetes/07-ai-infra-gpu-dra.md
+  s_87d9eb75eb4f48::t_7bfc72975547c1 472
+content/ai-infra/distributed-training/03-tensor-pipeline.md
+  s_87d9eb75eb4f48::t_38d80a77ea01f1 87
+content/ai-infra/llm-inference/06-performance-bottlenecks.md
+  s_87d9eb75eb4f48::t_0d3004bd20420d 50
+content/ai-infra/cluster-management/03-topology-communication.md
+  s_87d9eb75eb4f48::t_5b4d417adab4c2 3
+  s_87d9eb75eb4f48::t_d7f844dadf571f 231
+  s_87d9eb75eb4f48::t_5d7f555553b5fb 227
+content/ai-infra/llm-inference/03-prefill.md
+  s_87d9eb75eb4f48::t_9d3803f6d02c12 69
+content/ai-infra/cluster-management/06-qa.md
+  s_87d9eb75eb4f48::t_86aa915104fc4d 372
+  s_87d9eb75eb4f48::t_d04789fed97c18 376
+  s_87d9eb75eb4f48::t_4ccc668089692c 3
+content/cs-basics/distributed-ai/02-communication-storage.md
+  s_87d9eb75eb4f48::t_2792f87dd9061e 3
+  s_87d9eb75eb4f48::t_7ab9c2d8ff00b3 20,24
+content/ai-infra/system-design/03-distributed-training-platform.md
+  s_87d9eb75eb4f48::t_f740602d6d7bf2 67,71
+  s_87d9eb75eb4f48::t_2df09df249a55f 3
+pages/ai-infra/llm-inference/index.html
+  s_87d9eb75eb4f48::t_e7c77982b63788 20,90,92,133,135,194,196,244,246,293,295
+content/cs-basics/distributed-ai/01-role-replica-rank.md
+  s_87d9eb75eb4f48::t_cebf2bc27118f1 21,25
+  s_87d9eb75eb4f48::t_849dcb0c4bdc46 3
+content/ai-infra/papers/01-icdcs-2026-maestro-llm.md
+  s_87d9eb75eb4f48::t_8db75100571b90 3
+  s_87d9eb75eb4f48::t_facc7447e36f11 106,110
+content/ai-infra/distributed-training/02-data-parallel-gradient.md
+  s_87d9eb75eb4f48::t_56d7d202081625 93
+content/ai-infra/llm-inference/08-serving-engines.md
+  s_87d9eb75eb4f48::t_1dff8dc345db8f 315
+content/ai-infra/transformer/03-attention.md
+  s_87d9eb75eb4f48::t_188bb8ec438c91 132,136
+content/ai-infra/cluster-management/01b-volcano.md
+  s_87d9eb75eb4f48::t_b3cb5654a5b00a 7-10
+  s_87d9eb75eb4f48::t_1796f068927784 40-42
+content/ai-infra/papers/02f-talk.md
+  s_87d9eb75eb4f48::t_8829a368bf8e07 36,40
+  s_87d9eb75eb4f48::t_1e89c37496c4aa 3
+content/cs-basics/os/01-process-thread-coroutine.md
+  s_87d9eb75eb4f48::t_3a298af97be940 45
+  s_87d9eb75eb4f48::t_1b70d15fbb573f 49
+  s_87d9eb75eb4f48::t_d997a2ec9f0535 3
+pages/ai-infra/performance-prediction/index.html
+  s_87d9eb75eb4f48::t_397479710a1e80 44,46,76,78,294,296,329,331,375,377
+content/ai-infra/llm-inference/01-prefill-decode.md
+  s_87d9eb75eb4f48::t_fffe51cc2dd057 58
+content/ai-infra/kubernetes/05-security-admission-multitenancy.md
+  s_87d9eb75eb4f48::t_680b60736a1d55 335
+content/cs-basics/os/09-ai-infra-memory.md
+  s_87d9eb75eb4f48::t_ab07fee4473430 83
+  s_87d9eb75eb4f48::t_c2f16d4f226c8b 79
+  s_87d9eb75eb4f48::t_504abb22114a5e 3
+content/ai-infra/system-design/01-multi-model-llm-serving.md
+  s_87d9eb75eb4f48::t_f0d0b2c544685a 3
+  s_87d9eb75eb4f48::t_b0bc6c63c54c08 72,76
+content/cs-basics/programming-systems/05-cpp-compile-smartptr.md
+  s_87d9eb75eb4f48::t_9272ca15bcc42b 3
+  s_87d9eb75eb4f48::t_beee5469ac3b3e 73,77
+content/cs-basics/os/08-ai-infra-concurrency.md
+  s_87d9eb75eb4f48::t_7808f7e92f5a92 3
+  s_87d9eb75eb4f48::t_18150fef39007a 75
+  s_87d9eb75eb4f48::t_3382c7ce89dc8a 79
+content/ai-infra/distributed-training/05-nccl-communication.md
+  s_87d9eb75eb4f48::t_d64b2efb557e1c 93
+content/ai-infra/llm-inference/05-kv-cache-attention.md
+  s_87d9eb75eb4f48::t_acc5b1e432e8cf 110
+content/cs-basics/os/16-ai-infra-os-priority-checklist.md
+  s_87d9eb75eb4f48::t_2c21d9795bfe77 96
+  s_87d9eb75eb4f48::t_d439eb05bd3c53 92
+  s_87d9eb75eb4f48::t_d6dfc99468d0a7 3
+content/ai-infra/distributed-training/06-troubleshooting-interview.md
+  s_87d9eb75eb4f48::t_effe3c9103933f 94
+content/cs-basics/os/02-cpu-scheduling.md
+  s_87d9eb75eb4f48::t_c424dd1cc74536 82
+  s_87d9eb75eb4f48::t_f758b28aeec60d 3
+  s_87d9eb75eb4f48::t_5fe5d37b59bbae 86
+content/ai-infra/transformer/07-roofline-analysis.md
+  s_87d9eb75eb4f48::t_31850699cc953e 67
+content/ai-infra/agent/03-agent-engineering.md
+  s_87d9eb75eb4f48::t_8bd9a541f3eb2f 77,81
+content/ai-infra/papers/02d-faq-base.md
+  s_87d9eb75eb4f48::t_c8425ce1ac14ad 3
+  s_87d9eb75eb4f48::t_53953c3bf344b3 76,80
+content/ai-infra/papers/03-section-03.md
+  s_87d9eb75eb4f48::t_4530418983fcd7 48,52
+  s_87d9eb75eb4f48::t_c98960c831b292 3
+content/cs-basics/distributed-ai/03-gpu-npu-observability.md
+  s_87d9eb75eb4f48::t_06ac671e5ca0eb 22,26
+  s_87d9eb75eb4f48::t_0dd0b3e1eba39d 3
+content/cs-basics/programming-systems/03-cpp-oop.md
+  s_87d9eb75eb4f48::t_ef171a12e76d7e 81,85
+  s_87d9eb75eb4f48::t_55eb1d248fb6b0 3
+content/ai-infra/cluster-management/02-multi-tenancy.md
+  s_87d9eb75eb4f48::t_39878aa2db6ab4 207
+  s_87d9eb75eb4f48::t_a39c29a66fb1c8 3
+  s_87d9eb75eb4f48::t_854fea3ee2f51e 203
+content/ai-infra/kubernetes/04-networking-storage.md
+  s_87d9eb75eb4f48::t_77e6143fbb1a90 314
+content/cs-basics/os/03-memory-oom-numa.md
+  s_87d9eb75eb4f48::t_a3c19e2075f3bf 3
+  s_87d9eb75eb4f48::t_345d8321253a55 23
+  s_87d9eb75eb4f48::t_084f999b504b88 27
+content/cs-basics/os/15-ai-infra-observability.md
+  s_87d9eb75eb4f48::t_a14cafd4594007 68
+  s_87d9eb75eb4f48::t_a64a8132c6ed7d 72
+  s_87d9eb75eb4f48::t_dfb24db4d766d2 3
+content/cs-basics/linux-kernel-ai/01-numa-binding.md
+  s_87d9eb75eb4f48::t_11ba75cdb6ec5a 3
+content/ai-infra/scheduling/04-batch-gang-backfill.md
+  s_87d9eb75eb4f48::t_fb4578b1324bbb 3
+  s_87d9eb75eb4f48::t_8799901f35d2bd 456
+  s_87d9eb75eb4f48::t_2b6ed4688abe63 452
+pages/ai-infra/kubernetes/index.html
+  s_87d9eb75eb4f48::t_75a8e550efd77b 36-39
+content/ai-infra/agent/02-agent-components.md
+  s_87d9eb75eb4f48::t_aa1774f5af9aae 83,87
+content/cs-basics/os/14-ai-infra-gpu-systems.md
+  s_87d9eb75eb4f48::t_e1a97daa0603a5 3
+  s_87d9eb75eb4f48::t_bde3ed58cd2eec 67
+  s_87d9eb75eb4f48::t_1907b7b2614b06 71
+content/cs-basics/computer-architecture/02-cache-tlb.md
+  s_87d9eb75eb4f48::t_3016633f3d4ef7 22,26
+  s_87d9eb75eb4f48::t_8353755c240f86 3
+pages/ai-infra/papers/index.html
+  s_87d9eb75eb4f48::t_397479710a1e80 21,116,118,121,424,426,429,570,572,575,759,761,764,831,833,836,920,922,925,952,954,957,997,999
+pages/cs-basics/index.html
+  s_87d9eb75eb4f48::t_250677a70dcf39 831,845,847,851,865,867,871,895,897,1028,1041,1043,1047,1061,1063,1067,1080,1082,1552,1565,1567,1571,1583,1585,1589,1603,1605
+  s_87d9eb75eb4f48::t_397479710a1e80 56,58,62,131,133,137,184,186,189,204,206,210,271,273,277,325,327,330,345,347,351,423,425,429,473,475,478,546,548,552,586,588,591,625,627,630,664,666,669,709,711,714,755,757,761,826,828,900,971,973,977,991,993,997,1023,1025,1085,1179,1305,1403,1547,1549,1608,1621,1623,1627,1689,1691,1694,1762,1764,1767,1831,1833,1836,1849,1851
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "2645aa76c992340e4caa59a8f8cad38c646c9b26",
+  "prompts": {},
+  "sessions": {
+    "s_87d9eb75eb4f48": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a2f88a744e138525c140f7e",
+        "model": "openrouter-3o__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
