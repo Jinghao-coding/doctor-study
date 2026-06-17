@@ -27,8 +27,6 @@
 <tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
 <tr><td>面试抓手</td><td>先讲整体数据流，再讲每层组件和残差归一化。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <h2>架构图</h2>
 <figure class="transformer-figure">
 <img src="../../../resources/images/transformer/attention-is-all-you-need-figure-1-transformer.png" alt="Transformer model architecture from Attention Is All You Need, Figure 1">
@@ -77,9 +75,9 @@ $$</div>
 </table>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Transformer 的核心是用 self-attention 在序列内建立全局依赖，再用 FFN 做逐 token 非线性变换。 先讲整体数据流，再讲每层组件和残差归一化。</p>
+<p>Transformer 不是单个 attention 模块，而是一套可堆叠的序列建模骨架。每个 token 沿四条路径推进：残差主干保梯度、self-attention 做 token 间通信决定谁看谁、FFN 做逐 token 非线性变换提供容量、归一化稳定激活尺度。现代大模型基本就是 Decoder-only 这套结构堆几十层。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会先点明 Transformer 是可堆叠的序列建模骨架，而不是单个 attention 模块。一层里数据走四条路径：self-attention 让 token 之间交换信息、决定谁关注谁，FFN 对每个 token 独立做扩维-激活-降维、提供模型容量并存储事实知识，残差连接给梯度修了条高速公路让深层仍可训练，归一化（现代多用 Pre-LN 或 RMSNorm）控制激活尺度。完整链路是 tokenizer 切分 → embedding 查表叠加位置信息 → 多层 attention+FFN → LM head 预测 next token。架构上分 Encoder-only（BERT，双向理解）、Encoder-Decoder（T5，翻译摘要）和 Decoder-only（GPT/LLaMA，因果 mask 自回归生成）三类，当前 LLM 主流是 Decoder-only。最后落到 infra：prefill 阶段是 O(n²d) 计算密集型，decode 阶段靠 KV cache 增量维护、转成 memory-bound，这正是推理优化和显存规划的核心抓手。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::01-architecture-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::01-architecture-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">输入处理</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-2" aria-labelledby="transformer-tabs-tab-2" data-mid="transformer-tabs::02-input-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>输入处理</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。</p>
@@ -91,8 +89,6 @@ $$</div>
 <tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
 <tr><td>面试抓手</td><td>区分 tokenizer、embedding、position encoding 的职责。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>输入处理三件套：从文字到向量</h3>
 <p>模型不能直接吃文字，必须先把文字变成数字向量。整条链路是：</p>
@@ -138,9 +134,9 @@ $$</div>
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。 区分 tokenizer、embedding、position encoding 的职责。</p>
+<p>输入侧是三件套流水线：Tokenizer 用 BPE/WordPiece 把文本切成子词并查词表得到 token id，Embedding 矩阵按 id 查表（不是矩阵乘）映射成稠密向量，再叠加位置编码。因为 attention 本身无序，位置信息必须显式注入。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>输入处理的链路是：文本 →（Tokenizer）→ token →（查词表）→ input_ids →（Embedding 查表）→ 词向量 →（加位置编码）→ 进第一层。第一步 Tokenizer 用 BPE、WordPiece 或 SentencePiece 把连续文本切成子词，子词是整词和单字之间的折中——既能控制词表大小、又能处理没见过的 OOV 词。第二步 Embedding 是一张可学习的 [vocab_size, hidden_size] 查找表，本质是按 id 取行向量、不是矩阵乘，训练中语义相近的词向量会逐渐靠拢。第三步位置编码很关键：Transformer 是全局并行计算、没有 RNN 的天然顺序，attention 对 token 集合是置换等变的，打乱输入只会让结果跟着换位，分不清「猫追狗」和「狗追猫」，所以要把顺序补回来。主流方案有原文的正弦余弦（可外推）、BERT 的可学习位置编码、以及 LLaMA 等用的 RoPE 旋转位置编码（外推性好），RoPE 也是现在大模型支持长上下文的基础。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::02-input-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::02-input-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">整体架构</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Attention 机制</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-3" aria-labelledby="transformer-tabs-tab-3" data-mid="transformer-tabs::03-attention-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Attention 机制</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。</p>
@@ -152,8 +148,6 @@ $$</div>
 <tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
 <tr><td>面试抓手</td><td>必须讲清 QK^T、softmax、加权求和和多头拼接。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>Self-Attention：核心三步</h3>
 <p>注意力的本质是<strong>「加权求和」</strong>：每个 token 输出 = 其它所有 token 的 value 的加权平均，权重由「我和你有多相关」决定。</p>
@@ -262,9 +256,9 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。 必须讲清 QK^T、softmax、加权求和和多头拼接。</p>
+<p>Self-Attention 本质是加权求和：每个 token 投影出 Q/K/V，用 Q 和所有 K 点积得相关性分数，除以 √d_k 缩放后 softmax 成权重，再对 V 加权求和。Multi-Head 把 hidden_size 拆成多个子空间并行算注意力再拼接，让不同 head 学语法、语义、位置等不同关系，总参数量和计算量基本不变。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>注意力的核心公式是 softmax(QKᵀ/√d_k)·V，思想是加权求和——每个 token 的新表示是其它所有 token 的 value 按相关性加权平均，Q 是「我要找什么」、K 是「我能提供什么」、V 是「我的实际内容」。除以 √d_k 是因为维度大时点积数值会偏大、softmax 进入梯度极小的饱和区，缩放是为了稳定梯度。Multi-Head 把总维度切成多个子空间，每个 head 独立算一次注意力再拼接过输出投影，好处是多角度建模、表达更强、天然可并行，而且总维度不变所以参数量和算力基本不变。工程上手撕要点是：view+transpose 把 [B,S,H] 切成 [B,heads,S,head_dim]，合并多头前必须 contiguous 否则 view 会报错，causal mask 给未来位置加 -1e9 让 softmax 后权重趋零实现因果性。最关键的落点是 KV cache：自回归 decode 时历史 token 的 K/V 不变，缓存下来每步只算新 token，这是推理加速和显存占用的核心。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::03-attention-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::03-attention-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">输入处理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">训练稳定性</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-4" aria-labelledby="transformer-tabs-tab-4" data-mid="transformer-tabs::04-training-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>训练稳定性</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 训练稳定性依赖残差、归一化、初始化、warmup、梯度裁剪和混合精度。</p>
@@ -276,8 +270,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时把梯度稳定、数值稳定和吞吐优化分开。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>先搞懂：什么是梯度消失/爆炸</h3>
 <p>深层网络靠反向传播更新参数，梯度要从最后一层「逐层相乘」传回最前面。</p>
@@ -316,9 +308,9 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Transformer 训练稳定性依赖残差、归一化、初始化、warmup、梯度裁剪和混合精度。 回答时把梯度稳定、数值稳定和吞吐优化分开。</p>
+<p>深层 Transformer 的核心难题是梯度连乘后消失或爆炸。一整套手段来稳：残差连接把乘法传播变成加法传播是头号功臣，LayerNorm/RMSNorm 稳激活分布，Xavier/Kaiming 控初始方差，梯度裁剪封顶防爆炸，warmup+decay 防初期发散，混合精度配 loss scaling 解决 FP16 下溢。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>先讲问题：深层网络反向传播梯度逐层相乘，每层都小于 1 就连乘趋零、浅层学不动（梯度消失），都大于 1 就连乘爆炸、loss 变 NaN，大模型几十上百层这个问题尤其严重。然后是六个手段，分三类记：梯度稳定靠残差连接和梯度裁剪——残差是最关键的，y=x+F(x) 的梯度是 1+F&#x27;(x)，那个常数 1 保证即使 F&#x27;(x) 很小梯度也不衰减，相当于给梯度修了条高速公路，本质是把乘法传播变成加法传播；数值稳定靠归一化和初始化——NLP 用 LayerNorm 而不是 BatchNorm 是因为序列变长、batch 小时 batch 统计量不稳定，LayerNorm 对单样本所有特征归一化不依赖 batch，RMSNorm 进一步省掉减均值更快，LLaMA 在用，另外现代多用 Pre-Norm（x+F(LN(x)))比原文的 Post-Norm 更易收敛；吞吐和精度靠 warmup+decay 和混合精度+loss scaling——FP16 表示范围小、小梯度会下溢成 0，把 loss 乘大再算梯度、更新前除回来。落到 infra，这套直接关系到大规模分布式训练能不能稳定收敛、要不要 BF16、loss 突然 NaN 怎么排查。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::04-training-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::04-training-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Attention 机制</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-5" aria-labelledby="transformer-tabs-tab-5" data-mid="transformer-tabs::06-flops-derivation-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>FLOPs 逐步推导</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。</p>
@@ -330,8 +322,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
 <tr><td>面试抓手</td><td>记住矩阵乘 $2MNK$，再数 QKV、输出投影、FFN 和两次 attention matmul。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <p>先不用一上来背公式，而是把单层 Transformer 的计算量理解成两类：一类是各种线性层带来的 $nd^2$ 项，另一类是 Attention 两次大矩阵乘带来的 $n^2d$ 项。最终结论是：</p>
 <p>$$ \text{总FLOPs} = 24nd^2 + 4n^2d $$</p>
 <p>下面一步步推出它。</p>
@@ -399,7 +389,7 @@ class MultiHeadAttention(nn.Module):
 <p><strong>30 秒版：</strong></p>
 <p>单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。 记住矩阵乘 $2MNK$，再数 QKV、输出投影、FFN 和两次 attention matmul。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>推单层 Transformer FLOPs，我只记一个基本公式：矩阵乘 $A_{M\times N}\times B_{N\times K}$ 的 FLOPs 是 $2MNK$，因为输出有 $M\times K$ 个元素、每个是长度 $N$ 的点积约 $2N$ 次运算。然后数有几个矩阵乘。线性层这类都是 $nd^2$：QKV 三次投影加输出投影是 4 个 $n\times d$ 乘 $d\times d$，各 $2nd^2$ 合 $8nd^2$；FFN 两层维度 $d\to 4d\to d$，各 $8nd^2$ 合 $16nd^2$；两者合 $24nd^2$。Attention 两次大矩阵乘是 $n^2d$ 项：$QK^\top$ 得 $n\times n$ 注意力矩阵是 $2n^2d$、权重乘 V 也是 $2n^2d$，合 $4n^2d$。所以单层总 FLOPs 是 $24nd^2+4n^2d$，整模型再乘层数、训练含反向约再 ×3。关键直觉是 $n^2$ 来自每个 token 都要和每个 token 算相关性，这正是 attention 对序列长度平方复杂度的根源：当 $n\ll d$ 时线性层 $nd^2$ 主导，$n$ 很大时 $n^2d$ 成瓶颈，也是长上下文和 FlashAttention 要解决的问题。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::06-flops-derivation-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::06-flops-derivation-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">训练稳定性</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Roofline 分析</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-6" aria-labelledby="transformer-tabs-tab-6" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Roofline 分析</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 16 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。</p>
@@ -411,8 +401,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
 <tr><td>面试抓手</td><td>公式必须讲 FLOPs、bytes 和 ridge point。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
 <p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>
@@ -457,7 +445,7 @@ class MultiHeadAttention(nn.Module):
 <p><strong>30 秒版：</strong></p>
 <p>Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。 公式必须讲 FLOPs、bytes 和 ridge point。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>Roofline 用算术强度判断一个 kernel 是缺数据还是缺算力。横轴是算术强度 FLOPs/Byte，纵轴是实际性能 FLOPs/s，可达上限等于 min(峰值算力, 峰值带宽×算术强度)：图上斜线是 memory roof、水平线是 compute roof，交点 ridge point 就是机器平衡点。A100 平衡点约 312 TFLOPS÷2 TB/s≈156 FLOP/byte，算术强度高于它偏 compute-bound、远低于偏 memory-bound。映射到 Transformer：大 batch 的 QKV、FFN 矩阵乘计算量随 batch 增长快、数据复用高，是 compute-bound；逐 token decode（batch 小）退化成 GEMV，算术强度约 1，瓶颈是读权重带宽，是 memory-bound；Softmax、LayerNorm 这类 element-wise 计算量相对访存很小也是 memory-bound。串到推理两阶段：prefill 多 token 并行、大矩阵乘、compute-bound、看 TTFT，靠 chunked prefill 和提高 TensorCore 利用率；decode batch 小、GEMV、memory-bound、看 TPOT，靠 continuous batching 摊销权重读取、KV cache 量化和 PagedAttention 降带宽与显存。优化方向也由此分流：落斜线区减访存、提复用、融算子，落水平线区提 TensorCore 利用率、优化 tile、用低精度减 FLOPs。</p>
 <h2>关联模块</h2>
 <ul><li><code>性能预测与建模 / Roofline Model</code>：完整 Roofline 公式、图、硬件 ridge point 和 VGG/MobileNet 例子。</li><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::07-roofline-analysis-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-7" aria-labelledby="transformer-tabs-tab-7" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 为何 Memory-bound</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。</p>
@@ -469,8 +457,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
 <tr><td>面试抓手</td><td>按计算量、访存量、算术强度三步算。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <p>这一节用 Roofline 模型完整算清一个高频面试题：<strong>70B FP16 模型在 A100 上 decode、batch=1、每次只生成 1 个 token，为什么是显存带宽瓶颈（memory-bound）而不是算力瓶颈？</strong> 核心是三步——算计算量、算访存量、算算术强度，再和机器平衡点比较。</p>
 <h3>1. 为什么前向 FLOPs ≈ 2 × 参数量 × token 数</h3>
 <p>生成一个 token 时，模型里的权重基本都要参与一次矩阵乘。矩阵乘里一个权重参数通常对应一次乘法 + 一次加法：</p>
@@ -532,7 +518,7 @@ class MultiHeadAttention(nn.Module):
 <p><strong>30 秒版：</strong></p>
 <p>70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。 按计算量、访存量、算术强度三步算。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>这道高频题问 70B FP16 模型在 A100 上 batch=1 decode、每次生成 1 个 token 为什么是 memory-bound，我按计算量、访存量、算术强度三步算。计算量：一个参数对应一次乘加约 2 FLOPs，FLOPs≈2×参数量×token 数，70B 生成 1 个 token 是 2×70×10^9≈140 GFLOPs。访存量：权重 FP16 每参数 2 bytes，70×10^9×2=140 GB，batch=1 时每生成一个 token 都要把整套权重从 HBM 读一遍。算术强度=140 GFLOPs÷140 GB≈1 FLOP/byte，即每读 1 byte 只做约 1 次浮点运算。A100 平衡点是 312 TFLOPS÷2 TB/s=156 FLOP/byte，要 156 才能喂饱计算单元，而 decode 只有 1，远低于 156，所以算力用不满、卡在显存带宽。换成时间直觉更清楚：纯算力算一个 token 约 0.45 ms，但读 140 GB 权重要约 70 ms，差两个数量级，主要被带宽限制。落点是 batch 变大能改善：batch=B 时同一份权重服务 B 个 token，算术强度变成约 B FLOP/byte，逐渐趋向 compute-bound，这正是 continuous batching 提升吞吐的根本原因。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::08-decode-memory-bound-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Roofline 分析</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">逐算子 Bound 分类</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-8" aria-labelledby="transformer-tabs-tab-8" data-mid="transformer-tabs::09-operator-bound-classification-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>逐算子 Bound 分类</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。</p>
@@ -544,8 +530,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
 <tr><td>面试抓手</td><td>按算子分类，避免“一句话说全模型 compute-bound”。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <p>判断一个算子是 compute-bound 还是 memory-bound，核心看算术强度：</p>
 <p>$$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$</p>
 <p>算术强度高于机器平衡点（A100 ≈ $\frac{312\text{ TFLOPS}}{2\text{ TB/s}} \approx 156$ FLOP/byte）就 compute-bound，远低于就 memory-bound。下面把 Transformer 各算子按这个标准过一遍。</p>
@@ -611,7 +595,7 @@ class MultiHeadAttention(nn.Module):
 <p><strong>30 秒版：</strong></p>
 <p>Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。 按算子分类，避免“一句话说全模型 compute-bound”。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>Transformer 不能一句话说全模型 compute-bound，要按算子分类，核心标准是算术强度=FLOPs÷访存 bytes，高于机器平衡点（A100≈312 TFLOPS÷2 TB/s≈156 FLOP/byte）就 compute-bound，远低于就 memory-bound。规律是大而方的矩阵乘通常 compute-bound，小 batch、单 token、逐元素、归一化、softmax、KV cache 读写通常 memory-bound。大矩阵乘本质是 Y=XW，计算量约 2MKN、访存约 MK+KN+MN，M、N、K 都大时 FLOPs 增长远快于访存、复用高、能喂饱 TensorCore；但 decode batch=1 退化成瘦矩阵 [1,H]×[H,H]，几乎无 batch 复用，时间全花在从 HBM 读 Wq/Wk/Wv/Wo/Wup/Wgate/Wdown，转 memory-bound，这就是 70B FP16 约 140GB 权重单 token decode 的根因。Attention 两阶段相反：prefill 的 QK^T 是 O(B·h·S^2·D) 大矩阵乘 compute-bound，FlashAttention 减少 HBM 读写后更像高效 GEMM；decode query 长度为 1 但要扫历史 KV cache、读多算少，memory-bound，所以长上下文越来越慢是每步读 KV 线性增长而非计算爆炸。逐元素/归一化如 Residual add 算术强度约 1/6 必然 memory-bound，工程上常和相邻 GEMM 做 kernel fusion；AllReduce/AllGather 属 communication-bound 不在单卡二分内。训练大矩阵乘 compute-bound 但 optimizer step 读写多份状态偏 memory-bound。这套分类直接决定 prefill/decode 分离部署、continuous batching、PagedAttention、MQA/GQA 等优化方向。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::09-operator-bound-classification-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::09-operator-bound-classification-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">面试高频题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-9" aria-labelledby="transformer-tabs-tab-9" data-mid="transformer-tabs::05-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 面试要把架构、Attention、复杂度、训练稳定和推理系统连接起来。</p>
@@ -623,8 +607,6 @@ class MultiHeadAttention(nn.Module):
 <tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
 <tr><td>面试抓手</td><td>用 30 秒版和追问表收束。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-r">
 <h3>Transformer 面试高频题</h3>
 <p>把前面知识点压缩成可背诵的问答，点击展开。先盖住答案自己说一遍，再对照。</p>
@@ -714,9 +696,9 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Transformer 面试要把架构、Attention、复杂度、训练稳定和推理系统连接起来。 用 30 秒版和追问表收束。</p>
+<p>Transformer 面试我会用一条主线串起来：纯注意力架构抛弃 RNN/CNN，输入侧 tokenizer+embedding+位置编码，核心是 self-attention 做 token 间通信、FFN 做单 token 加工，残差加归一化让深层可训练，最后落到 Decoder-only 自回归生成和 KV cache 这些推理系统关切。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会从整体结构讲起：Transformer 是纯注意力架构，一层等于「自注意力交流一次 + FFN 各自加工一次」，残差和归一化保证深层能训。输入侧 tokenizer 用 BPE/WordPiece 切子词、embedding 查表、再叠加位置编码——因为 attention 本身无序必须显式注入顺序。注意力是 softmax(QKᵀ/√d_k)·V，除以 √d_k 防 softmax 饱和；Multi-Head 拆子空间多角度建模、参数量不变。手撕时要讲清 KV cache（decode 复用历史 K/V）和 causal mask（未来位置加 -1e9）。训练稳定性靠残差（把乘法传播变加法）、LayerNorm/RMSNorm、梯度裁剪、warmup、混合精度这一套。最后区分三种架构：Encoder-only（BERT 理解）、Encoder-Decoder（T5 翻译）、Decoder-only（GPT/LLaMA 生成，当前主流）。我会把这些和 infra 连起来：prefill 计算密集、decode memory-bound 靠 KV cache，这就接到了推理引擎、显存规划和分布式训练的系统话题。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::05-interview-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::05-interview-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">逐算子 Bound 分类</span></button><button type="button" class="tab-step tab-step-next" data-step-target="10"><span class="tab-step-label">下一篇</span><span class="tab-step-title">可视化资源</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-10" aria-labelledby="transformer-tabs-tab-10" data-mid="transformer-tabs::10-visual-explainer-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>可视化资源</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer Explainer 是一个适合“建立动态直觉”的交互式可视化项目，建议配合本站的 Attention、FLOPs/Roofline 和推理系统章节使用：它负责看懂 token 如何流过模型，我们负责补齐公式、系统瓶颈和面试回答。</p>

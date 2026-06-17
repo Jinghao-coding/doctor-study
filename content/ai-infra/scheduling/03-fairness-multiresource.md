@@ -1,6 +1,6 @@
 ## 一句话结论
 
-任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+多资源公平的核心是怎么在多维资源空间里定义"公平"：从单资源的 Max-Min Fairness 和 Proportional Share 起步，DRF 用 dominant share（每个用户占比最高的那维资源）做公平定义并保证 Sharing Incentive/Envy-freeness/Pareto Efficiency 三性质，工程上再用 Elastic Quota（min/max）和 QAD（保障度连续值）落地，最后叠加异构 GPU、拓扑、弹性和抢占代价四个 GPU 集群特有难点。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 系统类 |
 | 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
 | 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-m">
 <h3>多资源公平：调度方向的核心基本功</h3>
@@ -269,11 +263,11 @@
 
 **30 秒版：**
 
-任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+多资源公平的难点是"公平"在多维空间没唯一定义。DRF 是基石：用每个用户占比最高的维度（dominant resource）的份额做均衡，并保证 Sharing Incentive、Envy-freeness、Pareto Efficiency 三个性质。DRF 是理论，工程上用 Elastic Quota（min 保障+max 上限+空闲借用+可回收）和 QAD（保障度连续值，可设阈值触发渐进式回收）落地。GPU 集群还要叠加异构 GPU 按 flavor 分算、拓扑放 Score 阶段、弹性任务按目标 world size 算、抢占要代价感知。
 
 **2 分钟版：**
 
-我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+我会先说明 GPU 集群不是单资源系统，一个任务同时消耗 GPU、CPU、内存、网络，所以"公平"本身没有唯一定义——团队 A 跑 CV 吃 GPU、团队 B 跑 NLP GPU 和内存都吃，按 GPU 数均分对谁都不公平。从单资源的 Max-Min Fairness（按需分配、多余让给需要的人）和 Proportional Share（按权重，但不理解瓶颈资源）起步，引出多资源公平的基石算法 DRF：每个用户的 dominant resource 是它在所有维度里占比最高的那一维，DRF 让不同用户的 dominant share 尽量接近，能手动推演（如 9 CPU/18GB 内存下两个用户最终 dominant share 都收敛到 67%）。DRF 有三个关键性质：Sharing Incentive（参与共享不比独占差，是多租户系统的底线）、Envy-freeness（无嫉妒）、Pareto Efficiency（无浪费）。然后从理论过渡到工程：DRF 不理解拓扑/优先级/工程约束，所以用 Elastic Quota 做 min 保障+max 上限+空闲借用+可回收，再用 QAD（实际获得/保障配额）这个连续值替代离散阈值，可以设阈值（如 0.95）触发渐进式回收、做更精确的抢占决策。最后讲 GPU 集群特有的四个延伸难点：异构 GPU（1 H100≈4 V100，打破 DRF 同类资源可互换假设，按 flavor 分算或归一化）、拓扑（8 卡同 NVLink vs 跨 4 节点性能差 2 倍，拓扑放 Score 阶段不进 Fairness）、任务弹性（按目标 world size 算 dominant share）、抢占成本（不简单选 dominant share 最高的，而是选释放资源量/抢占代价比值最高的牺牲者）。落到队列设计就是 Quota、Borrowing、Reclaim、Admission、Hierarchy 五大能力。
 
 ## 关联模块
 

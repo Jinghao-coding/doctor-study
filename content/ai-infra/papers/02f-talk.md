@@ -1,6 +1,6 @@
 ## 一句话结论
 
-面试版完整回答（背诵展开版） 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。
+这一节给出 DeepShare 在面试里可直接背诵的完整口述版：不考虑 Gang Scheduling 时，Controller 维护两级租户队列、计算 QAD 并做 quota 准入，Scheduler Plugin 用 QAD-aware QueueSort 加 Filter/Score/Reserve/PostFilter 完成 Pod 级排序、落点和抢占。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 论文项目类 |
 | 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
 | 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-w">
 <h3>面试版完整回答（背诵展开版）</h3>
@@ -39,11 +33,11 @@
 
 **30 秒版：**
 
-02f-talk 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。
+不考虑 Gang Scheduling 时，DeepShare 在 K8s 上拆成 Controller 和 Scheduler Plugin：Controller 管 tenant/job 级逻辑——维护每租户的 Guaranteed/Best-effort 队列、算 QAD、做 quota 准入和 Best-effort cap，通过准入的 Pod 才进 scheduler；Scheduler Plugin 管 Pod/node 级——用 QueueSort 做 Guaranteed first、QAD low first、runtime short first 的全局排序，再用 Filter/Score 选节点、Reserve 记账、PostFilter 抢占。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+这一节是 DeepShare 的背诵口述版。我会先点出分工：Controller 负责租户级资源治理，Scheduler Plugin 负责 Pod 级调度。Controller watch 用户提交的 GPU Job，读取 tenant、class、GPU request 和预测运行时间放入对应租户的 Q_i^G 或 Q_i^B，周期性统计 quota 使用、计算 QAD 并维护 TenantQuota status。准入上，Guaranteed 作业满足 U_i^G + R_j ≤ q_i 才放行，Best-effort 要在没有可放置 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i 时才放行，通过移除 schedulingGate 进 kube-scheduler。第二级集群队列由 QueueSort 实现：Guaranteed 优先于 Best-effort，同类中 QAD 低的租户优先，QAD 接近时短作业优先，提交时间兜底。之后 PreFilter 解析上下文，Filter 检查 GPU 和共享干扰约束，Score 做 bin packing 和干扰打分，Reserve/Unreserve 维护账本，PostFilter 在 Guaranteed 调度失败且 QAD 低时选低代价 Best-effort 抢占。一句话收束：第一级队列在 Controller 显式维护，第二级队列由准入后的 Pod 集合加 QAD-aware QueueSort 共同实现，既保留 Kubernetes-native 框架又落地 QAD 驱动的资源管理。
 
 ## 关联模块
 

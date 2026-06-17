@@ -11,12 +11,6 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 不要只讲算法，必须讲缓存状态和绑定路径。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>调度问题定位：区分 Pod 属性、调度阶段和调度机制</h3>
 <p>在分析 Kubernetes Scheduler 时，需要区分三类概念，<strong>这三类概念不能混在一起</strong>：</p>
@@ -161,7 +155,7 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+讲调度一致性不能脱离 scheduler cache 和 binding cycle。我会先区分三类概念：priority、resource requests 这些是 Pod 属性，QueueSort/Filter/Score/Reserve/Permit/Bind 是 Scheduling Framework 的扩展点，而 Preemption、Backoff、Gang 是横跨多阶段的调度机制，不能混为一谈。核心链路上，scheduler 不每次都拉全量数据，而是维护本地 cache 并在调度周期开始时生成 snapshot，选中节点后先在 cache 里 assume 占住资源再异步 Bind，所以这里有三层不同状态：Assume 写 scheduler cache、Reserve 写插件内存账本（如 GPU 拓扑、PodGroup 名额）、Bind 才写 API Server。失败要能恢复，Bind 失败要 Forget assumed Pod，Reserve 失败要 Unreserve。权衡在于 cache 不是强一致换来的调度吞吐。抢占不是直接杀 Pod，而是选 victim 后设 nominatedNodeName 等优雅退出，还受 PDB、grace period 约束，硬约束不匹配抢占也救不了。排障时我会先看 FailedScheduling 事件是 Unschedulable 还是 UnschedulableAndUnresolvable，再定位是哪个 plugin 产生的 Status。
 
 ## 关联模块
 

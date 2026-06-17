@@ -1,6 +1,6 @@
 ## 一句话结论
 
-两级队列具体在哪里实现 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。
+DeepShare 的两级队列中，第一级租户级 Guaranteed/Best-effort 队列在 Controller 里显式维护并做准入，第二级全局队列是逻辑队列——由 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QAD-aware QueueSort 共同体现，调度执行落在 Framework 各扩展点。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 论文项目类 |
 | 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
 | 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-s">
 <h3>两级队列具体在哪里实现</h3>
@@ -197,11 +191,11 @@ if Best-effort:
 
 **30 秒版：**
 
-02c-impl-details 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。
+这一节落到 DeepShare 的实现细节，重点是两级队列的归属。第一级是每个租户的 Guaranteed 和 Best-effort 队列，在 Controller 里显式维护，由 Controller 做准入；第二级全局队列不是单独的物理队列，而是 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QueueSort 排序共同体现。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+这一节讲 DeepShare 各扩展点怎么实现。Controller 的工作流是：watch Job 放入对应租户的 Guaranteed/Best-effort 队列，计算 QAD，再分级准入——Guaranteed 满足 U_i^G + R_j ≤ q_i 才进候选集，Best-effort 更保守，要求没有可放置的 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i，准入后通过移除 schedulingGate 放行进 kube-scheduler。第二级全局队列由 Scheduler Plugin 的 QueueSort 实现，排序键依次是 class（Guaranteed 优先）、tenant QAD（低优先）、predicted runtime（短优先）、submit time，核心是先恢复保障不足的租户、再用预测时间做局部优化，runtime 不能覆盖 QAD。后续 PreFilter 解析上下文，Filter 检查 GPU 和 colocation 干扰，Score 做 bin packing、碎片控制和干扰打分，Reserve/Unreserve 维护账本防止与 kube-scheduler assumed state 不一致，PostFilter 在 Guaranteed 调度失败且 QAD 低时做代价感知抢占。面试里我会强调为什么不全放 Controller 或全放 Plugin——准入是全局状态管理，出队和落点必须在 scheduler 内决定。
 
 ## 关联模块
 

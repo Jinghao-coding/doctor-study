@@ -1,6 +1,6 @@
 ## 一句话结论
 
-load high 不等于 CPU busy 是 操作系统基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+load average 高不等于 CPU 忙，因为 load 同时统计 runnable 和 D 状态不可中断睡眠任务，大量任务卡在磁盘或网络 I/O 也会推高 load。判断 CPU 瓶颈要同时看 load、utilization、run queue、iowait 和 context switch。AI Infra 里数据预处理、tokenizer、序列化和容器 CFS throttling 都可能让 CPU 成瓶颈、拖垮 GPU 喂数据。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@ load high 不等于 CPU busy 是 操作系统基础 的核心知识点，面试�
 | 章节类型 | 排障诊断类 |
 | 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## AI Infra 面试模块：CPU 调度与性能分析
 
@@ -64,11 +58,11 @@ AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detoke
 
 **30 秒版：**
 
-11 ai infra cpu perf 是 操作系统基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+看 CPU 关键是分清 load average 和 utilization：load 包含 runnable 和 D 状态不可中断睡眠任务，I/O 卡住也会推高 load 但 utilization 不一定高。要再拆 user/system/iowait/steal 看时间花在哪。AI Infra 里 CPU 不是辅助资源，数据预处理、tokenizer、序列化、容器 CFS throttling 都可能让 GPU 空转，排障常用 perf 采样定位热点。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 操作系统基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+CPU 性能分析先建立几个关键概念区分。调度器从 runnable 队列选下一个任务运行，在公平、响应和吞吐间取舍。最容易踩坑的是 load average 和 utilization：load 同时统计 runnable 和 D 状态不可中断睡眠任务，所以大量任务卡在磁盘或网络 I/O 时 load 很高但 CPU utilization 不一定高，判断 CPU 瓶颈要把 load、utilization、run queue、iowait 和 context switch 一起看。进一步要拆 user/system/iowait/steal——分别是用户态执行、内核态执行、等 I/O、虚拟化环境被宿主抢占；iowait 高提示 I/O 可能拖慢任务，但要结合 iostat 的 await、util 判断。落到 AI Infra，CPU 从来不是辅助资源：训练时 CPU 数据准备不足会让 GPU 空转，高 QPS 推理里 tokenizer、JSON 序列化、日志和网络协议栈可能成瓶颈，多线程服务的锁竞争、过高 context switch、cache miss 会让吞吐下降、p99 抖动，容器里 CPU quota、cpuset、CFS throttling 还会让服务看着有 CPU 实际被限流。定位热点先用 perf top 在线看，再 perf record -g 采样调用栈、用火焰图分析热点落在业务函数、系统调用、锁还是内核网络栈。
 
 ## 关联模块
 

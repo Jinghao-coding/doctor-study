@@ -11,12 +11,6 @@ K8S 排障要从状态、事件、日志、资源、网络、节点和控制面�
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>故障排查总方法：从症状反推链路</h3>
 <p>Kubernetes 排障不要一上来背命令，而要按链路拆：<strong>API 对象是否存在 → 调度是否成功 → kubelet 是否执行 → 网络/存储是否就绪 → 应用是否健康 → 控制器是否持续修正。</strong></p>
@@ -305,7 +299,7 @@ K8S 排障要从状态、事件、日志、资源、网络、节点和控制面�
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+K8S 排障的核心方法不是背命令，而是从症状反推链路：API 对象是否存在、调度是否成功、kubelet 是否执行、网络存储是否就绪、应用是否健康、控制器是否持续修正。我先看状态用 kubectl get/describe 和 Events，再按症状分流：Pod Pending 偏调度与准入侧，看 requests、Node allocatable、污点、亲和性、PVC、Quota、DRA claim；ContainerCreating 偏节点执行侧，看镜像、CNI、CSI mount、sandbox；CrashLoopBackOff 先看 logs --previous、退出码和探针，区分应用崩溃还是 liveness 过激；OOMKilled 看 last state 和内存 limit。系统性问题再往控制面收，etcd 先看 etcd_server_has_leader、wal_fsync、backend_commit 三个指标，API Server 过载用 APF 的 FlowSchema/PriorityLevel 定位限流源，网络偶发超时优先排查 DNS 5s 超时、conntrack 表打满和 MTU 不一致。最后用这些观测指标和事件链路判断修复是否真正生效。
 
 ## 关联模块
 

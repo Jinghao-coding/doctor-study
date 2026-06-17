@@ -1,6 +1,6 @@
 ## 一句话结论
 
-任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层：Gang Scheduling 是 all-or-nothing 准入语义（防 partial allocation 导致 GPU 空转），Backfill 是队列利用率优化（保护队头大任务 reservation 的前提下让短任务插空），Bin Packing 是节点放置策略，Checkpoint-aware Preemption 是代价感知的运行时回收，配合 Elastic Training 还能用缩容代替杀任务。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 系统类 |
 | 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
 | 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-m">
 <h3>批调度：训练任务和普通在线服务的分水岭</h3>
@@ -455,11 +449,11 @@ for job in queue.after(head):
 
 **30 秒版：**
 
-任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+分布式训练是 all-or-nothing 语义——少一个 worker，NCCL AllReduce 就阻塞、所有 GPU 空转，所以批调度有四个不同层的机制：Gang Scheduling 是准入语义，凑齐 minAvailable 再整体启动，防 partial allocation；Backfill 是队列优化，给队头大任务建 reservation，让短任务利用等待期碎片但不延迟它启动（EASY Backfill 最常见）；Bin Packing 是放置，减碎片留完整节点给大 gang；Checkpoint-aware Preemption 是代价感知回收，选释放资源量/（checkpoint age+重启成本）比值最高的牺牲者，配合 Elastic Training 缩 world size 代替杀任务。
 
 **2 分钟版：**
 
-我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+我会先点出批调度和在线服务的分水岭：在线服务每个 Pod 独立，挂一个不影响其他；而分布式训练所有 worker 是一个整体，少一个 rank，NCCL collective 就阻塞，所有 GPU 空转，这就是 all-or-nothing 语义。然后我会把四个常被混问的概念按决策层拆开。第一是 Gang Scheduling，解决 partial allocation 问题——64 卡任务只凑到 56 卡就启动，56 个 worker 卡在 NCCL init 等第 64 个 rank、GPU 全空转；解法是 PodGroup + minAvailable + Permit 阶段等待凑齐 + 超时释放，实现有 Volcano PodGroup、K8s Coscheduling 插件、Kueue Workload 三种，代价是增加大作业等待时间。第二是 Backfill，队头大任务凑不齐资源时，FIFO 会让碎片 GPU 空转，Backfill 给队头建 reservation、估算它的最早启动时间，然后让预计能在该时间前结束、或可抢占的短任务插空运行；EASY Backfill 只保护队头任务，最常用，要配 aging 防后续大任务饥饿。第三是 Bin Packing 做放置减碎片。第四是抢占，训练抢占不能只看优先级，要做 checkpoint-aware：用 release_value /（checkpoint_age + restart_cost）打分选牺牲者，优先抢 checkpoint 新鲜、运行时间短的，并先优雅抢占（发信号让任务 checkpoint）再超时强杀。最后收束到三者组合 + Elastic Training：弹性训练让 minAvailable 小于 world size，资源够就先启动后扩容，被抢占时缩 world size 而非整组杀掉，但这需要训练框架、checkpoint 格式和调度器协同，且 TP/PP 通常固定、只在 DP 维度弹性。
 
 ## 关联模块
 

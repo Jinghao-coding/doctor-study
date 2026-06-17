@@ -51,10 +51,6 @@
 <img src="../../../resources/images/k8s-queue/two-level-queue-arch.svg" alt="两级队列架构图：平台业务队列 + Volcano 调度队列" loading="lazy">
 <p class="caption">两级队列：一级自研业务队列负责准入与配额（source of truth），二级 Volcano 负责 gang 调度与放置。超额任务停在 Queued，不创建 Pod。</p>
 </div>
-<div class="figure">
-<img src="../../../resources/images/k8s-queue/two-level-queue-overview.jpeg" alt="基于 Kubernetes + Volcano 的两级队列调度设计全景图" loading="lazy">
-<p class="caption">全景图：总体路径、业务队列设计、配额账本、放行决策流程、VolcanoJob 示例、二级调度、抢占分工与能力边界一图总览。</p>
-</div>
 <table>
 <tr><th>层级</th><th>组件</th><th>职责</th></tr>
 <tr><td rowspan="4">一级<br>自研平台</td><td>Admission Webhook</td><td>校验身份、team、优先级权限、卡型；拦截“单任务请求 &gt; 团队 quota”这种永远无法满足的任务</td></tr>
@@ -64,17 +60,7 @@
 <tr><td rowspan="2">二级<br>Volcano</td><td>Volcano Queue capability</td><td>按卡型配 capability，作为执行层 guardrail，即使平台 bug 多放也不会无限超发</td></tr>
 <tr><td>Volcano Scheduler</td><td>只接收已 admission 的任务，做 PodGroup、gang、allocate、preempt、binpack、topology-aware 放置</td></tr>
 </table>
-<pre><code class="language-text">用户提交 TrainingJob
-  ↓ Admission Webhook：合法才放行（单任务超团队 quota 直接拒）
-平台接收，进入 Queued（不因 quota 满而拒绝）
-  ↓ 多级排序：team → gpuType → priority → FIFO/aging/backfill
-Quota Manager 判断：used + reserved + incoming <= hard
-  ↓ 满足
-reserve quota → 创建 VolcanoJob
-  ↓
-Volcano：PodGroup gang scheduling → 节点选择 → Pod 运行
-  ↓
-任务结束释放 quota → 平台继续 admit 下一个</code></pre>
+<div class="qa-summary">图里的关键点：超额任务只停留在 TrainingJob 的 Queued 状态；拿到 quota token 之前不创建 VolcanoJob / PodGroup / Pod。</div>
 </div>
 
 <div class="card card-s">

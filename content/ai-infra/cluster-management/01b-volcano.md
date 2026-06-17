@@ -4,6 +4,10 @@ Volcano 的核心是 Queue、PodGroup、VolcanoJob：Queue 管多租户资源，
 
 <div class="card card-m">
 <h3>Volcano 定位与架构</h3>
+<div class="figure">
+<img src="../../../resources/images/volcano/volcano-demo.png" alt="解锁 Kubernetes 批处理新范式：Volcano 调度引擎初体验" loading="lazy">
+<p class="caption">Volcano 是 Kubernetes 批处理调度的新范式：为 AI/ML、HPC 等高性能工作负载补齐默认调度器缺失的 Gang、队列与公平性能力。</p>
+</div>
 <p>Volcano 是 CNCF 孵化的 Kubernetes 批处理调度系统，面向 AI/ML、HPC、Spark、Flink、Ray 等高性能工作负载。它通过 CRD 扩展 K8s 对象，再由 scheduler、controller manager、admission 协同完成批调度。</p>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-arch.png" alt="Volcano 架构图" loading="lazy">
@@ -32,6 +36,10 @@ kubectl get crd | grep volcano</code></pre>
 
 <div class="card card-d">
 <h3>三大核心对象关系</h3>
+<div class="figure">
+<img src="../../../resources/images/volcano/volcano-core-crd-cover.png" alt="Volcano 三大核心对象解析：Queue、PodGroup、VolcanoJob" loading="lazy">
+<p class="caption">Volcano 三大核心对象：Queue（资源池）、PodGroup（Gang 调度单元）、VolcanoJob（批作业抽象）。</p>
+</div>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-object-model.svg" alt="Volcano 对象关系概念图" loading="lazy">
 <p class="caption">Volcano 对象模型：Queue 管资源池，VolcanoJob 管用户作业，PodGroup 管 Gang 调度，TaskInfo 是 Pod 的调度内部包装。</p>

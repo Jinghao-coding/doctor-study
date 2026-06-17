@@ -11,12 +11,6 @@
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 回答时不要只讲模型 forward，要把引擎调度和 KV cache 管理一起讲。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 ## 请求生命周期
 
 一次 LLM 推理请求不是“直接进模型然后输出文本”，而是经过接入、排队、调度、计算、采样和返回等多个环节。理解这条链路，才能判断 TTFT、TPOT、吞吐和显存问题分别发生在哪里。
@@ -89,7 +83,7 @@ Stream Response | detokenize 后通过 SSE/WebSocket/HTTP 返回
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+一次 LLM 请求不是"直接进模型出文本"，而是一条链：请求接入（鉴权、限流、参数校验）→ tokenization（文本转 token IDs、套聊天模板）→ scheduler 调度排队 → prefill 并行建立 KV Cache → decode 逐 token 自回归生成并追加 K/V → sampler 做 temperature/top-p/top-k 采样 → 经 SSE/WebSocket 流式 detokenize 返回，最后释放 KV Cache。我会重点讲调度器和 KV cache 管理，而不只是模型 forward：scheduler 要做准入控制、batch 组织、KV block 分配、显存不足时的抢占换出和完成回收；vLLM 的 PagedAttention 把 KV 切成固定 block、用 block table 映射，按需分配、支持 copy-on-write 共享前缀。排障上按链路定位：首 token 慢看 TTFT、排队和 prefill；输出卡顿看 TPOT 和 KV 读取；并发上不去看显存余量和 block 碎片；P99 抖动看 chunked prefill 和优先级调度。
 
 ## 关联模块
 

@@ -82,30 +82,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "经典调度算法",
-      "file": "01-classic-algorithms.md"
-    },
-    {
-      "title": "目标函数与评价指标",
-      "file": "02-objectives-metrics.md"
-    },
-    {
-      "title": "多资源公平调度",
-      "file": "03-fairness-multiresource.md"
-    },
-    {
-      "title": "批调度、Gang 与 Backfill",
-      "file": "04-batch-gang-backfill.md"
-    },
-    {
-      "title": "拓扑感知调度",
-      "file": "05-topology-aware-scheduling.md"
-    },
-    {
-      "title": "调度面试题精讲",
-      "file": "06-scheduler-research-roadmap.md"
-    }
-  ]
+  "sections": []
 }

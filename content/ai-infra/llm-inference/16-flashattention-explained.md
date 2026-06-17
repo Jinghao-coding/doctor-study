@@ -11,12 +11,6 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 讲清标准 attention 慢在 IO，不是数学结果变了。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>FlashAttention <strong>不减少 attention 的计算量（FLOPs 一点没少，甚至略增）</strong>，它减少的是 GPU 显存（HBM）的读写次数。因为标准 attention 是 <strong>memory-bound</strong>——瓶颈在搬数据而不是算数据，所以“少搬数据”比“少算”更能加速。它是<strong>精确</strong>的，结果和标准 attention 完全一致，不是近似。</p>
@@ -201,7 +195,7 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+我会先讲清标准 attention 慢在哪：QKᵀ 会先算出一个 seq_len × seq_len 的注意力分数矩阵，长序列下非常大（如 4096×4096），它要写到 HBM、softmax 再从 HBM 读回处理写回、最后再读出来跟 V 做矩阵乘，中间这个大矩阵在 HBM 上来回好几趟。而 attention 算术强度低，是 memory-bound——瓶颈在搬数据不在算数据，所以"少搬"比"少算"更能加速。FlashAttention 的本质就是 tiling + online softmax：把 Q/K/V 切成小块逐块加载进 SRAM（片上缓存，带宽比 HBM 高一到两个数量级），靠 online softmax 增量维护最大值和分母，不需要先算出完整 QKᵀ 就能一块块累加出结果，让那个大矩阵从头到尾不落 HBM，HBM 上只读一遍 Q/K/V、写一遍输出，显存从 O(seq²) 降到 O(seq)。它没减少 FLOPs（甚至略增）但大幅减 HBM 读写，且结果精确不是近似。这正是 Roofline 思维：memory-bound 就减少数据搬运。V2 进一步减少非矩阵乘运算、在 seq_len 维度增加并行打满 SM、优化 warp 级工作划分。
 
 ## 关联模块
 

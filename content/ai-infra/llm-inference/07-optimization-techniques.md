@@ -11,12 +11,6 @@
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 回答时说明每种优化改善哪个指标、牺牲什么。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>优化技术：用显存、带宽和调度换延迟/吞吐</h3>
 <p>LLM 推理优化不是单一技巧，而是围绕三类资源做权衡：算力、显存和调度队列。高频优化包括 batching、KV cache 管理、量化、投机解码、prefix cache、并行切分和 prefill/decode 分离。</p>
@@ -118,7 +112,7 @@
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+推理优化不是单一技巧，而是围绕算力、显存、调度队列三类资源做权衡，回答时我会说明每种优化改哪个指标、牺牲什么。Continuous Batching 把调度粒度从请求级降到 iteration/token 级，每步移除已完成请求、补入新请求，解决 decode 输出长短不一造成的 GPU 空洞，代价是调度器复杂度上升，且它依赖 PagedAttention 这种按 block 管理 KV 的内存系统才能稳定落地。Quantization 降权重显存和带宽，如 70B 模型 BF16 约 140GB、INT8 约 70GB、INT4 约 35GB，代价是可能精度损失和 kernel 适配。Speculative Decoding 用 draft model 猜多个 token 再让大模型一次验证，降 decode 步数，但接受率决定收益。Prefix Cache 复用相同 prompt 前缀，命中率和失效策略是关键。prefill 和 decode 混跑时长 prefill 会阻塞 decode，所以常用 Chunked Prefill 拆 chunk 穿插、decode-prioritized token budget 保 TPOT，规模大时上 Prefill/Decode 分离用 RDMA 传 KV。面试口径：prefill 优化 TTFT，decode 优化 TPOT。
 
 ## 关联模块
 

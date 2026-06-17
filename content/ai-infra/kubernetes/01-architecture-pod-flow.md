@@ -11,17 +11,15 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 按 API Server、etcd、scheduler、kubelet、container runtime 链路讲。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-s">
 <h3>Kubernetes 架构图</h3>
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/kubernetes-components-official.svg" alt="Kubernetes 官方组件架构图" loading="lazy">
 <p class="caption">Kubernetes 官方文档组件图：控制面通过 API Server 协调集群状态，节点侧由 kubelet、kube-proxy 和容器运行时执行工作负载。</p>
+</div>
+<div class="figure">
+<img src="../../../resources/images/k8s-scheduler/01-k8s-architecture.png" alt="Kubernetes 集群控制面与多节点结构图" loading="lazy">
+<p class="caption">同一架构的另一视角：CLUSTER 内 Control Plane（cloud-controller-manager / kube-api-server / etcd / scheduler / controller-manager）与多个 Node（kubelet + kube-proxy + CRI 内的 Pod）的归属关系，cloud-controller-manager 单独对接 Cloud Provider API。</p>
 </div>
 </div>
 
@@ -208,7 +206,7 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Kubernetes 是声明式控制系统，所有组件都围绕 API Server 协作，etcd 只负责保存期望状态。一个 Pod 跑起来可以拆成四段：入口阶段用户通过 kubectl 或 client-go 提交 YAML，API Server 做认证、鉴权、Admission 准入和对象校验后写入 etcd；控制阶段 Deployment Controller 创建 ReplicaSet，ReplicaSet 再 reconcile 出 Pod，持续把实际状态逼近期望；调度阶段 scheduler watch 到未绑定 Pod，经过 Filter、Score、Reserve、Permit、Bind 选节点，并把绑定结果写回 API Server 而不是直接通知 kubelet；执行阶段目标节点 kubelet watch 到本节点 Pod 后进入 SyncPod，先用 CSI 准备 volume，再 CRI RunPodSandbox（pause 容器持有网络 namespace），由 containerd CRI plugin 调 CNI 配网，最后 PullImage、CreateContainer，由 containerd-shim/runc 真正拉起容器，并持续把 Pod phase、status 回写 API Server。这里要强调通常只有 API Server 直接读写 etcd，组件间靠 watch 解耦。排障时 Pending 偏调度侧、ContainerCreating 偏节点执行侧，分别看 Events、kubelet、containerd、CNI、CSI 日志。
 
 ## 关联模块
 

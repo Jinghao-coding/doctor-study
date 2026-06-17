@@ -18,7 +18,7 @@
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">System Design</div><h1>系统设计题</h1><p class="sub">多模型推理 · 多租户调度 · 训练平台 · KV 缓存管理</p><div class="hero-tags"><span>system-design</span><span>interview</span></div></div></section>
 
 <section class="tabs-shell" data-tabs data-tabs-id="system-design-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 4</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">系统设计题</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="系统设计题"><details class="tab-group" open data-group-id="system-design-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">推理与缓存</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="system-design-tabs-tab-1" data-initial="01" data-mid="system-design-tabs::01-multi-model-llm-serving-md" data-level="进阶" title="多模型 LLM 推理" aria-controls="system-design-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多模型 LLM 推理</span><span class="tab-desc">模型驻留、内存管理、请求路由、排队策略</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-2" data-initial="02" data-mid="system-design-tabs::04-kv-cache-system-md" data-level="精通" title="KV 缓存管理" aria-controls="system-design-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">KV 缓存管理</span><span class="tab-desc">分页管理、前缀共享、层级存储</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button></div></details><details class="tab-group" open data-group-id="system-design-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">调度与训练平台</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-3" data-initial="03" data-mid="system-design-tabs::02-multi-tenant-gpu-scheduler-md" data-level="进阶" title="多租户 GPU 调度" aria-controls="system-design-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多租户 GPU 调度</span><span class="tab-desc">QAD 配额、弹性借用、干扰感知合用</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button><button class="tab-button" type="button" role="tab" id="system-design-tabs-tab-4" data-initial="04" data-mid="system-design-tabs::03-distributed-training-platform-md" data-level="精通" title="分布式训练平台" aria-controls="system-design-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">分布式训练平台</span><span class="tab-desc">任务抽象、Gang 调度、容错与可观测性</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="system-design-tabs-panel-1" aria-labelledby="system-design-tabs-tab-1" data-mid="system-design-tabs::01-multi-model-llm-serving-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多模型 LLM 推理</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>系统设计题这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。</p>
+<p>多模型 LLM 推理服务的设计主线是「在有限 GPU 上让尽可能多的模型既低延迟又高利用率」：靠层级化模型驻留（Running/Sleeping/CPU/Disk）解决放不下，靠显存超配和准入控制守住 OOM，靠适应度路由 + 分队列 + SRTF 排队解决调度，靠输出长度预测把这些串起来。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -27,8 +27,6 @@
 <tr><td>解决问题</td><td>围绕多模型推理、多租户调度、分布式训练平台和 KV Cache 管理形成可复述设计题框架。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>题目</h3>
 <p>设计一个支持多模型的 LLM 推理服务，要求低延迟高利用率，多个 agent 组成工作流协作。</p>
@@ -83,12 +81,12 @@
 <hr class="div">
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>系统设计题这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。</p>
+<p>核心矛盾是模型多、GPU 少、还要低延迟。我会用层级化 LRU 管理模型驻留（热门常驻 GPU、冷门逐级退到 CPU/磁盘，Sleeping 保留 CUDA Graph 加速激活），用 CUDA VMM 超配 + 准入控制管显存，用适应度评分路由请求、交互和批处理分队列避免 HoL，再用输出长度预测驱动准入和预分配。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 系统设计题 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>我会先定范围：服务要同时托管多个模型、支持 agent 工作流协作，约束是 GPU 显存有限、要兼顾首 token 延迟和整体吞吐。然后分四块讲：第一是模型驻留，做 Running→Sleeping→CPU→Disk→Remote 的层级化 LRU，Sleeping 保留 CUDA Graph 和 JIT 缓存让重新激活更快。第二是内存，核算 M_kv + M_res ≤ M_total，用 CUDA VMM 把虚拟地址池开到物理显存的几倍按需映射，每个请求进来先做准入检查。第三是路由和排队，适应度评分综合就绪延迟、KV 适配度和降级代价选实例，交互和批处理分队列防 head-of-line blocking，排队用 SRTF 按预测剩余时间排序、只在 stage 边界抢占不打断解码。第四是预测驱动，输出长度预测喂给准入和预分配、安全裕度偏高估防 OOM。最后讲工程边界：突发流量靠排队+降级+弹性扩缩（注意模型加载慢要预热），A/B 用金丝雀部署、Sleeping 状态帮助快速回滚。判断有效看 GPU 利用率、P99 延迟和 OOM/驱逐率。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="system-design-tabs::01-multi-model-llm-serving-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="system-design-tabs::01-multi-model-llm-serving-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">KV 缓存管理</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="system-design-tabs-panel-2" aria-labelledby="system-design-tabs-tab-2" data-mid="system-design-tabs::04-kv-cache-system-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>KV 缓存管理</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>系统设计题这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。</p>
+<p>设计 KV 缓存管理系统的核心是把显存当成稀缺资源精细经营：分页（PagedAttention）消除碎片、按需分配避免预占、前缀共享复用系统 prompt、GPU/CPU/磁盘层级存储 offload 冷请求、再加准入控制守住 M_kv + M_res ≤ M_total。答题主线是「显存利用率 vs 命中延迟」的权衡。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -97,8 +95,6 @@
 <tr><td>解决问题</td><td>围绕多模型推理、多租户调度、分布式训练平台和 KV Cache 管理形成可复述设计题框架。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-w">
 <h3>题目</h3>
 <p>为 LLM 推理集群设计高效的 KV 缓存管理系统。</p>
@@ -120,12 +116,12 @@
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>系统设计题这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。</p>
+<p>我会把 KV 缓存当显存资源管理问题来设计：用 PagedAttention 把缓存切成固定 block 消除碎片，按需分配而不是预占最大长度，相同前缀做 RadixAttention 共享 + copy-on-write，热请求留 GPU、冷请求 offload 到 CPU/磁盘，最后用准入控制保证 M_kv + M_res 不超 M_total。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 系统设计题 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>我会先定问题范围：KV 缓存随序列长度线性增长，是 decode 阶段最主要的显存消耗，目标是在不 OOM 的前提下最大化并发和吞吐。然后讲核心机制：分页管理用 block table 维护逻辑到物理 block 的映射，像虚拟内存一样消除外部碎片；按需分配根据预测输出长度给初始 block、不够再追加；前缀共享让相同系统 prompt 的请求复用同一份 KV，写时复制避免相互污染。接着讲层级存储和驱逐：GPU 放热请求，暂停或低优先级请求 offload 到 CPU 甚至磁盘，驱逐在 LRU 基础上叠加请求优先级。然后讲准入控制：每个请求进来先核算显存够不够，不够就排队而非强行接收。最后讲权衡和多模型挑战：offload 省显存但增加换入延迟，前缀共享提升命中但要处理失效；多模型下 block 大小异构要统一到字节粒度 slab，模型换出时缓存要决定保留还是释放，输出长度预测要 per-model。判断方案有效就看显存利用率、缓存命中率和 OOM/驱逐频率。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="system-design-tabs::04-kv-cache-system-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="system-design-tabs::04-kv-cache-system-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">多模型 LLM 推理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">多租户 GPU 调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="system-design-tabs-panel-3" aria-labelledby="system-design-tabs-tab-3" data-mid="system-design-tabs::02-multi-tenant-gpu-scheduler-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多租户 GPU 调度</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>系统设计题这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。</p>
+<p>多租户 GPU 调度系统的设计主线是「在公平和效率之间持续权衡」：用 QAD 连续保障度替代二元配额、DRA 弹性借用闲置资源、词典序排序先补最欠缺的租户、代价基抢占和干扰感知合用提利用率，并以 K8s Scheduler Plugin 落地。答题要先分 workload 和资源维度，再讲队列、调度流水线和 AI 特有点。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -134,8 +130,6 @@
 <tr><td>解决问题</td><td>围绕多模型推理、多租户调度、分布式训练平台和 KV Cache 管理形成可复述设计题框架。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-d">
 <h3>题目</h3>
 <p>设计一个多团队共享的 GPU 训练集群调度系统，要求公平且高效。</p>
@@ -298,12 +292,12 @@
 <hr class="div">
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>系统设计题这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。</p>
+<p>GPU 集群调度不是「找有空卡的节点」，而是在多租户公平、gang 语义、拓扑质量、碎片治理和抢占代价之间做持续权衡。我会先分清训练/推理/评测/数据四类 workload 的调度语义，再把 GPU 抽象成型号+显存+拓扑+网络+故障域，然后讲队列、配额、抢占、回填的组合。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 系统设计题 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>我会按「任务抽象 → 资源抽象 → 调度目标 → 调度策略 → 拓扑感知 → 故障处理 → 观测 → 性能优化」的顺序展开（对应上面的分节）。重点突出三件事：第一，公平性用 QAD 连续保障度而不是二元配额，配合 DRA 弹性借用——闲时把资源借出去、需要时按保障度优先回收，排序用词典序先补最欠缺的租户、同等级短作业优先。第二，gang + 拓扑是 AI 调度区别于普通 K8s 调度的核心，训练任务必须满足 minAvailable 才启动，TP 要同节点 NVLink、PP 相邻 stage 低延迟、DP 可跨节点但要好 RDMA。第三，抢占要 checkpoint-aware，按释放资源量和沉没成本算代价，混部要干扰感知、用 MIG/MPS 隔离并实时监控保护主任务。最后用可观测收束：等待原因、利用率、JCT、QAD、失败率这些指标是判断调度策略好坏的依据。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="system-design-tabs::02-multi-tenant-gpu-scheduler-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="system-design-tabs::02-multi-tenant-gpu-scheduler-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">KV 缓存管理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">分布式训练平台</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="system-design-tabs-panel-4" aria-labelledby="system-design-tabs-tab-4" data-mid="system-design-tabs::03-distributed-training-platform-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>分布式训练平台</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>系统设计题这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。</p>
+<p>分布式训练平台的设计主线是「把一次多机多卡训练从提交到完成的全流程做成可靠的自动化」：任务抽象屏蔽并行细节、Gang + 拓扑感知调度保证一起起且通信近、生命周期管理训练循环和 checkpoint、容错处理 worker 故障弹性恢复、可观测性贯穿全程。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -312,8 +306,6 @@
 <tr><td>解决问题</td><td>围绕多模型推理、多租户调度、分布式训练平台和 KV Cache 管理形成可复述设计题框架。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-s">
 <h3>题目</h3>
 <p>设计一个端到端的分布式训练平台，支持从提交任务到训练完成的全流程。</p>
@@ -363,9 +355,9 @@
 <hr class="div">
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>系统设计题这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。</p>
+<p>我会按全流程拆：用户提交配置后平台生成 PodGroup + ConfigMap + Headless Service，调度用 Gang scheduling 保证所有 worker 同时起、拓扑感知优先同节点 NVLink；训练循环跑数据加载-前向-反向-AllReduce-更新并周期 checkpoint；容错靠心跳检测 + 从最近 checkpoint 弹性恢复 + GPU 健康检查；全程采集训练和系统指标。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 系统设计题 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>我会先定范围：平台要支持从提交任务到训练完成的全流程，用户只关心模型代码、数据、并行策略和资源需求。然后分五块讲：第一任务抽象，把用户配置翻译成 PodGroup、ConfigMap、Headless Service，让多 worker 能互相发现。第二资源调度，Gang scheduling 是关键——多卡训练必须所有 worker 同时拿到资源，否则部分起来的会空等死锁；再叠加拓扑感知，优先把 worker 排在同节点（NVLink）、退而求其次同机柜、最后跨机柜。第三训练生命周期，初始化做参数同步和 NCCL 通信组建立，循环里数据加载、前向、反向、AllReduce、更新，checkpoint 周期性异步写分布式存储。第四容错，心跳超时检测 worker 故障，从最近 checkpoint 弹性恢复并支持 worker 数量变化，GPU 做 ECC 健康检查自动摘除坏卡。第五可观测性，训练指标看 loss/throughput/利用率，系统指标看网络、存储 IOPS、调度延迟。最后讲优化点：大模型启动慢，靠镜像预热、checkpoint 本地 NVMe 缓存、NCCL 初始化优化和数据预加载来压缩冷启动时间。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="system-design-tabs::03-distributed-training-platform-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="system-design-tabs::03-distributed-training-platform-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">多租户 GPU 调度</span></button></div></div></article></div></section>
   </main>

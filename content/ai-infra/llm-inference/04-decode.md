@@ -11,12 +11,6 @@ Decode 阶段的核心是逐 token 生成和 KV cache 访存，batch 小时常�
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 把 TPOT 拆成调度、KV 读取、单步 forward、采样和流式返回。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 ## Decode 阶段
 
 Decode 阶段负责自回归生成。模型每一步只生成一个新 token，但每一步都需要读取历史 KV Cache，所以它通常是推理服务中最容易受到显存带宽限制的阶段。
@@ -71,7 +65,7 @@ Decode 阶段的核心是逐 token 生成和 KV cache 访存，batch 小时常�
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Decode 阶段负责自回归生成，输入是上一步生成的 token、历史 KV Cache 和采样参数，每步只做单 token 前向、读取历史 K/V、生成 logits，输出下一个 token 并追加新 K/V，关键指标是 TPOT、tokens/s 和 P95/P99。它通常是 memory-bound：单 token 矩阵乘规模小、Tensor Core 利用率不高，但每步都要读模型权重和历史所有 token 的 K/V，序列越长、batch 越大读取量越高。我会把 TPOT 拆成"单步模型计算 + KV Cache 读取 + 采样 + 流式返回"。优化上：用 CUDA Graph、Kernel Fusion 减少 CPU-GPU 调度和中间读写降单 token 延迟；用 Continuous Batching 让多请求摊销权重读取提吞吐；用 GQA/MQA、KV Cache 量化减少每步读取量；用 PagedAttention 按需分配 KV block 减碎片；用优先级调度、抢占、分离式推理压长尾。易错点是 decode GPU 利用率低不一定是实现差，根因是 memory-bound，且因为 KV 读取随 batch 和序列长度增长，batch 不能无限增大。
 
 ## 关联模块
 

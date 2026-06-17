@@ -98,42 +98,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "GPU 集群调度框架总览",
-      "file": "01a-framework-overview.md"
-    },
-    {
-      "title": "Volcano",
-      "file": "01b-volcano.md"
-    },
-    {
-      "title": "Kueue",
-      "file": "01c-kueue.md"
-    },
-    {
-      "title": "YuniKorn / Run:ai",
-      "file": "01d-yunikorn-runai.md"
-    },
-    {
-      "title": "自研队列设计",
-      "file": "01e-native-k8s-queue-design.md"
-    },
-    {
-      "title": "多租户管理",
-      "file": "02-multi-tenancy.md"
-    },
-    {
-      "title": "GPU 拓扑与通信",
-      "file": "03-topology-communication.md"
-    },
-    {
-      "title": "故障处理与弹性",
-      "file": "05-fault-tolerance.md"
-    },
-    {
-      "title": "集群管理面试问答",
-      "file": "06-qa.md"
-    }
-  ]
+  "sections": []
 }

@@ -11,12 +11,6 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | AI Infra 场景要补 GPU extended resource 和 device plugin。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>调度与资源模型：回答“为什么 Pending”的核心模块</h3>
 <p>调度和资源模型要一起学。<strong>资源模型定义 Pod 要什么、Node 有什么；调度器决定这个 Pod 放到哪里。</strong>面试中最常见的追问是：Pod 为什么 Pending、requests/limits 如何影响调度、QoS 如何影响驱逐、GPU 这类扩展资源如何被调度。</p>
@@ -214,7 +208,7 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+调度和资源模型要一起讲：资源模型定义 Pod 要什么、Node 有什么，调度器决定 Pod 放到哪。资源声明的核心是 requests 和 limits，scheduler 主要看 requests 判断 Node allocatable 放不放得下，而不是实时使用量；limits 管运行时上限，CPU 超限是 throttling，内存超限通常 OOMKilled。由 CPU/Memory 的 requests/limits 组合还会推导出 QoS（Guaranteed、Burstable、BestEffort），它决定节点压力下的驱逐优先级，再结合 PriorityClass 和实际资源压力。除了资源，还有放置约束：nodeSelector/NodeAffinity 让 Pod 选节点，PodAffinity 控制靠近或远离，TopologySpreadConstraints 用 maxSkew 控制拓扑域均匀分布，Taint/Toleration 让节点拒绝无关 Pod。所以会出现"资源够但仍 Pending"。落到 AI Infra，GPU 是离散 Extended Resource，scheduler 按整数过滤、kubelet 按同样数量调 Device Plugin Allocate，所以 GPU requests 通常等于 limits，MIG/MPS/DRA 才表达更细共享。排障 Pending 先看 describe 的 Events 是不是 FailedScheduling，再按资源、约束、PVC/ResourceClaim、Quota 逐层缩小。
 
 ## 关联模块
 

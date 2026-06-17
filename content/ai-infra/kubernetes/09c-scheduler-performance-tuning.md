@@ -11,12 +11,6 @@ Scheduler 性能调优关注候选节点比例、打分插件、profile、并发
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 解释 percentageOfNodesToScore 的收益与风险。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>Scheduler 性能与扩展性</h3>
 <p>大规模集群（数千节点、数万 Pod）中，scheduler 的性能直接决定 Pod 启动延迟。面试中要能说清楚关键性能参数和优化手段。</p>
@@ -94,7 +88,7 @@ Scheduler 性能调优关注候选节点比例、打分插件、profile、并发
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+大规模集群里 scheduler 性能直接决定 Pod 启动延迟，调优主要抓候选节点比例、打分插件、profile、并发和 HA。最关键的参数是 percentageOfNodesToScore，它控制 Score 阶段扫描的节点比例，默认随集群规模自适应，100 节点以下扫全部、5000 节点以上只扫 5%，并按 zone 分散候选；调大提高精度但增加计算量，调小提升性能但可能错过最优节点。打分阶段是优选，常用插件包括 NodeResourcesFit（LeastAllocated 分散、MostAllocated 装箱）、BalancedAllocation 防资源碎片、ImageLocality 加速启动，可以在 KubeSchedulerConfiguration 里调权重，还能用多 Profile 给不同 namespace 或 PriorityClass 配不同策略。并发靠 parallelism（默认 16）。这里的核心权衡是调度精度和吞吐、装箱率和高可用之间的取舍：在线服务用 LeastAllocated 留 buffer，批处理用 MostAllocated 腾整机。HA 用 Leader Election，最坏故障转移约 27s，但只保可用不提吞吐，单实例吞吐约 100-500 Pod/s，瓶颈在 API Server 的 Bind 写吞吐。判断调优是否有效就看调度延迟、pending 时长和 Bind 吞吐这些指标。
 
 ## 关联模块
 

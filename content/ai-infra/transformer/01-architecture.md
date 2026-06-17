@@ -11,12 +11,6 @@ Transformer 的核心是用 self-attention 在序列内建立全局依赖，再�
 | 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
 | 面试抓手 | 先讲整体数据流，再讲每层组件和残差归一化。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 ## 架构图
 
 <figure class="transformer-figure">
@@ -95,11 +89,11 @@ Pre-LN 的好处是梯度主干更直接，深层训练更稳定；代价是最�
 
 **30 秒版：**
 
-Transformer 的核心是用 self-attention 在序列内建立全局依赖，再用 FFN 做逐 token 非线性变换。 先讲整体数据流，再讲每层组件和残差归一化。
+Transformer 不是单个 attention 模块，而是一套可堆叠的序列建模骨架。每个 token 沿四条路径推进：残差主干保梯度、self-attention 做 token 间通信决定谁看谁、FFN 做逐 token 非线性变换提供容量、归一化稳定激活尺度。现代大模型基本就是 Decoder-only 这套结构堆几十层。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+我会先点明 Transformer 是可堆叠的序列建模骨架，而不是单个 attention 模块。一层里数据走四条路径：self-attention 让 token 之间交换信息、决定谁关注谁，FFN 对每个 token 独立做扩维-激活-降维、提供模型容量并存储事实知识，残差连接给梯度修了条高速公路让深层仍可训练，归一化（现代多用 Pre-LN 或 RMSNorm）控制激活尺度。完整链路是 tokenizer 切分 → embedding 查表叠加位置信息 → 多层 attention+FFN → LM head 预测 next token。架构上分 Encoder-only（BERT，双向理解）、Encoder-Decoder（T5，翻译摘要）和 Decoder-only（GPT/LLaMA，因果 mask 自回归生成）三类，当前 LLM 主流是 Decoder-only。最后落到 infra：prefill 阶段是 O(n²d) 计算密集型，decode 阶段靠 KV cache 增量维护、转成 memory-bound，这正是推理优化和显存规划的核心抓手。
 
 ## 关联模块
 

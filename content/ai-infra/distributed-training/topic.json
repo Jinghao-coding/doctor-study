@@ -83,30 +83,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "分布式训练并行策略",
-      "file": "01-principles.md"
-    },
-    {
-      "title": "数据并行与梯度同步",
-      "file": "02-data-parallel-gradient.md"
-    },
-    {
-      "title": "张量并行与流水线并行",
-      "file": "03-tensor-pipeline.md"
-    },
-    {
-      "title": "ZeRO / FSDP",
-      "file": "04-zero-fsdp.md"
-    },
-    {
-      "title": "NCCL 与通信优化",
-      "file": "05-nccl-communication.md"
-    },
-    {
-      "title": "排障与面试计算题",
-      "file": "06-troubleshooting-interview.md"
-    }
-  ]
+  "sections": []
 }

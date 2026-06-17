@@ -27,8 +27,6 @@
 <tr><td>解决问题</td><td>围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。</td></tr>
 <tr><td>面试抓手</td><td>先讲模式，再讲工程边界。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>什么是 AI Agent</h3>
 <p>AI Agent 是一个能<strong>感知环境、自主决策、执行动作</strong>的智能体。和传统 LLM Chat 不同，Agent 不只是回答问题，而是能<strong>使用工具、维护状态、多步推理、在真实环境中完成目标</strong>。</p>
@@ -128,9 +126,9 @@
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Agent 的本质是 LLM 驱动的循环决策系统：观察、思考、调用工具、接收反馈、继续行动。 先讲模式，再讲工程边界。</p>
+<p>Agent 是 LLM 驱动的自主循环系统：感知环境、思考决策、调用工具、接收反馈、再决策，直到完成目标。相比一问一答的 LLM Chat，它多了工具使用、记忆管理和多步规划三种能力。主流范式是 ReAct，即 Thought-Action-Observation 交替循环。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 AI Agent 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会先把 Agent 和 LLM Chat 区分开：Chat 是单轮或多轮对话、只生成文本、状态就是对话历史；Agent 是「感知→决策→行动→观察→再决策」的自主循环，能用工具、维护短期/长期记忆和任务状态、并有自我反思和重试的错误处理。架构上拆四块：LLM 大脑负责推理生成，记忆系统分上下文窗口的短期记忆和向量库的长期记忆，工具系统通过 Function Calling 或 MCP 接外部能力，规划与执行模块做任务分解和纠错。范式我会重点讲 ReAct——Thought 分析现状、Action 调工具、Observation 拿结果，交替循环到 Final Answer，好处是可解释、能用真实信息纠正幻觉、能错误恢复，局限是每步都要 LLM 调用、延迟高成本大、长链推理会累积误差。对比之下 Plan-and-Execute 先全局规划再逐步执行，适合步骤明确的结构化任务，而 ReAct 更适合探索性、不确定性高的场景。实际系统通常组合：用 CoT 做内部推理、ReAct 做外部交互、再叠加层次化规划和自我反思。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="agent-tabs::01-agent-concepts-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="agent-tabs::01-agent-concepts-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">核心组件</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="agent-tabs-panel-2" aria-labelledby="agent-tabs-tab-2" data-mid="agent-tabs::02-agent-components-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>核心组件</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行器和状态管理。</p>
@@ -142,8 +140,6 @@
 <tr><td>解决问题</td><td>围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。</td></tr>
 <tr><td>面试抓手</td><td>不要只说 Function Calling。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>记忆系统：Agent 的上下文管理</h3>
 <p>记忆是 Agent 区别于单次 LLM 调用的关键。一个合格的 Agent 需要管理<strong>短期记忆、长期记忆和工作记忆</strong>，面试中要能说清楚三者的区别和实现方式。</p>
@@ -206,9 +202,9 @@
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行器和状态管理。 不要只说 Function Calling。</p>
+<p>Agent 不只是 Function Calling。我会拆成记忆、工具、规划、多 Agent 协作四块：记忆分短期（上下文窗口）、长期（向量库+RAG）和工作记忆，工具靠 Function Calling 或 MCP 接外部能力，规划有 ReAct 动态、Plan-Execute、层次化和自我反思，复杂任务再上多 Agent 分工。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 AI Agent 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会按模块讲。记忆是 Agent 区别于单次调用的关键：感官记忆是当前上下文、短期记忆用滑动窗口或摘要压缩管理会话历史、长期记忆靠向量库跨会话持久化、工作记忆用结构化对象存任务状态，工程上最常用混合策略——近期原文+远期摘要+关键信息向量检索，再配 Reflexion 反思记忆做自我进化。工具调用是能力放大器，让只能生成文本的 LLM 能搜索、执行代码、操作文件、调 API；流程是定义 JSON Schema → 注入 prompt → LLM 输出 tool_call → 框架执行 → 结果拼回上下文，MCP 则是 Anthropic 提出的标准化协议、相当于 AI 的 USB-C 接口。规划要区分固定流程、ReAct 动态、Plan-Execute、层次化和自我反思，实际是组合使用。最后是多 Agent 协作：顺序流水线、辩论、角色扮演、层级结构、共享记忆，核心挑战在通信协议、任务分配、冲突解决、上下文共享和错误传播。落到 infra，这些直接对应记忆的存储成本、工具执行的沙箱隔离和多 Agent 的调度编排。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="agent-tabs::02-agent-components-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="agent-tabs::02-agent-components-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">基础概念</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">工程实践</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="agent-tabs-panel-3" aria-labelledby="agent-tabs-tab-3" data-mid="agent-tabs::03-agent-engineering-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>工程实践</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Agent 工程重点是可靠性、状态、权限、观测、评测和失败恢复。</p>
@@ -220,8 +216,6 @@
 <tr><td>解决问题</td><td>围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。</td></tr>
 <tr><td>面试抓手</td><td>把 demo 和生产系统分开讲。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>主流 Agent 框架对比</h3>
 <p>面试中经常被问到"你用过哪些 Agent 框架，有什么区别"。以下是当前主流框架的对比。</p>
@@ -278,9 +272,9 @@
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Agent 工程重点是可靠性、状态、权限、观测、评测和失败恢复。 把 demo 和生产系统分开讲。</p>
+<p>Agent 工程的难点是把 demo 推到生产。我会讲框架选型（LangChain/LangGraph/AutoGen 等）、Function Calling 的最佳实践和失败处理、RAG 检索增强（含 Agentic RAG）、多维度评估（任务成功率、效率、安全、鲁棒性），以及部署架构和 Prompt Injection、权限、沙箱、可观测性这些安全工程。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 AI Agent 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会把 demo 和生产系统分开讲。框架上 LangChain 适合快速原型和 RAG、LangGraph 用图结构支持循环和 checkpoint 适合复杂 Agent、AutoGen/CrewAI 做多 Agent、OpenAI Agents SDK 偏生产级。工具调用要讲清最佳实践（名称清晰、描述精确、参数用 JSON Schema 严格约束、返回格式统一）和常见坑（幻觉调用、循环调用、参数错误、工具描述冲突），还有并行 tool calls 降延迟。RAG 是获取外部知识的核心：文档分块向量化入库 → 问题向量检索 Top-K → 拼入 prompt 增强 → 生成，优化点在混合检索、重排序、语义分块、查询改写，Agentic RAG 让 Agent 自己决定是否检索、要不要重检。评估比单次调用复杂，要覆盖任务成功率、效率、工具准确性、鲁棒性、安全性，可用 GAIA、SWE-bench、WebArena 这些基准。最后是生产关切：部署分有状态/无状态/微服务化，安全上首要防 Prompt Injection，配合工具权限控制、输出审核、沙箱执行、速率限制，再加链路追踪、成本和质量监控做可观测性。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="agent-tabs::03-agent-engineering-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="agent-tabs::03-agent-engineering-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">核心组件</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">面试高频题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="agent-tabs-panel-4" aria-labelledby="agent-tabs-tab-4" data-mid="agent-tabs::04-agent-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Agent 面试要能解释 ReAct/Plan-Execute/RAG/Memory/Tool Use 的边界和风险。</p>
@@ -292,8 +286,6 @@
 <tr><td>解决问题</td><td>围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。</td></tr>
 <tr><td>面试抓手</td><td>用场景化追问回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-r">
 <h3>Agent 面试高频题</h3>
 <p>以下问题覆盖 Agent 面试中最常被问到的知识点，从基础概念到深入原理。</p>
@@ -390,9 +382,9 @@
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>Agent 面试要能解释 ReAct/Plan-Execute/RAG/Memory/Tool Use 的边界和风险。 用场景化追问回答。</p>
+<p>Agent 面试我会用一条主线收束：Agent = LLM + 工具 + 记忆 + 规划，让模型从「说」变成「做」。核心范式是 ReAct，记忆分短期长期，工具靠 Function Calling，知识靠 RAG。每个点都要讲边界和风险——延迟成本、幻觉累积、Prompt Injection、无限循环。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 AI Agent 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>我会从定义切入：Agent 和 LLM Chat 的区别是从一问一答变成感知-决策-行动-观察的自主循环，多了工具、记忆、规划三种能力。然后逐个点带边界讲：ReAct 是 Thought-Action-Observation 循环，比纯 CoT 强在能用工具拿真实信息纠正幻觉，但每步都要 LLM 调用、延迟高，简单任务用它反而过度设计。记忆分短期（上下文窗口、滑动窗口或摘要）和长期（向量库+语义检索），工程上混合用。Function Calling 是 LLM 输出结构化指令、框架执行回传，失败处理靠参数校验、重试、Fallback、超时。多 Agent 有流水线、辩论、角色扮演、层级、共享记忆，按任务复杂度选。RAG 优化围绕检索质量、幻觉控制、多跳推理，用混合检索、重排序、查询改写、Self-RAG。评估要多维度——成功率、效率、工具准确性、鲁棒性、安全。最后我会强调失败模式和安全：无限循环、目标偏离、幻觉累积、Prompt Injection，防护靠步数限制、参数校验、输出审核、输入隔离、权限控制和人工兜底。整体落点是 demo 容易、生产难，难在可靠性和安全工程。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="agent-tabs::04-agent-interview-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="agent-tabs::04-agent-interview-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">工程实践</span></button></div></div></article></div></section>
   </main>

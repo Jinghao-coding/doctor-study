@@ -11,12 +11,6 @@ LLM 推理性能不能只看 QPS，要同时看 TTFT、TPOT、tokens/s、显存�
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 先定义指标，再把 prefill/decode 的瓶颈分开。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>性能指标与瓶颈：先分清 TTFT、TPOT 和吞吐</h3>
 <p>LLM 推理性能不能只看 QPS。在线服务通常同时关注首 token 延迟、每 token 延迟、端到端延迟、吞吐、显存占用和稳定性。不同指标对应不同瓶颈：prefill 更偏计算密集，decode 更偏访存和 KV cache 读取。</p>
@@ -53,7 +47,7 @@ LLM 推理性能不能只看 QPS，要同时看 TTFT、TPOT、tokens/s、显存�
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+LLM 推理性能不能只看 QPS，在线服务要同时盯 TTFT、TPOT、端到端延迟、吞吐、显存占用和 P99 稳定性。我会先把指标和瓶颈对上：TTFT 是首 token 延迟，受排队、prompt prefill 和调度影响，优化靠 prefill batching、prefix cache、拆分 prefill/decode；TPOT 是每 token 延迟，受 decode 逐 token 计算和 KV 读取影响，优化靠 continuous batching、GQA/MQA、KV cache 管理；吞吐看 batch size、显存和并行度，靠动态 batching、量化、投机解码提升。关键是 prefill 和 decode 瓶颈不同：prefill 一次处理整段 prompt，矩阵乘大、算力利用高，偏 compute-bound；decode 每步一个 token 但要读历史 KV cache，batch 小时矩阵规模小，偏 memory-bound。显存上 KV cache ≈ layers × 2 × kv_heads × head_dim × seq_len × bytes，再乘 batch，用 GQA/MQA 能显著减小 kv_heads。面试口径：prefill 看首 token 和算力，decode 看逐 token 延迟和 KV cache 访存。
 
 ## 关联模块
 

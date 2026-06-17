@@ -11,12 +11,6 @@ FlashAttention 优化单次 attention 的 IO，vLLM/PagedAttention 优化多请�
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 不要把 FlashAttention 和 PagedAttention 混为一谈。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>FlashAttention V1 的三个特性</h3>
 <table>
@@ -89,7 +83,7 @@ FlashAttention 优化单次 attention 的 IO，vLLM/PagedAttention 优化多请�
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+这两个是不同层面的优化，不能混为一谈。FlashAttention 优化的是单次 attention 计算的 IO，它有三个特性：Fast（IO-Awareness，不减少 FLOPs，而是用 tiling 分块加 kernel fusion 降低对 HBM 的访问次数）、Memory-Efficient（用 online softmax 避免保存完整 N×N 注意力矩阵，把存储从 O(N²) 降到 O(N)）、Exact（结果与标准 attention 完全等同，不是稀疏那种近似）；V2 进一步置换内外循环减少非矩阵乘运算、在 seq_len 维度增加并行打满 SM、优化 warp 级工作减少通信。vLLM/PagedAttention 优化的是多请求 KV cache 的管理和调度：动态分配显存能同时处理更多 prompt，显存打满时按 FCFS 抢占后到请求，采用 all-or-nothing 策略把被抢占请求的全部 KV block swap 到 CPU，资源充足时再搬回；对 n=1 这类请求则用 recomputation 直接丢 KV、放回等待队列从 prefill 重算。本质上 swapping 是空间换时间、recomputation 是时间换空间。从瓶颈看，decode 主算子是 GEMV、属 memory-bound，KV cache 容量决定并发数，所以两类优化要一起用。
 
 ## 关联模块
 

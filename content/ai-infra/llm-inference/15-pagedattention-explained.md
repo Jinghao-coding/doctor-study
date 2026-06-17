@@ -11,12 +11,6 @@ PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 用 OS 分页类比，但要说明 GPU attention 仍需高效访存。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>PagedAttention <strong>不是一种 attention 算法</strong>，而是 vLLM 给 KV Cache 设计的一套<strong>“虚拟内存”管理系统</strong>。它把 KV Cache 切成固定大小的小块（block），让一个请求逻辑上看到连续的 token 序列，物理显存里却可以散落在任意位置——和操作系统用分页管理内存是同一个思路。</p>
@@ -181,7 +175,7 @@ PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+我会先点本质：PagedAttention 不是一种 attention 算法，而是 vLLM 给 KV Cache 设计的虚拟内存管理系统，思路和操作系统分页一致。它要解决传统连续分配的两种浪费：内部浪费（按 max_len 比如 4096 预留连续显存，实际可能只用 800 token，其余被占住又给不了别人）和外部碎片（请求结束释放后留下大小不一的空洞，总量够却拼不出连续大块，新请求进不来）。做法是把 KV Cache 切成固定大小 block（vLLM 默认 16 token），按需领 block、不要求物理连续，用 block table 记录"逻辑第几块 → 物理哪个 block"，跟页表一一对应；attention kernel 读 KV 时先查 block table 再取数，所以不连续不影响正确性。收益很直接：一个 800 token 请求只领 ⌈800/16⌉=50 个 block，结束立刻还池，同样显存能塞下多得多并发。block 切小内部浪费少但 block table 大、查表开销高，切大则尾部浪费和前缀共享粒度变粗，16 是折中。它还是 continuous batching 的地基——请求每轮动态进出靠按 block 分配才不会把显存搅碎。
 
 ## 关联模块
 

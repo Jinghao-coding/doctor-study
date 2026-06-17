@@ -11,12 +11,6 @@
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 面试时按阶段讲，不要直接跳到 Transformer 公式。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <h3>完整推理链路概览</h3>
 <p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
 
@@ -101,7 +95,7 @@ Decode | 逐 token 自回归生成，并持续更新 KV Cache
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+一个 prompt 从输入到输出大体经历 6 个阶段：请求封装、tokenization、推理调度、prefill、decode、反解码返回。我会按阶段讲：服务层先把 system/user/assistant 消息按模板组织好，经 tokenizer（如 BPE 的 tiktoken）切成 token IDs；请求进推理框架（vLLM/TGI）排队、做 continuous batching、管 KV cache；进模型后先 embedding lookup 加 RoPE，再过多层 Transformer block 的 self-attention（Q/K/V 加 causal mask）和 FFN。prefill 把整段 prompt 并行跑完、建立 KV cache，偏 compute-bound；decode 取最后位置 logits 经采样逐 token 生成、复用 KV cache，偏 memory-bound。这也是"第一个字慢、后面快"的原因，工程上靠 FlashAttention、continuous batching、chunked prefill 优化。职责上推理引擎决定"怎么高效跑"，模型决定"生成什么"。
 
 ## 关联模块
 

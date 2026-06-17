@@ -1,6 +1,6 @@
 ## 一句话结论
 
-一次 read 的典型路径 是 操作系统基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+一次 read 的路径是：进入内核查 fd 和 page cache，命中就拷给用户 buffer，未命中就发起磁盘或网络存储 I/O 读入 cache 再拷贝。AI Infra 里这条路径决定训练数据加载、checkpoint 和权重加载吞吐，排障要拆到系统调用、page cache miss、磁盘/网络存储延迟、小文件 metadata 和解码这几层。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## AI Infra 面试模块：文件系统与 I/O
 
@@ -80,11 +74,11 @@
 
 **30 秒版：**
 
-10 ai infra file io 是 操作系统基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+文件系统里 inode 存元数据和数据块位置、目录项把文件名映射到 inode、fd 是打开后的句柄。一次 read 进内核查 fd 和 page cache，命中拷给用户 buffer，未命中发起 I/O。buffered I/O 走 page cache、Direct I/O 绕过但要对齐，write 返回只到 page cache、fsync 才落盘。AI Infra 排训练 I/O 瓶颈要拆磁盘带宽、网络存储延迟、小文件 metadata、解码和 worker 队列深度。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 操作系统基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+文件 I/O 先讲抽象再讲路径：inode 保存文件元数据和数据块位置，目录项把文件名映射到 inode，进程 open 后拿到 fd 指向内核的 open file description（含偏移和打开模式）。一次 read 进内核检查 fd、偏移和 page cache，命中就把 cache 内容拷到用户 buffer，未命中就发起磁盘或网络存储 I/O，读进 page cache 再拷给用户，所以慢点可能在系统调用、cache miss、磁盘 I/O、metadata、CPU copy 或文件解码。机制上要分清 buffered I/O 走 page cache 适合复用小读、Direct I/O 绕过 cache 适合应用自管的大文件顺序读但要对齐，write 返回只代表进 page cache 形成脏页、fsync 才强制落盘且可能很慢。落到 AI Infra，训练数据读取瓶颈要拆成磁盘/对象存储带宽、网络存储延迟、文件数量和 metadata、解码、CPU worker 和 batch 队列深度——小文件过多会让 open/stat/readdir 拖慢 DataLoader，checkpoint 慢常来自序列化和 fsync，权重加载靠 mmap、顺序读、预读和并行 shard 优化。具体排查时先看 GPU 利用率是否周期性掉零（batch feeding 不连续），再看 worker CPU 和队列、iostat 的 util/await、文件数量和 page cache 命中。
 
 ## 关联模块
 

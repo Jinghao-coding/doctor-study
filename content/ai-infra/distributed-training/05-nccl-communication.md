@@ -11,12 +11,6 @@ NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、�
 | 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
 | 面试抓手 | 通信时间粗估是流量除以有效带宽。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>NCCL：GPU 集合通信的事实标准</h3>
 <p>NCCL 负责 GPU 间高效集合通信，常见于 DDP 梯度同步、TP 层内通信、MoE expert routing 等场景。分布式训练排障里，NCCL 往往是最关键也最难定位的一层。</p>
@@ -96,7 +90,7 @@ NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、�
 
 **2 分钟版：**
 
-我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+NCCL 是 GPU 集合通信的事实标准，DDP 梯度同步用 AllReduce、ZeRO/FSDP 用 ReduceScatter 和 AllGather、MoE expert routing 用 All-to-All。算法上 Ring 带宽利用高、链路均匀，适合大 tensor AllReduce，但延迟随 rank 数增加；Tree 延迟低适合小 tensor、rank 多；多节点常用 Hierarchical 分层优化。通信时间可粗估为流量除以有效带宽，比如每卡 AllReduce 流量 49GB、有效带宽 100GB/s，裸通信约 0.49s，实际还要加启动延迟、协议栈、拥塞和算法选择、重叠效果。排障是重点：NCCL hang 往往不是 NCCL 本身错，而是 rank 调用顺序不一致、某 rank OOM 或先退出、IB/RDMA 设备不可用，要先看是否所有 rank 一致进入 collective，再开 NCCL_DEBUG=INFO、NCCL_DEBUG_SUBSYS=INIT,NET,COLL、TORCH_DISTRIBUTED_DEBUG=DETAIL，检查网卡选择和设备可见性。环境变量按日志诊断、网卡选择（NCCL_SOCKET_IFNAME/NCCL_IB_HCA）、功能开关（NCCL_IB_DISABLE/NCCL_P2P_DISABLE）三类记。MoE 的 All-to-All 因路由不均、依赖 bisection bandwidth 比规则 AllReduce 更难优化。
 
 ## 关联模块
 

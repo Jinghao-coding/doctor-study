@@ -11,12 +11,6 @@
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 把 vLLM、TensorRT-LLM、SGLang、TGI 的定位讲清楚。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>AI Infra 视角：推理引擎 = 调度器 + 内存系统 + 计算后端 + 分布式策略 + Serving 工程</h3>
 <p>面向应用的人只需要会用 vLLM 启服务；做 AI Infra 必须能讲清楚引擎内部的请求调度、KV 内存管理、CUDA Kernel 选择、并行切分和容错。下面把推理引擎拆成 5 个子系统，每个子系统直接给出原理、关键数据结构、源码定位和实战要点。</p>
@@ -318,7 +312,7 @@
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+推理引擎本质是调度器 + KV 内存系统 + 计算后端 + 分布式策略 + Serving 工程，选型不能只比吞吐。调度器决定每个 forward step 跑哪些请求，vLLM 用 WAITING→RUNNING→SWAPPED→FINISHED 状态机加三队列，显存不够按 FCFS 反向抢占，策略是 recompute 或 swap；KV 内存靠 PagedAttention 按 block 管理把碎片从 60-80% 压到 4% 以下，配 prefix cache 和 CoW；计算后端有 FlashAttention v2/v3、PagedAttention kernel、CUDA Graphs 和算子融合；分布式有 TP/PP/EP/DP/SP，TP 因每层两次 all-reduce 不跨机。四个引擎定位不同：vLLM 是 PagedAttention + continuous batching 的通用 OSS 默认选项，上手快、模型全；TensorRT-LLM 是 NVIDIA 全栈 kernel，追求极致性能但要 build engine；SGLang 用 RadixAttention 前缀树，适合 agent、结构化生成和 DeepSeek MoE；TGI 强在 HF 生态快速上线。可观测上看 vllm:time_to_first_token_seconds、time_per_output_token、request_queue_time、num_preemptions_total、gpu_prefix_cache_hit_rate 这些 Prometheus 指标。选型要按 workload、硬件和团队能力三维决策，benchmark 永远在自己 workload 上跑。
 
 ## 关联模块
 

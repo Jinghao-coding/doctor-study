@@ -11,12 +11,6 @@ Prefill/Decode 是 LLM 推理最核心的阶段划分：prefill 负责一次性�
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 先分阶段，再解释 TTFT/TPOT，最后落到 compute-bound 与 memory-bound。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 ## LLM 推理是什么
 
 LLM 推理是模型接收用户输入，并逐步生成回复的过程。一次完整请求通常包含请求调度、Prompt 预处理、Prefill 计算、Decode 逐 token 生成和结果返回几个阶段。
@@ -61,7 +55,7 @@ Prefill/Decode 是 LLM 推理最核心的阶段划分：prefill 负责一次性�
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+LLM 推理可以拆成 prefill 和 decode 两个核心阶段。prefill 一次性处理完整 Prompt token 序列，并行计算所有 token、生成首 token 分布和初始 KV Cache；decode 基于上一步生成的 token 和历史 KV Cache 串行逐 token 生成，并持续追加新增 KV。两者瓶颈不同：prefill 是并行大矩阵计算，更偏 compute-bound，主要受输入长度、模型规模和 GPU 算力影响，对应指标是 TTFT（首 token 延迟）；decode 每步只算一个 token 但要反复读历史 K/V，更偏 memory-bound，受 KV Cache 读写、显存带宽和 batch 调度影响，对应指标是 TPOT、吞吐和 P99。所以面试时我会先分阶段，再用 TTFT/TPOT 量化体验，最后落到 compute-bound 与 memory-bound 的差异，这也决定了后续 batching、KV Cache 管理、量化等优化的方向。
 
 ## 关联模块
 

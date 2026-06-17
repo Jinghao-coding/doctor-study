@@ -11,12 +11,6 @@ Workload Controller 的本质是 reconcile：持续把实际状态拉回期望�
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 区分 Deployment/StatefulSet/Job/Operator 的边界。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <p><strong>Workload 与 Controller：声明式系统的核心。</strong></p>
 <p>Workload 解决“如何管理一组 Pod”，Controller 解决“如何让实际状态持续逼近期望状态”。面试中不要只背 Deployment、StatefulSet、DaemonSet、Job 的用途，还要讲清楚 <strong>Informer → WorkQueue → Reconcile → 更新 status</strong> 这条控制循环。</p>
@@ -397,7 +391,7 @@ Workload Controller 的本质是 reconcile：持续把实际状态拉回期望�
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Workload 解决"用哪种对象管理一组 Pod"，Controller 解决"如何让实际状态持续逼近期望状态"。选型上先看生命周期和身份：Deployment 管可替换的无状态副本，做滚动发布、回滚、HPA；StatefulSet 提供稳定 ordinal、稳定网络身份和 volumeClaimTemplates，适合数据库、有 rank 的训练组件；DaemonSet 保证每个符合条件的节点跑一个，适合 device plugin、CNI、CSI node；Job 跑完即止，关注 completions、parallelism、backoffLimit；CronJob 按 schedule 创建 Job。Controller 的本质是 reconcile，链路是 Informer 通过 Reflector List/Watch 维护本地缓存，事件只把 namespace/name key 入 WorkQueue，由 worker 取出后比较期望与实际状态做幂等修正、写回 status，WorkQueue 提供去重、限速、重试和并发控制。Operator = CRD + Controller + 领域运维逻辑，比如训练任务 Operator 把 TrainingJob 抽象成 Pending/Admitted/WorkersReady/Running/Restarting 的状态机，用 OwnerReference 级联回收、用 Finalizer 清理队列 quota 和 checkpoint。要讲清边界：Operator 管生命周期，Scheduler 管 Pod 放哪，Device Plugin/DRA 管设备发现交付，三者层次不同，不要混。
 
 ## 关联模块
 

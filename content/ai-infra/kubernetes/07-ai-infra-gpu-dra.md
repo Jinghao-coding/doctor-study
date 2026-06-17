@@ -11,12 +11,6 @@ AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 把 K8S 抽象和 GPU 物理资源语义连接起来。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>AI Infra：GPU / 批调度 / DRA 总览</h3>
 <p>AI Infra 场景下，Kubernetes 的核心问题从“跑一个无状态服务”扩展为：<strong>如何接入 GPU/NPU 等异构硬件，如何让分布式训练一组 Pod 同时拿到资源，如何表达显存、拓扑、MIG、NVLink、NUMA 等复杂约束。</strong></p>
@@ -475,7 +469,7 @@ AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+AI Infra 场景下 K8S 的核心问题从跑无状态服务扩展为如何接入 GPU/NPU 异构硬件、如何让一组训练 Pod 同时拿到资源、如何表达显存拓扑等复杂约束。设备接入这条链路是：Device Plugin 以 DaemonSet 发现 GPU 并通过 gRPC 向 kubelet 注册 nvidia.com/gpu 这类 Extended Resource，kubelet 写入 Node allocatable，scheduler 只看到资源名和整数数量做过滤打分，Pod 绑定后 kubelet 调 Allocate 把 device node、环境变量、mount 注入容器。设备共享上，Time Slicing 是时间片轮流、MPS 是多 CUDA 进程并发，二者都靠 Device Plugin 把一张卡暴露成多个逻辑 slot，但都不是 MIG 那种硬件级隔离，权衡就是利用率和隔离性、P99 抖动之间的取舍。表达能力不足时上 DRA，用 ResourceSlice 发布结构化设备属性、ResourceClaim 加 CEL 表达需求，让 scheduler 做设备级匹配，并配合 Gang Scheduling、Kueue/Volcano 解决整组准入。排障时我会用 kubectl get resourceslices、describe resourceclaim 看库存和分配状态，再结合 DCGM 指标判断共享是否真的没把显存打爆。
 
 ## 关联模块
 

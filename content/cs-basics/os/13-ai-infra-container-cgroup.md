@@ -1,6 +1,6 @@
 ## 一句话结论
 
-namespace 和 cgroup 的区别 是 操作系统基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+namespace 管"看见什么"（PID、网络栈、挂载点、IPC），cgroup 管"能用多少"（CPU、内存、I/O、设备），容器隔离就是 namespace + cgroup + rootfs + capability/seccomp 组合出来的。AI Infra 几乎都跑在容器和 K8s 上，所以要能把 OS 知识映射到容器 OOM（exit 137）、CFS throttling、cgroup memory limit 和 /dev/shm 不足这些实际故障。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@ namespace 和 cgroup 的区别 是 操作系统基础 的核心知识点，面�
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## AI Infra 面试模块：容器、cgroup 与 Linux 隔离机制
 
@@ -64,11 +58,11 @@ AI Infra 基本运行在容器和 Kubernetes 之上，因此操作系统知识�
 
 **30 秒版：**
 
-13 ai infra container cgroup 是 操作系统基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+容器隔离的核心是 namespace 管"看见什么"（PID、网络、挂载、IPC、主机名），cgroup 管"能用多少"（CPU、内存、I/O、设备、进程数），再加 overlayfs 镜像层和 capability/seccomp。和虚拟机的区别是容器共享宿主机内核。AI Infra 几乎都跑在容器上，要能映射到容器 OOM（exit 137、cgroup 内 kill）、CFS throttling、page cache 顶满 limit、GPU device plugin 和 /dev/shm 不足。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 操作系统基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+容器本质是 Linux 内核机制的组合，先把两个核心机制分开：namespace 解决"看见什么"，隔离 PID、网络栈、挂载点、主机名、IPC 对象；cgroup 解决"能用多少"，限制和统计 CPU、内存、I/O、进程数和设备。Docker 在这之上用 overlayfs 提供只读镜像层和可写层，再用 capability、seccomp、AppArmor/SELinux 收紧权限和系统调用，和虚拟机的本质区别是容器共享宿主机内核、没有独立 guest kernel。一个常见坑是容器内工具看到的资源可能是宿主机视角，但实际受 cgroup 限制。落到 AI Infra：K8s 训练任务的 CPU、内存、GPU 隔离由 request/limit、cgroup、device plugin 和调度器共同实现，GPU 通过 NVIDIA device plugin 暴露 device、驱动库和 CUDA_VISIBLE_DEVICES。容器 OOM 和宿主机 OOM 不同——达到 memory limit 会在 cgroup 内 kill，排查看 Pod exit code 137、events、cgroup memory.current/max、dmesg，并区分主进程 RSS、DataLoader worker、/dev/shm、page cache 和 shared memory。要特别注意 cgroup memory limit 会把 page cache 也算进去可能顶满，以及 /dev/shm 这块 tmpfs 太小会让 PyTorch DataLoader 多进程、共享内存队列出现 bus error、worker 异常退出或 hang。
 
 ## 关联模块
 

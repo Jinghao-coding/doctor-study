@@ -1,6 +1,6 @@
 ## 一句话结论
 
-第一层：概念准确 是 操作系统基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+这页是 OS 模块的收束：准备分三层——概念准确（每个机制能说清解决什么问题、原理、性能代价、在训练/推理里怎么体现）、能结合场景分析（GPU 利用率低、DataLoader 慢、OOM、p99 抖动、通信慢怎么排查）、熟悉 top/iostat/perf/nvidia-smi 等工具链。系统排查题用固定模板回答：先界定现象，再分层拆链路，用指标验证假设，最后给优化方案。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 面试收束类 |
 | 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## 准备方式与最小复习清单
 
@@ -95,11 +89,11 @@ cgget / systemd-cgtop</code></pre>
 
 **30 秒版：**
 
-16 ai infra os priority checklist 是 操作系统基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+OS 模块的准备分三层：概念准确（每个机制能讲清解决什么问题、核心原理、性能代价、在训练或推理里怎么体现）、能结合场景分析（GPU 利用率低、DataLoader 慢、训练 OOM、推理 p99 升高、通信慢、checkpoint 慢、容器被 OOM kill 怎么排查）、熟悉工具链（top/htop、ps、free、vmstat、iostat、pidstat、ss、lsof、strace、perf、dmesg、nvidia-smi，偏 Infra 再补 numactl、bpftrace、cgtop）。遇到系统排查题用固定模板：先界定现象，再分层拆链路，用指标验证假设，最后给方案。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 操作系统基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+这一页是整个操作系统模块的收束，回答时我会强调准备方式而不是再堆概念。第一层是概念准确：每个模块至少能解释这个机制解决什么问题、核心原理是什么、有什么性能代价、在 AI 训练或推理里如何体现。第二层是能结合场景分析，把概念落到典型问题上——GPU 利用率低如何排查、DataLoader 很慢如何优化、训练 OOM 如何定位、推理 p99 升高如何分析、分布式训练通信慢如何定位、checkpoint 慢如何优化、容器被 OOM kill 如何排查。第三层是熟悉工具链：通用的 top/htop、ps、free、vmstat、iostat、pidstat、sar、ss、lsof、strace、perf、dmesg、nvidia-smi，偏 Infra 或性能优化再补 numactl、numastat、ethtool、tcpdump、bcc/bpftrace、nsenter、systemd-cgtop。最小复习清单覆盖进程线程协程、同步死锁、虚拟内存分页缺页 TLB、mmap/page cache/COW、Linux 与容器 OOM、read/mmap/direct I/O 区别、epoll、CPU load/util/iowait、TCP 握手挥手 TIME_WAIT、namespace/cgroup、pinned memory/NUMA/PCIe 拓扑，以及三大排查路径。遇到系统排查题统一用模板回答：先界定现象（影响范围、时间、是否复现、哪个指标变坏），再分层拆链路（应用队列、CPU、内存、I/O、网络、GPU、容器限制、下游依赖），用 top/iostat/perf/nvidia-smi 等指标验证假设逐层收敛，最后给出调参、改并发、减拷贝、调 NUMA、优化 I/O 或扩容限流的方案。
 
 ## 关联模块
 

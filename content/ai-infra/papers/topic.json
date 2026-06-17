@@ -82,14 +82,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "ICDCS 2026 Maestro — LLM 多智能体系统的工作负载感知调度",
-      "file": "01-icdcs-2026-maestro-llm.md"
-    },
-    {
-      "title": "共通 两篇论文的关系与面试叙事",
-      "file": "03-section-03.md"
-    }
-  ]
+  "sections": []
 }

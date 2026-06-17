@@ -18,7 +18,7 @@
   <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Research Work</div><h1>论文工作</h1><p class="sub">Maestro · DeepShare · 互补关系与面试叙事</p><div class="hero-tags"><span>papers</span><span>maestro</span><span>deepshare</span></div></div></section>
 
 <section class="tabs-shell" data-tabs data-tabs-id="papers-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 3</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">论文工作</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="论文工作"><details class="tab-group" open data-group-id="papers-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">一作论文</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="papers-tabs-tab-1" data-initial="01" data-mid="papers-tabs::01-icdcs-2026-maestro-llm-md" data-level="精通" title="ICDCS 2026 Maestro" aria-controls="papers-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">ICDCS 2026 Maestro</span><span class="tab-desc">LLM 多智能体推理调度、输出长度预测、CUDA VMM</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></button><button class="tab-button" type="button" role="tab" id="papers-tabs-tab-2" data-initial="02" data-mid="papers-tabs::idx-2" data-level="精通" title="IEEE Cluster 2026 DeepShare" aria-controls="papers-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">IEEE Cluster 2026 DeepShare</span><span class="tab-desc">多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 40 min</span></span></button></div></details><details class="tab-group" open data-group-id="papers-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试叙事</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="papers-tabs-tab-3" data-initial="03" data-mid="papers-tabs::03-section-03-md" data-level="精通" title="关系与面试叙事" aria-controls="papers-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">关系与面试叙事</span><span class="tab-desc">互补关系、共通理念、自我介绍定位</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="papers-tabs-panel-1" aria-labelledby="papers-tabs-tab-1" data-mid="papers-tabs::01-icdcs-2026-maestro-llm-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>ICDCS 2026 Maestro</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>问题背景 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>Maestro 针对 LLM 多智能体工作流推理，利用 agent 上下文做前瞻性输出长度预测，再驱动弹性内存管理（CUDA VMM 超配）和工作流感知 SRTF 调度，在 64×A100 上把 SLO 达成率提升 23.6pp、KV 预留内存降 67.2%。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -27,8 +27,6 @@
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>问题背景</h3>
 <p>传统 LLM 推理面对的是独立的一问一答请求。但现在越来越多的应用把多个 agent 组成协作工作流：比如旅行助手里有"需求分析 agent"、"机票搜索 agent"、"酒店推荐 agent"、"行程整合 agent"，它们之间有 DAG 依赖，一个用户请求触发十几次甚至几十次 LLM 推理调用（称为 stage）。</p>
@@ -115,12 +113,12 @@
 <hr class="div">
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>01-icdcs-2026-maestro-llm 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>Maestro 解决 LLM 多智能体工作流的推理调度。它不把请求当黑盒，而是用 agent 上下文做两阶段输出长度预测，再用 CUDA VMM 虚拟内存超配做弹性 KV 缓存，配合工作流感知的 SRTF 调度。64×A100、14.4 万 stage 上，SLO 达成率比 EDF 高 23.6pp，KV 预留内存降 67.2%，交互排队延迟降 84.8%。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>Maestro 面向的是多个 agent 组成 DAG 协作工作流的 LLM 推理场景，一个用户请求会触发几十次 LLM 调用（stage），带来输出长度双峰波动、多模型共占显存、交互与批处理混合延迟三大挑战。核心思路是利用 agent 角色、工作流位置等上下文做前瞻预测，再指导内存和调度。预测分两阶段：LightGBM 先判断是否触发工具调用（AUC 0.96），回归器在给定模式下预测 token 数（MAE 165，R² 0.78）。内存上用五状态模型管理加 CUDA VMM 三倍超配，靠虚拟物理页分离、准入控制和映射失败拒绝三层防护避免 OOM。调度用基于剩余时间的 SRTF 加 stage 边界抢占。关键权衡是预测偏向高估——低估会导致解码中途 OOM 和队头阻塞，危害远大于高估。面试里我会用它说明如何用轻量预测为调度器提供前瞻信号，并讲清工程上不做 token 级抢占的复杂度取舍。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::01-icdcs-2026-maestro-llm-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::01-icdcs-2026-maestro-llm-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">IEEE Cluster 2026 DeepShare</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-2" aria-labelledby="papers-tabs-tab-2" data-mid="papers-tabs::idx-2" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>IEEE Cluster 2026 DeepShare</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 40 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-2-sub-1" aria-controls="papers-tabs-panel-2-subpanel-1" aria-selected="true" title="概述与设计"><span class="subtab-title">概述与设计</span><span class="subtab-desc">问题背景 / 系统设计 / 核心定位</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-2" aria-controls="papers-tabs-panel-2-subpanel-2" aria-selected="false" title="总体架构"><span class="subtab-title">总体架构</span><span class="subtab-desc">Controller + Plugin 架构 / K8S 对象设计</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-3" aria-controls="papers-tabs-panel-2-subpanel-3" aria-selected="false" title="K8S 实现细节"><span class="subtab-title">K8S 实现细节</span><span class="subtab-desc">两级队列 / Controller 工作流 / Scheduler 扩展点</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-4" aria-controls="papers-tabs-panel-2-subpanel-4" aria-selected="false" title="高频问答"><span class="subtab-title">高频问答</span><span class="subtab-desc">DeepShare + 实现细节高频问题</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-5" aria-controls="papers-tabs-panel-2-subpanel-5" aria-selected="false" title="论文延伸问答"><span class="subtab-title">论文延伸问答</span><span class="subtab-desc">EMA / RF / ablation / sensitivity / related work</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-6" aria-controls="papers-tabs-panel-2-subpanel-6" aria-selected="false" title="面试背诵"><span class="subtab-title">面试背诵</span><span class="subtab-desc">完整背诵版 + 60 秒缩略版</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-2-subpanel-1" aria-labelledby="papers-tabs-panel-2-sub-1" ><h2>一句话结论</h2>
-<p>问题背景 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配额借用、预测性调度和干扰感知合用三个子系统串成闭环，在保障租户 QoS 的前提下把 GPU 利用率从 39.64% 提到 70.58%，QoS 合规率 93%。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -129,8 +127,6 @@
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-d">
 <h3>问题背景</h3>
 <p>多团队共享 GPU 集群的核心矛盾：</p>
@@ -425,12 +421,12 @@ QAD 接近时，预测运行时间短的作业优先。</code></pre>
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02a-overview 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>DeepShare 解决多租户 GPU 集群里的核心矛盾：静态 quota 利用率低，过度共享又破坏 QoS。它提出统一指标 QAD（配额保障度），衡量租户当前 Guaranteed 需求被满足的程度，并用 QAD 同时驱动弹性配额借用、预测性调度和干扰感知合用。在 K8s 集群上把利用率从 39.64% 提到 70.58%，排队延迟降 46%，QoS 合规率 93%。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>DeepShare 是一篇多租户 GPU 集群资源管理的论文。问题背景是：严格按 quota 静态隔离会让闲置资源浪费、利用率只有约 40%，但允许借用后又难保证原主需要时能及时收回。论文认为根因是 quota、调度、抢占、共享四个模块缺少统一控制信号，于是提出 QAD = 已满足 Guaranteed 资源 / min(quota, 当前 Guaranteed demand)，并做 EMA 平滑。QAD 同时驱动三个子系统：DRA 弹性配额借用，空闲资源借出、QAD 下降时按优先级回收；预测性调度，用 Random Forest 预测运行时间，按 QAD 升序加短作业优先的词典序排队，并做代价感知抢占；干扰感知合用，用硬件计数器预测共享保持率（R² 0.902），只在高于动态阈值时合用并运行时驱逐。整体实现为 Kubernetes scheduler plugin，端到端调度延迟小于 50ms。面试里我会强调它的卖点不是单点算法，而是用 QAD 把资源效率和 QoS 保障形式化并闭环。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-2" aria-labelledby="papers-tabs-panel-2-sub-2" hidden><h2>一句话结论</h2>
-<p>总体架构 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>DeepShare 在 Kubernetes 上拆成 Controller 加 Scheduler Plugin 两层：Controller 管租户级的 quota、QAD、队列与准入，通过 TenantQuota CRD 和 Pod annotation 把租户语义传给调度路径；Scheduler Plugin 复用 Scheduler Framework 五个扩展点做 Pod 级排序、过滤、打分、预留和抢占。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -439,8 +435,6 @@ QAD 接近时，预测运行时间短的作业优先。</code></pre>
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-d">
 <h3>总体架构</h3>
 
@@ -573,12 +567,12 @@ spec:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02b-architecture 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>DeepShare 的 K8s 落地拆成 Controller 和 Scheduler Plugin 两层。难点在于 kube-scheduler 原生只认 Pod，不知道 Pod 属于哪个 tenant、是 Guaranteed 还是 Best-effort、quota 和 QAD 是多少。所以 Controller 负责租户级状态管理，把这些语义写进 TenantQuota CRD 和 Pod annotation，Scheduler Plugin 再读这些字段做调度决策。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节讲 DeepShare 的架构落地。整体链路是用户提交 GPU Job 后先经过 Controller，再进 kube-scheduler 加 DeepShare 插件。拆两层的原因是职责边界：QAD、弹性配额借用、Best-effort 借用回收、Guaranteed QoS 这些是租户级、作业级逻辑，而 kube-scheduler 默认调度对象是 Pod，原生不知道 Pod 的 tenant、class、quota、QAD 这些信息。所以 Controller 负责租户状态——维护 TenantQuota（gpuQuota、bestEffortMultiplier、guaranteedDemand/Allocated、qad）、计算 QAD、维护两级队列、做 quota 准入，并把结果写进 Pod 的 label 和 annotation，或移除 schedulingGate 放行。Scheduler Plugin 则在 QueueSort、Filter、Score、Reserve、PostFilter 这些扩展点读取这些字段，做 QAD-aware 排序、节点过滤打分、资源账本维护和抢占。Job 表达上可以用 DeepShareJob CRD（工程化，便于租户级排队）或原生 Pod 加 label（轻量）。面试里我会用这条链路说明 Kubernetes-native 系统如何把全局租户语义和 Pod 级调度热路径解耦。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-3" aria-labelledby="papers-tabs-panel-2-sub-3" hidden><h2>一句话结论</h2>
-<p>两级队列具体在哪里实现 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>DeepShare 的两级队列中，第一级租户级 Guaranteed/Best-effort 队列在 Controller 里显式维护并做准入，第二级全局队列是逻辑队列——由 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QAD-aware QueueSort 共同体现，调度执行落在 Framework 各扩展点。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -587,8 +581,6 @@ spec:
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-s">
 <h3>两级队列具体在哪里实现</h3>
 <p>论文里的队列结构：</p>
@@ -764,12 +756,12 @@ if Best-effort:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02c-impl-details 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>这一节落到 DeepShare 的实现细节，重点是两级队列的归属。第一级是每个租户的 Guaranteed 和 Best-effort 队列，在 Controller 里显式维护，由 Controller 做准入；第二级全局队列不是单独的物理队列，而是 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QueueSort 排序共同体现。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节讲 DeepShare 各扩展点怎么实现。Controller 的工作流是：watch Job 放入对应租户的 Guaranteed/Best-effort 队列，计算 QAD，再分级准入——Guaranteed 满足 U_i^G + R_j ≤ q_i 才进候选集，Best-effort 更保守，要求没有可放置的 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i，准入后通过移除 schedulingGate 放行进 kube-scheduler。第二级全局队列由 Scheduler Plugin 的 QueueSort 实现，排序键依次是 class（Guaranteed 优先）、tenant QAD（低优先）、predicted runtime（短优先）、submit time，核心是先恢复保障不足的租户、再用预测时间做局部优化，runtime 不能覆盖 QAD。后续 PreFilter 解析上下文，Filter 检查 GPU 和 colocation 干扰，Score 做 bin packing、碎片控制和干扰打分，Reserve/Unreserve 维护账本防止与 kube-scheduler assumed state 不一致，PostFilter 在 Guaranteed 调度失败且 QAD 低时做代价感知抢占。面试里我会强调为什么不全放 Controller 或全放 Plugin——准入是全局状态管理，出队和落点必须在 scheduler 内决定。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-4" aria-labelledby="papers-tabs-panel-2-sub-4" hidden><h2>一句话结论</h2>
-<p>DeepShare 高频问答 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>这一节用高频问答澄清 DeepShare 的关键设计点：QAD 与 DRF 的本质区别、为何 JCT 仅改善 6.3% 而排队延迟降 46%、GPU 共享靠 NVIDIA MPS 而非改 Extended Resource、干扰模型选 RF 的延迟与泛化考量，以及 Controller 与 Scheduler Plugin 的职责切分。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -778,8 +770,6 @@ if Best-effort:
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-d">
 <h3>DeepShare 高频问答</h3>
 
@@ -838,12 +828,12 @@ if Best-effort:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02d-faq-base 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>这一节是 DeepShare 的基础高频问答，覆盖面试最常追问的几个点：QAD 不是 DRF——DRF 只做均等分配，QAD 量化距离保障配额还差多少并允许可回收的超额；排队延迟降 46% 但 JCT 只改善约 6.3%，因为执行时间各策略一致、调度只能优化排队部分；GPU 共享靠 NVIDIA MPS 而非改 K8s Extended Resource。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节用问答澄清 DeepShare 的几个易混点。第一是 QAD vs DRF：DRF 追求均等分配、不区分保障与尽力而为，QAD 量化租户离保障配额有多远，允许 QAD&gt;1 的超额且可回收，还同时服务调度优先级、合用准入、QoS 报告三个子系统。第二是指标解读：JCT = 排队 + 执行，执行时间由计算量决定、各策略相同，所以排队大幅改善只带来 JCT 小幅改善，这恰说明优化空间在排队侧。第三是工程实现：nvidia.com/gpu 作为 Extended Resource 准入后不可修改，所以 GPU 共享通过 NVIDIA MPS 在驱动层多路复用并设 per-client 内存限制，每块 GPU 用 DaemonSet 部署 MPS daemon。第四是模型选型：干扰模型用 Random Forest 因为推理小于 1ms、R² 0.902、硬件计数器特征跨框架泛化，而 GAN 类要 50-200ms。最后是架构问答：QAD 由 Controller 算并写进 TenantQuota.status，Plugin 只读 informer cache 不阻塞热路径；为什么两层分工、Best-effort 如何借用回收。面试里这些是把项目讲深的关键追问点。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-5" aria-labelledby="papers-tabs-panel-2-sub-5" hidden><h2>一句话结论</h2>
-<p>论文原文延伸问答（基于 IEEE Cluster 2026 原稿） 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>这一节是基于 IEEE Cluster 2026 原稿的论文级深度问答，覆盖面试官按论文细节追问的参数与机制：EMA λ=0.3 与 50ms 周期的收敛意义、QAD 边界规定、RF 选型依据与 31.84% MAPE、抢占效率 E_j、动态容忍 ρ_tol、过载降级数据、消融贡献，以及与 Lucid/Tiresias/Gavel/HiveD 的本质差异和论文承认的四条局限。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -852,8 +842,6 @@ if Best-effort:
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-d">
 <h3>论文原文延伸问答（基于 IEEE Cluster 2026 原稿）</h3>
 <p>下面这组问题对应面试官真正会按论文细节追问的角度：参数选取、消融、敏感性、对比 baseline、工程边界。回答全部出自论文正文与 §V 实验。</p>
@@ -929,12 +917,12 @@ if Best-effort:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02e-faq-paper 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>这一节是 DeepShare 的论文级深度问答，全部对应原稿参数和实验。比如 EMA λ=0.3 加 50ms 周期能在约 350ms 内累积到稳态 90%、过滤亚秒抖动；干扰预测用 RF 是因为 sub-ms 推理且 R² 0.902，主特征是 SM Active；平均 JCT 只比 Lucid 好 6.3% 但排队降 46%、tail JCT 降 23%，因为 DeepShare 主战场是排队公平和尾延迟。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节准备的是面试官按论文细节深挖时的应答。EMA λ=0.3、50ms 周期的物理意义是持续偏差约 350ms 累积到稳态 90%，既过滤短任务抖动又能快速发现持续 under-service。QAD 在 demand=0 时定为 1 而非 0，避免空闲租户被误判为最受损者；分母用 min(quota, demand) 防止虚报哄抬。RF 选型三点理由：sub-ms 推理可挂在调度关键路径、主特征 SM Active 等可解释、DCGM 计数器跨框架泛化，MAPE 从 Lucid 的 68.72% 降到 31.84%，干扰预测 R² 0.902。抢占用 E_j = R_j·T̂/(1+α·C_p) 贪心选 victim，分子是可回收 GPU-时、分母惩罚反复被抢占。共享靠 RF 准入加在线检测兜底——连续 3 窗口 retention 低于 ρ_tol 就驱逐。论文承认四条局限：干扰模型只在 16 个模型族上训练、testbed 仅 16 GPU、异构卡需重训、未覆盖分布式训练 Gang Scheduling。和 prior art 的本质差异是用单一 QAD 信号把配额保障、干扰合用、运行时预测三者闭环，Tiresias/Lucid/Gavel/HiveD 都只解决其中一两块。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-6" aria-labelledby="papers-tabs-panel-2-sub-6" hidden><h2>一句话结论</h2>
-<p>面试版完整回答（背诵展开版） 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>这一节给出 DeepShare 在面试里可直接背诵的完整口述版：不考虑 Gang Scheduling 时，Controller 维护两级租户队列、计算 QAD 并做 quota 准入，Scheduler Plugin 用 QAD-aware QueueSort 加 Filter/Score/Reserve/PostFilter 完成 Pod 级排序、落点和抢占。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -943,8 +931,6 @@ if Best-effort:
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-w">
 <h3>面试版完整回答（背诵展开版）</h3>
 <p>如果先不考虑 Gang Scheduling，我会把 DeepShare 在 Kubernetes 里的实现拆成 Controller 和 Scheduler Plugin 两部分。<strong>Controller 负责租户级资源治理，Scheduler Plugin 负责 Pod 级调度。</strong></p>
@@ -963,12 +949,12 @@ if Best-effort:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>02f-talk 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>不考虑 Gang Scheduling 时，DeepShare 在 K8s 上拆成 Controller 和 Scheduler Plugin：Controller 管 tenant/job 级逻辑——维护每租户的 Guaranteed/Best-effort 队列、算 QAD、做 quota 准入和 Best-effort cap，通过准入的 Pod 才进 scheduler；Scheduler Plugin 管 Pod/node 级——用 QueueSort 做 Guaranteed first、QAD low first、runtime short first 的全局排序，再用 Filter/Score 选节点、Reserve 记账、PostFilter 抢占。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节是 DeepShare 的背诵口述版。我会先点出分工：Controller 负责租户级资源治理，Scheduler Plugin 负责 Pod 级调度。Controller watch 用户提交的 GPU Job，读取 tenant、class、GPU request 和预测运行时间放入对应租户的 Q_i^G 或 Q_i^B，周期性统计 quota 使用、计算 QAD 并维护 TenantQuota status。准入上，Guaranteed 作业满足 U_i^G + R_j ≤ q_i 才放行，Best-effort 要在没有可放置 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i 时才放行，通过移除 schedulingGate 进 kube-scheduler。第二级集群队列由 QueueSort 实现：Guaranteed 优先于 Best-effort，同类中 QAD 低的租户优先，QAD 接近时短作业优先，提交时间兜底。之后 PreFilter 解析上下文，Filter 检查 GPU 和共享干扰约束，Score 做 bin packing 和干扰打分，Reserve/Unreserve 维护账本，PostFilter 在 Guaranteed 调度失败且 QAD 低时选低代价 Best-effort 抢占。一句话收束：第一级队列在 Controller 显式维护，第二级队列由准入后的 Pod 集合加 QAD-aware QueueSort 共同实现，既保留 Kubernetes-native 框架又落地 QAD 驱动的资源管理。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::idx-2" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::idx-2" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">ICDCS 2026 Maestro</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">关系与面试叙事</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-3" aria-labelledby="papers-tabs-tab-3" data-mid="papers-tabs::03-section-03-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>关系与面试叙事</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>互补关系 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。</p>
+<p>Maestro 与 DeepShare 互补——前者解决推理侧多 agent 调度、后者解决训练侧多租户管理，两者共享预测驱动调度、代价感知抢占、弹性资源管理和分层架构四个理念，可串成&quot;用轻量预测为调度器提供前瞻信号&quot;的统一研究叙事。</p>
 <h2>复习定位</h2>
 <table>
 <tr><th>维度</th><th>内容</th></tr>
@@ -977,8 +963,6 @@ if Best-effort:
 <tr><td>解决问题</td><td>围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。</td></tr>
 <tr><td>面试抓手</td><td>按背景、方案、实现、结果、局限回答。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心概念、系统链路或关键机制，把知识点映射到工程场景。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-s">
 <h3>互补关系</h3>
 <p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
@@ -1010,9 +994,9 @@ if Best-effort:
 </div>
 <h2>面试回答</h2>
 <p><strong>30 秒版：</strong></p>
-<p>03-section-03 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。</p>
+<p>这一节把两篇论文串成统一叙事。DeepShare 解决训练侧多租户 GPU 集群调度，Maestro 解决推理侧 LLM 多 agent 工作流调度，二者互补、共同支撑一个完整 GPU 集群。贯穿的核心能力是：用轻量预测模型为调度器提供前瞻信号，再设计弹性资源管理和代价感知抢占来利用这些信号。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。</p>
+<p>这一节讲两篇论文如何互补，以及怎么组织成自我介绍。我的研究聚焦 GPU 集群的资源调度与性能预测，覆盖训练和推理两个互补场景。DeepShare（IEEE Cluster 2026）解决多租户 GPU 集群训练作业调度，核心创新是配额保障度 QAD，统一驱动弹性配额管理、预测性调度和干扰感知合用，在 219 GPU 的 K8s 集群上实现 70.58% 利用率和 93% QoS 合规。Maestro（ICDCS 2026）面向 LLM 多智能体推理，核心挑战是输出长度不确定和多模型内存压力，设计了两阶段预测器加 CUDA VMM 超配加 SRTF 调度，在 64 块 A100 上把 SLO 达成率提升 23.6pp。两者共享四个设计理念：预测驱动调度、代价感知抢占（Maestro 的 C_deg 对 DeepShare 的 E_j）、弹性资源管理（VMM 超配对 DRA 借用）、分层架构（全局调度器加节点运行时）。和工业系统的区别是：相对 vLLM/SGLang 这类单节点引擎，Maestro 在其上做多模型多 agent 工作流级调度；相对 Volcano 的 Gang scheduling，DeepShare 在配额弹性、干扰感知和运行时预测上做了增强。面试里我会用这条主线说明自己的研究是一个连贯的 ML-for-Systems 方向。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>系统设计题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::03-section-03-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::03-section-03-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">IEEE Cluster 2026 DeepShare</span></button></div></div></article></div></section>
   </main>

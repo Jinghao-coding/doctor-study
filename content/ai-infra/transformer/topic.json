@@ -119,16 +119,5 @@
       ]
     }
   ],
-  "sections": [
-    {"title": "整体架构", "file": "01-architecture.md"},
-    {"title": "输入处理", "file": "02-input.md"},
-    {"title": "Attention 机制", "file": "03-attention.md"},
-    {"title": "训练稳定性", "file": "04-training.md"},
-    {"title": "FLOPs 逐步推导", "file": "06-flops-derivation.md"},
-    {"title": "Roofline 分析", "file": "07-roofline-analysis.md"},
-    {"title": "Decode 为何 Memory-bound", "file": "08-decode-memory-bound.md"},
-    {"title": "逐算子 Bound 分类", "file": "09-operator-bound-classification.md"},
-    {"title": "面试高频题", "file": "05-interview.md"},
-    {"title": "可视化资源", "file": "10-visual-explainer.md"}
-  ]
+  "sections": []
 }

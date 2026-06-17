@@ -11,12 +11,6 @@ Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 hea
 | 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
 | 面试抓手 | 必须讲清 QK^T、softmax、加权求和和多头拼接。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>Self-Attention：核心三步</h3>
 <p>注意力的本质是<strong>「加权求和」</strong>：每个 token 输出 = 其它所有 token 的 value 的加权平均，权重由「我和你有多相关」决定。</p>
@@ -135,11 +129,11 @@ class MultiHeadAttention(nn.Module):
 
 **30 秒版：**
 
-Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。 必须讲清 QK^T、softmax、加权求和和多头拼接。
+Self-Attention 本质是加权求和：每个 token 投影出 Q/K/V，用 Q 和所有 K 点积得相关性分数，除以 √d_k 缩放后 softmax 成权重，再对 V 加权求和。Multi-Head 把 hidden_size 拆成多个子空间并行算注意力再拼接，让不同 head 学语法、语义、位置等不同关系，总参数量和计算量基本不变。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+注意力的核心公式是 softmax(QKᵀ/√d_k)·V，思想是加权求和——每个 token 的新表示是其它所有 token 的 value 按相关性加权平均，Q 是「我要找什么」、K 是「我能提供什么」、V 是「我的实际内容」。除以 √d_k 是因为维度大时点积数值会偏大、softmax 进入梯度极小的饱和区，缩放是为了稳定梯度。Multi-Head 把总维度切成多个子空间，每个 head 独立算一次注意力再拼接过输出投影，好处是多角度建模、表达更强、天然可并行，而且总维度不变所以参数量和算力基本不变。工程上手撕要点是：view+transpose 把 [B,S,H] 切成 [B,heads,S,head_dim]，合并多头前必须 contiguous 否则 view 会报错，causal mask 给未来位置加 -1e9 让 softmax 后权重趋零实现因果性。最关键的落点是 KV cache：自回归 decode 时历史 token 的 K/V 不变，缓存下来每步只算新 token，这是推理加速和显存占用的核心。
 
 ## 关联模块
 

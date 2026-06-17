@@ -21,7 +21,7 @@
             {
               "title": "端到端链路",
               "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程",
-              "file": "05-e2e-pipeline.md",
+              "file": "00-e2e-pipeline.md",
               "level": "基础",
               "priority": 1,
               "time": 12
@@ -37,7 +37,7 @@
             {
               "title": "请求生命周期",
               "description": "请求接入、调度、计算、生成、返回",
-              "file": "02-kv-attention.md",
+              "file": "02-request-lifecycle.md",
               "level": "基础",
               "priority": 2,
               "time": 12
@@ -50,7 +50,7 @@
             {
               "title": "Prefill 阶段",
               "description": "计算密集、TTFT、首 token 延迟",
-              "file": "03-optimization.md",
+              "file": "03-prefill.md",
               "level": "进阶",
               "priority": 1,
               "time": 12
@@ -58,7 +58,7 @@
             {
               "title": "Decode 阶段",
               "description": "逐 token 生成、memory-bound、TPOT",
-              "file": "04-serving-engines.md",
+              "file": "04-decode.md",
               "level": "进阶",
               "priority": 1,
               "time": 12
@@ -150,54 +150,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "端到端推理链路",
-      "file": "05-e2e-pipeline.md"
-    },
-    {
-      "title": "推理总览",
-      "file": "01-prefill-decode.md"
-    },
-    {
-      "title": "请求生命周期",
-      "file": "02-kv-attention.md"
-    },
-    {
-      "title": "Prefill 阶段",
-      "file": "03-optimization.md"
-    },
-    {
-      "title": "Decode 阶段",
-      "file": "04-serving-engines.md"
-    },
-    {
-      "title": "KV Cache 与 Attention",
-      "file": "05-kv-cache-attention.md"
-    },
-    {
-      "title": "KV Cache 显存预算实算",
-      "file": "14-kv-cache-memory-budget.md"
-    },
-    {
-      "title": "PagedAttention 图解",
-      "file": "15-pagedattention-explained.md"
-    },
-    {
-      "title": "FlashAttention 图解",
-      "file": "16-flashattention-explained.md"
-    },
-    {
-      "title": "性能指标与瓶颈",
-      "file": "06-performance-bottlenecks.md"
-    },
-    {
-      "title": "优化技术",
-      "file": "07-optimization-techniques.md"
-    },
-    {
-      "title": "推理引擎对比",
-      "file": "08-serving-engines.md"
-    }
-  ]
+  "sections": []
 }

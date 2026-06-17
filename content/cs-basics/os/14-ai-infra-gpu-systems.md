@@ -1,6 +1,6 @@
 ## 一句话结论
 
-GPU 利用率低的分层判断 是 操作系统基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+GPU 利用率低不能只看一个数：要分层判断到底卡在哪。先看 SM utilization 判断计算单元是否真在工作（显存高只代表被占不代表在算），再看 PCIe/NVLink 吞吐排查 H2D/D2H 或通信瓶颈，再看 CPU worker 和 DataLoader queue 是否供给不足，最后看 NCCL 日志和网络指标。这正是区分 AI Infra 候选人和普通后端的关键。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@ GPU 利用率低的分层判断 是 操作系统基础 的核心知识点，面�
 | 章节类型 | 概念类 |
 | 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## AI Infra 面试模块：GPU 训练/推理相关系统层知识
 
@@ -70,11 +64,11 @@ GPU 利用率低的分层判断 是 操作系统基础 的核心知识点，面�
 
 **30 秒版：**
 
-14 ai infra gpu systems 是 操作系统基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+数据路径是磁盘/网络进 CPU 内存，再经 PCIe/NVLink 进 GPU HBM，靠 DMA 传输。pinned memory 锁住物理页让 DMA 稳定访问、H2D 更快（DataLoader 的 pin_memory=True）。GPU 利用率低要分层看：SM util 判断是否真在算、显存高只代表被占、PCIe/NVLink 吞吐看拷贝或通信、CPU worker 和 queue 看供给、NCCL 日志看通信。多卡通信还受 PCIe/NVLink 拓扑和跨 NUMA 影响。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 操作系统基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+GPU 系统层先讲清数据路径：训练数据通常从磁盘或网络进 CPU 内存，再经 PCIe 或 NVLink 进入 GPU HBM，搬运靠 DMA——设备绕过 CPU 指令直接在内存和设备间传数据。这里 pinned memory 是关键：普通 pageable memory 可能被 OS 换页，GPU DMA 不能安全直接访问，驱动得先拷到 pinned staging buffer 再 DMA，而 pinned memory 锁定物理页避免换页，所以 DataLoader 的 pin_memory=True 配合 non_blocking copy 和 CUDA stream 能让 H2D 更高效、和计算重叠。诊断 GPU 利用率低要分层：先看 SM utilization 判断计算单元是否持续工作，显存占用高只说明权重、optimizer state、KV cache 或 allocator 常驻、不代表在算；再看 PCIe/NVLink 吞吐定位 H2D/D2H 或通信瓶颈；再看 CPU worker 和 DataLoader queue 是否供给不足让 GPU 等 batch；最后看 NCCL 日志和网络指标判断是否卡在通信。多卡训练里 rank 放置要匹配 PCIe/NVLink/NVSwitch 拓扑，跨 PCIe switch 或跨 NUMA socket 会拉低 all-reduce 性能，NIC 和 GPU 不同 locality 还会让 GPUDirect/RDMA 变差。
 
 ## 关联模块
 

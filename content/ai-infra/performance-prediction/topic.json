@@ -80,30 +80,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "调度系统中的预测方法示例",
-      "file": "01-examples.md"
-    },
-    {
-      "title": "为什么用树模型",
-      "file": "02-tree-models.md"
-    },
-    {
-      "title": "特征工程",
-      "file": "03-features.md"
-    },
-    {
-      "title": "评估指标",
-      "file": "04-metrics.md"
-    },
-    {
-      "title": "预测不准怎么办",
-      "file": "05-robustness.md"
-    },
-    {
-      "title": "Roofline Model",
-      "file": "06-roofline-model.md"
-    }
-  ]
+  "sections": []
 }

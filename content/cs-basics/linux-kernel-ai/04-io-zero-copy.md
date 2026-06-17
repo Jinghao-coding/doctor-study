@@ -1,6 +1,6 @@
 ## 一句话结论
 
-大模型权重加载为什么是系统瓶颈？ 是 Linux Kernel for AI Infra 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+大模型权重加载是典型系统瓶颈：权重几十到几百 GB 要穿过磁盘、page cache、用户态 buffer、反序列化、CPU 内存、pinned memory 再到 GPU HBM，路径不合理 GPU 就一直空等。优化围绕减少拷贝展开——mmap 省掉 page cache 到用户态的拷贝、Direct I/O 绕过 page cache 避免污染、sendfile 做文件到网络的零拷贝，落地还要叠加并行 shard、pinned memory 和 NUMA-aware 加载。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## 大模型权重加载为什么是系统瓶颈？
 
@@ -387,11 +381,11 @@ I/O 方面，传统 `read` 路径通常是磁盘 DMA 到 page cache，再 CPU co
 
 **30 秒版：**
 
-04 io zero copy 是 Linux Kernel for AI Infra 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+传统 read 路径是磁盘 DMA 到 page cache、再 CPU 拷贝到用户 buffer，加载到 GPU 还要从 CPU buffer 经 PCIe DMA 到 HBM。优化四种 I/O 各有定位：mmap 把文件映射进地址空间省掉 page cache 到用户态的拷贝、适合只读大权重和多进程共享但有 page fault 抖动；Direct I/O 用 O_DIRECT 绕过 page cache 避免污染、适合大文件顺序读但要对齐；sendfile 做文件到 socket 的零拷贝、适合权重分发。大模型权重加载要综合 mmap/Direct I/O、并行 shard、pinned memory、NUMA-aware loading 和 page cache 控制。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 Linux Kernel for AI Infra 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+大模型权重加载是典型的系统瓶颈，因为权重几十到几百 GB，加载链路要穿过磁盘/网络存储、文件系统、page cache、用户态 buffer、反序列化、CPU 内存、pinned memory 再到 GPU HBM，路径不合理 GPU 就一直等。先讲传统 read/write：磁盘 DMA 到 page cache，再 CPU 拷贝到用户 buffer，阻塞 read 还伴随用户态/内核态切换和进程调度，大量小 I/O 时 syscall 和上下文切换开销很明显，写网络则是 user buffer 到 socket buffer 再 NIC DMA。再讲三种优化各自的定位：mmap 把文件映射进虚拟地址空间，省掉 page cache 到用户 buffer 的显式拷贝、支持按需 page fault 加载和多进程共享 page cache，适合只读大权重，但随机访问可能 page fault 风暴；Direct I/O 用 O_DIRECT 绕过 page cache，避免一次性加载几百 GB 把 page cache 塞满挤掉热数据，适合大文件顺序读和应用自管缓存，但要求 buffer、size、offset 对齐，小 I/O 反而差；sendfile 在文件 fd 和 socket fd 之间零拷贝传输，减少内核态到用户态来回拷贝和 syscall，适合模型分发和 checkpoint 传输，但不是权重进 GPU HBM 的最终一步。落到实践，权重加载优化要综合用 safetensors 这类易 mmap 格式、并行 shard 加载、pinned memory 加速 H2D、NUMA-aware loading 避免跨 Socket，以及按是否反复加载选择 Direct I/O 还是 mmap 来控制 page cache。
 
 ## 关联模块
 

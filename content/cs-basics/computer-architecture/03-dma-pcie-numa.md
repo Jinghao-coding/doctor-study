@@ -1,6 +1,6 @@
 ## 一句话结论
 
-DMA、PCIe 与 NUMA 拓扑 是 计算机组成基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+DMA、PCIe 和 NUMA 共同决定了数据在 CPU、GPU、NIC、NVMe 之间「怎么走、走多快」：DMA 让设备绕过 CPU 搬数据，PCIe 是设备互联的带宽上限，NUMA 决定设备和内存的亲和距离——AI Infra 里大量性能问题不是 GPU 不够快，而是数据到 GPU 的路径太差。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@ DMA、PCIe 与 NUMA 拓扑 是 计算机组成基础 的核心知识点，面试
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕 CPU、缓存、TLB、DMA、PCIe、NUMA 等 AI Infra 底层系统知识建立基础答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-m"><h3>DMA、PCIe 与 NUMA 拓扑</h3><p>DMA 允许设备绕过 CPU 直接读写内存；PCIe 是 CPU、GPU、NIC、NVMe 等设备的主要互联；NUMA 决定 CPU、内存、GPU、NIC 之间的亲和关系。</p></div>
 <div class="card card-d"><h3>AI Infra 为什么关心这些</h3><table><tr><th>概念</th><th>影响</th><th>典型场景</th></tr><tr><td>DMA</td><td>降低 CPU copy 开销</td><td>GPU copy、RDMA、NVMe 数据加载</td></tr><tr><td>PCIe</td><td>限制 host-device 带宽</td><td>CPU 到 GPU 数据搬运</td></tr><tr><td>NUMA locality</td><td>影响 CPU-GPU/NIC 距离</td><td>数据加载线程应靠近目标 GPU/NIC</td></tr><tr><td>GPU-NIC affinity</td><td>影响 RDMA/NCCL 性能</td><td>跨节点 AllReduce</td></tr></table></div>
@@ -35,11 +29,11 @@ DMA、PCIe 与 NUMA 拓扑 是 计算机组成基础 的核心知识点，面试
 
 **30 秒版：**
 
-03 dma pcie numa 是 计算机组成基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+DMA 让设备直接读写内存、省掉 CPU 拷贝，PCIe 是 host 和 GPU/NIC/NVMe 的互联带宽上限，NUMA 决定 CPU、内存、GPU、NIC 之间的距离。数据路径越短、越少跨 socket，延迟越低、带宽越稳，所以训练前我会先用 nvidia-smi topo -m 看拓扑。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 计算机组成基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+我会从三个概念切入：DMA 让设备绕过 CPU 直接搬数据，是 GPU copy、RDMA、NVMe 读取的基础；PCIe 是这些设备的主互联，决定了 host-to-device 的带宽天花板；NUMA 则把多 socket 服务器的 CPU、内存、设备分成若干亲和域。接着讲路径：同一 PCIe switch 下的 GPU-GPU、GPU-NIC 走 P2P/GDR 最快，同 NUMA 次之，跨 socket 要经过 CPU interconnect、延迟和抖动上升，最差的是 P2P 不可用时经 CPU pinned memory 中转。然后讲工程影响：数据加载线程要绑在目标 GPU 的 NUMA 节点，NCCL/RDMA 性能强依赖 GPU-NIC affinity。最后收束：同样 8 卡，NVLink 全互联和跨 PCIe/跨节点的 AllReduce 性能差异巨大，所以拓扑感知调度很关键。
 
 ## 关联模块
 

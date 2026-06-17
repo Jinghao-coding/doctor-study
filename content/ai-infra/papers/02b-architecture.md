@@ -1,6 +1,6 @@
 ## 一句话结论
 
-总体架构 这一节要服务项目深挖：先说明问题背景和核心贡献，再讲系统设计、实现证据、实验结果和面试追问。
+DeepShare 在 Kubernetes 上拆成 Controller 加 Scheduler Plugin 两层：Controller 管租户级的 quota、QAD、队列与准入，通过 TenantQuota CRD 和 Pod annotation 把租户语义传给调度路径；Scheduler Plugin 复用 Scheduler Framework 五个扩展点做 Pod 级排序、过滤、打分、预留和抢占。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 论文项目类 |
 | 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
 | 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-d">
 <h3>总体架构</h3>
@@ -154,11 +148,11 @@ spec:
 
 **30 秒版：**
 
-02b-architecture 这一节要服务项目深挖：说明问题背景、核心贡献、系统设计、实验或证据，以及面试追问怎么回答。 按背景、方案、实现、结果、局限回答。
+DeepShare 的 K8s 落地拆成 Controller 和 Scheduler Plugin 两层。难点在于 kube-scheduler 原生只认 Pod，不知道 Pod 属于哪个 tenant、是 Guaranteed 还是 Best-effort、quota 和 QAD 是多少。所以 Controller 负责租户级状态管理，把这些语义写进 TenantQuota CRD 和 Pod annotation，Scheduler Plugin 再读这些字段做调度决策。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 论文工作 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+这一节讲 DeepShare 的架构落地。整体链路是用户提交 GPU Job 后先经过 Controller，再进 kube-scheduler 加 DeepShare 插件。拆两层的原因是职责边界：QAD、弹性配额借用、Best-effort 借用回收、Guaranteed QoS 这些是租户级、作业级逻辑，而 kube-scheduler 默认调度对象是 Pod，原生不知道 Pod 的 tenant、class、quota、QAD 这些信息。所以 Controller 负责租户状态——维护 TenantQuota（gpuQuota、bestEffortMultiplier、guaranteedDemand/Allocated、qad）、计算 QAD、维护两级队列、做 quota 准入，并把结果写进 Pod 的 label 和 annotation，或移除 schedulingGate 放行。Scheduler Plugin 则在 QueueSort、Filter、Score、Reserve、PostFilter 这些扩展点读取这些字段，做 QAD-aware 排序、节点过滤打分、资源账本维护和抢占。Job 表达上可以用 DeepShareJob CRD（工程化，便于租户级排队）或原生 Pod 加 label（轻量）。面试里我会用这条链路说明 Kubernetes-native 系统如何把全局租户语义和 Pod 级调度热路径解耦。
 
 ## 关联模块
 

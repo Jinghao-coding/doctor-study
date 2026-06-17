@@ -1,6 +1,6 @@
 ## 一句话结论
 
-cgroups 是什么？ 是 Linux Kernel for AI Infra 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+cgroups 是 Linux 内核限制、统计、隔离一组进程资源的机制，配合 namespace（看见什么）、capabilities/seccomp（能做什么）构成容器基础；v1 是多 controller 多层级、v2 是统一层级语义更一致。CPU 用 quota、weight、cpuset 控制，内存用 memory.max/high/swap.max 控制，I/O 用 io controller 做带宽和 IOPS。关键误区是 cgroups 原生并不理解 GPU 算力或显存配额，它只能通过 devices controller 控制容器能否访问 /dev/nvidia* 设备文件，真正的 GPU 注入和细粒度隔离要靠 NVIDIA Container Toolkit、Device Plugin、MIG/MPS 和上层调度器协同。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@ cgroups 是什么？ 是 Linux Kernel for AI Infra 的核心知识点，面试�
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## cgroups 是什么？
 

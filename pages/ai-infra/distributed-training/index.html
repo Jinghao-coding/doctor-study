@@ -27,8 +27,6 @@
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>先画并行维度，再讲通信和显存代价。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="foundation-brief">
 <h3>先把分布式训练看成四个问题</h3>
 <p>分布式训练不是“卡越多越快”，而是在多张 GPU 之间拆分数据、模型、训练状态和通信。读这一页时先建立地图：模型放不下看显存拆分，单层太大看张量并行，层数太多看流水线并行，吞吐不够再扩大数据并行。</p>
@@ -89,7 +87,7 @@
 <p><strong>30 秒版：</strong></p>
 <p>分布式训练并行策略的总公式是总 GPU 数由 DP、TP、PP 等维度相乘决定。 先画并行维度，再讲通信和显存代价。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>分布式训练不是卡越多越快，而是在多张 GPU 之间拆数据、拆模型、拆训练状态、放通信这四个问题。数据拆用 DP/DDP，每卡处理不同 batch，每步 AllReduce 同步梯度；模型拆里 TP 切层内矩阵、PP 切层间 stage、EP 切 MoE 专家；状态拆用 ZeRO/FSDP，把参数、梯度、优化器状态从每卡完整保存改成分片。选型按&quot;先能放下、再跑得快、再排得好&quot;：单卡放不下先上 ZeRO/FSDP，单层太大上 TP，层数太多上 PP，吞吐不够再扩 DP。常见组合是 3D 并行，总 GPU 数等于 TP×PP×DP。放置原则比公式更关键：TP 通信最频繁要限制在节点内 NVLink/NVSwitch，PP 只传相邻 stage 激活可跨节点，DP 每步同步一次梯度放最外层扩吞吐。落地时通信代价和显存代价是核心权衡，要结合拓扑判断瓶颈在哪一维。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::01-principles-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::01-principles-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-2" aria-labelledby="distributed-training-tabs-tab-2" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>数据并行与梯度同步</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。</p>
@@ -101,8 +99,6 @@
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>公式重点是梯度大小和 Ring AllReduce 每卡流量。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>数据并行：最常见、也最容易被低估的并行方式</h3>
 <p>数据并行（Data Parallelism, DP）的核心是：每张 GPU 持有一份完整模型，处理不同数据分片，每个 step 后同步梯度，保证所有副本参数一致。它的优点是实现简单、扩展直观；缺点是模型和优化器状态仍然需要每卡完整保存，通信瓶颈集中在梯度同步。</p>
@@ -171,7 +167,7 @@
 <p><strong>30 秒版：</strong></p>
 <p>数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。 公式重点是梯度大小和 Ring AllReduce 每卡流量。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>数据并行的核心是每张 GPU 持有一份完整模型、处理不同数据分片，每个 step 后通过 AllReduce 同步梯度，保证所有副本参数一致。链路是 forward 用本地 mini-batch 算 loss、backward 算本地梯度、bucket ready 后启动 AllReduce、optimizer step 用同步后的梯度更新。AllReduce 同步的是梯度：它把所有卡梯度求和再除以 world size，等价于更大 batch 上的平均梯度，去中心化没有 parameter server 单点瓶颈。通信量上，参数量 P 的 FP32 梯度约 P×4 bytes，Ring AllReduce 每卡收发约 2×(N-1)/N×梯度大小，N 大时近似 2P×4 bytes，比如 7B 模型 FP32 梯度约 28GB，8 卡每卡约 49GB。工程关键是通信-计算重叠：DDP 用 bucket 把小梯度合并、让通信隐藏在 backward 后面，bucket 太小启动开销高、太大重叠差；梯度累积可降通信频率到 1/k，但有效 batch 变大要重调 lr 和 warmup。排障时关注 DataLoader/IO 是否成瓶颈、通信尾巴是否暴露。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::02-data-parallel-gradient-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">并行策略总览</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-3" aria-labelledby="distributed-training-tabs-tab-3" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>张量并行与流水线并行</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。</p>
@@ -183,8 +179,6 @@
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>TP 看 NVLink，PP 看 bubble。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>张量并行与流水线并行：一个切层内，一个切层间</h3>
 <p>张量并行（TP）解决“单层矩阵太大或单层计算太重”的问题；流水线并行（PP）解决“层数太多、整模型放不进单卡”的问题。二者经常组合：TP 放在节点内 NVLink 域，PP 可以跨节点。</p>
@@ -247,7 +241,7 @@
 <p><strong>30 秒版：</strong></p>
 <p>张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。 TP 看 NVLink，PP 看 bubble。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>张量并行和流水线并行解决的瓶颈不同：TP 切层内矩阵，解决单层矩阵太大或单层计算太重；PP 切层间 stage 序列，解决层数太多、整模型放不进单卡。TP 以 Y=XW 为例，列并行把 W 按输出维度切成 [W1...Wt] 各算 Yi 再 concat，行并行切输入维度后用 ReduceScatter/AllReduce 合并；它每层 forward/backward 都要 AllGather 或 ReduceScatter，96 层模型一轮可能触发数百次集合通信，频率比通信量更致命，所以 TP 必须放在节点内 NVLink/NVSwitch 域，TP 度一般不超过单节点 GPU 数，跨节点 TP 是性能灾难。PP 把 batch 切成 m 个 micro-batch 在 p 个 stage 上流动，相邻 stage 只 Send/Recv 激活和梯度，可跨节点；核心开销是 bubble，1F1B 调度下 bubble rate≈(p-1)/(m+p-1)，stage 越多越差、micro-batch 越多越好，但 m 受 global batch 和显存约束。组合时按总 GPU=DP×TP×PP 算，TP 节点内、PP/DP 跨节点。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::03-tensor-pipeline-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::03-tensor-pipeline-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">数据并行与梯度同步</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-4" aria-labelledby="distributed-training-tabs-tab-4" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>ZeRO / FSDP</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。</p>
@@ -259,8 +253,6 @@
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>显存公式要按 ZeRO 阶段拆。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>ZeRO / FSDP：把训练状态从“每卡完整保存”变成“分片保存”</h3>
 <p>大模型训练的显存不仅被参数占用，还被梯度、优化器状态和激活值占用。ZeRO 和 FSDP 的核心都是将训练状态分片，降低每张 GPU 的显存压力；代价是前向/反向时需要更多通信来取回参数或同步分片。</p>
@@ -323,7 +315,7 @@
 <p><strong>30 秒版：</strong></p>
 <p>ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。 显存公式要按 ZeRO 阶段拆。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>ZeRO/FSDP 的本质是把训练状态从每卡完整保存变成按 data parallel group 分片，代价是前向/反向要更多通信取回参数或同步分片。训练显存不只是参数，还有梯度、Adam 一阶/二阶矩、master weights，混合精度下常按每参数约 18 bytes 估算（参数 2B+梯度 4B+Adam 状态 12B）。ZeRO 分阶段：ZeRO-1 只切优化器状态、通信接近 DP；ZeRO-2 再切梯度，是常用甜点；ZeRO-3 把参数也切，需要额外参数 AllGather，显存最省但通信最重。以 7B 4 卡为例，无 ZeRO 约 126GB/卡放不下，ZeRO-1 约 63GB、ZeRO-2 约 42GB、ZeRO-3 约 31.5GB。FSDP 可理解为 PyTorch 原生的 ZeRO-3 类方案，都按需 all-gather 完整参数、用完释放，差异在 wrapping 粒度——包太粗峰值显存高、包太细通信次数多——以及生态，DeepSpeed ZeRO 提供更完整的 offload。落点是典型的用通信换显存，ZeRO-2 够用就不一定上 ZeRO-3，要结合显存占用和通信瓶颈判断。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::04-zero-fsdp-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::04-zero-fsdp-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">张量并行与流水线并行</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-5" aria-labelledby="distributed-training-tabs-tab-5" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>NCCL 与通信优化</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。</p>
@@ -335,8 +327,6 @@
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>通信时间粗估是流量除以有效带宽。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>NCCL：GPU 集合通信的事实标准</h3>
 <p>NCCL 负责 GPU 间高效集合通信，常见于 DDP 梯度同步、TP 层内通信、MoE expert routing 等场景。分布式训练排障里，NCCL 往往是最关键也最难定位的一层。</p>
@@ -405,7 +395,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <p><strong>30 秒版：</strong></p>
 <p>NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。 通信时间粗估是流量除以有效带宽。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>NCCL 是 GPU 集合通信的事实标准，DDP 梯度同步用 AllReduce、ZeRO/FSDP 用 ReduceScatter 和 AllGather、MoE expert routing 用 All-to-All。算法上 Ring 带宽利用高、链路均匀，适合大 tensor AllReduce，但延迟随 rank 数增加；Tree 延迟低适合小 tensor、rank 多；多节点常用 Hierarchical 分层优化。通信时间可粗估为流量除以有效带宽，比如每卡 AllReduce 流量 49GB、有效带宽 100GB/s，裸通信约 0.49s，实际还要加启动延迟、协议栈、拥塞和算法选择、重叠效果。排障是重点：NCCL hang 往往不是 NCCL 本身错，而是 rank 调用顺序不一致、某 rank OOM 或先退出、IB/RDMA 设备不可用，要先看是否所有 rank 一致进入 collective，再开 NCCL_DEBUG=INFO、NCCL_DEBUG_SUBSYS=INIT,NET,COLL、TORCH_DISTRIBUTED_DEBUG=DETAIL，检查网卡选择和设备可见性。环境变量按日志诊断、网卡选择（NCCL_SOCKET_IFNAME/NCCL_IB_HCA）、功能开关（NCCL_IB_DISABLE/NCCL_P2P_DISABLE）三类记。MoE 的 All-to-All 因路由不均、依赖 bisection bandwidth 比规则 AllReduce 更难优化。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::05-nccl-communication-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::05-nccl-communication-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">ZeRO / FSDP</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">排障与面试计算题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="distributed-training-tabs-panel-6" aria-labelledby="distributed-training-tabs-tab-6" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>排障与面试计算题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。</p>
@@ -417,8 +407,6 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <tr><td>解决问题</td><td>围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。</td></tr>
 <tr><td>面试抓手</td><td>把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。</td></tr>
 </table>
-<h2>阅读路径</h2>
-<ol><li>先记住本节的一句话结论，避免从细节开始散。</li><li>再看核心链路或关键机制，把概念映射到系统组件和资源消耗。</li><li>最后用“面试回答”收束成 30 秒版和 2 分钟版。</li></ol>
 <div class="card card-m">
 <h3>分布式训练排障：先定位瓶颈属于哪一层</h3>
 <p>分布式训练慢或失败，不能只盯 GPU 利用率。应按链路拆分：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。</p>
@@ -488,7 +476,7 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <p><strong>30 秒版：</strong></p>
 <p>分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。 把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。</p>
 <p><strong>2 分钟版：</strong></p>
-<p>我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。</p>
+<p>分布式训练排障不能只盯 GPU 利用率，要按链路分层：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。常见现象速查：GPU 利用率低先查 DataLoader/CPU/IO 和通信等待，可用 profiler 看 timeline 空洞位置，forward 前空洞多半是数据慢、backward 或 optimizer 前空洞多半是通信，再用 synthetic data 隔离数据链路；GPU-Util 100% 不等于高效，那只说明采样窗口有 kernel 在跑，要看 MFU（实际模型 FLOPs 占硬件峰值比例），低效可能是小 kernel 碎片、访存瓶颈、通信等待或没用上 Tensor Core。OOM 要按来源分类：参数/优化器状态主导用 ZeRO/FSDP 和 offload，activation 主导（seq_len/batch 增大）用 activation checkpointing、减 micro-batch 或 sequence parallel，偶发 OOM 看 allocator fragmentation 和临时峰值。计算题套路记住四个公式：DP 通信量 2×(N-1)/N×P×bytes、ZeRO 显存按分片对象拆、PP bubble (p-1)/(m+p-1)、3D 并行 Total=DP×TP×PP，注意 TP 通常不能跨节点随便放。</p>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="distributed-training-tabs::06-troubleshooting-interview-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">NCCL 与通信优化</span></button></div></div></article></div></section>
   </main>

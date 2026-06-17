@@ -11,12 +11,6 @@ Prefill 阶段的核心是大矩阵计算和首 token 延迟，优化重点是 b
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 把 TTFT 拆成排队、tokenization、prefill compute 和返回链路。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 ## Prefill 阶段
 
 Prefill 阶段一次性处理完整 Prompt，计算所有输入 token 的 attention，并生成后续 Decode 所需的 KV Cache。它主要影响 `TTFT`，也就是用户看到第一个 token 前的等待时间。
@@ -72,7 +66,7 @@ Prefill 阶段的核心是大矩阵计算和首 token 延迟，优化重点是 b
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Prefill 阶段一次性处理完整 Prompt token 序列，做 Embedding、QKV 投影、Attention、FFN、Logits 计算，输出首 token 分布和整段 Prompt 的 KV Cache，主要影响 TTFT。它之所以是 compute-bound，是因为多个 token 并行、矩阵乘规模大，能较好吃满 Tensor Core，但长 Prompt 下 attention 计算和访存都会涨。我会把 TTFT 拆成"排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络返回"——prefill 计算通常是主要部分，但高并发时排队也可能成为主因。优化上：用 FlashAttention 和算子融合减少 attention 中间读写降首 token 延迟；用 Prefix Cache 复用相同 system prompt 减少重复计算；用 Chunked Prefill 把长 Prompt 拆块、穿插 decode，避免长 Prompt 阻塞；用 Continuous Batching 提吞吐；用量化和 KV Cache 管理省显存。易错点是 prefill 慢不一定是模型慢，可能是排队、Prompt 过长或前缀缓存没命中。
 
 ## 关联模块
 

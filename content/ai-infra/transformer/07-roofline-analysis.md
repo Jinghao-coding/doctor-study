@@ -11,12 +11,6 @@ Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bo
 | 解决问题 | 围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。 |
 | 面试抓手 | 公式必须讲 FLOPs、bytes 和 ridge point。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
 <p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>
@@ -70,7 +64,7 @@ Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bo
 
 **2 分钟版：**
 
-我会先说明这个问题在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Roofline 用算术强度判断一个 kernel 是缺数据还是缺算力。横轴是算术强度 FLOPs/Byte，纵轴是实际性能 FLOPs/s，可达上限等于 min(峰值算力, 峰值带宽×算术强度)：图上斜线是 memory roof、水平线是 compute roof，交点 ridge point 就是机器平衡点。A100 平衡点约 312 TFLOPS÷2 TB/s≈156 FLOP/byte，算术强度高于它偏 compute-bound、远低于偏 memory-bound。映射到 Transformer：大 batch 的 QKV、FFN 矩阵乘计算量随 batch 增长快、数据复用高，是 compute-bound；逐 token decode（batch 小）退化成 GEMV，算术强度约 1，瓶颈是读权重带宽，是 memory-bound；Softmax、LayerNorm 这类 element-wise 计算量相对访存很小也是 memory-bound。串到推理两阶段：prefill 多 token 并行、大矩阵乘、compute-bound、看 TTFT，靠 chunked prefill 和提高 TensorCore 利用率；decode batch 小、GEMV、memory-bound、看 TPOT，靠 continuous batching 摊销权重读取、KV cache 量化和 PagedAttention 降带宽与显存。优化方向也由此分流：落斜线区减访存、提复用、融算子，落水平线区提 TensorCore 利用率、优化 tile、用低精度减 FLOPs。
 
 ## 关联模块
 

@@ -62,22 +62,5 @@
       ]
     }
   ],
-  "sections": [
-    {
-      "title": "Agent 基础概念",
-      "file": "01-agent-concepts.md"
-    },
-    {
-      "title": "Agent 核心组件",
-      "file": "02-agent-components.md"
-    },
-    {
-      "title": "Agent 工程实践",
-      "file": "03-agent-engineering.md"
-    },
-    {
-      "title": "Agent 面试高频题",
-      "file": "04-agent-interview.md"
-    }
-  ]
+  "sections": []
 }

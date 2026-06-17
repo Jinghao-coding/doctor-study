@@ -1,6 +1,6 @@
 ## 一句话结论
 
-为什么大模型系统要关心 NUMA？ 是 Linux Kernel for AI Infra 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+NUMA 是多 Socket 服务器的非统一内存访问架构，每个 Socket 有自己直连的本地内存，访问本地内存延迟低带宽高，跨 Socket 访问要走 UPI/QPI/Infinity Fabric，延迟升高、带宽下降还会抢占互联链路。大模型训练不是 GPU 自己算，而是 CPU、内存、GPU、PCIe/NVLink、NIC 的协同，所以 NUMA 绑定的核心原则就是让一个 rank 的 CPU 线程、内存页、GPU 和 NIC 尽量落在同一个 NUMA domain，否则 DataLoader、H2D 拷贝和 RDMA 都可能跨 Socket 导致 GPU 等数据。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 机制类 |
 | 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 ## 为什么大模型系统要关心 NUMA？
 

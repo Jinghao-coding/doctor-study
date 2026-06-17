@@ -11,12 +11,6 @@
 | 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
 | 面试抓手 | 不要把 RBAC、Admission、Pod Security 混为一谈。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>安全、准入与多租户：请求能不能进入，资源能不能隔离</h3>
 <p>Kubernetes 安全链路可以概括为：<strong>Authentication 识别你是谁，Authorization 判断你能做什么，Admission 决定这个请求是否符合集群策略，Persistence 才会写入 etcd。</strong>多租户治理则在此基础上叠加 namespace、RBAC、Quota、LimitRange、Pod Security、PriorityClass 和队列配额。</p>
@@ -338,7 +332,7 @@ spec:
 
 **2 分钟版：**
 
-我会先说明这个问题在 Kubernetes 核心 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+Kubernetes 安全链路可以概括成 API Server 请求的几个阶段：Authentication 识别你是谁（证书、Token、OIDC、ServiceAccount），Authorization 判断你能做什么（RBAC 是 allow-only，按 subject、verb、resource、namespace/cluster 四维授权），Admission 再决定请求是否符合集群策略——先 Mutating（注入 sidecar、默认值）后 Validating（拒绝特权容器、非法镜像，可用 ValidatingAdmissionPolicy 的 CEL 替代轻量 webhook），最后才 Persistence 写入 etcd。多租户在此基础上叠加 namespace、ResourceQuota 管总量、LimitRange 管单体默认值和上下限、PriorityClass 和 Kueue/Volcano 队列做配额借用与回收。权衡上要讲清边界：RBAC 管 API 权限、NetworkPolicy 管网络流量、Pod Security 是 Pod 安全基线，三者别混；Webhook 要配超时和 failurePolicy，否则会成为写路径稳定性风险；Secret 默认只是 base64 不是加密，生产要做 etcd at-rest 加密加最小权限。落到 AI Infra，GPU 等 extended resource 必须纳入 Quota，否则只限 CPU/内存 GPU 会被抢光。排障某用户无权限先用 kubectl auth can-i 验证 RBAC，再看 Admission、Quota；被 429 则按 APF 的 FlowSchema→PriorityLevel 定位是谁打满了队列。
 
 ## 关联模块
 

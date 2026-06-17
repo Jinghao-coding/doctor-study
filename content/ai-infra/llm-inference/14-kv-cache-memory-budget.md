@@ -11,12 +11,6 @@ KV Cache 显存预算决定推理并发上限，单 token、单请求、并发�
 | 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
 | 面试抓手 | 公式要写清 layers、kv_heads、head_dim、K/V 两份和 bytes。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-d">
 <h3>单 token KV Cache 到底多大：Llama-2-70B 实算</h3>
 <p>KV Cache 大小公式：</p>
@@ -100,7 +94,7 @@ KV Cache 显存预算决定推理并发上限，单 token、单请求、并发�
 
 **2 分钟版：**
 
-我会先说明这个问题在 LLM 推理系统 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+KV Cache 显存预算常常比权重更先成为并发上限，要从单 token、单请求、并发逐级放大算。公式是每 token 字节数 = layers × kv_heads × head_dim × 2 × bytes，那个 2 是 K 和 V 各一份。代入 Llama-2-70B（FP16）：80 × 8 × 128 × 2 × 2 = 327680 字节 ≈ 320 KB/token，而且这已经是 GQA（8 个 KV head）压过的；一个 4096 上下文请求约 1.3 GB，32 并发就约 41.6 GB，能吃掉一张 A100/H100 大半显存。优化分三层、正交可叠加：架构层用 MQA/GQA 减少 KV head 数，Llama-2-70B 用 GQA 把 64 个 query head 共享成 8 个 KV head、省 8 倍，退回 MHA 会膨胀到约 2.5 MB/token；数值层用 KV 量化按字节缩，INT8 省一半、INT4 省 3/4，但 decode 每步都读历史 K/V，误差会沿生成步累积，所以比权重量化更敏感，通常 INT8 较稳、INT4 要配 per-channel/group 量化和敏感层保护；系统层用 PagedAttention 按 block 按需分配、消除预分配浪费和碎片，逼近真实显存上限。
 
 ## 关联模块
 

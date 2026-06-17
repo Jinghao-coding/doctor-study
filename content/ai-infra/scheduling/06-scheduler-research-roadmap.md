@@ -1,6 +1,6 @@
 ## 一句话结论
 
-任务调度理论这一节需要服务面试复习：先给结论，再把链路、机制、权衡和回答模板讲清楚。
+GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语义、多资源公平、拓扑质量、GPU 碎片、抢占代价和可观测之间做权衡；一个完整调度器要回答五个决策点：谁先调度（QueueSort）、能不能启动（Admit）、放到哪里（Placement）、是否抢占（Preemption）、运行后如何回收重试（运行时控制）。
 
 ## 复习定位
 
@@ -10,12 +10,6 @@
 | 章节类型 | 系统类 |
 | 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
 | 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
-
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
 
 <div class="card card-m">
 <h3>调度面试题精讲：直接回答问题，不讲路线图</h3>
@@ -192,11 +186,11 @@
 
 **30 秒版：**
 
-任务调度理论这一节需要先定范围，再把机制和工程边界讲清楚。 按结论、链路、权衡、风险回答。
+设计 GPU 集群调度器我会拆成五个决策点：QueueSort 决定谁先调度（FIFO/优先级/DRF/QAD/aging），Admit 决定能不能启动（quota、gang minAvailable、reservation），Placement 决定放哪（Filter/Score 加 bin packing 和拓扑打分），Preemption 决定谁让位（checkpoint-aware 代价打分），运行时控制处理失败、弹性和回收。AI 训练的特殊点是 gang 语义、拓扑质量和抢占代价，所以 K8s 默认调度器不够，要靠 Volcano/Kueue 这类扩展。
 
 **2 分钟版：**
 
-我会先说明这个问题在 任务调度理论 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+我会先建立统一模型：调度器输入是任务和资源、输出是调度决策，一个完整调度器要回答五个问题——谁先调度、能不能启动、放到哪里、是否抢占、运行后怎么回收重试。然后分层落地：队列层按团队/项目建层级队列，配 min/max quota、优先级和借用回收；准入层检查 quota、gang minAvailable、GPU flavor 和拓扑硬约束，资源不够就 reservation 而不是让部分 worker 先跑空转；放置层用 Filter 过滤不可行节点、Score 综合 bin packing、拓扑质量、碎片影响和数据 locality。多租户公平不是平均分卡，而是层级队列加 DRF/QAD 按主导资源排序、min 保障、max 限上限、借用可回收、aging 防饥饿。抢占要做 checkpoint-aware，按 release_value 除以 checkpoint_age 加 restart_cost 选代价最低的 victim，先发优雅退出信号让任务存 checkpoint。GPU 碎片不是总卡数不够而是满足约束的连续/同拓扑资源不够，靠 bin packing、reservation、backfill 和 defragmentation 组合解决。最后说清 K8s 默认调度器缺 gang 语义、队列公平、拓扑感知和 checkpoint-aware 抢占，所以要用 PodGroup、Elastic Quota、DRA 和自定义 plugin 扩展。
 
 ## 关联模块
 

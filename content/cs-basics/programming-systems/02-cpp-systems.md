@@ -1,6 +1,6 @@
 ## 一句话结论
 
-C++ 在 AI Infra 中为什么重要 是 编程与系统工程基础 的核心知识点，面试回答要先给结论，再说明机制边界、工程场景和常见误区。
+C++ 在 AI Infra 里占据 Python 之下的性能关键路径——训练框架、推理引擎、通信库、算子 runtime 都靠它扛吞吐，所以面试 C++ 的考点也都围绕这条路径：RAII/智能指针管资源、move/allocator 抠内存性能、mutex/atomic 做并发、动态库/ABI 处理链接加载、perf/gdb/sanitizer 做性能排障。
 
 ## 复习定位
 
@@ -11,12 +11,6 @@ C++ 在 AI Infra 中为什么重要 是 编程与系统工程基础 的核心知
 | 解决问题 | 围绕编译链接、C++、内存、智能指针、调试和工程排障建立系统编程答案。 |
 | 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m"><h3>C++ 在 AI Infra 中为什么重要</h3><p>训练框架、推理引擎、通信库、算子 runtime 和高性能服务里，C++ 常处在 Python 之下的性能关键路径。</p></div>
 <div class="card card-d"><h3>高频考点</h3><table><tr><th>方向</th><th>基础概念</th><th>AI Infra 场景</th></tr><tr><td>资源管理</td><td>RAII、析构、智能指针</td><td>CUDA stream、buffer、socket 自动释放</td></tr><tr><td>内存性能</td><td>move、拷贝、省略、allocator</td><td>减少 tensor metadata 拷贝</td></tr><tr><td>并发同步</td><td>mutex、atomic、condition_variable</td><td>调度队列、异步回调</td></tr><tr><td>链接加载</td><td>动态库、符号、ABI</td><td>CUDA/NCCL 插件加载失败</td></tr><tr><td>性能排查</td><td>perf、gdb、sanitizer</td><td>CPU hotspot、死锁、越界、泄漏</td></tr></table></div>
 
@@ -24,11 +18,11 @@ C++ 在 AI Infra 中为什么重要 是 编程与系统工程基础 的核心知
 
 **30 秒版：**
 
-02 cpp systems 是 编程与系统工程基础 中的一个基础知识点，面试回答要先给结论，再说明机制、边界和工程场景。 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。
+C++ 在 AI Infra 里基本都处在 Python 之下的性能关键路径上：训练框架、推理引擎、通信库、算子 runtime 的热点代码都是 C++。所以考 C++ 不是考语法，而是考你能不能在性能敏感场景里管好资源和内存。我会围绕五个方向答：RAII 和智能指针管资源、move 语义和 allocator 抠内存、并发同步、链接加载、性能排障。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 编程与系统工程基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+C++ 在 AI Infra 的价值是它处在 Python 之下、扛性能的关键路径上：训练框架的算子 kernel、推理引擎、NCCL 这类通信库、高性能 RPC 服务都用 C++ 写热点。面试常考五个高频方向，每个都能对应到实际场景：资源管理上用 RAII 和智能指针，把 CUDA stream、buffer、socket 的释放绑到对象生命周期，避免泄漏；内存性能上用 move、拷贝省略和自定义 allocator，减少 tensor metadata 的无谓拷贝；并发同步上用 mutex、atomic、condition_variable 实现调度队列和异步回调；链接加载上要懂动态库、符号和 ABI，因为 CUDA/NCCL 插件加载失败是常见故障；性能排查上用 perf 看 CPU hotspot、gdb 抓死锁、sanitizer 查越界和泄漏。一句话收束就是：C++ 的难点在 AI 系统里不是写功能，而是在性能关键路径上把资源、内存和并发都管对。
 
 ## 关联模块
 

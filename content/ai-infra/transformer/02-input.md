@@ -11,12 +11,6 @@
 | 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
 | 面试抓手 | 区分 tokenizer、embedding、position encoding 的职责。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心概念、系统链路或关键机制，把知识点映射到工程场景。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>输入处理三件套：从文字到向量</h3>
 <p>模型不能直接吃文字，必须先把文字变成数字向量。整条链路是：</p>
@@ -68,11 +62,11 @@
 
 **30 秒版：**
 
-输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。 区分 tokenizer、embedding、position encoding 的职责。
+输入侧是三件套流水线：Tokenizer 用 BPE/WordPiece 把文本切成子词并查词表得到 token id，Embedding 矩阵按 id 查表（不是矩阵乘）映射成稠密向量，再叠加位置编码。因为 attention 本身无序，位置信息必须显式注入。
 
 **2 分钟版：**
 
-我会先说明这个知识点在 Transformer 与大模型基础 里的位置，再拆核心链路：输入是什么、系统或机制如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：性能、稳定性、复杂度、可观测性和生产边界。最后用一个典型场景收束，说明如何在 AI Infra 面试里把它和 GPU、Kubernetes、调度、训练或推理系统连接起来。
+输入处理的链路是：文本 →（Tokenizer）→ token →（查词表）→ input_ids →（Embedding 查表）→ 词向量 →（加位置编码）→ 进第一层。第一步 Tokenizer 用 BPE、WordPiece 或 SentencePiece 把连续文本切成子词，子词是整词和单字之间的折中——既能控制词表大小、又能处理没见过的 OOV 词。第二步 Embedding 是一张可学习的 [vocab_size, hidden_size] 查找表，本质是按 id 取行向量、不是矩阵乘，训练中语义相近的词向量会逐渐靠拢。第三步位置编码很关键：Transformer 是全局并行计算、没有 RNN 的天然顺序，attention 对 token 集合是置换等变的，打乱输入只会让结果跟着换位，分不清「猫追狗」和「狗追猫」，所以要把顺序补回来。主流方案有原文的正弦余弦（可外推）、BERT 的可学习位置编码、以及 LLaMA 等用的 RoPE 旋转位置编码（外推性好），RoPE 也是现在大模型支持长上下文的基础。
 
 ## 关联模块
 

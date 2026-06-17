@@ -11,12 +11,6 @@
 | 解决问题 | 围绕数据并行、张量并行、流水线并行、ZeRO/FSDP、NCCL 和训练排障建立大模型训练系统答案。 |
 | 面试抓手 | 把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。 |
 
-## 阅读路径
-
-1. 先记住本节的一句话结论，避免从细节开始散。
-2. 再看核心链路或关键机制，把概念映射到系统组件和资源消耗。
-3. 最后用“面试回答”收束成 30 秒版和 2 分钟版。
-
 <div class="card card-m">
 <h3>分布式训练排障：先定位瓶颈属于哪一层</h3>
 <p>分布式训练慢或失败，不能只盯 GPU 利用率。应按链路拆分：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。</p>
@@ -97,7 +91,7 @@
 
 **2 分钟版：**
 
-我会先说明这个问题在 分布式训练 里的位置，再拆核心链路：输入是什么、系统如何处理、消耗哪些资源、输出什么结果。随后补充关键权衡：吞吐和延迟、显存和计算、隔离和利用率、简单实现和生产稳定性之间如何取舍。最后用观测指标或排障路径收束，说明如何判断方案真的有效。
+分布式训练排障不能只盯 GPU 利用率，要按链路分层：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。常见现象速查：GPU 利用率低先查 DataLoader/CPU/IO 和通信等待，可用 profiler 看 timeline 空洞位置，forward 前空洞多半是数据慢、backward 或 optimizer 前空洞多半是通信，再用 synthetic data 隔离数据链路；GPU-Util 100% 不等于高效，那只说明采样窗口有 kernel 在跑，要看 MFU（实际模型 FLOPs 占硬件峰值比例），低效可能是小 kernel 碎片、访存瓶颈、通信等待或没用上 Tensor Core。OOM 要按来源分类：参数/优化器状态主导用 ZeRO/FSDP 和 offload，activation 主导（seq_len/batch 增大）用 activation checkpointing、减 micro-batch 或 sequence parallel，偶发 OOM 看 allocator fragmentation 和临时峰值。计算题套路记住四个公式：DP 通信量 2×(N-1)/N×P×bytes、ZeRO 显存按分片对象拆、PP bubble (p-1)/(m+p-1)、3D 并行 Total=DP×TP×PP，注意 TP 通常不能跨节点随便放。
 
 ## 关联模块
 
