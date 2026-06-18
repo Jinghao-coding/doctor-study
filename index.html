@@ -19,7 +19,6 @@
 <a href="pages/cs-basics/index.html">计算机基础</a>
 <a href="pages/ai-infra/gpu/index.html">GPU</a>
 <a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>
-<a href="pages/ai-infra/production-ops/index.html">生产化闭环</a>
 <a href="pages/ai-infra/papers/index.html">论文项目</a>
     </nav>
   </div>
@@ -31,14 +30,14 @@
   <div class="idx-kicker">AI Infra Interview Notes</div>
   <h1>把面试知识组织成一张系统地图</h1>
   <p class="idx-hero-desc">毕业准备 · 面试 / 项目 / 简历 / 学习笔记总入口</p>
-  <p class="idx-hero-sub">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到资源路径和面试回答里理解，而不是孤立背概念。</p>
+  <p class="idx-hero-sub">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到资源路径和回答结构里理解，而不是孤立背概念。</p>
   <div class="idx-actions">
     <a class="idx-primary" href="pages/ai-infra/gpu/index.html">从 GPU 主线开始</a>
     <a class="idx-secondary" href="pages/cs-basics/index.html">补 Linux / CS 基础</a>
-    <a class="idx-secondary" href="pages/ai-infra/system-design/index.html">进入系统设计题</a>
+    <a class="idx-secondary" href="pages/ai-infra/scheduling/index.html">看调度设计题</a>
   </div>
   <div class="idx-hero-stats" aria-label="站点内容概览">
-    <div><strong>13</strong><span>学习主题</span></div>
+    <div><strong>11</strong><span>学习主题</span></div>
     <div><strong>5</strong><span>复习主线</span></div>
     <div><strong>QA</strong><span>面试问答</span></div>
   </div>
@@ -49,7 +48,7 @@
 <article><span>02</span><h3>AI Infra 核心系统</h3><p>从 Transformer、GPU/CUDA 到算力资源模型，建立大模型系统最核心的硬件与模型执行直觉。</p><div class="idx-lane-links">GPU 硬件与资源共享 / Transformer 与大模型基础</div></article>
 <article><span>03</span><h3>调度与集群</h3><p>任务调度理论、Kubernetes 与 GPU 集群管理，覆盖多租户、拓扑、队列和稳定性治理。</p><div class="idx-lane-links">Kubernetes 核心 / 任务调度理论 / GPU 集群管理</div></article>
 <article><span>04</span><h3>推理 / 训练 / 性能</h3><p>LLM 推理、分布式训练与性能预测建模，聚焦吞吐、延迟、显存、通信和容量判断。</p><div class="idx-lane-links">LLM 推理系统 / 分布式训练 / 性能预测与建模</div></article>
-<article><span>05</span><h3>论文项目与面试表达</h3><p>论文工作、系统设计题、生产化闭环和 Agent 工程表达，服务项目深挖、综合方案题和线上治理追问。</p><div class="idx-lane-links">论文工作 / 系统设计题 / AI Infra 生产化闭环 / AI Agent</div></article>
+<article><span>05</span><h3>论文项目与 Agent</h3><p>论文工作和 Agent 工程表达，服务自我介绍、项目深挖和高频追问；综合设计题已归入各专题专栏。</p><div class="idx-lane-links">论文工作 / AI Agent</div></article>
 </section>
 
 <section class="idx-track" aria-label="计算机基础"><div class="idx-track-head"><span>Foundation</span><h2>计算机基础</h2><p>操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。</p></div><div class="idx-track-cards"><a class="idx-card c4" href="pages/cs-basics/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/index.html#cs-basics-tabs" data-progress-total="7">
@@ -100,10 +99,10 @@
 </a>
 
 
-<a class="idx-card c4" href="pages/ai-infra/scheduling/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/scheduling/index.html#scheduling-tabs" data-progress-total="6">
+<a class="idx-card c4" href="pages/ai-infra/scheduling/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/scheduling/index.html#scheduling-tabs" data-progress-total="8">
   <div class="idx-card-top">
     <div class="idx-card-icon"></div>
-    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 6</span></span>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 8</span></span>
     <span class="idx-card-arrow">打开</span>
   </div>
   <div class="idx-title">任务调度理论</div>
@@ -124,10 +123,10 @@
 </a>
 </div></section>
 
-<section class="idx-track" aria-label="推理 / 训练 / 性能"><div class="idx-track-head"><span>Serving &amp; Training</span><h2>推理 / 训练 / 性能</h2><p>LLM 推理、分布式训练与性能预测建模，聚焦吞吐、延迟、显存、通信和容量判断。</p></div><div class="idx-track-cards"><a class="idx-card c1" href="pages/ai-infra/llm-inference/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/llm-inference/index.html#llm-inference-tabs" data-progress-total="12">
+<section class="idx-track" aria-label="推理 / 训练 / 性能"><div class="idx-track-head"><span>Serving &amp; Training</span><h2>推理 / 训练 / 性能</h2><p>LLM 推理、分布式训练与性能预测建模，聚焦吞吐、延迟、显存、通信和容量判断。</p></div><div class="idx-track-cards"><a class="idx-card c1" href="pages/ai-infra/llm-inference/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/llm-inference/index.html#llm-inference-tabs" data-progress-total="14">
   <div class="idx-card-top">
     <div class="idx-card-icon"></div>
-    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 12</span></span>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 14</span></span>
     <span class="idx-card-arrow">打开</span>
   </div>
   <div class="idx-title">LLM 推理系统</div>
@@ -136,10 +135,10 @@
 </a>
 
 
-<a class="idx-card c5" href="pages/ai-infra/distributed-training/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/distributed-training/index.html#distributed-training-tabs" data-progress-total="6">
+<a class="idx-card c5" href="pages/ai-infra/distributed-training/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/distributed-training/index.html#distributed-training-tabs" data-progress-total="7">
   <div class="idx-card-top">
     <div class="idx-card-icon"></div>
-    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 6</span></span>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 7</span></span>
     <span class="idx-card-arrow">打开</span>
   </div>
   <div class="idx-title">分布式训练</div>
@@ -160,7 +159,7 @@
 </a>
 </div></section>
 
-<section class="idx-track" aria-label="论文项目与面试表达"><div class="idx-track-head"><span>Projects &amp; Interview</span><h2>论文项目与面试表达</h2><p>论文工作、系统设计题、生产化闭环和 Agent 工程表达，服务项目深挖、综合方案题和线上治理追问。</p></div><div class="idx-track-cards"><a class="idx-card c1" href="pages/ai-infra/papers/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/papers/index.html#papers-tabs" data-progress-total="3">
+<section class="idx-track" aria-label="论文项目与 Agent"><div class="idx-track-head"><span>Projects &amp; Interview</span><h2>论文项目与 Agent</h2><p>论文工作和 Agent 工程表达，服务自我介绍、项目深挖和高频追问；综合设计题已归入各专题专栏。</p></div><div class="idx-track-cards"><a class="idx-card c1" href="pages/ai-infra/papers/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/papers/index.html#papers-tabs" data-progress-total="3">
   <div class="idx-card-top">
     <div class="idx-card-icon"></div>
     <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 3</span></span>
@@ -169,30 +168,6 @@
   <div class="idx-title">论文工作</div>
   <div class="idx-desc">Maestro 与 DeepShare 两篇论文工作的背景、系统设计、实验结果和高频问答。</div>
   <div class="idx-tags" aria-label="标签"><span>papers</span><span>maestro</span><span>deepshare</span></div>
-</a>
-
-
-<a class="idx-card c3" href="pages/ai-infra/system-design/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/system-design/index.html#system-design-tabs" data-progress-total="5">
-  <div class="idx-card-top">
-    <div class="idx-card-icon"></div>
-    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 5</span></span>
-    <span class="idx-card-arrow">打开</span>
-  </div>
-  <div class="idx-title">系统设计题</div>
-  <div class="idx-desc">多模型 LLM 推理系统、多租户 GPU 调度、分布式训练平台、KV 缓存管理系统等综合设计。</div>
-  <div class="idx-tags" aria-label="标签"><span>system-design</span></div>
-</a>
-
-
-<a class="idx-card c4" href="pages/ai-infra/production-ops/index.html" data-progress-key="doctor-study-progress::/pages/ai-infra/production-ops/index.html#production-ops-tabs" data-progress-total="4">
-  <div class="idx-card-top">
-    <div class="idx-card-icon"></div>
-    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 4</span></span>
-    <span class="idx-card-arrow">打开</span>
-  </div>
-  <div class="idx-title">AI Infra 生产化闭环</div>
-  <div class="idx-desc">数据集、Checkpoint、模型注册、可观测性、SLO、容量成本、灰度发布、安全治理和事故复盘。</div>
-  <div class="idx-tags" aria-label="标签"><span>production</span><span>slo</span><span>observability</span><span>finops</span></div>
 </a>
 
 

@@ -77,6 +77,14 @@
               "level": "精通",
               "priority": 1,
               "time": 22
+            },
+            {
+              "title": "系统设计：分布式训练平台",
+              "description": "任务抽象、Gang 调度、容错与可观测性",
+              "file": "design/07-distributed-training-platform.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
             }
           ]
         }

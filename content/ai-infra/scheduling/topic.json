@@ -76,6 +76,22 @@
               "level": "精通",
               "priority": 2,
               "time": 20
+            },
+            {
+              "title": "系统设计：多租户 GPU 调度",
+              "description": "QAD 配额、弹性借用、干扰感知合用",
+              "file": "design/07-multi-tenant-gpu-scheduler.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            },
+            {
+              "title": "系统设计：海量小显存 GPU 作业调度",
+              "description": "海量 C++ 短作业、异构 GPU 显存、多维装箱、best-fit、backfill 与调度器吞吐",
+              "file": "design/08-high-throughput-small-gpu-jobs.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 24
             }
           ]
         }

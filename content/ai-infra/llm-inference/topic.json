@@ -144,6 +144,22 @@
               "level": "精通",
               "priority": 2,
               "time": 18
+            },
+            {
+              "title": "系统设计：多模型 LLM 推理",
+              "description": "模型驻留、内存管理、请求路由、排队策略",
+              "file": "design/10-multi-model-llm-serving.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            },
+            {
+              "title": "系统设计：KV 缓存管理",
+              "description": "分页管理、前缀共享、层级存储",
+              "file": "design/11-kv-cache-system.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
             }
           ]
         }

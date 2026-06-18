@@ -59,14 +59,12 @@ TRACKS = [
     },
     {
         "key": "interview_expression_cards",
-        "label": "论文项目与面试表达",
+        "label": "论文项目与 Agent",
         "short_label": "项目表达",
         "eyebrow": "Projects & Interview",
-        "description": "论文工作、系统设计题、生产化闭环和 Agent 工程表达，服务项目深挖、综合方案题和线上治理追问。",
+        "description": "论文工作和 Agent 工程表达，服务自我介绍、项目深挖和高频追问；综合设计题已归入各专题专栏。",
         "slugs": [
             "ai-infra/papers",
-            "ai-infra/system-design",
-            "ai-infra/production-ops",
             "ai-infra/agent",
         ],
     },
@@ -831,7 +829,6 @@ def _render_home_nav() -> str:
         '<a href="pages/cs-basics/index.html">计算机基础</a>',
         '<a href="pages/ai-infra/gpu/index.html">GPU</a>',
         '<a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>',
-        '<a href="pages/ai-infra/production-ops/index.html">生产化闭环</a>',
         '<a href="pages/ai-infra/papers/index.html">论文项目</a>',
     ]
     return "\n".join(links)
