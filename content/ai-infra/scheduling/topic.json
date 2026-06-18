@@ -70,36 +70,33 @@
               "time": 18
             },
             {
-              "title": "调度面试题精讲",
-              "description": "GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练",
-              "file": "06-scheduler-research-roadmap.md",
-              "level": "精通",
-              "priority": 2,
-              "time": 20
-            },
-            {
-              "title": "GPU 调度工业场景题库",
-              "description": "异构、多租户、Gang、Backfill、抢占、碎片、拓扑、混部、弹性训练等工业常见场景题",
-              "file": "09-gpu-scheduling-scenario-bank.md",
+              "title": "GPU 调度场景题库",
+              "description": "按工业场景归类：异构、多租户、Gang/Backfill、抢占、碎片、拓扑、混部、弹性训练、海量小作业",
               "level": "精通",
               "priority": 1,
-              "time": 28
-            },
-            {
-              "title": "系统设计：多租户 GPU 调度",
-              "description": "QAD 配额、弹性借用、干扰感知合用",
-              "file": "design/07-multi-tenant-gpu-scheduler.md",
-              "level": "精通",
-              "priority": 1,
-              "time": 22
-            },
-            {
-              "title": "系统设计：海量小显存 GPU 作业调度",
-              "description": "海量 C++ 短作业、异构 GPU 显存、多维装箱、best-fit、backfill 与调度器吞吐",
-              "file": "design/08-high-throughput-small-gpu-jobs.md",
-              "level": "精通",
-              "priority": 1,
-              "time": 24
+              "time": 70,
+              "subtabs": [
+                {
+                  "title": "工业场景总览",
+                  "description": "异构、多租户、Gang、Backfill、抢占、碎片、拓扑、混部、弹性训练等题型地图",
+                  "file": "09-gpu-scheduling-scenario-bank.md"
+                },
+                {
+                  "title": "综合设计问答",
+                  "description": "GPU 集群调度系统设计、公平性、抢占、碎片、队列与弹性训练",
+                  "file": "06-scheduler-research-roadmap.md"
+                },
+                {
+                  "title": "多租户 GPU 调度",
+                  "description": "QAD 配额、弹性借用、干扰感知合用",
+                  "file": "design/07-multi-tenant-gpu-scheduler.md"
+                },
+                {
+                  "title": "海量小显存作业",
+                  "description": "海量 C++ 短作业、异构 GPU 显存、多维装箱、best-fit、backfill 与调度器吞吐",
+                  "file": "design/08-high-throughput-small-gpu-jobs.md"
+                }
+              ]
             }
           ]
         }
