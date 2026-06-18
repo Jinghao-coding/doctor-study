@@ -220,16 +220,6 @@ DP group 0: Pipeline 0 和 Pipeline 1 之间 AllReduce 梯度 (DP=2, over IB)
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-同样 8 卡，节点内 NVLink 互联和跨节点 InfiniBand 互联的 AllReduce 性能差 3-5 倍，所以 GPU 不能当作可互换资源。关键判据是通信频率：TP 每层都要 AllGather/ReduceScatter、频率极高，必须放进同节点 NVLink；DP 每步只 AllReduce 一次、PP 只点对点传激活，跨节点走 InfiniBand 就够。NCCL 会根据拓扑自动选路径，调度器要做的就是别把 TP 组拆到 NVLink 不通的节点上。
-
-**2 分钟版：**
-
-拓扑指的是 GPU 在物理上怎么连接，从快到慢是节点内 NVLink/NVSwitch（300-900 GB/s）、PCIe（32-64 GB/s）、节点间 InfiniBand/RoCE（25-50 GB/s），带宽量级能差 10-50 倍。分布式训练的通信由 NCCL 的集合通信原语承载：AllReduce 做 DP 梯度同步，AllGather/ReduceScatter 做 TP 和 ZeRO，P2P 做 PP 的 stage 间传递，All-to-All 做 MoE 专家并行。不同并行策略对拓扑偏好不同，核心判据是通信频率——TP 每层前反向各 2 次集合通信、频率极高，以 GPT-3 推算 NVLink 下通信约占 30%、InfiniBand 下会占 90%+，所以 TP 必须放进同节点 NVLink；DP 每步只同步一次、PP 只点对点传激活，跨节点走 InfiniBand 即可。工程上靠 nvidia-smi topo、NFD、Scheduler Plugin、DRA 等路径让调度器感知拓扑，把 TP 组锁在同节点、PP 尽量同机柜、DP 可跨机柜；NCCL 再据此自动选 NVLink/IB 通道和 Ring/Tree 算法。落到排障，NCCL 超时 80% 是 Gang 不完整或网络问题、而非 NCCL 本身的 bug，所以要先查 Pod 状态和网络，再看 NCCL_DEBUG 日志确认拓扑配置是否正确。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

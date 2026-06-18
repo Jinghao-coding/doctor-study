@@ -314,16 +314,6 @@ thread31 -> a[99999]</code></pre>
 | block 可以跨多个 SM 执行 | 一个 block 在运行期间通常驻留在一个 SM 上。 |
 | occupancy 越高越好 | occupancy 是诊断指标，不是最终性能目标。 |
 
-## 面试回答
-
-**30 秒版：**
-
-CUDA kernel 由 CPU Host 发起，一次 kernel launch 会创建一个 grid。grid 由多个 block 组成，block 由多个 thread 组成。GPU 会把 block 调度到 SM 上执行，thread 在硬件上通常按 warp 组织，一个 warp 通常是 32 个 thread。SM 的 warp scheduler 会选择 ready warp 发射指令，通过多个 warp 驻留来隐藏访存延迟。
-
-**2 分钟版：**
-
-我会从软件层级和硬件层级对应关系讲。软件上，程序员写 kernel，通过 `kernel<<<gridDim, blockDim>>>()` 指定 grid 和 block；每个 thread 用 `blockIdx`、`blockDim`、`threadIdx` 计算自己处理的数据下标。硬件上，block 被调度到 SM，一个 SM 可以驻留多个 block；block 内 thread 被切成 warp，warp scheduler 在 ready warp 之间切换。性能优化也沿着这条链路展开：grid/block 要足够铺满 SM，block size 要考虑 warp、register 和 shared memory，warp 内要减少分支发散和非连续访存，矩阵算子要尽量用 Tensor Core。
-
 ## 关联模块
 
 - `CUDA 内存模型与 Occupancy`：继续看 block size、register、shared memory 对 occupancy 的影响。

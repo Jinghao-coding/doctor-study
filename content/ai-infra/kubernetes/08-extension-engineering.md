@@ -160,16 +160,6 @@ K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator �
 
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-K8S 工程化交付要区分 Helm、Kustomize、GitOps、渐进式发布和不同扩展点选型。Operator 与 CRD 单独成章，本节重点讲如何安全交付和持续同步。
-
-**2 分钟版：**
-
-我会先把问题拆成两层：第一层是扩展点选型，新增业务对象用 CRD + Operator，动态准入用 Webhook，调度策略用 Scheduler Plugin，设备资源用 DRA，网络和存储分别用 CNI / CSI；第二层是交付工程化，Helm 解决参数化分发，Kustomize 解决多环境 overlay，GitOps 让 Git 成为集群期望状态的唯一真相，ArgoCD / Flux 在集群里持续 pull 并修正 drift。发布高风险服务时，再用 Argo Rollouts / Flagger 做 canary、blue-green 和 metrics 门禁。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

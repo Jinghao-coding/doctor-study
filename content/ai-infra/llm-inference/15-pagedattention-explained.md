@@ -167,16 +167,6 @@ PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核
 <div class="qa-a"><p>不会出错：kernel 读 KV 时先查 block table 找到每个逻辑块对应的物理 block，再去取数，逻辑顺序由映射保证。性能上确实多了查表和非连续访问的开销，但服务场景的瓶颈通常是 KV Cache 容量和调度空洞，而不是单次 attention 的极限带宽，所以换来更高并发和吞吐是划算的。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核心价值是减少碎片和支持 continuous batching。 用 OS 分页类比，但要说明 GPU attention 仍需高效访存。
-
-**2 分钟版：**
-
-我会先点本质：PagedAttention 不是一种 attention 算法，而是 vLLM 给 KV Cache 设计的虚拟内存管理系统，思路和操作系统分页一致。它要解决传统连续分配的两种浪费：内部浪费（按 max_len 比如 4096 预留连续显存，实际可能只用 800 token，其余被占住又给不了别人）和外部碎片（请求结束释放后留下大小不一的空洞，总量够却拼不出连续大块，新请求进不来）。做法是把 KV Cache 切成固定大小 block（vLLM 默认 16 token），按需领 block、不要求物理连续，用 block table 记录"逻辑第几块 → 物理哪个 block"，跟页表一一对应；attention kernel 读 KV 时先查 block table 再取数，所以不连续不影响正确性。收益很直接：一个 800 token 请求只领 ⌈800/16⌉=50 个 block，结束立刻还池，同样显存能塞下多得多并发。block 切小内部浪费少但 block table 大、查表开销高，切大则尾部浪费和前缀共享粒度变粗，16 是折中。它还是 continuous batching 的地基——请求每轮动态进出靠按 block 分配才不会把显存搅碎。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

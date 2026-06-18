@@ -187,16 +187,6 @@ if Best-effort:
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-这一节落到 DeepShare 的实现细节，重点是两级队列的归属。第一级是每个租户的 Guaranteed 和 Best-effort 队列，在 Controller 里显式维护，由 Controller 做准入；第二级全局队列不是单独的物理队列，而是 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QueueSort 排序共同体现。
-
-**2 分钟版：**
-
-这一节讲 DeepShare 各扩展点怎么实现。Controller 的工作流是：watch Job 放入对应租户的 Guaranteed/Best-effort 队列，计算 QAD，再分级准入——Guaranteed 满足 U_i^G + R_j ≤ q_i 才进候选集，Best-effort 更保守，要求没有可放置的 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i，准入后通过移除 schedulingGate 放行进 kube-scheduler。第二级全局队列由 Scheduler Plugin 的 QueueSort 实现，排序键依次是 class（Guaranteed 优先）、tenant QAD（低优先）、predicted runtime（短优先）、submit time，核心是先恢复保障不足的租户、再用预测时间做局部优化，runtime 不能覆盖 QAD。后续 PreFilter 解析上下文，Filter 检查 GPU 和 colocation 干扰，Score 做 bin packing、碎片控制和干扰打分，Reserve/Unreserve 维护账本防止与 kube-scheduler assumed state 不一致，PostFilter 在 Guaranteed 调度失败且 QAD 低时做代价感知抢占。面试里我会强调为什么不全放 Controller 或全放 Plugin——准入是全局状态管理，出队和落点必须在 scheduler 内决定。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

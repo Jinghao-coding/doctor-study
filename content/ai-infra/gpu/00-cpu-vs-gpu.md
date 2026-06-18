@@ -54,32 +54,6 @@ GPU 适合处理可拆成大量相似小任务的数据并行计算，例如矩�
 | 显存越大性能越强 | 显存容量决定能不能放下模型和数据，性能还要看带宽、SM、Tensor Core、互联和算子效率。 |
 | GPU 利用率高就代表训练快 | `GPU-Util` 只是粗指标，还要看 SM Active、Tensor Core 利用率、显存带宽、通信和数据加载。 |
 
-## 面试回答
-
-**30 秒版：**
-
-CPU 和 GPU 的本质区别是设计目标不同。CPU 为低延迟和复杂控制流设计，核心少但每个核心很强，有分支预测、乱序执行和大缓存；GPU 为吞吐和数据并行设计，核心更轻量，依靠大量 thread、warp 调度和高带宽 HBM 同时处理海量相似计算。深度学习主要是 GEMM、卷积和 Attention，这些算子并行度高、访存带宽需求高，又能用 Tensor Core 加速，所以更适合 GPU。
-
-**2 分钟版：**
-
-我会从设计目标、执行模型和资源模型三层回答。第一，CPU 面向通用低延迟任务，适合分支多、依赖强、控制逻辑复杂的场景；GPU 面向高吞吐任务，适合把一个计算拆成大量相似的小工作。第二，CPU 通常用少量强核心执行复杂线程，GPU 则通过 CUDA kernel 把工作组织成 grid、block、thread，硬件上再由 SM 和 warp 调度大量并发线程。第三，CPU 依赖大缓存、预测和乱序执行降低单线程延迟，GPU 依赖 HBM 高带宽、Tensor Core 和大量 warp 切换提升整体吞吐。
-
-所以深度学习适合 GPU，不是因为 GPU “什么都快”，而是因为深度学习的主要计算形态正好适合 GPU：矩阵乘法多、数据并行度高、控制流相对规则、显存带宽需求大。反过来，如果任务分支复杂、串行依赖强、batch 很小或者 CPU-GPU 数据搬运占主导，GPU 优势就会下降。
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: CPU 能不能做深度学习训练？</div>
-<div class="qa-a">
-<p>能，但通常只适合小模型、调试或特殊部署场景。CPU 缺少面向矩阵乘的 Tensor Core，也没有 GPU 那样的大规模并发执行单元和 HBM 带宽。同样的 GEMM，GPU 可以用高吞吐矩阵硬件和大量线程并行完成，CPU 很难在训练吞吐上竞争。</p>
-</div>
-</div>
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: GPU 为什么不能替代 CPU？</div>
-<div class="qa-a">
-<p>GPU 不擅长复杂控制流、操作系统调度、IO 编排、低延迟串行逻辑和频繁分支判断。实际系统里 CPU 负责 Host 侧控制、数据准备、任务调度和 kernel launch，GPU 负责大规模数值计算。两者是分工协作，不是替代关系。</p>
-</div>
-</div>
-
 ## 关联模块
 
 - `硬件基础`：继续看 SM、Tensor Core、HBM、NVLink/NVSwitch 等硬件组件。

@@ -445,16 +445,6 @@ for job in queue.after(head):
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-分布式训练是 all-or-nothing 语义——少一个 worker，NCCL AllReduce 就阻塞、所有 GPU 空转，所以批调度有四个不同层的机制：Gang Scheduling 是准入语义，凑齐 minAvailable 再整体启动，防 partial allocation；Backfill 是队列优化，给队头大任务建 reservation，让短任务利用等待期碎片但不延迟它启动（EASY Backfill 最常见）；Bin Packing 是放置，减碎片留完整节点给大 gang；Checkpoint-aware Preemption 是代价感知回收，选释放资源量/（checkpoint age+重启成本）比值最高的牺牲者，配合 Elastic Training 缩 world size 代替杀任务。
-
-**2 分钟版：**
-
-我会先点出批调度和在线服务的分水岭：在线服务每个 Pod 独立，挂一个不影响其他；而分布式训练所有 worker 是一个整体，少一个 rank，NCCL collective 就阻塞，所有 GPU 空转，这就是 all-or-nothing 语义。然后我会把四个常被混问的概念按决策层拆开。第一是 Gang Scheduling，解决 partial allocation 问题——64 卡任务只凑到 56 卡就启动，56 个 worker 卡在 NCCL init 等第 64 个 rank、GPU 全空转；解法是 PodGroup + minAvailable + Permit 阶段等待凑齐 + 超时释放，实现有 Volcano PodGroup、K8s Coscheduling 插件、Kueue Workload 三种，代价是增加大作业等待时间。第二是 Backfill，队头大任务凑不齐资源时，FIFO 会让碎片 GPU 空转，Backfill 给队头建 reservation、估算它的最早启动时间，然后让预计能在该时间前结束、或可抢占的短任务插空运行；EASY Backfill 只保护队头任务，最常用，要配 aging 防后续大任务饥饿。第三是 Bin Packing 做放置减碎片。第四是抢占，训练抢占不能只看优先级，要做 checkpoint-aware：用 release_value /（checkpoint_age + restart_cost）打分选牺牲者，优先抢 checkpoint 新鲜、运行时间短的，并先优雅抢占（发信号让任务 checkpoint）再超时强杀。最后收束到三者组合 + Elastic Training：弹性训练让 minAvailable 小于 world size，资源够就先启动后扩容，被抢占时缩 world size 而非整组杀掉，但这需要训练框架、checkpoint 格式和调度器协同，且 TP/PP 通常固定、只在 DP 维度弹性。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

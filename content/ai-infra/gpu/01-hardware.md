@@ -45,16 +45,6 @@ GPU 性能通常由下面几类资源共同决定：
 | CUDA Core 数量可以直接比较 GPU 性能 | 深度学习更要看 SM、Tensor Core、HBM、互联和实际 kernel 效率。 |
 | 单卡强就代表多卡也强 | 多卡性能还受 NVLink/NVSwitch、PCIe、RDMA、NCCL 拓扑影响。 |
 
-## 面试回答
-
-**30 秒版：**
-
-GPU 硬件可以按计算、显存和互联三层讲。计算层看 SM、CUDA Core、Tensor Core，决定矩阵乘和一般 kernel 的吞吐；显存层看 HBM 容量和带宽，决定模型、激活、KV cache 能不能放下以及 decode 这类 memory-bound 阶段的上限；互联层看 PCIe、NVLink、NVSwitch 和 RDMA，决定 CPU-GPU 拷贝、多卡训练和跨机通信效率。
-
-**追问口径：**
-
-如果面试官问 A100/H100/H200 的区别，可以回答：H100 相比 A100 主要提升 Hopper 架构、Tensor Core 能力、FP8 支持、显存带宽和 NVLink 带宽；H200 进一步把显存容量和 HBM3e 带宽拉高，更适合大模型推理中 KV cache 压力大的场景。
-
 ## 关联模块
 
 - `CPU vs GPU`：先理解 GPU 为什么为吞吐而设计。

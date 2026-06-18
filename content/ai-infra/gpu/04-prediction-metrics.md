@@ -267,16 +267,6 @@ $$</div>
 | 特征越多越好 | 特征要有物理含义，否则容易过拟合且难以跨硬件泛化。 |
 | 只用静态特征就够 | 实际系统需要运行时指标校准，例如 SM Active、memory util、communication time。 |
 
-## 面试回答
-
-**30 秒版：**
-
-GPU 性能预测一般把特征分成算法、硬件和部署三类。算法特征包括 FLOPs、shape、batch、activation memory；硬件特征包括 peak FLOPS、HBM bandwidth、SM 数和互联带宽；部署特征包括 TP/PP/DP、micro batch 和通信拓扑。输出标签可以是 step time、MFU、peak active memory、communication time。MFU、peak memory 和 communication time 通常比单独 GPU-Util 更有预测价值。
-
-**2 分钟版：**
-
-我会先建立一个物理可解释的预测链路：模型和输入决定 FLOPs、访存量和激活显存；GPU spec 决定 compute roof、memory roof 和互联 roof；并行策略决定每张卡分到多少计算、显存和通信。预测器可以是解析公式、机器学习模型或混合模型，输出 step time、MFU、peak memory 和通信时间。工程上还要用 DCGM、Nsight 或训练日志持续校准，因为真实系统会受数据加载、kernel 选择、通信拥塞、重计算和调度干扰影响。
-
 ## 关联模块
 
 - `性能指标`：提供 TFLOPS、HBM、Roofline 等基础指标定义。

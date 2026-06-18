@@ -144,16 +144,6 @@ spec:
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-DeepShare 的 K8s 落地拆成 Controller 和 Scheduler Plugin 两层。难点在于 kube-scheduler 原生只认 Pod，不知道 Pod 属于哪个 tenant、是 Guaranteed 还是 Best-effort、quota 和 QAD 是多少。所以 Controller 负责租户级状态管理，把这些语义写进 TenantQuota CRD 和 Pod annotation，Scheduler Plugin 再读这些字段做调度决策。
-
-**2 分钟版：**
-
-这一节讲 DeepShare 的架构落地。整体链路是用户提交 GPU Job 后先经过 Controller，再进 kube-scheduler 加 DeepShare 插件。拆两层的原因是职责边界：QAD、弹性配额借用、Best-effort 借用回收、Guaranteed QoS 这些是租户级、作业级逻辑，而 kube-scheduler 默认调度对象是 Pod，原生不知道 Pod 的 tenant、class、quota、QAD 这些信息。所以 Controller 负责租户状态——维护 TenantQuota（gpuQuota、bestEffortMultiplier、guaranteedDemand/Allocated、qad）、计算 QAD、维护两级队列、做 quota 准入，并把结果写进 Pod 的 label 和 annotation，或移除 schedulingGate 放行。Scheduler Plugin 则在 QueueSort、Filter、Score、Reserve、PostFilter 这些扩展点读取这些字段，做 QAD-aware 排序、节点过滤打分、资源账本维护和抢占。Job 表达上可以用 DeepShareJob CRD（工程化，便于租户级排队）或原生 Pod 加 label（轻量）。面试里我会用这条链路说明 Kubernetes-native 系统如何把全局租户语义和 Pod 级调度热路径解耦。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

@@ -216,16 +216,6 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-GPU 性能指标不能只看 GPU-Util。我的回答会分五类：算力看 TFLOPS 和 Tensor Core 是否用上，显存看 HBM 带宽和容量，利用率看 GPU-Util、SM Active、Occupancy 和 Warp Stall，互联看 PCIe/NVLink/RDMA/NCCL，成本看功耗和 tokens/J。最后用 Roofline 把 kernel 放到计算屋顶或内存屋顶下面，判断优化方向。
-
-**2 分钟版：**
-
-我会先把 workload 拆成 FLOPs、访存量和通信量。理论上，算力峰值给出 compute roof，HBM 带宽给出 memory roof，二者和 arithmetic intensity 一起决定 Roofline 上限。实际运行时，如果 compute throughput 高、Tensor Core 利用率高，说明可能 compute-bound；如果 memory throughput 高、Long Scoreboard 高，说明可能 memory-bound；如果 Nsight Systems 里 NCCL/memcpy 占比高，说明可能通信或拷贝瓶颈。GPU-Util 只是采样周期内有没有 kernel，不能说明 SM 是否铺满，也不能说明 Tensor Core 是否有效工作。
-
 ## 关联模块
 
 - `利用率诊断`：把 GPU-Util 深挖到 SM Active、Occupancy、Warp Stall。

@@ -75,16 +75,6 @@ CPU 调度回答的是"下一个时间片给谁"。FIFO/SJF/RR/优先级/CFS 这
 <div class="qa-a"><p>CFS 是 CPU 上的操作系统调度器，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享；CUDA thread block 调度是 GPU kernel 内部的硬件执行机制，调度对象是 grid 中的 block/CTA，目标是把 block 分配到 SM、让 warp scheduler 用 ready warp 隐藏访存延迟。CFS 通过 <code>vruntime</code>、权重、抢占和上下文切换决定哪个 task 运行；CUDA block 一旦驻留 SM 通常运行到完成，SM 内部以 warp 为单位发射指令，更强调吞吐而不是公平时间片。</p><div class="qa-summary">一句话：CFS 管 OS task 的公平 CPU 时间，CUDA block/warp 调度管 kernel 内部的高吞吐并行执行。</div></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-CPU 调度决定"下一个时间片给谁"。经典算法有 FIFO（先到先服务但队头阻塞）、SJF（短任务优先降低平均等待，但要预测且长任务饥饿）、RR（时间片轮转保响应）、优先级（可抢占，低优可能饥饿）和 Linux 默认的 CFS（按 vruntime 公平分配）。这些思想会直接迁移到集群调度。
-
-**2 分钟版：**
-
-CPU 调度回答的是内核从 runnable 队列里选谁运行。我会先列经典算法和它们的权衡：FIFO 简单但队头阻塞；SJF 能降低平均等待时间（短任务放前面只让长任务多等一点），代价是要预测运行时间且长任务饥饿，工程上用 aging 兜底；RR 靠时间片轮转保响应，但时间片太小切换开销大；优先级调度能表达业务重要性但低优会饥饿。Linux 默认用 CFS，核心是 vruntime——加权后的虚拟运行时间，调度器总挑 vruntime 最小（最"没跑够"）的任务，nice 值越高权重越大、vruntime 涨得越慢，目标是公平和响应而不是单任务吞吐。这套思想直接迁移到 AI 集群：训练队列按提交时间排队是 FIFO，PriorityClass 抢占低优训练任务对应优先级调度且可能要回滚 checkpoint，配额和 dominant share 对应 CFS 公平份额。要注意 CFS 调度的是 OS task，和 CUDA 的 stream/event 依赖编排、block→SM→warp 的 kernel 内调度是完全不同的三层，后者追求 SM 吞吐和 occupancy 而非公平时间片。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

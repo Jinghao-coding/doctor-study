@@ -56,16 +56,6 @@ Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bo
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。 公式必须讲 FLOPs、bytes 和 ridge point。
-
-**2 分钟版：**
-
-Roofline 用算术强度判断一个 kernel 是缺数据还是缺算力。横轴是算术强度 FLOPs/Byte，纵轴是实际性能 FLOPs/s，可达上限等于 min(峰值算力, 峰值带宽×算术强度)：图上斜线是 memory roof、水平线是 compute roof，交点 ridge point 就是机器平衡点。A100 平衡点约 312 TFLOPS÷2 TB/s≈156 FLOP/byte，算术强度高于它偏 compute-bound、远低于偏 memory-bound。映射到 Transformer：大 batch 的 QKV、FFN 矩阵乘计算量随 batch 增长快、数据复用高，是 compute-bound；逐 token decode（batch 小）退化成 GEMV，算术强度约 1，瓶颈是读权重带宽，是 memory-bound；Softmax、LayerNorm 这类 element-wise 计算量相对访存很小也是 memory-bound。串到推理两阶段：prefill 多 token 并行、大矩阵乘、compute-bound、看 TTFT，靠 chunked prefill 和提高 TensorCore 利用率；decode batch 小、GEMV、memory-bound、看 TPOT，靠 continuous batching 摊销权重读取、KV cache 量化和 PagedAttention 降带宽与显存。优化方向也由此分流：落斜线区减访存、提复用、融算子，落水平线区提 TensorCore 利用率、优化 tile、用低精度减 FLOPs。
-
 ## 关联模块
 
 - `性能预测与建模 / Roofline Model`：完整 Roofline 公式、图、硬件 ridge point 和 VGG/MobileNet 例子。

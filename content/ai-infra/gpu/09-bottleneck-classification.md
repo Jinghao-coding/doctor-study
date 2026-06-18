@@ -130,16 +130,6 @@ GPU 慢不能只说“利用率低”或“显存满”，要先分类：计算�
 <div class="qa-a"><p>在同一个 kernel 上通常不会——Roofline 模型里一个点要么在斜线区域（memory-bound），要么在水平区域（compute-bound）。但在端到端场景中，不同 kernel 可以是不同瓶颈：prefill 阶段 compute-bound，decode 阶段 memory-bound，某些小算子 launch-bound。所以优化时需要针对不同阶段不同策略，这也是为什么推理引擎会把 prefill 和 decode 分开调度。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-我会先把 GPU 性能问题分成计算、显存和通信三类。计算瓶颈看 Tensor Core/CUDA Core 是否接近峰值；显存带宽瓶颈看 HBM throughput、Long Scoreboard 和 Roofline 位置；显存容量瓶颈看 OOM、batch/seq_len/并发是否受限；通信瓶颈看 Nsight Systems 里 NCCL/memcpy 占比和多卡扩展效率。不同瓶颈的优化方向完全不同，不能只看 GPU-Util。
-
-**2 分钟版：**
-
-系统排查时我先确认业务指标，比如 step time、QPS、TTFT/TPOT。然后用 `nvidia-smi` 或 DCGM 做粗筛，看 GPU 是否有活、显存是否接近上限、功耗和链路计数是否异常。第二步用 Nsight Systems 看 timeline，判断时间主要花在 kernel、memcpy、NCCL 还是 CPU 等待。第三步对热点 kernel 用 Nsight Compute，看 compute throughput、memory throughput、SM Active、occupancy 和 warp stall。最后结合 workload 阶段判断：prefill 常偏 compute-bound，decode 常偏 memory-bound，多卡训练常偏 communication-bound，数据加载慢则是 input pipeline 问题。
-
 ## 关联模块
 
 - `性能指标`：Roofline、TFLOPS、HBM 带宽是分类基础。

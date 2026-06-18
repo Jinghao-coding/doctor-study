@@ -46,6 +46,14 @@
               "time": 22
             },
             {
+              "title": "海量小显存 GPU 作业调度",
+              "description": "海量 C++ 短作业、异构 GPU 显存、多维装箱、best-fit、backfill 与调度器吞吐",
+              "file": "05-high-throughput-small-gpu-jobs.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 24
+            },
+            {
               "title": "分布式训练平台",
               "description": "任务抽象、Gang 调度、容错与可观测性",
               "file": "03-distributed-training-platform.md",

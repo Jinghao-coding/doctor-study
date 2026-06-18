@@ -57,16 +57,6 @@ Decode 阶段的用户感知不是“第一个 token 多快”，而是“后续
 
 Decode 的 GPU 利用率低不一定是实现差，根因通常是 memory-bound。增大 batch 可以摊销权重读取，但 KV Cache 读取也会随 batch 和序列长度增长，所以 batch 不是无限增大的。
 
-## 面试回答
-
-**30 秒版：**
-
-Decode 阶段的核心是逐 token 生成和 KV cache 访存，batch 小时常见 memory-bound。 把 TPOT 拆成调度、KV 读取、单步 forward、采样和流式返回。
-
-**2 分钟版：**
-
-Decode 阶段负责自回归生成，输入是上一步生成的 token、历史 KV Cache 和采样参数，每步只做单 token 前向、读取历史 K/V、生成 logits，输出下一个 token 并追加新 K/V，关键指标是 TPOT、tokens/s 和 P95/P99。它通常是 memory-bound：单 token 矩阵乘规模小、Tensor Core 利用率不高，但每步都要读模型权重和历史所有 token 的 K/V，序列越长、batch 越大读取量越高。我会把 TPOT 拆成"单步模型计算 + KV Cache 读取 + 采样 + 流式返回"。优化上：用 CUDA Graph、Kernel Fusion 减少 CPU-GPU 调度和中间读写降单 token 延迟；用 Continuous Batching 让多请求摊销权重读取提吞吐；用 GQA/MQA、KV Cache 量化减少每步读取量；用 PagedAttention 按需分配 KV block 减碎片；用优先级调度、抢占、分离式推理压长尾。易错点是 decode GPU 利用率低不一定是实现差，根因是 memory-bound，且因为 KV 读取随 batch 和序列长度增长，batch 不能无限增大。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

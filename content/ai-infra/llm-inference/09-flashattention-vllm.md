@@ -75,16 +75,6 @@ FlashAttention 优化单次 attention 的 IO，vLLM/PagedAttention 优化多请�
 <div class="qa-a"><p>Swapping 把被抢占请求的全部 KV block（all-or-nothing）搬到 CPU 内存，恢复时再搬回 GPU，适合 KV 较大、重算代价高的情况。Recomputation 直接丢弃 KV，把请求放回等待队列从 prefill 重算，适合 KV 较小、重算便宜的情况（如 n=1 的采样）。本质是空间换时间 vs 时间换空间的权衡。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-FlashAttention 优化单次 attention 的 IO，vLLM/PagedAttention 优化多请求 KV cache 管理和调度。 不要把 FlashAttention 和 PagedAttention 混为一谈。
-
-**2 分钟版：**
-
-这两个是不同层面的优化，不能混为一谈。FlashAttention 优化的是单次 attention 计算的 IO，它有三个特性：Fast（IO-Awareness，不减少 FLOPs，而是用 tiling 分块加 kernel fusion 降低对 HBM 的访问次数）、Memory-Efficient（用 online softmax 避免保存完整 N×N 注意力矩阵，把存储从 O(N²) 降到 O(N)）、Exact（结果与标准 attention 完全等同，不是稀疏那种近似）；V2 进一步置换内外循环减少非矩阵乘运算、在 seq_len 维度增加并行打满 SM、优化 warp 级工作减少通信。vLLM/PagedAttention 优化的是多请求 KV cache 的管理和调度：动态分配显存能同时处理更多 prompt，显存打满时按 FCFS 抢占后到请求，采用 all-or-nothing 策略把被抢占请求的全部 KV block swap 到 CPU，资源充足时再搬回；对 n=1 这类请求则用 recomputation 直接丢 KV、放回等待队列从 prefill 重算。本质上 swapping 是空间换时间、recomputation 是时间换空间。从瓶颈看，decode 主算子是 GEMV、属 memory-bound，KV cache 容量决定并发数，所以两类优化要一起用。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

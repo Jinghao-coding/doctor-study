@@ -51,16 +51,6 @@ Transformer 训练稳定性依赖残差、归一化、初始化、warmup、梯�
 <p>另外还有 <strong>Pre-Norm vs Post-Norm</strong>：原文是 Post-Norm（先残差后归一），现代大模型多用 <strong>Pre-Norm</strong>（先归一再进子层，<code>x + F(LN(x))</code>），训练更稳定、更容易收敛。</p>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-深层 Transformer 的核心难题是梯度连乘后消失或爆炸。一整套手段来稳：残差连接把乘法传播变成加法传播是头号功臣，LayerNorm/RMSNorm 稳激活分布，Xavier/Kaiming 控初始方差，梯度裁剪封顶防爆炸，warmup+decay 防初期发散，混合精度配 loss scaling 解决 FP16 下溢。
-
-**2 分钟版：**
-
-先讲问题：深层网络反向传播梯度逐层相乘，每层都小于 1 就连乘趋零、浅层学不动（梯度消失），都大于 1 就连乘爆炸、loss 变 NaN，大模型几十上百层这个问题尤其严重。然后是六个手段，分三类记：梯度稳定靠残差连接和梯度裁剪——残差是最关键的，y=x+F(x) 的梯度是 1+F'(x)，那个常数 1 保证即使 F'(x) 很小梯度也不衰减，相当于给梯度修了条高速公路，本质是把乘法传播变成加法传播；数值稳定靠归一化和初始化——NLP 用 LayerNorm 而不是 BatchNorm 是因为序列变长、batch 小时 batch 统计量不稳定，LayerNorm 对单样本所有特征归一化不依赖 batch，RMSNorm 进一步省掉减均值更快，LLaMA 在用，另外现代多用 Pre-Norm（x+F(LN(x)))比原文的 Post-Norm 更易收敛；吞吐和精度靠 warmup+decay 和混合精度+loss scaling——FP16 表示范围小、小梯度会下溢成 0，把 loss 乘大再算梯度、更新前除回来。落到 infra，这套直接关系到大规模分布式训练能不能稳定收敛、要不要 BF16、loss 突然 NaN 怎么排查。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

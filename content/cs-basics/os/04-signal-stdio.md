@@ -16,16 +16,6 @@ Signal 是内核投递给进程的异步事件，最该记住的是优雅退出�
 <div class="card card-s"><h3>stdin/stdout/stderr</h3><table><tr><th>通道</th><th>fd</th><th>用途</th><th>容器/K8s 含义</th></tr><tr><td>stdin</td><td>0</td><td>输入</td><td>交互式 exec 或管道输入</td></tr><tr><td>stdout</td><td>1</td><td>正常输出</td><td>容器日志采集主通道</td></tr><tr><td>stderr</td><td>2</td><td>错误和 warning</td><td>容器日志采集主通道</td></tr></table></div>
 <div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: K8s 删除 Pod 时为什么先 SIGTERM 后 SIGKILL？</div><div class="qa-a"><p>先发 SIGTERM 是为了给应用优雅退出机会：停止接新请求、处理完存量请求、flush 日志、保存状态、释放锁。超过 terminationGracePeriodSeconds 仍未退出时，再发不可捕获的 SIGKILL 强制回收资源。</p><div class="qa-summary">面试口径：SIGTERM 是协商退出，SIGKILL 是强制回收。</div></div></div>
 
-## 面试回答
-
-**30 秒版：**
-
-Signal 是内核投递给进程的异步事件。最该讲清的是优雅退出这条线：SIGTERM 可捕获，语义是"协商退出"，给应用 flush 日志、保存状态、释放锁的机会；SIGKILL 不可捕获、不可忽略，是强制回收。K8s 删 Pod 就是先发 SIGTERM，超过 terminationGracePeriodSeconds 还没退出再发 SIGKILL。配套记住三个标准流：stdin（fd 0）、stdout（fd 1）、stderr（fd 2），容器日志采集主要抓 stdout 和 stderr。
-
-**2 分钟版：**
-
-Signal 是内核投递给进程的异步事件，用来做终止、暂停恢复、用户中断、非法访问、定时器和子进程状态变化的通知。面试里要能分清几个常见信号：SIGTERM 可捕获，语义是请求进程优雅退出；SIGKILL 不可捕获、不可忽略，是强制杀；SIGINT 是 Ctrl-C 用户中断；SIGSEGV 是非法内存访问、通常进程崩溃；SIGCHLD 用于父进程回收子进程。最经典的工程场景是 K8s 删 Pod：先发 SIGTERM 给应用机会停止接新请求、处理完存量请求、flush 日志、保存状态、释放锁，超过 terminationGracePeriodSeconds 还没退出再发 SIGKILL 强制回收——所以训练或推理服务一定要正确处理 SIGTERM，否则 checkpoint 或在途请求会丢。配套要记住三个标准流：stdin 是 fd 0，stdout 是 fd 1、stderr 是 fd 2，容器日志采集主要就是抓 stdout 和 stderr，所以服务日志写这两个通道才能被平台收集。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

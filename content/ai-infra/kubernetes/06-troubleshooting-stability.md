@@ -291,16 +291,6 @@ K8S 排障要从状态、事件、日志、资源、网络、节点和控制面�
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-K8S 排障要从状态、事件、日志、资源、网络、节点和控制面逐层收敛。 先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。
-
-**2 分钟版：**
-
-K8S 排障的核心方法不是背命令，而是从症状反推链路：API 对象是否存在、调度是否成功、kubelet 是否执行、网络存储是否就绪、应用是否健康、控制器是否持续修正。我先看状态用 kubectl get/describe 和 Events，再按症状分流：Pod Pending 偏调度与准入侧，看 requests、Node allocatable、污点、亲和性、PVC、Quota、DRA claim；ContainerCreating 偏节点执行侧，看镜像、CNI、CSI mount、sandbox；CrashLoopBackOff 先看 logs --previous、退出码和探针，区分应用崩溃还是 liveness 过激；OOMKilled 看 last state 和内存 limit。系统性问题再往控制面收，etcd 先看 etcd_server_has_leader、wal_fsync、backend_commit 三个指标，API Server 过载用 APF 的 FlowSchema/PriorityLevel 定位限流源，网络偶发超时优先排查 DNS 5s 超时、conntrack 表打满和 MTU 不一致。最后用这些观测指标和事件链路判断修复是否真正生效。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

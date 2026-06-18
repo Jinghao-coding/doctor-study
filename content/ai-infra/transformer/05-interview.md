@@ -9,7 +9,7 @@ Transformer 面试要把架构、Attention、复杂度、训练稳定和推理�
 | 所属模块 | Transformer 与大模型基础 |
 | 章节类型 | 面试收束类 |
 | 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
-| 面试抓手 | 用 30 秒版和追问表收束。 |
+| 面试抓手 | 用可展开问答和追问表收束。 |
 
 <div class="card card-r">
 <h3>Transformer 面试高频题</h3>
@@ -109,16 +109,6 @@ Transformer 面试要把架构、Attention、复杂度、训练稳定和推理�
 <div class="qa-summary">现在说「大模型」基本默认 Decoder-only：靠因果掩码自回归地一个一个 token 往外吐。</div>
 </div>
 </div>
-
-## 面试回答
-
-**30 秒版：**
-
-Transformer 面试我会用一条主线串起来：纯注意力架构抛弃 RNN/CNN，输入侧 tokenizer+embedding+位置编码，核心是 self-attention 做 token 间通信、FFN 做单 token 加工，残差加归一化让深层可训练，最后落到 Decoder-only 自回归生成和 KV cache 这些推理系统关切。
-
-**2 分钟版：**
-
-我会从整体结构讲起：Transformer 是纯注意力架构，一层等于「自注意力交流一次 + FFN 各自加工一次」，残差和归一化保证深层能训。输入侧 tokenizer 用 BPE/WordPiece 切子词、embedding 查表、再叠加位置编码——因为 attention 本身无序必须显式注入顺序。注意力是 softmax(QKᵀ/√d_k)·V，除以 √d_k 防 softmax 饱和；Multi-Head 拆子空间多角度建模、参数量不变。手撕时要讲清 KV cache（decode 复用历史 K/V）和 causal mask（未来位置加 -1e9）。训练稳定性靠残差（把乘法传播变加法）、LayerNorm/RMSNorm、梯度裁剪、warmup、混合精度这一套。最后区分三种架构：Encoder-only（BERT 理解）、Encoder-Decoder（T5 翻译）、Decoder-only（GPT/LLaMA 生成，当前主流）。我会把这些和 infra 连起来：prefill 计算密集、decode memory-bound 靠 KV cache，这就接到了推理引擎、显存规划和分布式训练的系统话题。
 
 ## 关联模块
 

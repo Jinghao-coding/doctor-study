@@ -156,7 +156,7 @@
 </div>
 
 <div class="card card-m">
-<h3>面试回答模板</h3>
+<h3>回答结构</h3>
 <p>当面试官问"你怎么衡量调度系统的好坏"，用这个框架回答：</p>
 <ol>
 <li><strong>先定场景</strong>——推理、训练、实验平台、大模型预训练？不同场景的指标优先级不同。</li>
@@ -210,16 +210,6 @@
 <div class="qa-section"><div class="qa-section-title">什么时候用哪个</div><p>批处理和数据 Pipeline 关心 makespan；交互式训练和实验平台关心平均 JCT；多租户平台还要看公平性。</p></div>
 </div>
 </div>
-
-## 面试回答
-
-**30 秒版：**
-
-衡量调度好坏不能只盯一个指标，要先定场景再选指标。核心指标有 Waiting Time（排队体验）、JCT=等待+执行（训练用户最关心）、Makespan（一批活何时全部跑完）、Throughput（产出）、Utilization（忙碌程度，但高利用率不等于高产出）、Fairness、SLO violation、Preemption Cost。关键是它们互相冲突：公平 vs 利用率、短作业优先 vs 长作业饥饿、拓扑最优 vs 调度延迟。面试要说清场景下哪个是硬约束、哪个让步——在线推理把 SLO 当硬约束，训练队列优化 JCT 和利用率。
-
-**2 分钟版：**
-
-我会强调调度本质是一个多目标优化问题，学算法之前必须先搞清楚优化什么。我会先把核心指标按视角分开：Waiting Time 衡量从提交到开始执行，是用户感知的响应速度；JCT = waiting time + execution time，是训练用户最关心的全链路指标，降 waiting time 靠排序/准入/抢占，降 execution time 靠拓扑放置和资源分配；Makespan 是一批任务最后一个完成的时间，是管理员视角；Throughput 是产出，Utilization 是忙碌程度，二者不等价——GPU 可能在做 NCCL 等待或数据加载瓶颈这种"忙但没产出"的无效计算。再加上 Fairness（多维要看 dominant share，不是简单均分）、SLO violation rate（在线推理的硬约束）、Preemption Cost（训练抢占要回滚 checkpoint、重建 NCCL，远大于普通 Pod 驱逐）。接着我会讲指标冲突：公平性 vs 利用率（严格配额会让空闲资源不能借用）、短作业优先 vs 长作业饥饿、拓扑最优 vs 调度延迟、抢占效率 vs 进度损失、装箱 vs 故障域隔离。最后收束到场景化优先级：在线推理 SLO/tail latency 第一，离线训练 JCT 第一，实验平台 waiting time 第一，大模型预训练 stability/拓扑质量第一。回答模板是先定场景、再定硬约束、说明优化目标和牺牲项，并能说清"优化了什么、牺牲了什么、为什么可接受"。
 
 ## 关联模块
 

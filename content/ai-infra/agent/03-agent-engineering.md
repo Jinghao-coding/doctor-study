@@ -70,16 +70,6 @@ Agent 工程重点是可靠性、状态、权限、观测、评测和失败恢�
 <div class="qa-section"><div class="qa-section-title">可观测性</div><ul><li><strong>链路追踪：</strong>记录每一步的 Thought、Action、Observation，方便调试。</li><li><strong>成本监控：</strong>统计每次任务的 Token 消耗和 API 调用费用。</li><li><strong>质量监控：</strong>自动检测任务成功率、工具调用准确率等指标。</li></ul></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Agent 工程的难点是把 demo 推到生产。我会讲框架选型（LangChain/LangGraph/AutoGen 等）、Function Calling 的最佳实践和失败处理、RAG 检索增强（含 Agentic RAG）、多维度评估（任务成功率、效率、安全、鲁棒性），以及部署架构和 Prompt Injection、权限、沙箱、可观测性这些安全工程。
-
-**2 分钟版：**
-
-我会把 demo 和生产系统分开讲。框架上 LangChain 适合快速原型和 RAG、LangGraph 用图结构支持循环和 checkpoint 适合复杂 Agent、AutoGen/CrewAI 做多 Agent、OpenAI Agents SDK 偏生产级。工具调用要讲清最佳实践（名称清晰、描述精确、参数用 JSON Schema 严格约束、返回格式统一）和常见坑（幻觉调用、循环调用、参数错误、工具描述冲突），还有并行 tool calls 降延迟。RAG 是获取外部知识的核心：文档分块向量化入库 → 问题向量检索 Top-K → 拼入 prompt 增强 → 生成，优化点在混合检索、重排序、语义分块、查询改写，Agentic RAG 让 Agent 自己决定是否检索、要不要重检。评估比单次调用复杂，要覆盖任务成功率、效率、工具准确性、鲁棒性、安全性，可用 GAIA、SWE-bench、WebArena 这些基准。最后是生产关切：部署分有状态/无状态/微服务化，安全上首要防 Prompt Injection，配合工具权限控制、输出审核、沙箱执行、速率限制，再加链路追踪、成本和质量监控做可观测性。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

@@ -54,16 +54,6 @@ AI Infra 基本运行在容器和 Kubernetes 之上，因此操作系统知识�
 <div class="qa-a"><p>/dev/shm 是 tmpfs 共享内存。PyTorch DataLoader 多进程、共享内存队列、Ray、某些分布式通信都可能依赖它。空间不足会出现 bus error、worker 异常退出、进程 hang 或吞吐下降。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-容器隔离的核心是 namespace 管"看见什么"（PID、网络、挂载、IPC、主机名），cgroup 管"能用多少"（CPU、内存、I/O、设备、进程数），再加 overlayfs 镜像层和 capability/seccomp。和虚拟机的区别是容器共享宿主机内核。AI Infra 几乎都跑在容器上，要能映射到容器 OOM（exit 137、cgroup 内 kill）、CFS throttling、page cache 顶满 limit、GPU device plugin 和 /dev/shm 不足。
-
-**2 分钟版：**
-
-容器本质是 Linux 内核机制的组合，先把两个核心机制分开：namespace 解决"看见什么"，隔离 PID、网络栈、挂载点、主机名、IPC 对象；cgroup 解决"能用多少"，限制和统计 CPU、内存、I/O、进程数和设备。Docker 在这之上用 overlayfs 提供只读镜像层和可写层，再用 capability、seccomp、AppArmor/SELinux 收紧权限和系统调用，和虚拟机的本质区别是容器共享宿主机内核、没有独立 guest kernel。一个常见坑是容器内工具看到的资源可能是宿主机视角，但实际受 cgroup 限制。落到 AI Infra：K8s 训练任务的 CPU、内存、GPU 隔离由 request/limit、cgroup、device plugin 和调度器共同实现，GPU 通过 NVIDIA device plugin 暴露 device、驱动库和 CUDA_VISIBLE_DEVICES。容器 OOM 和宿主机 OOM 不同——达到 memory limit 会在 cgroup 内 kill，排查看 Pod exit code 137、events、cgroup memory.current/max、dmesg，并区分主进程 RSS、DataLoader worker、/dev/shm、page cache 和 shared memory。要特别注意 cgroup memory limit 会把 page cache 也算进去可能顶满，以及 /dev/shm 这块 tmpfs 太小会让 PyTorch DataLoader 多进程、共享内存队列出现 bus error、worker 异常退出或 hang。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

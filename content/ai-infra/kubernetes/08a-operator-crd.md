@@ -208,16 +208,6 @@ spec:
 
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Operator = CRD + Controller。CRD 负责把领域对象注册成 Kubernetes API，Operator 通过幂等 Reconcile 持续把 spec 描述的期望状态推进到 status 反映的实际状态。面试要重点讲 schema、spec/status 分离、owner reference、finalizer、conditions 和 controller-runtime。
-
-**2 分钟版：**
-
-我会先说 CRD 只是数据模型：它提供 GVK、OpenAPI schema、status 子资源、多版本 conversion 和 printer columns，但没有行为。Operator 在 CRD 之上加控制循环，通过 Informer watch 资源变化，把事件放入 workqueue，然后在 Reconcile 里读取当前状态、计算差异、创建或更新子对象、写 status。Reconcile 必须幂等，因为事件会重复、缓存可能延迟、错误会重入队。真正工程化时还要处理 owner reference 做级联删除，finalizer 做外部资源清理，conditions 表达 Ready/Progressing/Degraded，leader election 保证多副本只有一个 active。AIJob 这类训练任务 Operator 还要管理 PodGroup、worker Pod、checkpoint、失败恢复和预测状态。
-
 ## 关联模块
 
 - `Workload 与 Controller`：理解 controller / reconcile 的基础。

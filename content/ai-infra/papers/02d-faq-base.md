@@ -69,16 +69,6 @@
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-这一节是 DeepShare 的基础高频问答，覆盖面试最常追问的几个点：QAD 不是 DRF——DRF 只做均等分配，QAD 量化距离保障配额还差多少并允许可回收的超额；排队延迟降 46% 但 JCT 只改善约 6.3%，因为执行时间各策略一致、调度只能优化排队部分；GPU 共享靠 NVIDIA MPS 而非改 K8s Extended Resource。
-
-**2 分钟版：**
-
-这一节用问答澄清 DeepShare 的几个易混点。第一是 QAD vs DRF：DRF 追求均等分配、不区分保障与尽力而为，QAD 量化租户离保障配额有多远，允许 QAD>1 的超额且可回收，还同时服务调度优先级、合用准入、QoS 报告三个子系统。第二是指标解读：JCT = 排队 + 执行，执行时间由计算量决定、各策略相同，所以排队大幅改善只带来 JCT 小幅改善，这恰说明优化空间在排队侧。第三是工程实现：nvidia.com/gpu 作为 Extended Resource 准入后不可修改，所以 GPU 共享通过 NVIDIA MPS 在驱动层多路复用并设 per-client 内存限制，每块 GPU 用 DaemonSet 部署 MPS daemon。第四是模型选型：干扰模型用 Random Forest 因为推理小于 1ms、R² 0.902、硬件计数器特征跨框架泛化，而 GAN 类要 50-200ms。最后是架构问答：QAD 由 Controller 算并写进 TenantQuota.status，Plugin 只读 informer cache 不阻塞热路径；为什么两层分工、Best-effort 如何借用回收。面试里这些是把项目讲深的关键追问点。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

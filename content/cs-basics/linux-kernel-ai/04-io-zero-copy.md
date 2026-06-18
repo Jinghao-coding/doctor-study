@@ -377,16 +377,6 @@ I/O 方面，传统 `read` 路径通常是磁盘 DMA 到 page cache，再 CPU co
 <div class="qa-a"><p><code>mmap</code> 适合只读大权重文件、按需加载和多进程共享 page cache；Direct I/O 适合大文件顺序读取、应用自己做缓存且不希望污染 page cache 的场景；<code>sendfile</code> 适合模型权重分发、checkpoint 文件传输或静态文件服务，因为它优化的是文件到 socket 的路径。真正把权重加载进 GPU HBM 时，通常还需要 CPU 侧解析和 H2D 拷贝，sendfile 不是最终一步的主要优化。</p><div class="qa-summary">面试口径：mmap 优化文件到地址空间，Direct I/O 优化缓存控制，sendfile 优化文件到网络。</div></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-传统 read 路径是磁盘 DMA 到 page cache、再 CPU 拷贝到用户 buffer，加载到 GPU 还要从 CPU buffer 经 PCIe DMA 到 HBM。优化四种 I/O 各有定位：mmap 把文件映射进地址空间省掉 page cache 到用户态的拷贝、适合只读大权重和多进程共享但有 page fault 抖动；Direct I/O 用 O_DIRECT 绕过 page cache 避免污染、适合大文件顺序读但要对齐；sendfile 做文件到 socket 的零拷贝、适合权重分发。大模型权重加载要综合 mmap/Direct I/O、并行 shard、pinned memory、NUMA-aware loading 和 page cache 控制。
-
-**2 分钟版：**
-
-大模型权重加载是典型的系统瓶颈，因为权重几十到几百 GB，加载链路要穿过磁盘/网络存储、文件系统、page cache、用户态 buffer、反序列化、CPU 内存、pinned memory 再到 GPU HBM，路径不合理 GPU 就一直等。先讲传统 read/write：磁盘 DMA 到 page cache，再 CPU 拷贝到用户 buffer，阻塞 read 还伴随用户态/内核态切换和进程调度，大量小 I/O 时 syscall 和上下文切换开销很明显，写网络则是 user buffer 到 socket buffer 再 NIC DMA。再讲三种优化各自的定位：mmap 把文件映射进虚拟地址空间，省掉 page cache 到用户 buffer 的显式拷贝、支持按需 page fault 加载和多进程共享 page cache，适合只读大权重，但随机访问可能 page fault 风暴；Direct I/O 用 O_DIRECT 绕过 page cache，避免一次性加载几百 GB 把 page cache 塞满挤掉热数据，适合大文件顺序读和应用自管缓存，但要求 buffer、size、offset 对齐，小 I/O 反而差；sendfile 在文件 fd 和 socket fd 之间零拷贝传输，减少内核态到用户态来回拷贝和 syscall，适合模型分发和 checkpoint 传输，但不是权重进 GPU HBM 的最终一步。落到实践，权重加载优化要综合用 safetensors 这类易 mmap 格式、并行 shard 加载、pinned memory 加速 H2D、NUMA-aware loading 避免跨 Socket，以及按是否反复加载选择 Direct I/O 还是 mmap 来控制 page cache。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

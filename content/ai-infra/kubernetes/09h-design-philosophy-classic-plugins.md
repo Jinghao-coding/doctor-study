@@ -302,16 +302,6 @@ extenders:
 </ul>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-K8s scheduler 设计哲学是六维平衡：可扩展性（Plugin/Extender/DRA）、效率优先（percentageOfNodesToScore、Filter 并行）、声明式（affinity/tolerations）、公平性（PriorityClass/Preemption）、HA（Leader Election）、用户可配置（多 Profile）。NodeAffinity 把 Required/Preferred 分别落到 Filter/Score；TaintToleration 三种 Effect 中只有 NoExecute 会驱逐运行中的 Pod；NodeResourcesFit 提供 LeastAllocated/MostAllocated/RequestedToCapacityRatio 三种打分公式。Extender 是上一代 HTTP 扩展，新功能一律走 Framework Plugin。
-
-**2 分钟版：**
-
-我会先讲六维设计矩阵，再用三个经典插件落地：NodeAffinity 的 Required 在 PreFilter+Filter，Preferred 在 PreScore+Score，打分公式是按 weight 求和后归一化。TaintToleration 三 effect：NoSchedule 在 Filter 阻新 Pod；PreferNoSchedule 在 Score 降权重；NoExecute 在 Filter 阻新 Pod 之外，由 controller-manager 的 TaintEvictionController 驱逐运行中 Pod，可通过 tolerationSeconds 延迟。NodeResourcesFit 的 Score 阶段三种策略，公式形式都是各资源利用率的加权平均，差异在"剩余越多分越高"还是"已用越多分越高"还是"按曲线打分"，分别对应通用、装箱、性能拐点场景。Extender 通过 HTTP 通信，Filter/Prioritize/Bind 三个 verb，毫秒级延迟，新功能一律推荐 Framework Plugin，Extender 配置必须设 httpTimeout 和 ignorable 否则会拖死调度。
-
 ## 关联模块
 
 - `Scheduler 内部机制 · 调度路径与队列`（09a）：六维矩阵中"效率优先"的具体落地。

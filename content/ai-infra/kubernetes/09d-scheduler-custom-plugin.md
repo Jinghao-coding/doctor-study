@@ -512,16 +512,6 @@ func (pl *PredictivePlugin) Unreserve(
 <div class="qa-summary">收束：预测运行时间决定“先调谁”，共置干扰预测决定“能不能放和放哪里”；预测值统一由 Operator 写 CRD，scheduler plugin 只通过 Informer 本地缓存读取。</div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-自定义调度逻辑优先用 Scheduling Framework Plugin，复杂系统再考虑 extender 或独立 scheduler。基础例子可以讲 GPU 拓扑感知 Filter/Score；如果面试官追问预测调度器，就说 AIJob Operator 负责管理任务和预测状态，scheduler plugin 只读 Informer 本地缓存，把运行时间预测放到 QueueSort，把共置干扰预测放到 Filter / Score，把插件账本放到 Reserve / Unreserve。
-
-**2 分钟版：**
-
-我会先说明自定义调度逻辑有 Framework Plugin、Extender 和独立 Scheduler 三种方式。AI Infra 里的 GPU 拓扑、预测调度、共置干扰判断都在 scheduler 热路径上，所以优先选 Framework Plugin。普通拓扑感知插件可以实现 PreFilter / Filter / Score / Reserve；预测调度器则进一步拆成 AIJob Operator 和 Scheduler Plugin：AIJob CRD 表达训练任务，Operator 创建 PodGroup / Pods、维护 checkpoint 和任务状态，并写 PredictionResult / NodeGpuProfile；Plugin 通过 Informer 本地缓存读取结果。运行时间预测用于 QueueSort 和抢占成本，共置干扰预测用于 Filter 的硬阈值和 Score 的软打分。最后用 Reserve / Unreserve 保证 GPU 共置账本和 scheduler assumed state 一致，并用 plugin latency、JCT、GPU 利用率、SLO violation 和实际 slowdown 验证效果。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

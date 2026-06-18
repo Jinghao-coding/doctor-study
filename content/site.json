@@ -43,6 +43,10 @@
       "href": "pages/ai-infra/performance-prediction/index.html"
     },
     {
+      "title": "生产化闭环",
+      "href": "pages/ai-infra/production-ops/index.html"
+    },
+    {
       "title": "系统设计题",
       "href": "pages/ai-infra/system-design/index.html"
     },
@@ -180,6 +184,20 @@
         "system-design"
       ],
       "color": "c3"
+    },
+    {
+      "title": "AI Infra 生产化闭环",
+      "slug": "ai-infra/production-ops",
+      "source": "content/ai-infra/production-ops/topic.json",
+      "output": "pages/ai-infra/production-ops/index.html",
+      "description": "数据集、Checkpoint、模型注册、可观测性、SLO、容量成本、灰度发布、安全治理和事故复盘。",
+      "tags": [
+        "production",
+        "slo",
+        "observability",
+        "finops"
+      ],
+      "color": "c4"
     },
     {
       "title": "计算机基础知识",

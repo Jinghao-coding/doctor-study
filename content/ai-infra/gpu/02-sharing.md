@@ -100,16 +100,6 @@ GPU 显存碎片可以分为两类：**外部碎片**和**内部碎片**。外�
 <div class="qa-a"><p>至少要同时看三类指标：GPU 总显存使用率、进程级显存占用、allocator 层 reserved/allocated 差值。对 PyTorch 服务，可以看 <code>memory_reserved - memory_allocated</code> 判断缓存池空洞；对推理引擎，还要看 KV block 使用率、空闲 block 数、prefix cache 命中率和 OOM 前的最大可分配块。调度层可把这些画像沉淀成任务 profile，用于后续显存 bin packing 和共享密度控制。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-GPU 共享要先区分隔离语义。MIG 是硬件切片，SM、显存和 cache 边界清晰，适合生产多租户和稳定 SLA；MPS 是软件级多进程共享，可以提升小 kernel 或小模型并发效率，但共享显存和 cache，有干扰风险；time-slicing 是按时间复用，部署简单但不保证固定算力。K8S 里通常通过 NVIDIA Device Plugin 把物理 GPU 暴露成多个逻辑资源，scheduler 只看到 slot，不理解真实性能隔离。
-
-**2 分钟版：**
-
-我会从调度层和 runtime 层两层讲。调度层通过 device plugin、GPU Operator、MIG profile、共享 replicas 和节点标签来表达可分配资源，但它只能决定 Pod 放在哪里。runtime 层才真正决定 GPU 怎么共享：MIG 由硬件分区，MPS 由 MPS daemon 合并多个 CUDA context，time-slicing 由 driver 轮换上下文，CUDA VMM 则用虚拟地址和物理页映射解决弹性显存。生产里选择方案要看 SLA、租户信任边界、显存压力和 P99 抖动，而不是只看平均利用率。
-
 ## 关联模块
 
 - `K8S GPU 共享`：继续看 device plugin、replicas 和节点级配置。

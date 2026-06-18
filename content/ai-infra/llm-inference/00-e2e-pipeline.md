@@ -87,16 +87,6 @@ Decode | 逐 token 自回归生成，并持续更新 KV Cache
 </table>
 <p><strong>推理引擎决定"怎么高效地跑"，模型决定"到底生成什么"。</strong>前者偏"编排与优化"，后者偏"语义计算与内容生成"。</p>
 
-## 面试回答
-
-**30 秒版：**
-
-端到端推理链路要从用户请求进入服务开始，一直讲到 token 流式返回和资源释放。 面试时按阶段讲，不要直接跳到 Transformer 公式。
-
-**2 分钟版：**
-
-一个 prompt 从输入到输出大体经历 6 个阶段：请求封装、tokenization、推理调度、prefill、decode、反解码返回。我会按阶段讲：服务层先把 system/user/assistant 消息按模板组织好，经 tokenizer（如 BPE 的 tiktoken）切成 token IDs；请求进推理框架（vLLM/TGI）排队、做 continuous batching、管 KV cache；进模型后先 embedding lookup 加 RoPE，再过多层 Transformer block 的 self-attention（Q/K/V 加 causal mask）和 FFN。prefill 把整段 prompt 并行跑完、建立 KV cache，偏 compute-bound；decode 取最后位置 logits 经采样逐 token 生成、复用 KV cache，偏 memory-bound。这也是"第一个字慢、后面快"的原因，工程上靠 FlashAttention、continuous batching、chunked prefill 优化。职责上推理引擎决定"怎么高效跑"，模型决定"生成什么"。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

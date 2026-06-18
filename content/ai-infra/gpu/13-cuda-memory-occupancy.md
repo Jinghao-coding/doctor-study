@@ -89,16 +89,6 @@ Tensor Core 是专门做矩阵乘加（GEMM、卷积、Attention）的硬件单�
 <div class="qa-a"><p>内存墙是处理器算力增长远快于内存访问速度造成的瓶颈。CUDA 里 global memory 延迟高、带宽相对有限，容易成为瓶颈。缓解办法是把频繁复用的数据搬到 shared memory（片上）做缓存复用，减少 global memory 访问次数，例如矩阵乘 tiling 和 FlashAttention 的分块计算。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-CUDA 内存层级可以按距离计算单元的远近理解：register 最快且 thread 私有，shared memory 是 block 内共享，L2 是 GPU 级缓存，global memory/HBM 容量大但延迟高。Occupancy 表示 SM 上有多少 warp 可以调度，用来隐藏访存延迟，但它不是越高越好，需要结合寄存器、shared memory、访存模式和实际 throughput 一起判断。
-
-**2 分钟版：**
-
-调优时我会先看 grid 是否有足够 block 铺满所有 SM，再看每个 block 的 thread 数、register 和 shared memory 用量是否让 SM 能挂足够多 warp。如果 block 太少，SM 空着；如果 block 太大或每个 thread 用太多寄存器，SM 上可驻留的 block/warp 变少，occupancy 会下降。内存上，global memory 容量大但慢，shared memory 和 register 快但容量小，所以高性能 kernel 通常通过 tiling、访存合并和数据复用减少 HBM 访问。最终还是要用 Nsight Compute 看 achieved occupancy、memory throughput、warp stall 和实际运行时间。
-
 ## 关联模块
 
 - `CUDA 执行模型`：block、warp、SM 是 occupancy 的前置概念。

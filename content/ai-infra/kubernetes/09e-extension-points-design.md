@@ -192,16 +192,6 @@ type Scheduler struct {
 //   └── Scheduler.bind() → Framework.RunBindPlugins() → Framework.RunPostBindPlugins()
 ```
 
-## 面试回答
-
-**30 秒版：**
-
-PreFilter / PreScore 是**集群级串行预处理**，可以终止整个调度周期、写 CycleState；Filter / Score 是**节点级并行处理**，只读 CycleState、只能影响当前节点。这样切是为了让 Filter/Score 阶段能在多协程下安全并发。
-
-**2 分钟版：**
-
-我会先讲 Scheduling Framework 的整体流程：PreEnqueue → Scheduling Cycle → Binding Cycle，前两段串行，Binding 可以和下一个 Pod 的 Scheduling 并发。然后讲扩展点设计哲学：Pre 阶段做"一次"的事（解析、统计、查全局状态），Score/Filter 阶段做"节点级"的事，通过 CycleState 在阶段间传数据。再举 `NodeAffinity` 同时挂 5 个扩展点和 `NodeResourcesFit` 内置三种策略两个例子说明插件和 Hook 是多对多关系。最后顺带一提 `var _ framework.FilterPlugin = ...` 这种编译期接口校验技巧，体现对 Go 工程的熟悉度。
-
 ## 关联模块
 
 - 上一节：`Scheduler 内部机制 · 调度路径与队列`，理解 ActiveQ → Cycle → Bind 的整体流转。

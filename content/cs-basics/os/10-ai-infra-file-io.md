@@ -70,16 +70,6 @@
 <div class="qa-a"><p>write 返回通常只表示数据进入 page cache，不代表落盘。fsync 要等待脏页写回、文件系统 journal、设备 flush、网络存储确认和其他 I/O 排队。checkpoint 或日志频繁 fsync 会显著影响吞吐和延迟。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-文件系统里 inode 存元数据和数据块位置、目录项把文件名映射到 inode、fd 是打开后的句柄。一次 read 进内核查 fd 和 page cache，命中拷给用户 buffer，未命中发起 I/O。buffered I/O 走 page cache、Direct I/O 绕过但要对齐，write 返回只到 page cache、fsync 才落盘。AI Infra 排训练 I/O 瓶颈要拆磁盘带宽、网络存储延迟、小文件 metadata、解码和 worker 队列深度。
-
-**2 分钟版：**
-
-文件 I/O 先讲抽象再讲路径：inode 保存文件元数据和数据块位置，目录项把文件名映射到 inode，进程 open 后拿到 fd 指向内核的 open file description（含偏移和打开模式）。一次 read 进内核检查 fd、偏移和 page cache，命中就把 cache 内容拷到用户 buffer，未命中就发起磁盘或网络存储 I/O，读进 page cache 再拷给用户，所以慢点可能在系统调用、cache miss、磁盘 I/O、metadata、CPU copy 或文件解码。机制上要分清 buffered I/O 走 page cache 适合复用小读、Direct I/O 绕过 cache 适合应用自管的大文件顺序读但要对齐，write 返回只代表进 page cache 形成脏页、fsync 才强制落盘且可能很慢。落到 AI Infra，训练数据读取瓶颈要拆成磁盘/对象存储带宽、网络存储延迟、文件数量和 metadata、解码、CPU worker 和 batch 队列深度——小文件过多会让 open/stat/readdir 拖慢 DataLoader，checkpoint 慢常来自序列化和 fsync，权重加载靠 mmap、顺序读、预读和并行 shard 优化。具体排查时先看 GPU 利用率是否周期性掉零（batch feeding 不连续），再看 worker CPU 和队列、iostat 的 util/await、文件数量和 page cache 命中。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

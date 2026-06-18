@@ -58,16 +58,6 @@
 <div class="qa-summary">面试答法：因为 Transformer 用全局并行计算、没有 RNN 的天然顺序，Attention 本身对位置不敏感，所以要用位置编码把顺序信息补回来。</div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-输入侧是三件套流水线：Tokenizer 用 BPE/WordPiece 把文本切成子词并查词表得到 token id，Embedding 矩阵按 id 查表（不是矩阵乘）映射成稠密向量，再叠加位置编码。因为 attention 本身无序，位置信息必须显式注入。
-
-**2 分钟版：**
-
-输入处理的链路是：文本 →（Tokenizer）→ token →（查词表）→ input_ids →（Embedding 查表）→ 词向量 →（加位置编码）→ 进第一层。第一步 Tokenizer 用 BPE、WordPiece 或 SentencePiece 把连续文本切成子词，子词是整词和单字之间的折中——既能控制词表大小、又能处理没见过的 OOV 词。第二步 Embedding 是一张可学习的 [vocab_size, hidden_size] 查找表，本质是按 id 取行向量、不是矩阵乘，训练中语义相近的词向量会逐渐靠拢。第三步位置编码很关键：Transformer 是全局并行计算、没有 RNN 的天然顺序，attention 对 token 集合是置换等变的，打乱输入只会让结果跟着换位，分不清「猫追狗」和「狗追猫」，所以要把顺序补回来。主流方案有原文的正弦余弦（可外推）、BERT 的可学习位置编码、以及 LLaMA 等用的 RoPE 旋转位置编码（外推性好），RoPE 也是现在大模型支持长上下文的基础。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

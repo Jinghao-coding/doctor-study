@@ -254,13 +254,3 @@ cgroups 本身通常不直接精细限制 GPU SM、Tensor Core、HBM 带宽或�
 | 框架限制 | 进程级显存策略 | 易用，例如 PyTorch fraction | 不是真正硬隔离 |
 | 调度器记录 | 上层资源账本 | 能做配额和准入控制 | 依赖平台实现 |
 
-## 面试回答模板
-
-cgroups 是 Linux 内核的资源隔离机制，可以限制一组进程的 CPU、内存、I/O、进程数和设备访问权限。v1 是多个 controller 多层级模型，v2 是统一层级模型，接口和语义更一致。CPU 可以通过 quota、weight、cpuset 限制；内存可以通过 `memory.max`、`memory.high` 等限制；I/O 可以通过 io controller 做带宽和 IOPS 控制。
-
-GPU 方面，cgroups 本身通常不理解 GPU 算力或显存配额，它主要通过 devices controller 控制容器能访问哪些 `/dev/nvidia*` 设备。真正的 GPU 注入和可见性通常由 NVIDIA Container Toolkit、NVIDIA Device Plugin、容器运行时和调度器协同完成；更细粒度的 GPU 隔离则依赖 MIG、MPS 或框架/调度器策略。
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: K8s 里的 GPU limit 是 cgroups 直接限制 GPU 算力吗？</div>
-<div class="qa-a"><p>不是。Kubernetes 里的 <code>nvidia.com/gpu</code> 通常通过 NVIDIA Device Plugin 分配设备，容器运行时和 NVIDIA Container Toolkit 注入对应 <code>/dev/nvidia*</code> 设备和驱动库。cgroups devices controller 更多控制“能不能访问这个设备文件”，不是直接限制 GPU SM 使用率、Tensor Core 使用率或 HBM 带宽。GPU 的精细隔离通常依赖 MIG、MPS、time-slicing 或上层调度策略。</p><div class="qa-summary">面试口径：cgroups 控设备访问，GPU 算力/显存隔离要靠 NVIDIA 栈和调度器协同。</div></div>
-</div>

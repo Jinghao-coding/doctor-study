@@ -83,16 +83,6 @@ $$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$
 <div class="qa-a"><p>不是单 token 计算复杂度爆炸，而是 decode attention 是 memory-bound 的，每生成一个新 token 都要从 HBM 读一遍历史 KV cache。上下文越长，KV cache 越大，每步读取量线性增长，所以越来越慢。优化方向是降 KV cache 带宽/容量压力：PagedAttention、KV cache 量化、MQA/GQA、FlashAttention 等。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。 按算子分类，避免“一句话说全模型 compute-bound”。
-
-**2 分钟版：**
-
-Transformer 不能一句话说全模型 compute-bound，要按算子分类，核心标准是算术强度=FLOPs÷访存 bytes，高于机器平衡点（A100≈312 TFLOPS÷2 TB/s≈156 FLOP/byte）就 compute-bound，远低于就 memory-bound。规律是大而方的矩阵乘通常 compute-bound，小 batch、单 token、逐元素、归一化、softmax、KV cache 读写通常 memory-bound。大矩阵乘本质是 Y=XW，计算量约 2MKN、访存约 MK+KN+MN，M、N、K 都大时 FLOPs 增长远快于访存、复用高、能喂饱 TensorCore；但 decode batch=1 退化成瘦矩阵 [1,H]×[H,H]，几乎无 batch 复用，时间全花在从 HBM 读 Wq/Wk/Wv/Wo/Wup/Wgate/Wdown，转 memory-bound，这就是 70B FP16 约 140GB 权重单 token decode 的根因。Attention 两阶段相反：prefill 的 QK^T 是 O(B·h·S^2·D) 大矩阵乘 compute-bound，FlashAttention 减少 HBM 读写后更像高效 GEMM；decode query 长度为 1 但要扫历史 KV cache、读多算少，memory-bound，所以长上下文越来越慢是每步读 KV 线性增长而非计算爆炸。逐元素/归一化如 Residual add 算术强度约 1/6 必然 memory-bound，工程上常和相邻 GEMM 做 kernel fusion；AllReduce/AllGather 属 communication-bound 不在单卡二分内。训练大矩阵乘 compute-bound 但 optimizer step 读写多份状态偏 memory-bound。这套分类直接决定 prefill/decode 分离部署、continuous batching、PagedAttention、MQA/GQA 等优化方向。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

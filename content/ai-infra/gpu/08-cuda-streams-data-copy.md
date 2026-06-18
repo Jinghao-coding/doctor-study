@@ -105,16 +105,6 @@ Buffer C: CPU 正在准备再下一批数据
 <div class="qa-a"><p>不一定。并行取决于硬件资源是否足够。如果两个 stream 的 kernel 都需要全部 SM，它们会被串行执行；如果一个在拷贝（使用 DMA engine / copy engine），一个在计算（使用 SM），它们可以并行，因为用的是不同硬件单元。这也是为什么计算+拷贝重叠比计算+计算重叠更容易实现——DMA engine 和 SM 是独立的硬件资源。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-CUDA stream 是 GPU 上的异步队列，同一个 stream 内操作按提交顺序执行，不同 stream 在没有依赖且硬件资源允许时可以并行。要让 H2D/D2H 和 kernel 重叠，通常需要 pinned memory、`cudaMemcpyAsync`、自定义 stream 和 event，同步点要放在真正需要结果的位置。
-
-**2 分钟版：**
-
-我会把 stream 放到端到端流水线里讲。CPU 负责准备输入并提交 H2D copy 和 kernel launch；H2D copy 使用 copy engine，kernel 使用 SM，所以在不同 stream 上有机会重叠。典型做法是双缓冲或三缓冲：一个 batch 在 GPU 上计算，下一个 batch 正在 H2D，再下一个 batch 在 CPU 侧准备。这样可以隐藏 PCIe/NVLink 拷贝和 CPU preprocessing 延迟。但多 stream 不保证并行，如果默认 stream 有隐式同步、kernel 占满全部 SM、内存不是 pinned，或者中途 `.item()` / `cudaDeviceSynchronize()`，流水线都会被打断。
-
 ## 关联模块
 
 - `Host-Device 数据拷贝`：定位 H2D/D2H 触发点和 DataLoader 问题。

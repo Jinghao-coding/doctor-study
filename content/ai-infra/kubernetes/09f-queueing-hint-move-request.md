@@ -147,16 +147,6 @@ func (pl *NodeAffinity) isSchedulableAfterNodeChange(
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-QueueingHint 是 1.28 Beta、1.32 GA 的能力，把 UnschedulableQ → ActiveQ 的唤醒判断下沉到 Plugin，让 Plugin 基于具体集群事件返回 Queue/QueueSkip，避免之前"任何匹配类型事件都广播到所有相关 Pod"的惊群问题。Move Request 是 scheduler 内部对集群事件的统一抽象，覆盖 Node/Pod/PVC/CSI 增删改和定时 flush。
-
-**2 分钟版：**
-
-Pod 调度失败后会进 UnschedulableQ，必须靠集群事件唤醒。1.28 之前 scheduler 只看 Plugin 注册的 ClusterEvent 类型，事件来了就把所有相关 Plugin 的 Pod 一起搬移，导致大集群下惊群、CPU 浪费。1.28 引入 QueueingHint，每个 Plugin 注册 EnqueueExtensions 时带上一个 hint 函数，scheduler 收到事件会调用这个函数判断"这次事件是否真的可能让 Pod 成功"，只有返回 Queue 才搬移。Move Request 来源包括：Node 增删、Allocatable/Taint/Label/Condition 变化、Pod 删除、Pod label 更新、PVC/CSINode 变化，外加 5 分钟兜底 flush。多 Plugin 失败时只要一个 hint 返回 Queue 就搬移，遵循"宁可错放不漏放"原则。
-
 ## 关联模块
 
 - `调度路径与三个队列`（09a）：三队列基础和入队出队主流程。

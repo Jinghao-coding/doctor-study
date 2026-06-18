@@ -72,16 +72,6 @@ AI Infra 的内存问题往往同时涉及虚拟内存、物理内存、page cac
 <div class="qa-a"><p>Linux 会尽量用空闲内存缓存文件页，提升后续读取性能，所以 free 看到的空闲内存可能很少。但 page cache 通常是可回收的，内存压力来时可以释放。排查时要看 available、cache、cgroup limit 和真正不可回收的 RSS。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-进程访问的是虚拟地址，MMU 通过页表翻译成物理地址，TLB 缓存翻译、缺页中断按需分配。malloc 是承诺、写入触碰页面才通过缺页兑现物理内存。看内存要分清 VIRT（虚拟空间）、RES（真实物理占用）、SHR（共享页）、page cache（可回收）。AI Infra 排 OOM 要区分进程 RSS、page cache、cgroup limit、宿主机 OOM 和容器 OOM。
-
-**2 分钟版：**
-
-内存管理先讲机制：进程看到的是独立虚拟地址空间，MMU 通过页表把虚拟地址翻译成物理地址，TLB 缓存翻译结果，缺页中断负责按需分配或换入。一个关键直觉是 malloc 只是分配虚拟地址或复用空闲块，物理页通常在第一次写入时通过缺页中断兑现，所以 VIRT 大不代表真实占用，RES/RSS 才是真实物理压力。Linux 还会用空闲内存做 page cache 缓存文件页，让 free 看起来很少，但 page cache 通常可回收。再说权衡：mmap 加载大模型权重能避免一次性读全文件、支持多进程共享 page cache，代价是访问时可能触发 page fault 造成启动抖动；fork DataLoader 时大对象先 COW 共享，worker 一写入物理内存就复制、RSS 突增；任务一旦触发 swap，训练吞吐基本断崖式下降。落到 AI Infra，OOM 定位要区分进程 RSS、shared memory、page cache、cgroup memory limit 以及宿主机 OOM 还是容器 OOM——容器里 page cache、shm、DataLoader worker、日志 buffer 会一起顶满 limit；NUMA 绑定不合理还会让 CPU worker 访问远端内存、跨 socket 给 GPU 喂数据拖慢吞吐。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

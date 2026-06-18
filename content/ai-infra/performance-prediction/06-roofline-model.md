@@ -184,20 +184,6 @@ Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β**
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Roofline Model 用三个量做性能预测：平台的算力 π、带宽 β，模型的计算强度 I。理论性能 $P = \min(\pi, \beta \cdot I)$。当 $I \geq I_{max} = \pi / \beta$ 时模型是 Compute-Bound（吃满算力），当 $I < I_{max}$ 时是 Memory-Bound（卡在带宽）。比如 1080Ti 的 I<sub>max</sub> ≈ 24，VGG16 的 I ≈ 25 刚好 Compute-Bound，MobileNet 的 I ≈ 7 是 Memory-Bound——所以 MobileNet 虽然 FLOPs 只有 VGG 的 1/30，但在 1080Ti 上加速比只有 10 倍。
-
-**2 分钟版：**
-
-我会先讲三组指标。**平台侧两个**：算力 π（FLOP/s）和带宽 β（Byte/s），二者相除是平台的计算强度上限 I<sub>max</sub>。**模型侧两个**：计算量（前向 FLOPs）和访存量（权重 + 特征图，乘 4），二者相除是模型的计算强度 I。**Roofline 给出的是模型在该平台上的理论性能上界** $P = \min(\pi, \beta \cdot I)$，呈现为"屋顶 + 房檐"的形态：算力决定屋顶高度，带宽决定房檐斜率，交点就是 I<sub>max</sub>。
-
-然后我会拿 VGG16 vs MobileNet 在 1080Ti 上做实例：1080Ti 的 π = 11.3 TFLOP/s，β = 484 GB/s，I<sub>max</sub> ≈ 24。VGG16 的 I ≈ 25，刚刚越过 I<sub>max</sub>，处于 Compute-Bound，能吃满 11.3 TFLOP/s。MobileNet 的 I ≈ 7（DW+PW 把 FLOPs 砍得比访存量更厉害，所以 I 反而下降），处于 Memory-Bound，理论性能只有 β · I = 3.3 TFLOP/s。所以 MobileNet 在 1080Ti 上的实际加速远小于 FLOPs 比例预期——**这是为什么端侧模型放在大卡上是浪费带宽，应该放回端侧（端侧 I<sub>max</sub> 低，MobileNet 反而能站到屋顶）**。
-
-最后强调三个边界：① Roofline 是上界不是实测，cache、GEMM 实现、kernel launch 等因素都会让实际更低；② I<sub>max</sub> 是平台属性，I 是模型属性，相互独立；③ 训练比推理多了反向和优化器状态，I 通常更小。
-
 ## 关联模块
 
 - [`Transformer 与大模型基础 / 07-roofline-analysis`](../../transformer/07-roofline-analysis.md)：把 Roofline 用在 Transformer 算子分类上。

@@ -228,16 +228,6 @@ kernel 之间的大空洞</code></pre>
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Host 指 CPU 侧，Device 指 GPU 侧。H2D 是把数据从 CPU 内存拷到 GPU 显存，例如训练 batch 输入；D2H 是把 GPU 结果拷回 CPU，例如 `.cpu()`、`.numpy()`、`.item()`、日志和后处理。优化时先减少不必要的 D2H，再用 pinned memory、`non_blocking=True`、DataLoader prefetch 和 CUDA stream 让 H2D 与计算重叠，多 GPU 场景尽量走 NCCL/NVLink/GPUDirect，避免 GPU 到 CPU 再到 GPU。
-
-**2 分钟版：**
-
-我会先看拷贝是不是端到端瓶颈。Nsight Systems 里如果 kernel 之间有空洞、Memcpy HtoD/DtoH 很多，或者 CPU 侧频繁 `cudaStreamSynchronize`，就要查数据搬运。训练里 H2D 通常不可避免，但可以通过 pinned memory、non_blocking copy、prefetch、多 worker 和 persistent workers 隐藏；D2H 更要谨慎，`.item()`、`.cpu()`、`.numpy()`、打印 GPU tensor 都可能触发同步。推理里要减少小请求小 tensor 拷贝，批量化输入输出，后处理尽量留在 GPU。多卡场景要避免 Host 中转，优先使用 NCCL、P2P copy、NVLink/NVSwitch 和 GPUDirect RDMA。
-
 ## 关联模块
 
 - `Stream 与异步流水线`：用 stream/event 和多缓冲把拷贝与计算重叠。

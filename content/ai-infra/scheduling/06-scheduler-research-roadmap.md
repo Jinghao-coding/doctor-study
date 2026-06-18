@@ -182,16 +182,6 @@ GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语�
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-设计 GPU 集群调度器我会拆成五个决策点：QueueSort 决定谁先调度（FIFO/优先级/DRF/QAD/aging），Admit 决定能不能启动（quota、gang minAvailable、reservation），Placement 决定放哪（Filter/Score 加 bin packing 和拓扑打分），Preemption 决定谁让位（checkpoint-aware 代价打分），运行时控制处理失败、弹性和回收。AI 训练的特殊点是 gang 语义、拓扑质量和抢占代价，所以 K8s 默认调度器不够，要靠 Volcano/Kueue 这类扩展。
-
-**2 分钟版：**
-
-我会先建立统一模型：调度器输入是任务和资源、输出是调度决策，一个完整调度器要回答五个问题——谁先调度、能不能启动、放到哪里、是否抢占、运行后怎么回收重试。然后分层落地：队列层按团队/项目建层级队列，配 min/max quota、优先级和借用回收；准入层检查 quota、gang minAvailable、GPU flavor 和拓扑硬约束，资源不够就 reservation 而不是让部分 worker 先跑空转；放置层用 Filter 过滤不可行节点、Score 综合 bin packing、拓扑质量、碎片影响和数据 locality。多租户公平不是平均分卡，而是层级队列加 DRF/QAD 按主导资源排序、min 保障、max 限上限、借用可回收、aging 防饥饿。抢占要做 checkpoint-aware，按 release_value 除以 checkpoint_age 加 restart_cost 选代价最低的 victim，先发优雅退出信号让任务存 checkpoint。GPU 碎片不是总卡数不够而是满足约束的连续/同拓扑资源不够，靠 bin packing、reservation、backfill 和 defragmentation 组合解决。最后说清 K8s 默认调度器缺 gang 语义、队列公平、拓扑感知和 checkpoint-aware 抢占，所以要用 PodGroup、Elastic Quota、DRA 和自定义 plugin 扩展。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

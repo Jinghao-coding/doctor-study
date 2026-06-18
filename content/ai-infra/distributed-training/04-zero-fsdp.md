@@ -75,16 +75,6 @@ ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存�
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-ZeRO/FSDP 的本质是把参数、梯度和优化器状态从每卡完整保存变成分片保存。 显存公式要按 ZeRO 阶段拆。
-
-**2 分钟版：**
-
-ZeRO/FSDP 的本质是把训练状态从每卡完整保存变成按 data parallel group 分片，代价是前向/反向要更多通信取回参数或同步分片。训练显存不只是参数，还有梯度、Adam 一阶/二阶矩、master weights，混合精度下常按每参数约 18 bytes 估算（参数 2B+梯度 4B+Adam 状态 12B）。ZeRO 分阶段：ZeRO-1 只切优化器状态、通信接近 DP；ZeRO-2 再切梯度，是常用甜点；ZeRO-3 把参数也切，需要额外参数 AllGather，显存最省但通信最重。以 7B 4 卡为例，无 ZeRO 约 126GB/卡放不下，ZeRO-1 约 63GB、ZeRO-2 约 42GB、ZeRO-3 约 31.5GB。FSDP 可理解为 PyTorch 原生的 ZeRO-3 类方案，都按需 all-gather 完整参数、用完释放，差异在 wrapping 粒度——包太粗峰值显存高、包太细通信次数多——以及生态，DeepSpeed ZeRO 提供更完整的 offload。落点是典型的用通信换显存，ZeRO-2 够用就不一定上 ZeRO-3，要结合显存占用和通信瓶颈判断。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

@@ -379,20 +379,6 @@ PostBind</code></pre>
 <div class="qa-summary">队列性能优化不是“多重试几次”，而是“在正确事件发生后，只唤醒可能变得可调度的 Pod”。</div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Scheduler 监听 API Server 中未绑定 Node 的 Pod，把它放入调度队列；从 ActiveQ 取出后进入 Scheduling Cycle，先 PreFilter 整理约束，再 Filter 筛掉不可用 Node，Score 给可用 Node 打分，选出目标 Node 后 Reserve / Permit / PreBind / Bind，把 <code>spec.nodeName</code> 写回 API Server。随后目标 Node 上的 kubelet watch 到这个 Pod，负责拉镜像、配置网络和启动容器。Scheduler 只负责选机器，不负责起容器。
-
-**2 分钟版：**
-
-我会从 Pod 创建讲起。用户或控制器创建 Pod 后，API Server 把它写入 etcd；如果 <code>spec.nodeName</code> 为空，它就是待调度 Pod。kube-scheduler 通过 informer/watch 发现它，把它放进 scheduling queue。队列里有 ActiveQ、BackoffQ 和 UnschedulableQ，分别表示现在可以试、失败后过会儿再试、等集群状态变化再试。
-
-真正调度时，scheduler 从 ActiveQ 取一个 Pod 进入 Scheduling Cycle。PreFilter 先把 Pod 的资源请求、PVC、Affinity、TopologySpread、端口等约束整理到 CycleState；Filter 遍历候选 Node，判断资源、标签、污点、亲和性、volume、hostPort 等硬约束；如果没有可行节点，PostFilter 可能触发抢占；如果有多个可行节点，Score 和 NormalizeScore 根据资源分布、镜像本地性、软亲和性和拓扑分布打分，选出最高分 Node。选中后 Reserve / Assume 先在 scheduler 本地占位，Permit 可用于 gang scheduling 等等待场景，PreBind 做绑定前处理，Bind 把结果写回 API Server。
-
-绑定完成后，Pod 对象有了 <code>spec.nodeName</code>。目标节点上的 kubelet watch 到属于自己的 Pod，进入 SyncPod：准备 volume、创建 sandbox、调用 CNI 配网络、拉镜像、通过 CRI 调 containerd / runc 创建并启动容器，最后回写 Pod 状态。所以职责边界是：scheduler 负责选 Node 和绑定，kubelet 负责在节点上真正运行 Pod。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

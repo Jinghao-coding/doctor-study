@@ -303,16 +303,6 @@ K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂�
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。 按 CNI、Service、DNS、Ingress、PV/PVC/CSI 讲。
-
-**2 分钟版：**
-
-网络和存储解决 Pod 怎么被访问、怎么发现服务、怎么挂持久数据。网络侧每个 Pod 一个可路由 IP，由 CNI 分配并配路由（Flannel 简单但策略弱，Calico 走 BGP 加原生 NetworkPolicy，Cilium 走 eBPF 可替代 kube-proxy 并提供 L7 和 Hubble 可观测）；Service 通过 selector 关联 EndpointSlice，kube-proxy 把 VIP 转发到后端 Pod，iptables 是 O(N) 规则，大集群上万 Service 必须切 IPVS 或 eBPF；Headless Service 不给 VIP，直接用 DNS 暴露 Pod，配合 StatefulSet 稳定域名；南北向入口从 Ingress 演进到 Gateway API，把 GatewayClass/Gateway/Route 三层解耦。存储侧 PVC 是声明、PV 是实际资源、StorageClass 做动态供给，WaitForFirstConsumer 会延迟绑定让 scheduler 结合 Pod 约束和存储拓扑一起决策。排障 Service 不通按"入口→selector/endpoints→Pod 直连→DNS/NetworkPolicy/数据面"逐层缩小，PVC Pending 按"Events→StorageClass/CSI→拓扑"排查。AI 训练对带宽延迟敏感，常用 hostNetwork 或 Multus 给 Pod 接 RDMA 副网卡走 NCCL 集合通信，并配合拓扑感知调度保证 Pod 落在同一 leaf，避免 AllReduce 跨 spine 带宽腰斩。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

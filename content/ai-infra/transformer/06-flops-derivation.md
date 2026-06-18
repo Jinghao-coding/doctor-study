@@ -124,16 +124,6 @@ $$ \text{总FLOPs} = 8nd^2 + 4n^2d + 16nd^2 = 24nd^2 + 4n^2d $$
 <div class="qa-a"><p>只记一个基本公式 $2MNK$，然后数有几个矩阵乘：QKV 三次投影 + 输出投影是 4 个 $n\times d$ 乘 $d\times d$，各 $2nd^2$，合 $8nd^2$；FFN 两层是 $8nd^2 \times 2 = 16nd^2$；这两类都是 $nd^2$，合 $24nd^2$。再加注意力两次大矩阵乘 $QK^\top$ 和权重乘 V，各 $2n^2d$，合 $4n^2d$。最终 $24nd^2 + 4n^2d$。整模型再乘层数，训练含反向约再 ×3。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。 记住矩阵乘 $2MNK$，再数 QKV、输出投影、FFN 和两次 attention matmul。
-
-**2 分钟版：**
-
-推单层 Transformer FLOPs，我只记一个基本公式：矩阵乘 $A_{M\times N}\times B_{N\times K}$ 的 FLOPs 是 $2MNK$，因为输出有 $M\times K$ 个元素、每个是长度 $N$ 的点积约 $2N$ 次运算。然后数有几个矩阵乘。线性层这类都是 $nd^2$：QKV 三次投影加输出投影是 4 个 $n\times d$ 乘 $d\times d$，各 $2nd^2$ 合 $8nd^2$；FFN 两层维度 $d\to 4d\to d$，各 $8nd^2$ 合 $16nd^2$；两者合 $24nd^2$。Attention 两次大矩阵乘是 $n^2d$ 项：$QK^\top$ 得 $n\times n$ 注意力矩阵是 $2n^2d$、权重乘 V 也是 $2n^2d$，合 $4n^2d$。所以单层总 FLOPs 是 $24nd^2+4n^2d$，整模型再乘层数、训练含反向约再 ×3。关键直觉是 $n^2$ 来自每个 token 都要和每个 token 算相关性，这正是 attention 对序列长度平方复杂度的根源：当 $n\ll d$ 时线性层 $nd^2$ 主导，$n$ 很大时 $n^2d$ 成瓶颈，也是长上下文和 FlashAttention 要解决的问题。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

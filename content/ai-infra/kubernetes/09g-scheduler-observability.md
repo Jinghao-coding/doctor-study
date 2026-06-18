@@ -167,16 +167,6 @@ topk(5, sum(scheduler_unschedulable_pods) by (plugin))</code></pre>
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-scheduler 可观测性靠三件套：**simulator 本地重放**（不动生产复现问题）+ **Diagnosis/FitError** 看每个节点被哪个 Plugin 拦下来（NodeToStatus、UnschedulablePlugins、PreFilterMsg）+ **Prometheus metrics** 看长期 SLO（pending_pods、scheduling_duration P99、plugin_execution_duration、unschedulable_pods 按 plugin）。
-
-**2 分钟版：**
-
-排查 Pod Pending 我会按"现场 → 共性 → 复现 → 趋势"四步走。第一步用 describe pod 看 FailedScheduling，事件文本背后是 framework.Diagnosis，包含 NodeToStatus（每节点被谁拦下）和 UnschedulablePlugins（决定 QueueingHint 关心哪些事件）。第二步看 metrics 里的 scheduler_unschedulable_pods{plugin=...} 判断是不是某个 Plugin 拦了大量 Pod。第三步用 kube-scheduler-simulator 把生产快照拉下来本地重放，可以注入 mock plugin 构造极端场景。第四步看 scheduler_scheduling_duration_seconds P99 和 plugin_execution_duration_seconds 找性能回退。SLO 的几个常用阈值：调度 P99 < 100ms、unschedulable rate < 1%、UnschedulableQ < 100、单 plugin P99 < 10ms。
-
 ## 关联模块
 
 - `调度路径与三个队列`（09a）：三队列流转。

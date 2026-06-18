@@ -76,16 +76,6 @@
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-张量并行切层内矩阵，流水线并行切层间 stage，两者解决的瓶颈不同。 TP 看 NVLink，PP 看 bubble。
-
-**2 分钟版：**
-
-张量并行和流水线并行解决的瓶颈不同：TP 切层内矩阵，解决单层矩阵太大或单层计算太重；PP 切层间 stage 序列，解决层数太多、整模型放不进单卡。TP 以 Y=XW 为例，列并行把 W 按输出维度切成 [W1...Wt] 各算 Yi 再 concat，行并行切输入维度后用 ReduceScatter/AllReduce 合并；它每层 forward/backward 都要 AllGather 或 ReduceScatter，96 层模型一轮可能触发数百次集合通信，频率比通信量更致命，所以 TP 必须放在节点内 NVLink/NVSwitch 域，TP 度一般不超过单节点 GPU 数，跨节点 TP 是性能灾难。PP 把 batch 切成 m 个 micro-batch 在 p 个 stage 上流动，相邻 stage 只 Send/Recv 激活和梯度，可跨节点；核心开销是 bubble，1F1B 调度下 bubble rate≈(p-1)/(m+p-1)，stage 越多越差、micro-batch 越多越好，但 m 受 global batch 和显存约束。组合时按总 GPU=DP×TP×PP 算，TP 节点内、PP/DP 跨节点。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

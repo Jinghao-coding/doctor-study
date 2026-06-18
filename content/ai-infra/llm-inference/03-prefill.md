@@ -58,16 +58,6 @@ TTFT = 排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络�
 
 Prefill 不等于“生成阶段”，它主要处理输入上下文。Prefill 慢不一定是模型本身慢，也可能是排队、Prompt 过长、batch 组织不合理或前缀缓存没有命中。
 
-## 面试回答
-
-**30 秒版：**
-
-Prefill 阶段的核心是大矩阵计算和首 token 延迟，优化重点是 batching、prefix cache、算子选择和 GPU 算力利用。 把 TTFT 拆成排队、tokenization、prefill compute 和返回链路。
-
-**2 分钟版：**
-
-Prefill 阶段一次性处理完整 Prompt token 序列，做 Embedding、QKV 投影、Attention、FFN、Logits 计算，输出首 token 分布和整段 Prompt 的 KV Cache，主要影响 TTFT。它之所以是 compute-bound，是因为多个 token 并行、矩阵乘规模大，能较好吃满 Tensor Core，但长 Prompt 下 attention 计算和访存都会涨。我会把 TTFT 拆成"排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络返回"——prefill 计算通常是主要部分，但高并发时排队也可能成为主因。优化上：用 FlashAttention 和算子融合减少 attention 中间读写降首 token 延迟；用 Prefix Cache 复用相同 system prompt 减少重复计算；用 Chunked Prefill 把长 Prompt 拆块、穿插 decode，避免长 Prompt 阻塞；用 Continuous Batching 提吞吐；用量化和 KV Cache 管理省显存。易错点是 prefill 慢不一定是模型慢，可能是排队、Prompt 过长或前缀缓存没命中。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

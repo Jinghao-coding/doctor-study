@@ -15,16 +15,6 @@ CPU 性能不只看核数，更取决于数据离 CPU 有多近：寄存器、L1
 <div class="card card-d"><h3>层次结构</h3><table><tr><th>层次</th><th>特点</th><th>性能影响</th></tr><tr><td>寄存器</td><td>CPU 内部，最快</td><td>编译器优化和指令级并行</td></tr><tr><td>L1/L2 Cache</td><td>每 core 或小范围共享</td><td>热数据命中时极快</td></tr><tr><td>L3 Cache</td><td>多 core 共享</td><td>跨线程共享数据常经过 L3</td></tr><tr><td>DRAM</td><td>容量大但延迟高</td><td>内存带宽瓶颈常见</td></tr><tr><td>远端 NUMA 内存</td><td>跨 socket 访问</td><td>延迟更高，带宽更低</td></tr></table></div>
 <div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: 为什么线程数增加后吞吐可能下降？</div><div class="qa-a"><p>线程数增加会带来上下文切换、锁竞争、cache line 抖动、内存带宽竞争和 NUMA 远端访问。CPU core 变忙不代表有效吞吐提升。</p></div></div>
 
-## 面试回答
-
-**30 秒版：**
-
-现代 CPU 的瓶颈往往不是算力而是访存。寄存器、L1/L2/L3、本地 DRAM、远端 NUMA 内存的延迟逐级放大、带宽逐级下降，所以优化的核心是让热数据尽量靠近 CPU、保持访问局部性，而不是单纯堆核数。
-
-**2 分钟版：**
-
-我会先讲层次：寄存器最快但极小，L1/L2 每核私有、L3 多核共享，再往下是本地 DRAM 和跨 socket 的远端 NUMA 内存，延迟从纳秒到上百纳秒逐级放大，带宽逐级下降。接着讲为什么重要：程序如果频繁 cache miss 或跨 NUMA 访存，CPU 会大量时间在等内存，表现为「CPU 跑满但吞吐上不去」。然后讲工程手段：提升空间/时间局部性、按 cache line 对齐避免 false sharing、用 numactl 做内存和 CPU 绑核、大页减少 TLB miss。最后收束到 AI Infra：数据加载线程要靠近目标 GPU 所在的 NUMA 节点，否则 host-to-device 拷贝会跨 socket，拖慢整个训练 pipeline。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

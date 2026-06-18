@@ -200,18 +200,6 @@ status:
 </table>
 </div>
 
-<div class="card card-w">
-<h3>面试回答模板</h3>
-<div class="qa-section">
-<div class="qa-section-title">30 秒版</div>
-<p>原生 ResourceQuota 是超额即拒绝，满足不了“照常提交、超额排队”。我会做两级队列：自研一级业务队列接收所有 TrainingJob，永不因 quota 满而拒绝，维护 <code>(team, gpuType)</code> 的硬配额账本，按优先级/aging/防饿死排序，只有 <code>used + reserved + incoming <= hard</code> 时才 reserve 配额并创建 VolcanoJob；Volcano 作为二级只做 gang、PodGroup、放置和抢占执行。状态全存 CRD 的 spec/status 由 etcd 持久化，账本靠 reconcile 全量重算，不另起数据库。</p>
-</div>
-<div class="qa-section">
-<div class="qa-section-title">2 分钟版</div>
-<p>先点矛盾：ResourceQuota 拒绝语义、scheduler 只认 Pod 不认用户额度、单靠 Volcano 的队列偏 scheduler 内部不承载业务语义。再给两级架构：一级平台层负责提交入口、超额排队、异构配额账本（按卡型分格）、优先级与防饿死、抢占决策，是配额的 source of truth；二级 Volcano 负责 gang、PodGroup、节点选择、binpack、拓扑和抢占执行，Queue capability 作为兜底 guardrail。然后讲状态：desired 放 spec、observed 放 status，etcd 持久化，配额 used 每次 reconcile 全量重算而非手工加减，控制器无状态、重启靠 List+Watch 重建；并发靠 resourceVersion 乐观锁 + 单 key 串行 + leader election；reserve 后 Volcano 拉不起来设超时 Requeue。最后收一句：这套就是 Kueue（ResourceFlavor + Workload 准入）和 Volcano（PodGroup + gang）在工业界的分层，只是把业务排队收回平台层自己控。</p>
-</div>
-</div>
-
 ## 关联模块
 
 - `Volcano`：PodGroup、Gang、Queue、Priority、Preempt、Reclaim 等二级调度能力细节。

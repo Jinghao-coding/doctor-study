@@ -54,16 +54,6 @@
 <div class="qa-a"><p>从应用看 batch、梯度大小、通信算法、NCCL 日志；从 GPU 拓扑看 NVLink/PCIe、跨 NUMA、GPU affinity；从网络看带宽、丢包、拥塞、RoCE PFC/ECN、网卡错误；从系统看 CPU 辅助线程、软中断、IRQ 亲和和容器资源限制。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-TCP 三次握手确认双方收发能力和初始序列号、四次挥手分阶段关闭，TIME_WAIT 保证可靠关闭、CLOSE_WAIT 多半是应用没 close。收发包路径要经过网卡 DMA、硬/软中断、协议栈、socket buffer 再到用户态，高并发服务用 epoll 管理大量 fd。AI Infra 里 RDMA/InfiniBand/NCCL 就是为绕过传统 TCP/IP 的内核协议栈、CPU copy 和延迟而存在的。
-
-**2 分钟版：**
-
-网络基础连接了分布式训练、推理服务、RPC 和存储访问。先讲 socket 和 TCP：建连走 socket/bind/listen/accept/connect，三次握手确认双方收发能力和初始序列号，四次挥手分阶段关闭，主动关闭方进 TIME_WAIT 确保最后 ACK 送达并让旧报文消散，CLOSE_WAIT 堆积通常是应用没 close。listen 有 SYN queue 和 accept queue，队列过小会连接失败或延迟升高。收发包路径要经网卡 DMA、硬中断/软中断、协议栈、socket buffer 再拷到用户态，所以高并发服务用 epoll 管理大量 fd，且要分清 LT 反复通知、ET 只在状态变化时通知（要非阻塞 fd 一次读到 EAGAIN）。落到 AI Infra，分布式训练通信慢要分四层排查：应用看 batch、梯度大小、通信算法和 NCCL 日志，GPU 拓扑看 NVLink/PCIe、跨 NUMA、GPU affinity，网络看带宽、丢包、拥塞、RoCE PFC/ECN 和网卡错误，系统看 CPU 辅助线程、软中断和 IRQ 亲和。正因为传统 TCP/IP 在内核协议栈、CPU copy、延迟和吞吐上有瓶颈，才有 RDMA、InfiniBand、RoCE 和 NCCL；推理服务则要关注连接池、超时、重试、限流熔断，以及流式输出时慢客户端、发送缓冲区和反压。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

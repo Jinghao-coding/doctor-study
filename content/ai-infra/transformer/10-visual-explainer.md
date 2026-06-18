@@ -45,16 +45,6 @@ $$</div>
 | 可视化里的小模型能代表线上 LLM 性能 | 小模型适合理解机制，线上 LLM 还要看显存、并行、batching、KV cache 和 serving engine。 |
 | Transformer 架构图已经够了 | 架构图是静态结构，Explainer 补动态过程，本站补工程和面试表达。 |
 
-## 面试回答
-
-**30 秒版：**
-
-我会用 Transformer Explainer 建立动态直觉：token 进入模型后经过 embedding、attention、MLP 和 residual stream，最后得到 next-token logits。可视化能帮助理解“attention 是权重化的信息混合”，但面试还要补公式、mask、KV cache、FLOPs 和 prefill/decode 的系统瓶颈。
-
-**2 分钟版：**
-
-我会把它当成学习辅助，不当成最终答案。第一步用可视化看输入 token 如何变成 embedding，并沿着 residual stream 逐层更新。第二步看每个 attention head 如何给不同 token 分配权重，对应公式里的 \(QK^\top\)、softmax 和对 \(V\) 的加权求和。第三步看 MLP/FFN 对每个 token 独立变换，理解 Attention 负责 token 间通信，FFN 负责逐 token 加工。最后回到系统视角：prefill 阶段可以并行处理整段 prompt，decode 阶段逐 token 生成并读写 KV cache，所以线上瓶颈不能只靠架构图解释，还要结合 Roofline、显存和调度。
-
 ## 关联模块
 
 - `整体架构`：静态结构和 Encoder/Decoder/Decoder-only 边界。

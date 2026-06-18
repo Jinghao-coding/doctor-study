@@ -259,16 +259,6 @@
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-多资源公平的难点是"公平"在多维空间没唯一定义。DRF 是基石：用每个用户占比最高的维度（dominant resource）的份额做均衡，并保证 Sharing Incentive、Envy-freeness、Pareto Efficiency 三个性质。DRF 是理论，工程上用 Elastic Quota（min 保障+max 上限+空闲借用+可回收）和 QAD（保障度连续值，可设阈值触发渐进式回收）落地。GPU 集群还要叠加异构 GPU 按 flavor 分算、拓扑放 Score 阶段、弹性任务按目标 world size 算、抢占要代价感知。
-
-**2 分钟版：**
-
-我会先说明 GPU 集群不是单资源系统，一个任务同时消耗 GPU、CPU、内存、网络，所以"公平"本身没有唯一定义——团队 A 跑 CV 吃 GPU、团队 B 跑 NLP GPU 和内存都吃，按 GPU 数均分对谁都不公平。从单资源的 Max-Min Fairness（按需分配、多余让给需要的人）和 Proportional Share（按权重，但不理解瓶颈资源）起步，引出多资源公平的基石算法 DRF：每个用户的 dominant resource 是它在所有维度里占比最高的那一维，DRF 让不同用户的 dominant share 尽量接近，能手动推演（如 9 CPU/18GB 内存下两个用户最终 dominant share 都收敛到 67%）。DRF 有三个关键性质：Sharing Incentive（参与共享不比独占差，是多租户系统的底线）、Envy-freeness（无嫉妒）、Pareto Efficiency（无浪费）。然后从理论过渡到工程：DRF 不理解拓扑/优先级/工程约束，所以用 Elastic Quota 做 min 保障+max 上限+空闲借用+可回收，再用 QAD（实际获得/保障配额）这个连续值替代离散阈值，可以设阈值（如 0.95）触发渐进式回收、做更精确的抢占决策。最后讲 GPU 集群特有的四个延伸难点：异构 GPU（1 H100≈4 V100，打破 DRF 同类资源可互换假设，按 flavor 分算或归一化）、拓扑（8 卡同 NVLink vs 跨 4 节点性能差 2 倍，拓扑放 Score 阶段不进 Fairness）、任务弹性（按目标 world size 算 dominant share）、抢占成本（不简单选 dominant share 最高的，而是选释放资源量/抢占代价比值最高的牺牲者）。落到队列设计就是 Quota、Borrowing、Reclaim、Admission、Hierarchy 五大能力。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

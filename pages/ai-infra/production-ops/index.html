@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Infra 生产化闭环 · doctor-study</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../../assets/style.css?v=1781710946">
+</head>
+<body>
+<nav class="topnav">
+<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机基础">基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机基础知识</span><small>cs-basics / os / networking</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与面试表达">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/system-design/index.html"><span>系统设计题</span><small>system-design</small></a><a href="../../../pages/ai-infra/production-ops/index.html"><span>AI Infra 生产化闭环</span><small>production / slo / observability</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
+</nav>
+<div class="app-shell">
+<aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机基础">基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机基础知识"><span>计算机基础知识</span><small>cs-basics · os</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与面试表达">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/system-design/index.html" data-initial="系统" title="系统设计题"><span>系统设计题</span><small>system-design</small></a><a class="side-link active" href="../../../pages/ai-infra/production-ops/index.html" data-initial="AI" title="AI Infra 生产化闭环"><span>AI Infra 生产化闭环</span><small>production · slo</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
+  <main class="wrap">
+  <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Production Ops</div><h1>AI Infra 生产化闭环</h1><p class="sub">数据与模型制品 · 可观测性 · SLO · 容量成本 · 发布安全</p><div class="hero-tags"><span>production</span><span>observability</span><span>slo</span><span>model-registry</span><span>finops</span><span>security</span></div></div></section>
+
+<section class="tabs-shell" data-tabs data-tabs-id="production-ops-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 4</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">生产化闭环内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="生产化闭环内容模块"><details class="tab-group" open data-group-id="production-ops-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">覆盖审查</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="production-ops-tabs-tab-1" data-initial="01" data-mid="production-ops-tabs::01-coverage-map-md" data-level="基础" title="知识覆盖地图" aria-controls="production-ops-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">知识覆盖地图</span><span class="tab-desc">当前站点已覆盖内容、缺口和补齐优先级</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="production-ops-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">资产与平台</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="production-ops-tabs-tab-2" data-initial="02" data-mid="production-ops-tabs::02-data-model-artifacts-md" data-level="进阶" title="数据、模型与制品链路" aria-controls="production-ops-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">数据、模型与制品链路</span><span class="tab-desc">数据集、Checkpoint、模型注册、镜像、血缘和回滚</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="production-ops-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">运行治理</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="production-ops-tabs-tab-3" data-initial="03" data-mid="production-ops-tabs::03-observability-slo-capacity-md" data-level="精通" title="可观测性、SLO 与容量成本" aria-controls="production-ops-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">可观测性、SLO 与容量成本</span><span class="tab-desc">指标、日志、Tracing、容量规划、成本和能效</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></button><button class="tab-button" type="button" role="tab" id="production-ops-tabs-tab-4" data-initial="04" data-mid="production-ops-tabs::04-release-security-governance-md" data-level="精通" title="发布、安全与事故闭环" aria-controls="production-ops-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">发布、安全与事故闭环</span><span class="tab-desc">灰度发布、回滚、RBAC、Secret、供应链安全和复盘</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="production-ops-tabs-panel-1" aria-labelledby="production-ops-tabs-tab-1" data-mid="production-ops-tabs::01-coverage-map-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>知识覆盖地图</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>当前站点已经覆盖 AI Infra 面试的主干：模型基础、GPU/CUDA、LLM 推理、分布式训练、Kubernetes、调度、集群管理、性能建模、系统设计和计算机基础。主要遗漏不是单个算法，而是<strong>生产化闭环</strong>：数据和模型资产如何进入平台、服务如何观测和守 SLO、容量成本如何规划、发布安全和事故复盘如何闭环。</p>
+<h2>覆盖现状</h2>
+<table>
+<tr><th>方向</th><th>当前覆盖</th><th>面试风险</th></tr>
+<tr><td>模型与算子</td><td>Transformer、FLOPs、Roofline、Attention、Decode memory-bound</td><td>基础充分，后续可补 MoE/多模态细节</td></tr>
+<tr><td>GPU 与 CUDA</td><td>硬件、互联、MIG/MPS、VMM、Stream、Occupancy、诊断</td><td>主线充分，适合回答性能排查题</td></tr>
+<tr><td>LLM 推理</td><td>Prefill/Decode、KV cache、PagedAttention、FlashAttention、vLLM、调度优化</td><td>主线充分，后续可补 TensorRT-LLM / Triton 部署对比</td></tr>
+<tr><td>分布式训练</td><td>DP/TP/PP、ZeRO/FSDP、NCCL、训练排障</td><td>主线充分，后续可补 MoE/EP 和训练数据管道</td></tr>
+<tr><td>K8s / 调度 / 集群</td><td>Scheduler、Operator、DRA、Volcano/Kueue/YuniKorn、多租户、容错</td><td>主线充分，适合平台岗</td></tr>
+<tr><td>CS 基础</td><td>OS、网络、Linux/容器、NUMA、I/O、C++、分布式基础</td><td>覆盖广，后续可按面试频率继续收束</td></tr>
+<tr><td>生产化闭环</td><td>分散出现在 K8s、集群、系统设计、CS 基础里</td><td>缺少统一页面，容易在综合设计题里答散</td></tr>
+</table>
+<h2>明显缺口</h2>
+<table>
+<tr><th>缺口</th><th>为什么重要</th><th>建议优先级</th></tr>
+<tr><td>数据与模型制品链路</td><td>面试会追问数据集、checkpoint、模型注册、镜像、版本、血缘和回滚，不只是训练/推理运行时</td><td>P0</td></tr>
+<tr><td>可观测性与 SLO</td><td>AI Infra 平台岗常问如何发现、定位和治理慢请求、训练 hang、GPU 利用率低、调度延迟和容量风险</td><td>P0</td></tr>
+<tr><td>容量规划与成本</td><td>生产平台不仅要跑通，还要解释 quota、峰值、碎片、能耗、tokens/J、GPU 型号选型和扩容依据</td><td>P0</td></tr>
+<tr><td>发布与安全治理</td><td>推理服务、训练平台、Operator 和调度器都涉及灰度、回滚、权限、Secret、镜像供应链和事故复盘</td><td>P1</td></tr>
+<tr><td>Serving runtime 对比</td><td>vLLM 已覆盖较多，Triton Inference Server、TensorRT-LLM、ONNX Runtime、Ray Serve 可补成部署选型页</td><td>P1</td></tr>
+<tr><td>数据工程与训练管道</td><td>数据校验、shuffle、缓存、冷热分层、样本去重、在线特征/离线数据一致性可作为训练平台补充</td><td>P1</td></tr>
+<tr><td>MLOps / LLMOps 流程</td><td>评测、模型准入、A/B、提示词版本、Agent 工具权限和离线回放可作为 Agent 与系统设计补充</td><td>P2</td></tr>
+</table>
+<h2>补齐策略</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">先补横向闭环</div><div class="flow-desc">数据、模型、观测、容量、安全贯穿所有主题</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">再补部署选型</div><div class="flow-desc">vLLM / Triton / TensorRT-LLM / Ray Serve 做对比</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">最后补专题深挖</div><div class="flow-desc">MoE、数据管道、LLMOps、评测准入按岗位需要扩展</div></div></div>
+<h2>关联模块</h2>
+<ul><li><code>LLM 推理系统</code>：补齐 serving engine 之外的部署、SLO 和发布治理。</li><li><code>分布式训练</code>：补齐数据、checkpoint、模型制品和训练平台生命周期。</li><li><code>Kubernetes 核心</code>：补齐 Operator、RBAC、Secret、Admission、发布和事故治理。</li><li><code>GPU 集群管理</code>：补齐容量规划、成本、配额、碎片和可观测性闭环。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="production-ops-tabs::01-coverage-map-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="production-ops-tabs::01-coverage-map-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">数据、模型与制品链路</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="production-ops-tabs-panel-2" aria-labelledby="production-ops-tabs-tab-2" data-mid="production-ops-tabs::02-data-model-artifacts-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>数据、模型与制品链路</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>AI Infra 的生产链路不是“代码提交后跑一个 Job”，而是把数据集、训练配置、checkpoint、模型权重、镜像、推理配置和评测结果都变成可追踪、可回滚、可审计的制品。面试回答要强调<strong>版本、血缘、准入和回滚</strong>四件事。</p>
+<h2>核心概念</h2>
+<table>
+<tr><th>制品</th><th>解决什么问题</th><th>关键元数据</th></tr>
+<tr><td>Dataset</td><td>训练、评测和回放的数据来源</td><td>版本、schema、样本量、来源、权限、质量报告</td></tr>
+<tr><td>Training Config</td><td>复现实验和训练任务</td><td>代码 commit、镜像、超参、并行策略、资源规格</td></tr>
+<tr><td>Checkpoint</td><td>训练恢复、模型导出和回滚</td><td>step、metric、optimizer state、并行切分方式、存储路径</td></tr>
+<tr><td>Model Artifact</td><td>推理部署的模型权重和 tokenizer</td><td>base model、finetune 方法、精度、量化方式、签名</td></tr>
+<tr><td>Container Image</td><td>运行环境一致性</td><td>digest、CUDA/driver 兼容、依赖版本、安全扫描结果</td></tr>
+<tr><td>Serving Config</td><td>推理服务行为</td><td>engine、tensor parallel、max tokens、batch 策略、限流策略</td></tr>
+<tr><td>Evaluation Report</td><td>模型准入依据</td><td>benchmark、线上回放、红线 case、回归结果、审批人</td></tr>
+</table>
+<h2>系统链路</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">数据进入</div><div class="flow-desc">数据集版本、schema、权限、质量检查</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">训练提交</div><div class="flow-desc">代码、镜像、配置、资源和数据版本绑定</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">运行产出</div><div class="flow-desc">checkpoint、日志、metrics、profile、失败事件沉淀</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">模型注册</div><div class="flow-desc">权重、tokenizer、配置、评测报告和血缘写入 registry</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">部署准入</div><div class="flow-desc">评测达标、安全扫描、容量预估、灰度策略确认</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">线上回滚</div><div class="flow-desc">按模型版本、镜像 digest 和 serving config 一起回滚</div></div></div>
+<h2>关键机制</h2>
+<div class="card card-s">
+<h3>血缘不是文档，是平台状态</h3>
+<p>模型注册时必须能回答：这个模型来自哪个 base model、哪个数据集版本、哪次训练任务、哪个 checkpoint、哪份评测报告、哪个镜像和哪份 serving config。否则线上出问题时只能靠人工猜。</p>
+</div>
+<div class="card card-m">
+<h3>Checkpoint 与 Model Artifact 的边界</h3>
+<p>Checkpoint 服务训练恢复，通常包含 optimizer state、scheduler state、随机数状态和并行切分信息；Model Artifact 服务推理部署，通常只保留权重、tokenizer、模型结构、量化参数和推理配置。两者不能混为一谈。</p>
+</div>
+<div class="card card-w">
+<h3>镜像用 tag 不够，要用 digest</h3>
+<p>生产发布不能只记录 <code>latest</code> 或普通 tag，因为 tag 可变。准入、回滚和审计应记录 image digest、构建流水线、依赖 SBOM 和安全扫描结果。</p>
+</div>
+<h2>常见误区</h2>
+<table>
+<tr><th>误区</th><th>正确说法</th></tr>
+<tr><td>只要保存模型权重就能复现</td><td>还需要数据版本、代码 commit、镜像、配置、随机种子和评测结果</td></tr>
+<tr><td>checkpoint 就是线上模型</td><td>checkpoint 偏训练恢复，线上模型要经过导出、转换、量化、评测和注册</td></tr>
+<tr><td>模型 registry 只是文件目录</td><td>registry 应保存元数据、血缘、权限、准入状态和版本生命周期</td></tr>
+<tr><td>回滚只回滚权重</td><td>需要一起回滚镜像、engine 参数、tokenizer、prompt/config 和路由策略</td></tr>
+<tr><td>数据质量是算法问题</td><td>数据 schema、缺失、重复、脏样本、权限和合规都是平台问题</td></tr>
+</table>
+<h2>关联模块</h2>
+<ul><li><code>分布式训练平台</code>：训练任务产出 checkpoint 和模型制品。</li><li><code>LLM 推理系统</code>：模型制品进入 serving engine 后变成线上服务。</li><li><code>Kubernetes 核心</code>：镜像、ConfigMap、Secret、Service 和 Deployment 承载运行环境。</li><li><code>系统设计题</code>：资产血缘和回滚是综合设计题里的加分点。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="production-ops-tabs::02-data-model-artifacts-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="production-ops-tabs::02-data-model-artifacts-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">知识覆盖地图</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">可观测性、SLO 与容量成本</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="production-ops-tabs-panel-3" aria-labelledby="production-ops-tabs-tab-3" data-mid="production-ops-tabs::03-observability-slo-capacity-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>可观测性、SLO 与容量成本</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>AI Infra 的可观测性要把业务指标、模型指标、系统指标和调度指标连起来；容量规划要从 SLO 反推 GPU、显存、网络、存储和队列余量。面试不要只说 Prometheus，要说<strong>指标分层、告警归因、容量模型和成本权衡</strong>。</p>
+<h2>指标分层</h2>
+<table>
+<tr><th>层级</th><th>训练场景</th><th>推理场景</th><th>调度 / 平台场景</th></tr>
+<tr><td>业务指标</td><td>任务成功率、训练完成时间、有效吞吐</td><td>QPS、成功率、TTFT、TPOT、P95/P99</td><td>提交成功率、准入延迟、排队时长</td></tr>
+<tr><td>模型指标</td><td>loss、gradient norm、tokens/s、MFU</td><td>输出 token/s、cache hit、acceptance rate</td><td>不直接看模型质量，但要关联模型大小和资源需求</td></tr>
+<tr><td>GPU 指标</td><td>GPU-Util、SM Active、HBM、显存、ECC、功耗</td><td>HBM、KV cache、batch size、kernel timeline</td><td>卡健康、碎片率、MIG/MPS 归因</td></tr>
+<tr><td>网络指标</td><td>NCCL 带宽、重传、RDMA error、AllReduce 时间</td><td>P/D 分离 KV 传输、跨节点延迟</td><td>节点拓扑、交换机拥塞、机架放置</td></tr>
+<tr><td>存储指标</td><td>数据加载吞吐、checkpoint 时间、元数据延迟</td><td>权重加载、模型分发、日志写入</td><td>PVC attach、对象存储吞吐、缓存命中</td></tr>
+<tr><td>控制面指标</td><td>Operator reconcile、API error、队列 depth</td><td>发布状态、endpoint 健康</td><td>scheduler latency、binding error、quota ledger</td></tr>
+</table>
+<h2>SLO 设计</h2>
+<div class="card card-m">
+<h3>推理 SLO</h3>
+<p>常见目标是可用性、错误率、TTFT、TPOT、P99、吞吐和成本。交互式服务通常优先保护 TTFT 和 TPOT；离线批处理更关注吞吐和单位成本。</p>
+</div>
+<div class="card card-d">
+<h3>训练 SLO</h3>
+<p>训练不一定有请求级延迟，但有任务级 SLO：排队时间、启动时间、失败恢复时间、checkpoint 保存时间、tokens/s、MFU、任务完成率和资源浪费率。</p>
+</div>
+<div class="card card-w">
+<h3>告警要避免只看单点指标</h3>
+<p><code>GPU-Util</code> 低不能直接说明 GPU 问题，可能是 DataLoader、H2D、NCCL、存储、调度队列或应用同步点。告警应该带上上下文指标，方便直接归因。</p>
+</div>
+<h2>容量规划</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">确定 SLO</div><div class="flow-desc">QPS、TTFT/TPOT、训练完成时间、排队时间</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">建立单模型画像</div><div class="flow-desc">参数量、KV cache、tokens/s、显存、网络和存储需求</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">估算峰值负载</div><div class="flow-desc">日峰值、活动峰值、长 prompt 比例、训练提交波峰</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">映射资源池</div><div class="flow-desc">GPU 型号、显存、互联、CPU、内存、NVMe、网络</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">加入安全余量</div><div class="flow-desc">N+1、故障域、升级窗口、碎片、冷启动、抢占恢复</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">持续校准</div><div class="flow-desc">用线上 metrics 和 profile 修正容量模型</div></div></div>
+<table>
+<tr><th>问题</th><th>估算方法</th><th>风险</th></tr>
+<tr><td>推理需要多少 GPU</td><td>单卡 tokens/s、batch 策略、TTFT/TPOT SLO、峰值 QPS</td><td>长 prompt 和 KV cache 可能比权重更先打满显存</td></tr>
+<tr><td>训练队列需要多少 GPU</td><td>到达率、平均训练时长、资源规格、目标排队时间</td><td>Gang 作业和拓扑约束导致碎片</td></tr>
+<tr><td>该买哪类 GPU</td><td>模型大小、精度、显存容量、HBM 带宽、互联、功耗</td><td>只看 TFLOPS 会忽略 memory-bound 和通信瓶颈</td></tr>
+<tr><td>成本如何衡量</td><td>GPU 小时、tokens/J、tokens/$、利用率、失败重跑率</td><td>平均利用率高不代表 P99 和用户体验好</td></tr>
+</table>
+<h2>排查路径</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">先看用户症状</div><div class="flow-desc">慢请求、失败、排队、训练停滞、成本异常</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">对齐 SLO 指标</div><div class="flow-desc">错误率、TTFT、TPOT、JCT、queue time、MFU</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">分层定位</div><div class="flow-desc">应用、模型、GPU、网络、存储、调度、控制面</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">拿证据</div><div class="flow-desc">metrics、logs、trace、profile、events、scheduler state</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">修复复测</div><div class="flow-desc">限流、扩容、调度策略、模型参数、数据路径、发布回滚</div></div></div>
+<h2>关联模块</h2>
+<ul><li><code>GPU 利用率诊断</code>：提供 SM、HBM、Occupancy 和 Warp Stall 的底层解释。</li><li><code>LLM 推理系统</code>：提供 TTFT、TPOT、KV cache 和 serving scheduler 语境。</li><li><code>分布式训练</code>：提供 MFU、NCCL、checkpoint 和 hang 排查语境。</li><li><code>任务调度理论 / GPU 集群管理</code>：提供排队、配额、碎片和公平性语境。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="production-ops-tabs::03-observability-slo-capacity-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="production-ops-tabs::03-observability-slo-capacity-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">数据、模型与制品链路</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">发布、安全与事故闭环</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="production-ops-tabs-panel-4" aria-labelledby="production-ops-tabs-tab-4" data-mid="production-ops-tabs::04-release-security-governance-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>发布、安全与事故闭环</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>AI Infra 的生产发布不是把模型服务重启一下，而是让模型、镜像、配置、路由、权限和观测一起受控变更。面试回答要把灰度、回滚、安全边界和事故复盘讲成一条闭环。</p>
+<h2>发布链路</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">变更准备</div><div class="flow-desc">模型版本、镜像 digest、serving config、资源预算、评测报告</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">准入检查</div><div class="flow-desc">离线评测、回放、性能压测、安全扫描、容量评估</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">灰度发布</div><div class="flow-desc">小流量、指定租户、影子流量或 canary endpoint</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">实时观测</div><div class="flow-desc">错误率、TTFT、TPOT、P99、GPU 显存、KV cache、日志</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">自动回滚</div><div class="flow-desc">指标越线、健康检查失败、资源异常或人工确认</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">复盘沉淀</div><div class="flow-desc">根因、时间线、检测缺口、修复项、预防项</div></div></div>
+<h2>发布策略</h2>
+<table>
+<tr><th>策略</th><th>适合场景</th><th>风险点</th></tr>
+<tr><td>Rolling Update</td><td>无状态 API、普通控制面服务</td><td>版本混跑期间要兼容旧配置</td></tr>
+<tr><td>Blue-Green</td><td>回滚要求高、切流明确</td><td>成本更高，需要双份容量</td></tr>
+<tr><td>Canary</td><td>大模型推理服务、调度器策略、Operator 变更</td><td>指标窗口太短会误判，太长会扩大影响</td></tr>
+<tr><td>Shadow Traffic</td><td>新模型或新推理引擎验证</td><td>影子流量不能影响线上，且要处理隐私数据</td></tr>
+<tr><td>Feature Flag</td><td>调度策略、限流、缓存策略</td><td>flag 爆炸会增加排障复杂度</td></tr>
+</table>
+<h2>安全边界</h2>
+<div class="card card-s">
+<h3>权限隔离</h3>
+<p>训练和推理平台应按租户、namespace、service account、RBAC、quota 和资源池隔离。用户不能直接拿集群级权限，平台控制器也应最小权限运行。</p>
+</div>
+<div class="card card-m">
+<h3>Secret 与数据权限</h3>
+<p>模型下载 token、对象存储 key、数据库密码、私有数据集权限都不能写进镜像或普通 ConfigMap。Secret 要配合访问审计、轮转和最小可见范围。</p>
+</div>
+<div class="card card-w">
+<h3>供应链安全</h3>
+<p>镜像要记录 digest、构建来源、依赖版本和扫描结果；模型制品也要记录来源、license、评测和准入状态。不要让未审核镜像或未知来源权重直接进入生产 GPU 池。</p>
+</div>
+<h2>事故闭环</h2>
+<table>
+<tr><th>阶段</th><th>要回答的问题</th><th>证据</th></tr>
+<tr><td>发现</td><td>谁发现、哪个 SLO 越线、影响范围多大</td><td>告警、dashboard、用户反馈</td></tr>
+<tr><td>定位</td><td>是模型、引擎、GPU、网络、存储、调度还是控制面</td><td>metrics、logs、trace、events、profile</td></tr>
+<tr><td>止血</td><td>限流、回滚、摘节点、切路由、扩容还是禁用策略</td><td>发布记录、路由记录、变更单</td></tr>
+<tr><td>修复</td><td>根因修掉了吗，是否有回归测试</td><td>MR、测试、压测、回放</td></tr>
+<tr><td>预防</td><td>哪个检测缺口导致没有提前发现</td><td>新告警、准入规则、演练、runbook</td></tr>
+</table>
+<h2>常见误区</h2>
+<table>
+<tr><th>误区</th><th>正确说法</th></tr>
+<tr><td>模型发布只要 A/B 看效果</td><td>还要看性能、容量、安全、回滚和观测</td></tr>
+<tr><td>回滚就是切回旧权重</td><td>需要一起回滚镜像、tokenizer、config、engine 参数和路由</td></tr>
+<tr><td>训练平台不用考虑安全</td><td>数据集、checkpoint、日志和 shell 权限都可能泄露敏感信息</td></tr>
+<tr><td>调度器改动可以直接全量</td><td>调度策略影响全局资源，应先影子评估、小流量或按队列灰度</td></tr>
+<tr><td>事故复盘只是写文档</td><td>复盘要产生检测、准入、自动化和架构改进项</td></tr>
+</table>
+<h2>关联模块</h2>
+<ul><li><code>Kubernetes 核心</code>：RBAC、Admission、Secret、Deployment 和 Operator 发布机制。</li><li><code>LLM 推理系统</code>：推理服务灰度、路由和 SLO 指标。</li><li><code>GPU 集群管理</code>：资源池隔离、配额、节点健康和故障域。</li><li><code>AI Agent</code>：工具权限、数据访问边界和审计也属于生产治理。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="production-ops-tabs::04-release-security-governance-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="production-ops-tabs::04-release-security-governance-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">可观测性、SLO 与容量成本</span></button></div></div></article></div></section>
+  </main>
+</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>doctor-study · AI Infra 面试准备</span>
+    <span class="footer-dot">·</span>
+    <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
+  </div>
+</footer>
+<script src="../../../assets/script.js?v=1781510254"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
+</body>
+</html>

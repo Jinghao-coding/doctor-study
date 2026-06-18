@@ -237,16 +237,6 @@
 </ul>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-拓扑感知调度的本质是把 rank 通信图映射到硬件路径图，最小化通信代价而不是看 GPU 总数。同样 8 卡，同节点 NVLink 和跨机 InfiniBand 的 AllReduce 差 10 倍。所以 Tensor Parallel/MoE 这种每层都通信的策略必须放进同一 NVLink/NVSwitch 域，Pipeline Parallel 的 P2P 走跨机 IB 也能接受，GPU 和 RDMA NIC 还要做 NUMA 对齐保证 GPUDirect RDMA 不退化。
-
-**2 分钟版：**
-
-我会先点明拓扑感知调度优化的是连接关系而不是 GPU 数量，因为大模型训练的通信能占总时间 30-50%，而 NVLink 比 InfiniBand 快 10-50 倍。接着按拓扑层次展开：GPU 内部、节点内 NVLink/NVSwitch、CPU-GPU 的 PCIe、节点间 InfiniBand/RoCE、机架交换机，每层带宽和延迟差一两个数量级。然后把并行策略映射到拓扑：Tensor Parallel 每层前向反向都做 AllReduce，通信频率最高，必须同节点 NVLink；MoE 的 All-to-All 最重，要避免跨拥塞域；Pipeline Parallel 是相邻 stage P2P，通信量小，跨节点可接受；Data Parallel 每步一次 AllReduce，需要高带宽网络；ZeRO-3 通信量比普通 DP 大 1.5-3 倍。工程权衡上不能追求所有任务都拿最优拓扑，而是设拓扑质量阈值，超阈值就调度、超时就降级。实现路径短期用 Node Label 加 Scheduler Plugin 在 Filter/Score 做拓扑打分，节点内用 kubelet Topology Manager 对齐 NUMA，长期演进到 DRA 的 ResourceSlice 做设备级结构化表达，因为 Node Label 只能到节点级、表达不了哪几张 GPU 之间有 NVLink。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

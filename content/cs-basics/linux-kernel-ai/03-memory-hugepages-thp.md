@@ -191,11 +191,3 @@ Pinned Memory | H2D DMA 前的关键缓冲区
 GPU HBM | 最终进入模型计算路径
 ```
 
-## 面试回答模板
-
-虚拟内存是操作系统给每个进程提供的独立地址空间，物理内存是真实 DRAM，MMU 负责把虚拟地址翻译成物理地址，TLB 用来缓存地址翻译结果。普通页通常是 4KB，大页可以是 2MB 或 1GB，可以减少页表项数量、扩大 TLB 覆盖范围、降低 TLB miss。THP 是 Linux 的透明大页机制，内核自动尝试把普通页合并为大页。它可能提升大内存顺序访问吞吐，但也可能因为 page fault、内存碎片整理、`khugepaged` 合并和大页拆分引入延迟抖动。在深度学习系统里，离线训练是否开启 THP 要 benchmark；在线推理或对 P99 敏感的服务通常更倾向关闭 THP 或设置为 `madvise`。
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么在线推理服务常建议关闭 THP？</div>
-<div class="qa-a"><p>因为在线推理更关注 P99/P999 稳定性，而 THP 可能在 page fault、内存碎片整理、页面合并或拆分时引入延迟尖刺。THP 对大内存顺序访问可能有吞吐收益，但这种收益不一定能覆盖推理服务对低抖动的要求。因此生产上常设为 <code>never</code> 或 <code>madvise</code>，具体还要 benchmark。</p><div class="qa-summary">面试口径：THP 是吞吐和延迟稳定性的权衡，不是绝对开或关。</div></div>
-</div>

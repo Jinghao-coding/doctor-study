@@ -104,16 +104,6 @@
 </ul>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-推理优化是多层组合：batching 提升吞吐，量化降显存和带宽，投机解码降 decode 步数，prefix cache 复用公共前缀。 回答时说明每种优化改善哪个指标、牺牲什么。
-
-**2 分钟版：**
-
-推理优化不是单一技巧，而是围绕算力、显存、调度队列三类资源做权衡，回答时我会说明每种优化改哪个指标、牺牲什么。Continuous Batching 把调度粒度从请求级降到 iteration/token 级，每步移除已完成请求、补入新请求，解决 decode 输出长短不一造成的 GPU 空洞，代价是调度器复杂度上升，且它依赖 PagedAttention 这种按 block 管理 KV 的内存系统才能稳定落地。Quantization 降权重显存和带宽，如 70B 模型 BF16 约 140GB、INT8 约 70GB、INT4 约 35GB，代价是可能精度损失和 kernel 适配。Speculative Decoding 用 draft model 猜多个 token 再让大模型一次验证，降 decode 步数，但接受率决定收益。Prefix Cache 复用相同 prompt 前缀，命中率和失效策略是关键。prefill 和 decode 混跑时长 prefill 会阻塞 decode，所以常用 Chunked Prefill 拆 chunk 穿插、decode-prioritized token budget 保 TPOT，规模大时上 Prefill/Decode 分离用 RDMA 传 KV。面试口径：prefill 优化 TTFT，decode 优化 TPOT。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

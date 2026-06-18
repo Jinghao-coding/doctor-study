@@ -27,16 +27,6 @@ RDMA 让网卡直接 DMA 读写远端内存，绕过内核协议栈、省掉 CPU
 <p>如果 GPU 和 NIC 跨 Socket，或者 GDR 不可用，路径可能退化成 GPU → CPU pinned memory → NIC → 网络 → CPU pinned memory → GPU。这会增加延迟、占用 CPU 内存带宽，并降低 NCCL 有效吞吐。</p>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-RDMA 是让网卡直接读写远端主机内存的技术，绕过内核协议栈，减少 CPU 参与、系统调用和数据拷贝，所以延迟低、吞吐高、CPU 占用少，适合分布式训练里的 NCCL 通信和参数同步。和 TCP RPC 比，它牺牲了服务治理的便利，换来内存搬运的极致性能，代价是 QP、内存注册、驱动这些工程复杂度。
-
-**2 分钟版：**
-
-RDMA 的核心是网卡直接对远端内存发起 DMA 读写，绕过内核协议栈，省掉序列化、系统调用和多次数据拷贝，所以相比 TCP RPC 它延迟更低、CPU 占用更小、吞吐更高，但工程上要管 QP、内存注册、驱动和拥塞控制。它有 RC/UC/UD 三种传输模式：RC 可靠有序连接态、用于分布式训练和存储，UC 连接但不可靠，UD 无连接不可靠开销低、用于控制消息和发现。AI 训练里最关键的是 GPUDirect RDMA：理想路径是 NIC 直接从源 GPU 的 HBM 发起 DMA、经 IB/RoCE 网络写到远端 GPU 显存，全程不经过 CPU 内存中转，省掉 host staging、CPU 内存带宽占用和额外拷贝。但这条路径对拓扑敏感——如果 GPU 和 NIC 跨 Socket 或 GDR 不可用，就退化成 GPU→CPU pinned memory→NIC→网络→对端 CPU→GPU，延迟变大、占用 CPU 内存带宽、NCCL 有效吞吐下降。所以排障时要先确认 GPU 和 NIC 是否在同 NUMA/同 PCIe root 下、GDR 是否启用，这直接决定大规模训练的通信效率。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

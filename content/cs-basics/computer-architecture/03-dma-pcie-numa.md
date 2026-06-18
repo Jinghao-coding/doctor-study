@@ -25,16 +25,6 @@ DMA、PCIe 和 NUMA 共同决定了数据在 CPU、GPU、NIC、NVMe 之间「怎
 </div>
 <div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: 为什么 GPU 训练要看 <code>nvidia-smi topo -m</code>？</div><div class="qa-a"><p>它能显示 GPU-GPU、GPU-NIC、GPU-CPU 的拓扑关系。张量并行、NCCL、RDMA 和数据加载都受拓扑影响；同样 8 张 GPU，NVLink 内互联和跨 PCIe/跨节点性能差异很大。</p></div></div>
 
-## 面试回答
-
-**30 秒版：**
-
-DMA 让设备直接读写内存、省掉 CPU 拷贝，PCIe 是 host 和 GPU/NIC/NVMe 的互联带宽上限，NUMA 决定 CPU、内存、GPU、NIC 之间的距离。数据路径越短、越少跨 socket，延迟越低、带宽越稳，所以训练前我会先用 nvidia-smi topo -m 看拓扑。
-
-**2 分钟版：**
-
-我会从三个概念切入：DMA 让设备绕过 CPU 直接搬数据，是 GPU copy、RDMA、NVMe 读取的基础；PCIe 是这些设备的主互联，决定了 host-to-device 的带宽天花板；NUMA 则把多 socket 服务器的 CPU、内存、设备分成若干亲和域。接着讲路径：同一 PCIe switch 下的 GPU-GPU、GPU-NIC 走 P2P/GDR 最快，同 NUMA 次之，跨 socket 要经过 CPU interconnect、延迟和抖动上升，最差的是 P2P 不可用时经 CPU pinned memory 中转。然后讲工程影响：数据加载线程要绑在目标 GPU 的 NUMA 节点，NCCL/RDMA 性能强依赖 GPU-NIC affinity。最后收束：同样 8 卡，NVLink 全互联和跨 PCIe/跨节点的 AllReduce 性能差异巨大，所以拓扑感知调度很关键。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

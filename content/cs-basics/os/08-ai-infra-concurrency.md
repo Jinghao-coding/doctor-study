@@ -68,16 +68,6 @@ AI Infra 面试里，进程、线程和协程不是概念背诵题，而是资�
 <div class="qa-a"><p>CPython 有 GIL，同一时刻通常只有一个线程执行 Python bytecode，所以纯 Python CPU 密集型多线程不能真正并行利用多核。但 I/O 阻塞、C++ 扩展、CUDA kernel launch 等可能释放 GIL，因此训练框架常通过 C++/CUDA 后端、多进程 DataLoader 和异步 pipeline 提升吞吐。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-进程是资源分配单位、有独立地址空间，隔离性强但创建切换贵；线程是执行调度单位、共享地址空间，通信方便但要处理锁竞争；协程是用户态执行流，切换不进内核，适合大量 I/O 等待。选型上 CPU 密集且要绕 GIL 用多进程，I/O 密集、共享状态多用线程或协程。
-
-**2 分钟版：**
-
-并发模型先分三层：进程是 OS 分配资源的基本单位，有独立虚拟地址空间、fd 表和信号上下文，隔离强、崩溃影响小，但创建和切换要切地址空间、刷 TLB，成本最高；线程是进程内的执行流，共享地址空间和打开文件、只独占栈和寄存器，通信方便、切换较轻，代价是要用 mutex、rwlock、semaphore 处理数据竞争；协程是运行时调度的用户态执行流，切换不进内核，特别适合大量连接多数时间在等 I/O 的场景，但阻塞系统调用会卡住承载线程，必须配非阻塞 I/O。上下文切换成本来自保存恢复寄存器、PC、栈指针，进程切换还会破坏 TLB 和 cache locality，所以线程不是越多越好。落到 AI Infra：PyTorch DataLoader 用多进程加载是为了绕过 CPython 的 GIL（纯 Python CPU 密集多线程无法真正并行多核），代价是进程间队列、pickle、shared memory 和 COW；推理服务用线程池跑 tokenizer、detokenizer、网络收发；DataLoader worker 数和 NUMA 绑核没配好，CPU 准备 batch 跟不上就会让 GPU 周期性空转。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

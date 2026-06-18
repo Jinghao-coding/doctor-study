@@ -187,16 +187,6 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 <div class="qa-a"><p>普通 softmax 要先看到一整行分数才能算分母（所有 exp 之和）和最大值。online softmax 维护“当前见过的最大值”和“当前累计分母”，每来一个新块就按数值稳定的方式更新这两个量，并对已累加的输出做相应 rescale。这样不需要先凑齐整行，就能一块一块累加出和标准 softmax 完全相同的结果——这是中间矩阵不必落 HBM 的数学前提。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩阵不落 HBM。 讲清标准 attention 慢在 IO，不是数学结果变了。
-
-**2 分钟版：**
-
-我会先讲清标准 attention 慢在哪：QKᵀ 会先算出一个 seq_len × seq_len 的注意力分数矩阵，长序列下非常大（如 4096×4096），它要写到 HBM、softmax 再从 HBM 读回处理写回、最后再读出来跟 V 做矩阵乘，中间这个大矩阵在 HBM 上来回好几趟。而 attention 算术强度低，是 memory-bound——瓶颈在搬数据不在算数据，所以"少搬"比"少算"更能加速。FlashAttention 的本质就是 tiling + online softmax：把 Q/K/V 切成小块逐块加载进 SRAM（片上缓存，带宽比 HBM 高一到两个数量级），靠 online softmax 增量维护最大值和分母，不需要先算出完整 QKᵀ 就能一块块累加出结果，让那个大矩阵从头到尾不落 HBM，HBM 上只读一遍 Q/K/V、写一遍输出，显存从 O(seq²) 降到 O(seq)。它没减少 FLOPs（甚至略增）但大幅减 HBM 读写，且结果精确不是近似。这正是 Roofline 思维：memory-bound 就减少数据搬运。V2 进一步减少非矩阵乘运算、在 seq_len 维度增加并行打满 SM、优化 warp 级工作划分。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

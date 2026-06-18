@@ -82,16 +82,6 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。 通信时间粗估是流量除以有效带宽。
-
-**2 分钟版：**
-
-NCCL 是 GPU 集合通信的事实标准，DDP 梯度同步用 AllReduce、ZeRO/FSDP 用 ReduceScatter 和 AllGather、MoE expert routing 用 All-to-All。算法上 Ring 带宽利用高、链路均匀，适合大 tensor AllReduce，但延迟随 rank 数增加；Tree 延迟低适合小 tensor、rank 多；多节点常用 Hierarchical 分层优化。通信时间可粗估为流量除以有效带宽，比如每卡 AllReduce 流量 49GB、有效带宽 100GB/s，裸通信约 0.49s，实际还要加启动延迟、协议栈、拥塞和算法选择、重叠效果。排障是重点：NCCL hang 往往不是 NCCL 本身错，而是 rank 调用顺序不一致、某 rank OOM 或先退出、IB/RDMA 设备不可用，要先看是否所有 rank 一致进入 collective，再开 NCCL_DEBUG=INFO、NCCL_DEBUG_SUBSYS=INIT,NET,COLL、TORCH_DISTRIBUTED_DEBUG=DETAIL，检查网卡选择和设备可见性。环境变量按日志诊断、网卡选择（NCCL_SOCKET_IFNAME/NCCL_IB_HCA）、功能开关（NCCL_IB_DISABLE/NCCL_P2P_DISABLE）三类记。MoE 的 All-to-All 因路由不均、依赖 bisection bandwidth 比规则 AllReduce 更难优化。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

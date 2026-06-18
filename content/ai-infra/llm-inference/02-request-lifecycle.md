@@ -75,16 +75,6 @@ Stream Response | detokenize 后通过 SSE/WebSocket/HTTP 返回
 | GPU 利用率低 | Decode memory-bound | 看 MFU、HBM 带宽、batch size |
 | P99 抖动大 | 长 prompt 阻塞、抢占、换出 | 看 chunked prefill、优先级调度 |
 
-## 面试回答
-
-**30 秒版：**
-
-请求生命周期要把 API 接入、tokenization、调度、prefill、decode、stream 返回和缓存释放串成一条链。 回答时不要只讲模型 forward，要把引擎调度和 KV cache 管理一起讲。
-
-**2 分钟版：**
-
-一次 LLM 请求不是"直接进模型出文本"，而是一条链：请求接入（鉴权、限流、参数校验）→ tokenization（文本转 token IDs、套聊天模板）→ scheduler 调度排队 → prefill 并行建立 KV Cache → decode 逐 token 自回归生成并追加 K/V → sampler 做 temperature/top-p/top-k 采样 → 经 SSE/WebSocket 流式 detokenize 返回，最后释放 KV Cache。我会重点讲调度器和 KV cache 管理，而不只是模型 forward：scheduler 要做准入控制、batch 组织、KV block 分配、显存不足时的抢占换出和完成回收；vLLM 的 PagedAttention 把 KV 切成固定 block、用 block table 映射，按需分配、支持 copy-on-write 共享前缀。排障上按链路定位：首 token 慢看 TTFT、排队和 prefill；输出卡顿看 TPOT 和 KV 读取；并发上不去看显存余量和 block 碎片；P99 抖动看 chunked prefill 和优先级调度。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

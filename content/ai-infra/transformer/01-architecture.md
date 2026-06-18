@@ -85,16 +85,6 @@ Pre-LN 的好处是梯度主干更直接，深层训练更稳定；代价是最�
 | 为什么 FFN 很重要？ | 参数和计算量大，提供模型容量；很多事实知识和非线性变换能力在 FFN 中体现。 |
 | 为什么 Transformer 适合 GPU？ | 大部分核心算子是 GEMM/attention block，可批量并行；但 decode 阶段会转向 memory-bound。 |
 
-## 面试回答
-
-**30 秒版：**
-
-Transformer 不是单个 attention 模块，而是一套可堆叠的序列建模骨架。每个 token 沿四条路径推进：残差主干保梯度、self-attention 做 token 间通信决定谁看谁、FFN 做逐 token 非线性变换提供容量、归一化稳定激活尺度。现代大模型基本就是 Decoder-only 这套结构堆几十层。
-
-**2 分钟版：**
-
-我会先点明 Transformer 是可堆叠的序列建模骨架，而不是单个 attention 模块。一层里数据走四条路径：self-attention 让 token 之间交换信息、决定谁关注谁，FFN 对每个 token 独立做扩维-激活-降维、提供模型容量并存储事实知识，残差连接给梯度修了条高速公路让深层仍可训练，归一化（现代多用 Pre-LN 或 RMSNorm）控制激活尺度。完整链路是 tokenizer 切分 → embedding 查表叠加位置信息 → 多层 attention+FFN → LM head 预测 next token。架构上分 Encoder-only（BERT，双向理解）、Encoder-Decoder（T5，翻译摘要）和 Decoder-only（GPT/LLaMA，因果 mask 自回归生成）三类，当前 LLM 主流是 Decoder-only。最后落到 infra：prefill 阶段是 O(n²d) 计算密集型，decode 阶段靠 KV cache 增量维护、转成 memory-bound，这正是推理优化和显存规划的核心抓手。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

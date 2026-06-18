@@ -125,16 +125,6 @@ class MultiHeadAttention(nn.Module):
 <p>形象比喻：Attention 是「开会，大家交换信息」；FFN 是「会后各自回去消化、加工」。一层 Transformer 就是「交流一次 + 各自加工一次」。研究还发现大模型的事实知识大量存储在 FFN 层里。</p>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Self-Attention 本质是加权求和：每个 token 投影出 Q/K/V，用 Q 和所有 K 点积得相关性分数，除以 √d_k 缩放后 softmax 成权重，再对 V 加权求和。Multi-Head 把 hidden_size 拆成多个子空间并行算注意力再拼接，让不同 head 学语法、语义、位置等不同关系，总参数量和计算量基本不变。
-
-**2 分钟版：**
-
-注意力的核心公式是 softmax(QKᵀ/√d_k)·V，思想是加权求和——每个 token 的新表示是其它所有 token 的 value 按相关性加权平均，Q 是「我要找什么」、K 是「我能提供什么」、V 是「我的实际内容」。除以 √d_k 是因为维度大时点积数值会偏大、softmax 进入梯度极小的饱和区，缩放是为了稳定梯度。Multi-Head 把总维度切成多个子空间，每个 head 独立算一次注意力再拼接过输出投影，好处是多角度建模、表达更强、天然可并行，而且总维度不变所以参数量和算力基本不变。工程上手撕要点是：view+transpose 把 [B,S,H] 切成 [B,heads,S,head_dim]，合并多头前必须 contiguous 否则 view 会报错，causal mask 给未来位置加 -1e9 让 softmax 后权重趋零实现因果性。最关键的落点是 KV cache：自回归 decode 时历史 token 的 K/V 不变，缓存下来每步只算新 token，这是推理加速和显存占用的核心。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

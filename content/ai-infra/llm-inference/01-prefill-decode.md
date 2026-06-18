@@ -47,16 +47,6 @@ LLM 推理系统的主线可以按“请求怎么流动、每个阶段做什么�
 
 后续模块按这个顺序展开：先讲请求生命周期，再分别拆 Prefill 和 Decode，然后解释 KV Cache 与 Attention，最后落到性能指标、优化技术和推理引擎选型。
 
-## 面试回答
-
-**30 秒版：**
-
-Prefill/Decode 是 LLM 推理最核心的阶段划分：prefill 负责一次性读完 prompt 并建立 KV cache，decode 负责逐 token 生成并持续读写 KV cache。 先分阶段，再解释 TTFT/TPOT，最后落到 compute-bound 与 memory-bound。
-
-**2 分钟版：**
-
-LLM 推理可以拆成 prefill 和 decode 两个核心阶段。prefill 一次性处理完整 Prompt token 序列，并行计算所有 token、生成首 token 分布和初始 KV Cache；decode 基于上一步生成的 token 和历史 KV Cache 串行逐 token 生成，并持续追加新增 KV。两者瓶颈不同：prefill 是并行大矩阵计算，更偏 compute-bound，主要受输入长度、模型规模和 GPU 算力影响，对应指标是 TTFT（首 token 延迟）；decode 每步只算一个 token 但要反复读历史 K/V，更偏 memory-bound，受 KV Cache 读写、显存带宽和 batch 调度影响，对应指标是 TPOT、吞吐和 P99。所以面试时我会先分阶段，再用 TTFT/TPOT 量化体验，最后落到 compute-bound 与 memory-bound 的差异，这也决定了后续 batching、KV Cache 管理、量化等优化的方向。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

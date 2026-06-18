@@ -304,16 +304,6 @@
 <p>① PagedAttention 块管理与 CoW；② Continuous batching 状态机；③ Chunked prefill 与 PD 分离的取舍；④ Prefix cache / RadixAttention 命中机制；⑤ 投机解码原理与变体；⑥ TP/PP/EP/SP 切分与通信开销；⑦ KV 量化的精度风险；⑧ MoE 路由与 all-to-all 优化；⑨ vLLM scheduler 状态机与 preemption 策略；⑩ FlashAttention v3 在 H100 上的关键优化（warp specialization、TMA、async）；⑪ CUDA Graphs 在 decode step 的收益；⑫ 服务化指标体系与 SLO 分解；⑬ 千卡集群的请求路由、KV 迁移、容灾。</p>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-推理引擎选型要看调度、KV cache、batching、并行、量化、部署生态和可观测性，不是只比较吞吐。 把 vLLM、TensorRT-LLM、SGLang、TGI 的定位讲清楚。
-
-**2 分钟版：**
-
-推理引擎本质是调度器 + KV 内存系统 + 计算后端 + 分布式策略 + Serving 工程，选型不能只比吞吐。调度器决定每个 forward step 跑哪些请求，vLLM 用 WAITING→RUNNING→SWAPPED→FINISHED 状态机加三队列，显存不够按 FCFS 反向抢占，策略是 recompute 或 swap；KV 内存靠 PagedAttention 按 block 管理把碎片从 60-80% 压到 4% 以下，配 prefix cache 和 CoW；计算后端有 FlashAttention v2/v3、PagedAttention kernel、CUDA Graphs 和算子融合；分布式有 TP/PP/EP/DP/SP，TP 因每层两次 all-reduce 不跨机。四个引擎定位不同：vLLM 是 PagedAttention + continuous batching 的通用 OSS 默认选项，上手快、模型全；TensorRT-LLM 是 NVIDIA 全栈 kernel，追求极致性能但要 build engine；SGLang 用 RadixAttention 前缀树，适合 agent、结构化生成和 DeepSeek MoE；TGI 强在 HF 生态快速上线。可观测上看 vllm:time_to_first_token_seconds、time_per_output_token、request_queue_time、num_preemptions_total、gpu_prefix_cache_hit_rate 这些 Prometheus 指标。选型要按 workload、硬件和团队能力三维决策，benchmark 永远在自己 workload 上跑。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

@@ -383,16 +383,6 @@ func Reconcile(ctx, req) {
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Workload Controller 的本质是 reconcile：持续把实际状态拉回期望状态。 区分 Deployment/StatefulSet/Job/Operator 的边界。
-
-**2 分钟版：**
-
-Workload 解决"用哪种对象管理一组 Pod"，Controller 解决"如何让实际状态持续逼近期望状态"。选型上先看生命周期和身份：Deployment 管可替换的无状态副本，做滚动发布、回滚、HPA；StatefulSet 提供稳定 ordinal、稳定网络身份和 volumeClaimTemplates，适合数据库、有 rank 的训练组件；DaemonSet 保证每个符合条件的节点跑一个，适合 device plugin、CNI、CSI node；Job 跑完即止，关注 completions、parallelism、backoffLimit；CronJob 按 schedule 创建 Job。Controller 的本质是 reconcile，链路是 Informer 通过 Reflector List/Watch 维护本地缓存，事件只把 namespace/name key 入 WorkQueue，由 worker 取出后比较期望与实际状态做幂等修正、写回 status，WorkQueue 提供去重、限速、重试和并发控制。Operator = CRD + Controller + 领域运维逻辑，比如训练任务 Operator 把 TrainingJob 抽象成 Pending/Admitted/WorkersReady/Running/Restarting 的状态机，用 OwnerReference 级联回收、用 Finalizer 清理队列 quota 和 checkpoint。要讲清边界：Operator 管生命周期，Scheduler 管 Pod 放哪，Device Plugin/DRA 管设备发现交付，三者层次不同，不要混。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

@@ -103,16 +103,6 @@ QueueingHint | 后续事件是否应该唤醒这个 Pod，依赖失败 plugin �
 | 写自定义 GPU 拓扑插件 | `Scheduler 插件与扩展 / 自定义 Plugin 实战` |
 | 如何观测哪个 plugin 卡住 | `Scheduler 插件与扩展 / Scheduler 可观测性` |
 
-## 面试回答
-
-**30 秒版：**
-
-kube-scheduler 源码可以按五条主线读：启动配置、Informer/cache、调度队列、选节点、绑定循环。真正调度单个 Pod 的核心是 `scheduleOne`，它先跑串行的 scheduling cycle，通过 `findNodesThatFitPod` 找 feasible nodes，再用 `prioritizeNodes` 打分，用 `selectHost` 选节点；之后 assume 到 cache，并异步进入 binding cycle。
-
-**2 分钟版：**
-
-我会从 `Scheduler.Run` 开始讲。scheduler 先启动 `SchedulingQueue`，然后循环执行 `scheduleOne`。`scheduleOne` 从队列取出一个未绑定 Pod，进入 scheduling cycle。`schedulePod` 里先调用 `findNodesThatFitPod`，执行 PreFilter 和 Filter，得到 feasible nodes 和 Diagnosis；如果没有可行节点，就返回 FitError 并触发 FailedScheduling / PostFilter / 抢占等逻辑。如果有可行节点，再调用 `prioritizeNodes` 执行 PreScore、Score、NormalizeScore 和 extender 打分，最后 `selectHost` 选出最高分节点。选中后 scheduler 先在本地 cache 里 assume 这个 Pod，避免并发绑定期间资源被重复分配，然后 binding cycle 运行 WaitOnPermit、PreBind、Bind、PostBind，把绑定结果写回 API Server。
-
 ## 关联模块
 
 - `调度与资源模型`：理解 Pod 需求和 Node 资源/约束。

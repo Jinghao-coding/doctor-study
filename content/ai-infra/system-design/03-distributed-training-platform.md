@@ -60,16 +60,6 @@
 
 <hr class="div">
 
-## 面试回答
-
-**30 秒版：**
-
-我会按全流程拆：用户提交配置后平台生成 PodGroup + ConfigMap + Headless Service，调度用 Gang scheduling 保证所有 worker 同时起、拓扑感知优先同节点 NVLink；训练循环跑数据加载-前向-反向-AllReduce-更新并周期 checkpoint；容错靠心跳检测 + 从最近 checkpoint 弹性恢复 + GPU 健康检查；全程采集训练和系统指标。
-
-**2 分钟版：**
-
-我会先定范围：平台要支持从提交任务到训练完成的全流程，用户只关心模型代码、数据、并行策略和资源需求。然后分五块讲：第一任务抽象，把用户配置翻译成 PodGroup、ConfigMap、Headless Service，让多 worker 能互相发现。第二资源调度，Gang scheduling 是关键——多卡训练必须所有 worker 同时拿到资源，否则部分起来的会空等死锁；再叠加拓扑感知，优先把 worker 排在同节点（NVLink）、退而求其次同机柜、最后跨机柜。第三训练生命周期，初始化做参数同步和 NCCL 通信组建立，循环里数据加载、前向、反向、AllReduce、更新，checkpoint 周期性异步写分布式存储。第四容错，心跳超时检测 worker 故障，从最近 checkpoint 弹性恢复并支持 worker 数量变化，GPU 做 ECC 健康检查自动摘除坏卡。第五可观测性，训练指标看 loss/throughput/利用率，系统指标看网络、存储 IOPS、调度延迟。最后讲优化点：大模型启动慢，靠镜像预热、checkpoint 本地 NVMe 缓存、NCCL 初始化优化和数据预加载来压缩冷启动时间。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

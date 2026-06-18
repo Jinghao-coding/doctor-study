@@ -1,0 +1,71 @@
+{
+  "title": "AI Infra 生产化闭环",
+  "subtitle": "数据与模型制品 · 可观测性 · SLO · 容量成本 · 发布安全",
+  "kicker": "Production Ops",
+  "tags": [
+    "production",
+    "observability",
+    "slo",
+    "model-registry",
+    "finops",
+    "security"
+  ],
+  "output": "pages/ai-infra/production-ops/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "production-ops-tabs",
+      "title": "生产化闭环内容模块",
+      "groups": [
+        {
+          "title": "覆盖审查",
+          "items": [
+            {
+              "title": "知识覆盖地图",
+              "description": "当前站点已覆盖内容、缺口和补齐优先级",
+              "file": "01-coverage-map.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 12
+            }
+          ]
+        },
+        {
+          "title": "资产与平台",
+          "items": [
+            {
+              "title": "数据、模型与制品链路",
+              "description": "数据集、Checkpoint、模型注册、镜像、血缘和回滚",
+              "file": "02-data-model-artifacts.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            }
+          ]
+        },
+        {
+          "title": "运行治理",
+          "items": [
+            {
+              "title": "可观测性、SLO 与容量成本",
+              "description": "指标、日志、Tracing、容量规划、成本和能效",
+              "file": "03-observability-slo-capacity.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "发布、安全与事故闭环",
+              "description": "灰度发布、回滚、RBAC、Secret、供应链安全和复盘",
+              "file": "04-release-security-governance.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 18
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

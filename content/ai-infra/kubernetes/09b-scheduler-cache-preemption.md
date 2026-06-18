@@ -147,16 +147,6 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 <div class="qa-a"><p>新能力优先用 Scheduling Framework Plugin，因为它能接入完整生命周期和 scheduler cache；Extender 更像外部 HTTP 过滤/打分，延迟和一致性控制较弱；多个 scheduler 适合业务强隔离，但要避免不同 scheduler 同时竞争同一批资源造成策略冲突。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。 不要只讲算法，必须讲缓存状态和绑定路径。
-
-**2 分钟版：**
-
-讲调度一致性不能脱离 scheduler cache 和 binding cycle。我会先区分三类概念：priority、resource requests 这些是 Pod 属性，QueueSort/Filter/Score/Reserve/Permit/Bind 是 Scheduling Framework 的扩展点，而 Preemption、Backoff、Gang 是横跨多阶段的调度机制，不能混为一谈。核心链路上，scheduler 不每次都拉全量数据，而是维护本地 cache 并在调度周期开始时生成 snapshot，选中节点后先在 cache 里 assume 占住资源再异步 Bind，所以这里有三层不同状态：Assume 写 scheduler cache、Reserve 写插件内存账本（如 GPU 拓扑、PodGroup 名额）、Bind 才写 API Server。失败要能恢复，Bind 失败要 Forget assumed Pod，Reserve 失败要 Unreserve。权衡在于 cache 不是强一致换来的调度吞吐。抢占不是直接杀 Pod，而是选 victim 后设 nominatedNodeName 等优雅退出，还受 PDB、grace period 约束，硬约束不匹配抢占也救不了。排障时我会先看 FailedScheduling 事件是 Unschedulable 还是 UnschedulableAndUnresolvable，再定位是哪个 plugin 产生的 Status。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

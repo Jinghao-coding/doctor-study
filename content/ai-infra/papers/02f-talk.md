@@ -29,16 +29,6 @@
 <p><span class="hl">第一级队列在 Controller 里，第二级队列由 admitted Pod 集合 + QueueSort 逻辑实现。</span></p>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-不考虑 Gang Scheduling 时，DeepShare 在 K8s 上拆成 Controller 和 Scheduler Plugin：Controller 管 tenant/job 级逻辑——维护每租户的 Guaranteed/Best-effort 队列、算 QAD、做 quota 准入和 Best-effort cap，通过准入的 Pod 才进 scheduler；Scheduler Plugin 管 Pod/node 级——用 QueueSort 做 Guaranteed first、QAD low first、runtime short first 的全局排序，再用 Filter/Score 选节点、Reserve 记账、PostFilter 抢占。
-
-**2 分钟版：**
-
-这一节是 DeepShare 的背诵口述版。我会先点出分工：Controller 负责租户级资源治理，Scheduler Plugin 负责 Pod 级调度。Controller watch 用户提交的 GPU Job，读取 tenant、class、GPU request 和预测运行时间放入对应租户的 Q_i^G 或 Q_i^B，周期性统计 quota 使用、计算 QAD 并维护 TenantQuota status。准入上，Guaranteed 作业满足 U_i^G + R_j ≤ q_i 才放行，Best-effort 要在没有可放置 Guaranteed 作业且 U_i^B + R_j ≤ η·q_i 时才放行，通过移除 schedulingGate 进 kube-scheduler。第二级集群队列由 QueueSort 实现：Guaranteed 优先于 Best-effort，同类中 QAD 低的租户优先，QAD 接近时短作业优先，提交时间兜底。之后 PreFilter 解析上下文，Filter 检查 GPU 和共享干扰约束，Score 做 bin packing 和干扰打分，Reserve/Unreserve 维护账本，PostFilter 在 Guaranteed 调度失败且 QAD 低时选低代价 Best-effort 抢占。一句话收束：第一级队列在 Controller 显式维护，第二级队列由准入后的 Pod 集合加 QAD-aware QueueSort 共同实现，既保留 Kubernetes-native 框架又落地 QAD 驱动的资源管理。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

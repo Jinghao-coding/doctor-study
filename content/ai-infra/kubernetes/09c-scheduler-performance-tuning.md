@@ -80,16 +80,6 @@ Scheduler 性能调优关注候选节点比例、打分插件、profile、并发
 <div class="qa-a"><p>LeastAllocated 把 Pod 分散到不同节点，资源使用率更均匀，适合在线服务（需要 buffer 应对流量波动）。MostAllocated 把 Pod 集中到少数节点，装箱率更高，适合批处理任务（可以腾出整机做下线维护）。可以通过 <code>NodeResourcesFit</code> 插件的 <code>scoringStrategy.type</code> 切换。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Scheduler 性能调优关注候选节点比例、打分插件、profile、并发和 HA。 解释 percentageOfNodesToScore 的收益与风险。
-
-**2 分钟版：**
-
-大规模集群里 scheduler 性能直接决定 Pod 启动延迟，调优主要抓候选节点比例、打分插件、profile、并发和 HA。最关键的参数是 percentageOfNodesToScore，它控制 Score 阶段扫描的节点比例，默认随集群规模自适应，100 节点以下扫全部、5000 节点以上只扫 5%，并按 zone 分散候选；调大提高精度但增加计算量，调小提升性能但可能错过最优节点。打分阶段是优选，常用插件包括 NodeResourcesFit（LeastAllocated 分散、MostAllocated 装箱）、BalancedAllocation 防资源碎片、ImageLocality 加速启动，可以在 KubeSchedulerConfiguration 里调权重，还能用多 Profile 给不同 namespace 或 PriorityClass 配不同策略。并发靠 parallelism（默认 16）。这里的核心权衡是调度精度和吞吐、装箱率和高可用之间的取舍：在线服务用 LeastAllocated 留 buffer，批处理用 MostAllocated 腾整机。HA 用 Leader Election，最坏故障转移约 27s，但只保可用不提吞吐，单实例吞吐约 100-500 Pod/s，瓶颈在 API Server 的 Bind 写吞吐。判断调优是否有效就看调度延迟、pending 时长和 Bind 吞吐这些指标。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

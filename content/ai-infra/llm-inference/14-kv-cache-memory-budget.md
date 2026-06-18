@@ -86,16 +86,6 @@ KV Cache 显存预算决定推理并发上限，单 token、单请求、并发�
 <div class="qa-a"><p>权重量化误差是静态的、一次性的；而 KV 在 decode 阶段每一步都被反复读出来做 attention，量化误差会沿生成步累积并扰动注意力分布，越长的序列影响越明显。所以 KV 一般 INT8 较稳，INT4 要配合 per-channel/group 量化、保护敏感层，否则容易掉点。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-KV Cache 显存预算决定推理并发上限，单 token、单请求、并发请求要逐级放大计算。 公式要写清 layers、kv_heads、head_dim、K/V 两份和 bytes。
-
-**2 分钟版：**
-
-KV Cache 显存预算常常比权重更先成为并发上限，要从单 token、单请求、并发逐级放大算。公式是每 token 字节数 = layers × kv_heads × head_dim × 2 × bytes，那个 2 是 K 和 V 各一份。代入 Llama-2-70B（FP16）：80 × 8 × 128 × 2 × 2 = 327680 字节 ≈ 320 KB/token，而且这已经是 GQA（8 个 KV head）压过的；一个 4096 上下文请求约 1.3 GB，32 并发就约 41.6 GB，能吃掉一张 A100/H100 大半显存。优化分三层、正交可叠加：架构层用 MQA/GQA 减少 KV head 数，Llama-2-70B 用 GQA 把 64 个 query head 共享成 8 个 KV head、省 8 倍，退回 MHA 会膨胀到约 2.5 MB/token；数值层用 KV 量化按字节缩，INT8 省一半、INT4 省 3/4，但 decode 每步都读历史 K/V，误差会沿生成步累积，所以比权重量化更敏感，通常 INT8 较稳、INT4 要配 per-channel/group 量化和敏感层保护；系统层用 PagedAttention 按 block 按需分配、消除预分配浪费和碎片，逼近真实显存上限。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

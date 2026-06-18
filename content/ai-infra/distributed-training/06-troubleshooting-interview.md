@@ -83,16 +83,6 @@
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。 把 GPU-Util、MFU、NCCL、OOM、hang 分开定位。
-
-**2 分钟版：**
-
-分布式训练排障不能只盯 GPU 利用率，要按链路分层：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。常见现象速查：GPU 利用率低先查 DataLoader/CPU/IO 和通信等待，可用 profiler 看 timeline 空洞位置，forward 前空洞多半是数据慢、backward 或 optimizer 前空洞多半是通信，再用 synthetic data 隔离数据链路；GPU-Util 100% 不等于高效，那只说明采样窗口有 kernel 在跑，要看 MFU（实际模型 FLOPs 占硬件峰值比例），低效可能是小 kernel 碎片、访存瓶颈、通信等待或没用上 Tensor Core。OOM 要按来源分类：参数/优化器状态主导用 ZeRO/FSDP 和 offload，activation 主导（seq_len/batch 增大）用 activation checkpointing、减 micro-batch 或 sequence parallel，偶发 OOM 看 allocator fragmentation 和临时峰值。计算题套路记住四个公式：DP 通信量 2×(N-1)/N×P×bytes、ZeRO 显存按分片对象拆、PP bubble (p-1)/(m+p-1)、3D 并行 Total=DP×TP×PP，注意 TP 通常不能跨节点随便放。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

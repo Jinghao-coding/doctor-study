@@ -60,16 +60,6 @@ GPU 利用率低不能只看一个数：要分层判断到底卡在哪。先看 
 <div class="qa-a"><p>GPU 之间可能通过 NVLink、NVSwitch、同一 PCIe switch、跨 PCIe root complex 或跨 NUMA socket 通信，路径不同带宽和延迟差异很大。rank 放置不匹配拓扑时，all-reduce 可能跨慢链路；NIC 和 GPU 不在同一 locality 时，RDMA/GPUDirect 效果也会变差。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-数据路径是磁盘/网络进 CPU 内存，再经 PCIe/NVLink 进 GPU HBM，靠 DMA 传输。pinned memory 锁住物理页让 DMA 稳定访问、H2D 更快（DataLoader 的 pin_memory=True）。GPU 利用率低要分层看：SM util 判断是否真在算、显存高只代表被占、PCIe/NVLink 吞吐看拷贝或通信、CPU worker 和 queue 看供给、NCCL 日志看通信。多卡通信还受 PCIe/NVLink 拓扑和跨 NUMA 影响。
-
-**2 分钟版：**
-
-GPU 系统层先讲清数据路径：训练数据通常从磁盘或网络进 CPU 内存，再经 PCIe 或 NVLink 进入 GPU HBM，搬运靠 DMA——设备绕过 CPU 指令直接在内存和设备间传数据。这里 pinned memory 是关键：普通 pageable memory 可能被 OS 换页，GPU DMA 不能安全直接访问，驱动得先拷到 pinned staging buffer 再 DMA，而 pinned memory 锁定物理页避免换页，所以 DataLoader 的 pin_memory=True 配合 non_blocking copy 和 CUDA stream 能让 H2D 更高效、和计算重叠。诊断 GPU 利用率低要分层：先看 SM utilization 判断计算单元是否持续工作，显存占用高只说明权重、optimizer state、KV cache 或 allocator 常驻、不代表在算；再看 PCIe/NVLink 吞吐定位 H2D/D2H 或通信瓶颈；再看 CPU worker 和 DataLoader queue 是否供给不足让 GPU 等 batch；最后看 NCCL 日志和网络指标判断是否卡在通信。多卡训练里 rank 放置要匹配 PCIe/NVLink/NVSwitch 拓扑，跨 PCIe switch 或跨 NUMA socket 会拉低 all-reduce 性能，NIC 和 GPU 不同 locality 还会让 GPUDirect/RDMA 变差。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

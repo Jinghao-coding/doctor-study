@@ -82,16 +82,6 @@
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。 公式重点是梯度大小和 Ring AllReduce 每卡流量。
-
-**2 分钟版：**
-
-数据并行的核心是每张 GPU 持有一份完整模型、处理不同数据分片，每个 step 后通过 AllReduce 同步梯度，保证所有副本参数一致。链路是 forward 用本地 mini-batch 算 loss、backward 算本地梯度、bucket ready 后启动 AllReduce、optimizer step 用同步后的梯度更新。AllReduce 同步的是梯度：它把所有卡梯度求和再除以 world size，等价于更大 batch 上的平均梯度，去中心化没有 parameter server 单点瓶颈。通信量上，参数量 P 的 FP32 梯度约 P×4 bytes，Ring AllReduce 每卡收发约 2×(N-1)/N×梯度大小，N 大时近似 2P×4 bytes，比如 7B 模型 FP32 梯度约 28GB，8 卡每卡约 49GB。工程关键是通信-计算重叠：DDP 用 bucket 把小梯度合并、让通信隐藏在 backward 后面，bucket 太小启动开销高、太大重叠差；梯度累积可降通信频率到 1/k，但有效 batch 变大要重调 lr 和 warmup。排障时关注 DataLoader/IO 是否成瓶颈、通信尾巴是否暴露。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

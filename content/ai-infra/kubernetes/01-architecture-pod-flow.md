@@ -38,7 +38,7 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 </div>
 
 <div class="card card-w">
-<h3>面试回答模板：Pod 是怎么跑起来的？</h3>
+<h3>回答结构：Pod 是怎么跑起来的？</h3>
 <p>可以按“四段式”回答，主线是：<strong>所有控制面和节点组件都围绕 API Server 协作，etcd 只负责保存状态，真正执行发生在目标节点的 kubelet 上。</strong></p>
 <ol>
 <li><strong>入口：</strong>用户通过 <code>kubectl</code> 或 <code>client-go</code> 把 YAML 提交到 API Server。API Server 负责认证、鉴权、准入控制、对象校验和默认值填充；合法对象会<strong>通过 API Server</strong> 持久化到 etcd。这里要强调：通常只有 API Server 直接读写 etcd，其他组件通过 API Server watch 和更新对象。</li>
@@ -197,16 +197,6 @@ journalctl -u containerd</code></pre>
 <div class="qa-summary">面试口径：watch 机制让组件通过 API Server 解耦协作，Controller 管期望状态，Scheduler 管放置决策，kubelet 管节点执行。</div>
 </div>
 </div>
-
-## 面试回答
-
-**30 秒版：**
-
-Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller/Scheduler/kubelet 协同把 Pod 跑起来。 按 API Server、etcd、scheduler、kubelet、container runtime 链路讲。
-
-**2 分钟版：**
-
-Kubernetes 是声明式控制系统，所有组件都围绕 API Server 协作，etcd 只负责保存期望状态。一个 Pod 跑起来可以拆成四段：入口阶段用户通过 kubectl 或 client-go 提交 YAML，API Server 做认证、鉴权、Admission 准入和对象校验后写入 etcd；控制阶段 Deployment Controller 创建 ReplicaSet，ReplicaSet 再 reconcile 出 Pod，持续把实际状态逼近期望；调度阶段 scheduler watch 到未绑定 Pod，经过 Filter、Score、Reserve、Permit、Bind 选节点，并把绑定结果写回 API Server 而不是直接通知 kubelet；执行阶段目标节点 kubelet watch 到本节点 Pod 后进入 SyncPod，先用 CSI 准备 volume，再 CRI RunPodSandbox（pause 容器持有网络 namespace），由 containerd CRI plugin 调 CNI 配网，最后 PullImage、CreateContainer，由 containerd-shim/runc 真正拉起容器，并持续把 Pod phase、status 回写 API Server。这里要强调通常只有 API Server 直接读写 etcd，组件间靠 watch 解耦。排障时 Pending 偏调度侧、ContainerCreating 偏节点执行侧，分别看 Events、kubelet、containerd、CNI、CSI 日志。
 
 ## 关联模块
 

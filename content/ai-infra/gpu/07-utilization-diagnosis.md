@@ -273,18 +273,6 @@ SM Active 高
 Tensor Pipe / Tensor Core Util 低</code></pre><p>如果 workload 是 GEMM、Conv 或 Attention，需要检查 FP16/BF16/TF32 是否开启，shape 是否对齐，是否使用高性能库，是否 fallback 到普通 CUDA kernel，batch size 是否太小。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-我不会只看 `nvidia-smi` 的 GPU-Util，因为它只是采样窗口内 GPU 上是否有 kernel 在执行的时间比例。判断 GPU 是否真正被充分使用，我会先看 GPU-Util、显存、功耗做粗筛，再用 Nsight Systems 看 timeline 有没有空洞、memcpy、同步和 NCCL，最后用 Nsight Compute 看 SM Active、Achieved Occupancy、Warp Stall、Compute Throughput、Memory Throughput 和 Tensor Core Util。最终还要结合 tokens/sec、step time、QPS、P99 判断 GPU 忙得是否有效。
-
-**2 分钟版：**
-
-我会按从粗到细的漏斗排查。第一层，GPU-Util 低说明 GPU 时间上没活，可能是数据加载、CPU preprocessing、batch 太小或请求量不足；GPU-Util 高只能说明有活，不能说明高效。第二层，看 SM Active，如果低，说明 kernel 没铺满 SM，常见于 grid 太小或 batch 太小。第三层看 occupancy 和 eligible warps，如果 active warp 很多但 eligible warp 少，说明大部分 warp 在等。第四层看 stall reason 和 throughput，Long Scoreboard 多通常是等 HBM，Tensor Core Util 低可能是 dtype/shape/kernel 没用上矩阵硬件。最后用业务指标收口，避免优化了一个看起来忙但对吞吐和延迟没帮助的指标。
-
-短版：`nvidia-smi` 看是否忙；Nsight Systems 看是否连续；Nsight Compute 看为什么慢；业务指标看忙得值不值。
-
 ## 排查路径
 
 <pre><code>GPU-Util：

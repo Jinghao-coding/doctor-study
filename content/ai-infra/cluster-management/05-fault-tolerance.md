@@ -425,16 +425,6 @@ torchrun \
 
 **面试金句**：「GPU 监控的核心不是指标多，而是三层联动——硬件异常要能追溯到训练影响，训练瓶颈要能定位到硬件根因。」
 
-## 面试回答
-
-**30 秒版：**
-
-大规模 GPU 集群故障是常态——单卡 MTBF 约 24 个月，1024 卡集群的 MTBF 只有约 42 分钟，所以高可用的核心是降 MTTR 而非追求不故障。我会按检测、容错、恢复三层讲：DCGM + Prometheus + NPD 秒级发现 ECC、NVLink 降级、节点故障、网络分区、OOM 等异常；异步分布式 Checkpoint 兜底进度，最优频率是 T*=√(2FC)；PyTorch Elastic 在少量节点故障时弹性缩容续跑，大规模故障再从 Checkpoint 重启。
-
-**2 分钟版：**
-
-GPU 集群故障远比 CPU 集群频繁，常见类型有 ECC 错误（可纠正只需降级、不可纠正要驱逐重调度）、NVLink 降级（带宽腰斩、TP 吞吐掉 20-40%）、节点故障、网络分区（NCCL 超时、可能脑裂）和 OOM，而 Gang 约束让单卡故障就能拖垮整个 Job。应对体系分检测、定位、恢复三段：检测靠 DCGM + DCGM Exporter + Prometheus + NPD，盯 ECC、温度、NVLink CRC、利用率等指标做秒级告警；恢复的基石是 Checkpoint，从周期性到异步、增量、分布式逐级优化，大模型必须用分布式 Checkpoint 把单卡 I/O 降到秒级，最优保存频率是 T*=√(2FC)，在 Checkpoint 固定开销和故障平均丢失 T/2 进度之间取平衡。再往上是弹性训练，PyTorch Elastic 通过 Rendezvous 在 world_size 变化时重新协商、从 Checkpoint 恢复继续，但要处理 BatchNorm、学习率缩放、数据重分片、ZeRO 重分片等一致性问题。工程上的关键权衡是：1024 卡 MTBF 仅约 42 分钟，高可用核心是降 MTTR 而非防故障——小故障用弹性缩容续跑、大故障或网络分区用 Checkpoint 兜底重启，并通过三层监控把硬件异常和训练影响联动起来验证恢复是否真的有效。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

@@ -100,16 +100,6 @@ $$ \frac{140\text{ GB}}{2000\text{ GB/s}} = 0.07\text{ s} = 70\text{ ms} $$
 <div class="qa-a"><p>70B FP16 模型 batch=1 decode 每生成 1 个 token，需约 140 GFLOPs 计算，但要读约 140 GB 权重，算术强度只有 1 FLOP/byte，远低于 A100 的约 156 FLOP/byte 平衡点，所以瓶颈是显存带宽（memory-bound），不是 GPU 算力。加大 batch 复用权重可把算术强度提到约 $B$ FLOP/byte，逐渐趋向 compute-bound。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。 按计算量、访存量、算术强度三步算。
-
-**2 分钟版：**
-
-这道高频题问 70B FP16 模型在 A100 上 batch=1 decode、每次生成 1 个 token 为什么是 memory-bound，我按计算量、访存量、算术强度三步算。计算量：一个参数对应一次乘加约 2 FLOPs，FLOPs≈2×参数量×token 数，70B 生成 1 个 token 是 2×70×10^9≈140 GFLOPs。访存量：权重 FP16 每参数 2 bytes，70×10^9×2=140 GB，batch=1 时每生成一个 token 都要把整套权重从 HBM 读一遍。算术强度=140 GFLOPs÷140 GB≈1 FLOP/byte，即每读 1 byte 只做约 1 次浮点运算。A100 平衡点是 312 TFLOPS÷2 TB/s=156 FLOP/byte，要 156 才能喂饱计算单元，而 decode 只有 1，远低于 156，所以算力用不满、卡在显存带宽。换成时间直觉更清楚：纯算力算一个 token 约 0.45 ms，但读 140 GB 权重要约 70 ms，差两个数量级，主要被带宽限制。落点是 batch 变大能改善：batch=B 时同一份权重服务 B 个 token，算术强度变成约 B FLOP/byte，逐渐趋向 compute-bound，这正是 continuous batching 提升吞吐的根本原因。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

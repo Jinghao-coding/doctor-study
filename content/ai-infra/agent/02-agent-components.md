@@ -76,16 +76,6 @@ Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行�
 <div class="qa-section"><div class="qa-section-title">多 Agent 的核心挑战</div><ul><li><strong>通信协议：</strong>Agent 之间如何交换信息？结构化 JSON 还是自然语言？</li><li><strong>任务分配：</strong>谁来决定哪个 Agent 做什么？集中式调度还是协商？</li><li><strong>冲突解决：</strong>多个 Agent 意见不一致时如何决策？投票、仲裁还是层级决策？</li><li><strong>上下文共享：</strong>哪些信息需要共享？如何避免上下文爆炸？</li><li><strong>错误传播：</strong>上游 Agent 的错误如何影响下游？如何隔离和恢复？</li></ul></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-Agent 不只是 Function Calling。我会拆成记忆、工具、规划、多 Agent 协作四块：记忆分短期（上下文窗口）、长期（向量库+RAG）和工作记忆，工具靠 Function Calling 或 MCP 接外部能力，规划有 ReAct 动态、Plan-Execute、层次化和自我反思，复杂任务再上多 Agent 分工。
-
-**2 分钟版：**
-
-我会按模块讲。记忆是 Agent 区别于单次调用的关键：感官记忆是当前上下文、短期记忆用滑动窗口或摘要压缩管理会话历史、长期记忆靠向量库跨会话持久化、工作记忆用结构化对象存任务状态，工程上最常用混合策略——近期原文+远期摘要+关键信息向量检索，再配 Reflexion 反思记忆做自我进化。工具调用是能力放大器，让只能生成文本的 LLM 能搜索、执行代码、操作文件、调 API；流程是定义 JSON Schema → 注入 prompt → LLM 输出 tool_call → 框架执行 → 结果拼回上下文，MCP 则是 Anthropic 提出的标准化协议、相当于 AI 的 USB-C 接口。规划要区分固定流程、ReAct 动态、Plan-Execute、层次化和自我反思，实际是组合使用。最后是多 Agent 协作：顺序流水线、辩论、角色扮演、层级结构、共享记忆，核心挑战在通信协议、任务分配、冲突解决、上下文共享和错误传播。落到 infra，这些直接对应记忆的存储成本、工具执行的沙箱隔离和多 Agent 的调度编排。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

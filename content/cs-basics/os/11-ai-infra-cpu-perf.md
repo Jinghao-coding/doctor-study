@@ -54,16 +54,6 @@ AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detoke
 <div class="qa-a"><p>先用 <code>perf top -p &lt;pid&gt;</code> 在线看热点，再用 <code>perf record -g -p &lt;pid&gt; -- sleep 30</code> 采样调用栈，最后用 <code>perf report</code> 或火焰图分析热点是在业务函数、系统调用、锁、内核网络栈、内存拷贝还是调度函数。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-看 CPU 关键是分清 load average 和 utilization：load 包含 runnable 和 D 状态不可中断睡眠任务，I/O 卡住也会推高 load 但 utilization 不一定高。要再拆 user/system/iowait/steal 看时间花在哪。AI Infra 里 CPU 不是辅助资源，数据预处理、tokenizer、序列化、容器 CFS throttling 都可能让 GPU 空转，排障常用 perf 采样定位热点。
-
-**2 分钟版：**
-
-CPU 性能分析先建立几个关键概念区分。调度器从 runnable 队列选下一个任务运行，在公平、响应和吞吐间取舍。最容易踩坑的是 load average 和 utilization：load 同时统计 runnable 和 D 状态不可中断睡眠任务，所以大量任务卡在磁盘或网络 I/O 时 load 很高但 CPU utilization 不一定高，判断 CPU 瓶颈要把 load、utilization、run queue、iowait 和 context switch 一起看。进一步要拆 user/system/iowait/steal——分别是用户态执行、内核态执行、等 I/O、虚拟化环境被宿主抢占；iowait 高提示 I/O 可能拖慢任务，但要结合 iostat 的 await、util 判断。落到 AI Infra，CPU 从来不是辅助资源：训练时 CPU 数据准备不足会让 GPU 空转，高 QPS 推理里 tokenizer、JSON 序列化、日志和网络协议栈可能成瓶颈，多线程服务的锁竞争、过高 context switch、cache miss 会让吞吐下降、p99 抖动，容器里 CPU quota、cpuset、CFS throttling 还会让服务看着有 CPU 实际被限流。定位热点先用 perf top 在线看，再 perf record -g 采样调用栈、用火焰图分析热点落在业务函数、系统调用、锁还是内核网络栈。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

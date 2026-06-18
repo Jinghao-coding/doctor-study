@@ -157,16 +157,6 @@ kubectl label node gpu-node-2 \
 | MPS 和 MIG 都是硬隔离 | MIG 是硬件切片，MPS 是共享上下文，隔离弱很多。 |
 | Pod 里看到整卡显存就可以全用 | time-slicing/MPS 下多个 Pod 共享同一卡，应用需要限制显存使用。 |
 
-## 面试回答
-
-**30 秒版：**
-
-K8S 默认把 GPU 当整数扩展资源，`nvidia.com/gpu: 1` 表示一整张卡。共享 GPU 通常靠 NVIDIA device-plugin 或 GPU Operator 配置 time-slicing、MPS 或 MIG，把物理 GPU 上报成多个逻辑资源。scheduler 只按资源数量调度，真正的共享和隔离由 driver、MPS daemon 或 MIG 硬件分区实现。time-slicing 简单但无隔离，MPS 可以并发但共享故障域，MIG 隔离强但切分粒度固定。
-
-**2 分钟版：**
-
-我会先说明 K8S 的资源模型：GPU 是 extended resource，默认不可分割。device-plugin 把 GPU 资源发现并上报给 kubelet，scheduler 只看到 `nvidia.com/gpu` 这类资源名和数量。共享时，time-slicing 通过 replicas 把一张卡复制成多个逻辑 slot；MPS 启动 MPS control daemon，让多个 CUDA 进程共享上下文并可设置一定显存/算力比例；MIG 则把支持的 GPU 做硬件切片，上报成独立实例。生产选择要看 SLA 和隔离：开发测试可以 time-slicing，可信小任务可以 MPS，强隔离多租户优先 MIG。
-
 ## 关联模块
 
 - `共享方式`：理解 MIG/MPS/time-slicing 的底层取舍。

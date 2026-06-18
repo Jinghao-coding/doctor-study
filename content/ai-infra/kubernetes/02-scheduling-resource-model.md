@@ -200,16 +200,6 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 </div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资源模型。 AI Infra 场景要补 GPU extended resource 和 device plugin。
-
-**2 分钟版：**
-
-调度和资源模型要一起讲：资源模型定义 Pod 要什么、Node 有什么，调度器决定 Pod 放到哪。资源声明的核心是 requests 和 limits，scheduler 主要看 requests 判断 Node allocatable 放不放得下，而不是实时使用量；limits 管运行时上限，CPU 超限是 throttling，内存超限通常 OOMKilled。由 CPU/Memory 的 requests/limits 组合还会推导出 QoS（Guaranteed、Burstable、BestEffort），它决定节点压力下的驱逐优先级，再结合 PriorityClass 和实际资源压力。除了资源，还有放置约束：nodeSelector/NodeAffinity 让 Pod 选节点，PodAffinity 控制靠近或远离，TopologySpreadConstraints 用 maxSkew 控制拓扑域均匀分布，Taint/Toleration 让节点拒绝无关 Pod。所以会出现"资源够但仍 Pending"。落到 AI Infra，GPU 是离散 Extended Resource，scheduler 按整数过滤、kubelet 按同样数量调 Device Plugin Allocate，所以 GPU requests 通常等于 limits，MIG/MPS/DRA 才表达更细共享。排障 Pending 先看 describe 的 Events 是不是 FailedScheduling，再按资源、约束、PVC/ResourceClaim、Quota 逐层缩小。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。

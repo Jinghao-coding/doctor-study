@@ -85,16 +85,6 @@ cgget / systemd-cgtop</code></pre>
 </ol>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-OS 模块的准备分三层：概念准确（每个机制能讲清解决什么问题、核心原理、性能代价、在训练或推理里怎么体现）、能结合场景分析（GPU 利用率低、DataLoader 慢、训练 OOM、推理 p99 升高、通信慢、checkpoint 慢、容器被 OOM kill 怎么排查）、熟悉工具链（top/htop、ps、free、vmstat、iostat、pidstat、ss、lsof、strace、perf、dmesg、nvidia-smi，偏 Infra 再补 numactl、bpftrace、cgtop）。遇到系统排查题用固定模板：先界定现象，再分层拆链路，用指标验证假设，最后给方案。
-
-**2 分钟版：**
-
-这一页是整个操作系统模块的收束，回答时我会强调准备方式而不是再堆概念。第一层是概念准确：每个模块至少能解释这个机制解决什么问题、核心原理是什么、有什么性能代价、在 AI 训练或推理里如何体现。第二层是能结合场景分析，把概念落到典型问题上——GPU 利用率低如何排查、DataLoader 很慢如何优化、训练 OOM 如何定位、推理 p99 升高如何分析、分布式训练通信慢如何定位、checkpoint 慢如何优化、容器被 OOM kill 如何排查。第三层是熟悉工具链：通用的 top/htop、ps、free、vmstat、iostat、pidstat、sar、ss、lsof、strace、perf、dmesg、nvidia-smi，偏 Infra 或性能优化再补 numactl、numastat、ethtool、tcpdump、bcc/bpftrace、nsenter、systemd-cgtop。最小复习清单覆盖进程线程协程、同步死锁、虚拟内存分页缺页 TLB、mmap/page cache/COW、Linux 与容器 OOM、read/mmap/direct I/O 区别、epoll、CPU load/util/iowait、TCP 握手挥手 TIME_WAIT、namespace/cgroup、pinned memory/NUMA/PCIe 拓扑，以及三大排查路径。遇到系统排查题统一用模板回答：先界定现象（影响范围、时间、是否复现、哪个指标变坏），再分层拆链路（应用队列、CPU、内存、I/O、网络、GPU、容器限制、下游依赖），用 top/iostat/perf/nvidia-smi 等指标验证假设逐层收敛，最后给出调参、改并发、减拷贝、调 NUMA、优化 I/O 或扩容限流的方案。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。

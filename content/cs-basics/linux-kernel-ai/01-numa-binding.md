@@ -177,11 +177,3 @@ numactl --membind=0 taskset -c 0-31 python train.py
 
 排查训练慢时，如果 GPU Util 周期性掉低，要同时看 CPU worker 是否跨 NUMA、page cache 是否抖动、H2D 是否跨 Socket、NIC 是否和 GPU 不亲和。
 
-## 面试回答模板
-
-NUMA 是多 Socket 服务器中的非统一内存访问架构，每个 Socket 有自己的本地内存。CPU 访问本地内存延迟低、带宽高，访问远端 Socket 的内存需要经过 Socket 间互联，会增加延迟、降低带宽，并造成链路拥塞。在多卡训练服务器中，NUMA 绑定的目标是让进程的 CPU 线程、内存、GPU 和 NIC 尽量位于同一个 NUMA domain。常见做法是根据 `nvidia-smi topo -m`、`numactl --hardware` 等拓扑信息，把每个 rank 绑定到离目标 GPU 最近的 CPU core 和内存节点，避免 GPU 挂在 Socket 0，但 CPU 和内存却落在 Socket 1。
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么 GPU 训练中 NUMA 绑定会影响吞吐？</div>
-<div class="qa-a"><p>因为训练不是只有 GPU 计算，还包括 CPU DataLoader、数据解码、batch 拼接、H2D 拷贝和 RDMA 通信。如果 CPU 线程、内存页、GPU、NIC 分布在不同 Socket，数据路径会跨 Socket，延迟升高、带宽下降，还会占用 Socket 间互联。结果就是 GPU 可能周期性等数据，NCCL 或 H2D 也可能抖动。</p><div class="qa-summary">面试口径：NUMA 绑定优化的是 CPU、内存、GPU、NIC 的端到端数据路径。</div></div>
-</div>

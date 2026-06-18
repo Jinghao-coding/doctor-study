@@ -61,16 +61,6 @@ AI Infra 面试经常问“线上问题怎么定位”。回答这类问题要�
 <div class="qa-a"><p>CPU 瓶颈通常表现为 CPU util 高、run queue 长、perf 热点明显；I/O 瓶颈表现为 iowait、磁盘 await/util 高、read/write 慢、major fault 多；网络瓶颈表现为吞吐接近上限、丢包/重传、RTT 增大、socket buffer 堆积。</p></div>
 </div>
 
-## 面试回答
-
-**30 秒版：**
-
-排障的核心是分层思维而不是一上来猜：先界定现象（影响范围、开始时间、是否稳定复现、哪个指标变坏），再分层拆链路，用指标验证假设逐层收敛，最后给方案。三类信号分工是指标发现异常、日志解释语义、trace 串联请求链路。常用工具有 top/pidstat/iostat/ss/strace/perf/nvidia-smi/dmesg。比如训练 GPU 利用率突降，要从 GPU 指标、CPU worker、I/O、NCCL 通信、应用日志逐层查。
-
-**2 分钟版：**
-
-线上问题定位我会用一套固定的分层方法，而不是直接猜原因。第一步界定现象：影响范围是单卡、单机还是多机，从什么时间开始，是否稳定复现，到底是 p50/p99、吞吐还是 GPU 利用率变坏。第二步分层拆链路：应用排队、CPU、内存、I/O、网络、GPU、容器限制和下游依赖。第三步用指标和工具验证假设逐层收敛——三类信号分工明确：指标发现异常、日志解释语义、trace 串联请求链路；常用工具是 top/htop、pidstat、iostat、ss、lsof、strace、perf、nvidia-smi、dmesg，进程卡死还能用 strace 看卡在 futex/read/poll/fsync、用 pstack/gdb 看线程栈。判断瓶颈类型有经验法则：CPU 瓶颈是 util 高、run queue 长、perf 热点明显，I/O 瓶颈是 iowait 高、磁盘 await/util 高、major fault 多，网络瓶颈是吞吐接近上限、丢包重传、RTT 增大。最后给优化方案：调参数、改并发模型、减少拷贝、加缓存、调 NUMA 绑核、优化 I/O 格式、扩容或限流。落到 AI Infra，训练 GPU 利用率突降按 GPU 指标→CPU/DataLoader→I/O→NCCL 通信→应用日志逐层查，推理 p99 抖动则拆排队、batching、CPU 前后处理、GPU 执行、网络、锁竞争和下游依赖。
-
 ## 关联模块
 
 - `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
