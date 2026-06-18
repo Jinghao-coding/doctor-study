@@ -136,15 +136,38 @@
             },
             {
               "title": "Linux 与容器基础",
-              "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s",
+              "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s、containerd/CRI/OCI",
               "files": [
                 "linux-container/01-env-runtime.md",
                 "linux-container/02-namespace-cgroup-rootfs.md",
-                "linux-container/03-docker-k8s-resource.md"
+                "linux-container/03-docker-k8s-resource.md",
+                "linux-container/04-container-runtime-containerd.md"
+              ],
+              "subtabs": [
+                {
+                  "title": "运行环境",
+                  "description": "env、PATH、LD_LIBRARY_PATH、配置注入",
+                  "file": "linux-container/01-env-runtime.md"
+                },
+                {
+                  "title": "隔离三件套",
+                  "description": "namespace、cgroup、rootfs",
+                  "file": "linux-container/02-namespace-cgroup-rootfs.md"
+                },
+                {
+                  "title": "资源模型",
+                  "description": "requests/limits、QoS、RSS/Usage、OOMKilled",
+                  "file": "linux-container/03-docker-k8s-resource.md"
+                },
+                {
+                  "title": "containerd / CRI",
+                  "description": "containerd、CRI、OCI、runc、shim、pause 容器和节点侧排障",
+                  "file": "linux-container/04-container-runtime-containerd.md"
+                }
               ],
               "level": "进阶",
               "priority": 1,
-              "time": 18
+              "time": 30
             }
           ]
         },

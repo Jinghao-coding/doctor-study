@@ -29,6 +29,11 @@
           "title": "Docker 与 Kubernetes 资源模型",
           "description": "requests/limits、QoS、RSS/Usage、OOMKilled",
           "file": "03-docker-k8s-resource.md"
+        },
+        {
+          "title": "containerd / CRI / OCI",
+          "description": "containerd、CRI、OCI、runc、shim、pause 容器和节点侧排障",
+          "file": "04-container-runtime-containerd.md"
         }
       ]
     }

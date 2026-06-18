@@ -78,6 +78,14 @@
               "time": 20
             },
             {
+              "title": "GPU 调度工业场景题库",
+              "description": "异构、多租户、Gang、Backfill、抢占、碎片、拓扑、混部、弹性训练等工业常见场景题",
+              "file": "09-gpu-scheduling-scenario-bank.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 28
+            },
+            {
               "title": "系统设计：多租户 GPU 调度",
               "description": "QAD 配额、弹性借用、干扰感知合用",
               "file": "design/07-multi-tenant-gpu-scheduler.md",
