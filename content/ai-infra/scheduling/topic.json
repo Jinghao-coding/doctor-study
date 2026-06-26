@@ -1,13 +1,15 @@
 {
   "title": "任务调度理论",
-  "subtitle": "目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 面试题精讲",
+  "subtitle": "目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 排队论 · 架构演进 · 面试题精讲",
   "kicker": "Scheduling Theory",
   "tags": [
     "scheduling",
     "theory",
     "fairness",
     "batch",
-    "topology"
+    "topology",
+    "queueing",
+    "borg"
   ],
   "output": "pages/ai-infra/scheduling/index.html",
   "layout": [
@@ -97,6 +99,35 @@
                   "file": "design/08-high-throughput-small-gpu-jobs.md"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "title": "调度理论与架构演进",
+          "items": [
+            {
+              "title": "排队论基础",
+              "description": "Little's Law、Kendall 记号、M/M/1、M/M/c、M/G/1、利用率-延迟曲线、SRPT",
+              "file": "10-queueing-theory.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            },
+            {
+              "title": "调度架构演进",
+              "description": "集中式/双层/共享态/混合调度：Borg、Mesos、Omega、Firmament",
+              "file": "11-scheduler-architecture-evolution.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 25
+            },
+            {
+              "title": "Spot / 抢占式实例调度",
+              "description": "Spot 经济模型、中断检测、checkpoint-on-revocation、训练/推理策略、Karpenter/Kueue",
+              "file": "12-spot-instance-scheduling.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 28
             }
           ]
         }

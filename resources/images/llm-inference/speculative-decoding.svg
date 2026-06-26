@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 340" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#333"/></marker>
+    <style>.t{font-size:13px;font-weight:600}.l{font-size:11px;fill:#444}.s{font-size:10px;fill:#888}.box{rx:8;ry:8;stroke-width:1.5}</style>
+  </defs>
+  <text x="390" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a2e">投机解码 (Speculative Decoding):Draft 生成 + Target 并行验证</text>
+  <rect x="30" y="50" width="140" height="50" class="box" fill="#d4edda" stroke="#28a745"/>
+  <text x="100" y="72" text-anchor="middle" class="t" fill="#155724">Draft Model (小)</text>
+  <text x="100" y="90" text-anchor="middle" class="l">自回归生成 k 个候选 token</text>
+  <rect x="210" y="50" width="180" height="50" class="box" fill="#e8f0fe" stroke="#0066cc"/>
+  <text x="300" y="72" text-anchor="middle" class="t" fill="#004085">候选序列: [t1, t2, ..., tk]</text>
+  <text x="300" y="90" text-anchor="middle" class="l">Draft 逐 token 生成,延迟低</text>
+  <line x1="170" y1="75" x2="210" y2="75" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="190" y="68" text-anchor="middle" class="s">生成</text>
+  <rect x="100" y="140" width="220" height="60" class="box" fill="#f8d7da" stroke="#dc3545" stroke-width="2"/>
+  <text x="210" y="162" text-anchor="middle" class="t" fill="#721c24">Target Model (大,1 次 forward)</text>
+  <text x="210" y="180" text-anchor="middle" class="l">并行验证所有位置 + 预测下一个 token</text>
+  <text x="210" y="193" text-anchor="middle" class="l">Tree Attention 可验证多条路径</text>
+  <path d="M300,100 L300,120 L250,120 L250,140" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#a)"/>
+  <rect x="430" y="140" width="320" height="60" class="box" fill="#fff3cd" stroke="#e6a700"/>
+  <text x="590" y="162" text-anchor="middle" class="t" fill="#856404">Rejection Sampling 验证</text>
+  <text x="445" y="180" class="l">对每个候选 ti:以概率 min(1, p_target/(α·p_draft)) 接受</text>
+  <text x="445" y="193" class="l">拒绝位置从修正分布 resample;拒绝后停止,接受部分保留</text>
+  <line x1="320" y1="170" x2="430" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="375" y="163" text-anchor="middle" class="s">验证</text>
+  <rect x="30" y="240" width="200" height="70" class="box" fill="#d4edda" stroke="#28a745"/>
+  <text x="130" y="262" text-anchor="middle" class="t" fill="#155724">Accepted Prefix ✓</text>
+  <text x="45" y="282" class="l">接受:前 n 个 token (n ≤ k)</text>
+  <text x="45" y="298" class="l">这些 token "白嫖" 了,只需 1 次大模型 forward</text>
+  <rect x="280" y="240" width="200" height="70" class="box" fill="#f8d7da" stroke="#dc3545"/>
+  <text x="380" y="262" text-anchor="middle" class="t" fill="#721c24">Rejected Position ✗</text>
+  <text x="295" y="282" class="l">第一个被拒位置:从目标分布 resample</text>
+  <text x="295" y="298" class="l">保证输出分布与 target 完全一致</text>
+  <rect x="530" y="240" width="220" height="70" class="box" fill="#e8f0fe" stroke="#0066cc"/>
+  <text x="640" y="262" text-anchor="middle" class="t" fill="#004085">Next Round</text>
+  <text x="545" y="282" class="l">接受的 n 个 + resampled 1 个 → 新前缀</text>
+  <text x="545" y="298" class="l">Draft 继续从新位置生成 k 个,循环</text>
+  <line x1="430" y1="185" x2="180" y2="240" stroke="#28a745" stroke-width="1.5" stroke-dasharray="4"/>
+  <line x1="500" y1="200" x2="380" y2="240" stroke="#dc3545" stroke-width="1.5" stroke-dasharray="4"/>
+  <line x1="650" y1="200" x2="640" y2="240" stroke="#0066cc" stroke-width="1.5" stroke-dasharray="4"/>
+  <rect x="30" y="320" width="720" height="18" rx="3" fill="#f8f9fa" stroke="#eee"/>
+  <text x="40" y="333" class="s">Medusa:加多个 head 预测多 token,无独立 draft;EAGLE:feature-level draft;Lookahead:Jacobi 迭代;典型加速 2-3x(接受率 70-90%)</text>
+</svg>

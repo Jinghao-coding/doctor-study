@@ -1,11 +1,13 @@
 {
   "title": "论文工作",
-  "subtitle": "Maestro · DeepShare · 互补关系与面试叙事",
+  "subtitle": "Maestro · DeepShare · ElastiCo · SagePilot · 简历视角面试问答",
   "kicker": "Research Work",
   "tags": [
     "papers",
     "maestro",
-    "deepshare"
+    "deepshare",
+    "elastico",
+    "sagepilot"
   ],
   "output": "pages/ai-infra/papers/index.html",
   "layout": [
@@ -19,7 +21,7 @@
           "items": [
             {
               "title": "ICDCS 2026 Maestro",
-              "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM",
+              "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM 弹性显存",
               "file": "01-icdcs-2026-maestro-llm.md",
               "level": "精通",
               "priority": 1,
@@ -63,6 +65,22 @@
                   "file": "02f-talk.md"
                 }
               ]
+            },
+            {
+              "title": "PE 2026 ElastiCo",
+              "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
+              "file": "04-elastico-train-inference.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "SagePilot（撰写中）",
+              "description": "GNN 计算图表征、多目标性能预测、Agentic 工作流编排",
+              "file": "05-sagepilot-gnn-prediction.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 15
             }
           ]
         },
@@ -76,6 +94,14 @@
               "level": "精通",
               "priority": 1,
               "time": 15
+            },
+            {
+              "title": "简历视角面试问答",
+              "description": "从简历描述出发预测面试官追问，含跨论文串联问题",
+              "file": "06-resume-perspective-qa.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 35
             }
           ]
         }

@@ -96,7 +96,48 @@ def asset_link(output: Path, target: str) -> str:
     return f"{rel_link(output, target)}?v={version}"
 
 
+_REL_URL_RE = re.compile(r'(src|href)\s*=\s*"([^"]+)"')
+
+
+def read_md(md_path: Path, output: Path) -> str:
+    """Read markdown file, rewriting relative src/href paths to be correct for output location."""
+    text = md_path.read_text(encoding="utf-8")
+    md_dir = md_path.parent
+
+    def _rewrite(m: re.Match) -> str:
+        attr, url = m.group(1), m.group(2)
+        if url.startswith(("#", "http:", "https:", "mailto:", "javascript:", "data:")):
+            return m.group(0)
+        if url.startswith("/"):
+            abs_target = ROOT / url.lstrip("/")
+        else:
+            abs_target = (md_dir / url).resolve()
+        try:
+            rel = abs_target.relative_to(ROOT)
+        except ValueError:
+            return m.group(0)
+        depth = len(output.parent.relative_to(ROOT).parts)
+        prefix = "." if depth == 0 else "/".join([".."] * depth)
+        new_url = (prefix + "/" + rel.as_posix()) if prefix != "." else rel.as_posix()
+        return f'{attr}="{new_url}"'
+
+    return _REL_URL_RE.sub(_rewrite, text)
+
+
 def apply_inline(text: str) -> str:
+    text = html.escape(text)
+    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\[([^\]]+)\]\((https?://[^)]+)\)", r'<a href="\2">\1</a>', text)
+    return text
+
+
+def apply_inline_in_html(text: str) -> str:
+    """Apply inline markdown to text already inside HTML blocks.
+    First unescape any existing HTML entities, then escape + apply markdown,
+    so existing entities like &lt; are preserved without double-escaping,
+    and raw < or & in markdown text are properly escaped."""
+    text = html.unescape(text)
     text = html.escape(text)
     text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
@@ -110,12 +151,12 @@ def render_table(lines: list[str]) -> str:
         head, body = rows[0], rows[2:]
     else:
         head, body = [], rows
-    parts = ["<table>"]
+    parts = ['<div class="table-scroll"><table>']
     if head:
         parts.append("<tr>" + "".join(f"<th>{apply_inline(cell)}</th>" for cell in head) + "</tr>")
     for row in body:
         parts.append("<tr>" + "".join(f"<td>{apply_inline(cell)}</td>" for cell in row) + "</tr>")
-    parts.append("</table>")
+    parts.append("</table></div>")
     return "\n".join(parts)
 
 
@@ -164,6 +205,12 @@ def markdown_to_html(markdown: str) -> str:
     raw_html_lines: list[str] = []
     raw_html_tag: str | None = None
     raw_html_depth = 0
+    html_in_code = False
+    html_code_lang = ""
+    html_code_lines: list[str] = []
+    html_in_pre = 0
+    html_in_table = False
+    html_table_lines: list[str] = []
 
     def flush_para() -> None:
         nonlocal para
@@ -185,18 +232,118 @@ def markdown_to_html(markdown: str) -> str:
             out.append(render_table(table_lines))
             table_lines = []
 
+    def flush_html_table() -> None:
+        nonlocal html_in_table, html_table_lines
+        if html_in_table and html_table_lines:
+            raw_html_lines.append(render_table(html_table_lines))
+            html_table_lines = []
+            html_in_table = False
+
+    def _inline_html_line(line: str) -> str:
+        """Apply inline markdown processing to text segments within an HTML line,
+        preserving HTML tags and their attributes. Does NOT modify html_in_pre state;
+        caller tracks that."""
+        if html_in_pre > 0:
+            return line
+        if not line.strip():
+            return line
+        if line.lstrip().startswith("<") and ">" in line:
+            parts = re.split(r"(<[^>]+>)", line)
+            processed = []
+            for part in parts:
+                if part.startswith("<") and part.endswith(">"):
+                    processed.append(part)
+                elif part:
+                    processed.append(apply_inline_in_html(part))
+            return "".join(processed)
+        return apply_inline_in_html(line)
+
     for raw in markdown.splitlines():
         line = raw.rstrip()
         if raw_html_tag:
-            raw_html_lines.append(line)
             lower = line.lower()
-            raw_html_depth += len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", lower))
-            raw_html_depth -= len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", lower))
+            old_html_in_pre = html_in_pre
+            pre_open = len(re.findall(r"<\s*pre[\s>]", lower)) if not html_in_code else 0
+            pre_close = len(re.findall(r"<\s*/\s*pre\s*>", lower)) if not html_in_code else 0
+            new_html_in_pre = old_html_in_pre + pre_open - pre_close
+            should_parse_div = not html_in_code and (old_html_in_pre <= 0 or pre_close > 0)
+            if should_parse_div:
+                if old_html_in_pre > 0 and pre_close > 0:
+                    div_open_count = 0
+                    div_close_count = 0
+                    for m in re.finditer(rf"<\s*{raw_html_tag}(?:\s|>|/)", lower):
+                        if m.start() > lower.rfind("</pre>"):
+                            div_open_count += 1
+                    for m in re.finditer(rf"<\s*/\s*{raw_html_tag}\s*>", lower):
+                        if m.start() > lower.rfind("</pre>"):
+                            div_close_count += 1
+                    raw_html_depth += div_open_count - div_close_count
+                else:
+                    raw_html_depth += len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", lower))
+                    raw_html_depth -= len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", lower))
+            if html_in_code:
+                if line.strip().startswith("```"):
+                    flush_html_table()
+                    raw_html_lines.append(render_code_block(html_code_lines, html_code_lang))
+                    html_code_lines = []
+                    html_in_code = False
+                    html_code_lang = ""
+                    post_pre_open = len(re.findall(r"<\s*pre[\s>]", lower))
+                    post_pre_close = len(re.findall(r"<\s*/\s*pre\s*>", lower))
+                    html_in_pre = html_in_pre + post_pre_open - post_pre_close
+                    post_div_open = len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", lower))
+                    post_div_close = len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", lower))
+                    raw_html_depth += post_div_open - post_div_close
+                else:
+                    html_code_lines.append(line)
+                if raw_html_depth <= 0:
+                    flush_html_table()
+                    if html_in_code and html_code_lines:
+                        raw_html_lines.append(render_code_block(html_code_lines, html_code_lang))
+                        html_code_lines = []
+                        html_in_code = False
+                    out.append("\n".join(raw_html_lines))
+                    raw_html_lines = []
+                    raw_html_tag = None
+                    raw_html_depth = 0
+                    html_in_pre = 0
+                    html_in_table = False
+                    html_table_lines = []
+                continue
+            if old_html_in_pre <= 0 and line.strip().startswith("```"):
+                flush_html_table()
+                html_in_code = True
+                html_code_lang = line.strip()[3:].strip()
+                html_code_lines = []
+                if raw_html_depth <= 0:
+                    out.append("\n".join(raw_html_lines))
+                    raw_html_lines = []
+                    raw_html_tag = None
+                    raw_html_depth = 0
+                    html_in_pre = 0
+                    html_in_table = False
+                    html_table_lines = []
+                else:
+                    html_in_pre = new_html_in_pre
+                continue
+            is_table_line = old_html_in_pre <= 0 and line.strip().startswith("|") and line.strip().endswith("|")
+            if old_html_in_pre <= 0 and is_table_line:
+                html_in_table = True
+                html_table_lines.append(line)
+            else:
+                if html_in_table:
+                    flush_html_table()
+                raw_html_lines.append(_inline_html_line(line))
+            html_in_pre = new_html_in_pre
             if raw_html_depth <= 0:
+                flush_html_table()
                 out.append("\n".join(raw_html_lines))
                 raw_html_lines = []
                 raw_html_tag = None
                 raw_html_depth = 0
+                html_in_pre = 0
+                html_in_table = False
+                html_table_lines = []
             continue
         if line.startswith("```"):
             flush_para(); flush_list(); flush_table()
@@ -223,11 +370,13 @@ def markdown_to_html(markdown: str) -> str:
             raw_html_lines = [line]
             raw_html_depth = len(re.findall(rf"<\s*{raw_html_tag}(?:\s|>|/)", stripped_lower))
             raw_html_depth -= len(re.findall(rf"<\s*/\s*{raw_html_tag}\s*>", stripped_lower))
+            html_in_pre = len(re.findall(r"<\s*pre[\s>]", stripped_lower)) - len(re.findall(r"<\s*/\s*pre\s*>", stripped_lower))
             if raw_html_depth <= 0:
                 out.append("\n".join(raw_html_lines))
                 raw_html_lines = []
                 raw_html_tag = None
                 raw_html_depth = 0
+                html_in_pre = 0
             continue
         if line.lstrip().startswith("<"):
             flush_para(); flush_list(); flush_table()
@@ -264,6 +413,8 @@ def markdown_to_html(markdown: str) -> str:
     flush_para(); flush_list(); flush_table()
     if in_code and code_lines:
         out.append(render_code_block(code_lines, code_lang))
+    if html_in_table and html_table_lines:
+        flush_html_table()
     if raw_html_lines:
         out.append("\n".join(raw_html_lines))
     return "\n".join(out)
@@ -442,9 +593,9 @@ def render_resources(block: dict, output: Path) -> str:
     return f'<section class="component-block"><h2>{html.escape(block.get("title", "相关资源"))}</h2><div class="resource-grid">{"".join(resources)}</div></section>'
 
 
-def render_section(block: dict, topic_path: Path) -> str:
+def render_section(block: dict, topic_path: Path, output: Path) -> str:
     md_path = topic_path.parent / block["file"]
-    body = markdown_to_html(md_path.read_text(encoding="utf-8"))
+    body = markdown_to_html(read_md(md_path, output))
     title = f'<h2>{html.escape(block["title"])}</h2>'
     card = block.get("card")
     if card:
@@ -452,12 +603,12 @@ def render_section(block: dict, topic_path: Path) -> str:
     return f"{title}\n{body}"
 
 
-def render_grid(block: dict, topic_path: Path) -> str:
+def render_grid(block: dict, topic_path: Path, output: Path) -> str:
     cards = []
     for item in block.get("items", []):
         body = ""
         if item.get("file"):
-            body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
+            body = markdown_to_html(read_md(topic_path.parent / item["file"], output))
         elif item.get("text"):
             body = markdown_to_html(item["text"])
         card_class = html.escape(item.get("card", "card-m"))
@@ -526,7 +677,7 @@ def _render_item_chips(item: dict) -> str:
     return f'<span class="tab-chips">{"".join(chips)}</span>'
 
 
-def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str) -> str:
+def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str, output: Path) -> str:
     if not subtabs:
         return ""
     nav_buttons: list[str] = []
@@ -539,10 +690,10 @@ def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str) -> str:
         desc = sub.get("description", "")
         body = ""
         if sub.get("file"):
-            body = markdown_to_html((topic_path.parent / sub["file"]).read_text(encoding="utf-8"))
+            body = markdown_to_html(read_md(topic_path.parent / sub["file"], output))
         elif sub.get("files"):
             body = "\n".join(
-                markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
+                markdown_to_html(read_md(topic_path.parent / file, output))
                 for file in sub["files"]
             )
         elif sub.get("text"):
@@ -581,7 +732,7 @@ def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str) -> str:
     ).format(buttons="".join(nav_buttons), panels="".join(panels))
 
 
-def render_tabs(block: dict, topic_path: Path) -> str:
+def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
     groups = _normalize_groups(block)
     if not groups:
         return ""
@@ -610,12 +761,12 @@ def render_tabs(block: dict, topic_path: Path) -> str:
             initial = f"{index + 1:02d}"
             body = ""
             if item.get("subtabs"):
-                body = _render_subtabs(item["subtabs"], topic_path, panel_id)
+                body = _render_subtabs(item["subtabs"], topic_path, panel_id, output)
             elif item.get("file"):
-                body = markdown_to_html((topic_path.parent / item["file"]).read_text(encoding="utf-8"))
+                body = markdown_to_html(read_md(topic_path.parent / item["file"], output))
             elif item.get("files"):
                 body = "\n".join(
-                    markdown_to_html((topic_path.parent / file).read_text(encoding="utf-8"))
+                    markdown_to_html(read_md(topic_path.parent / file, output))
                     for file in item["files"]
                 )
             elif item.get("text"):
@@ -785,18 +936,18 @@ def render_tabs(block: dict, topic_path: Path) -> str:
 def render_layout_block(block: dict, topic_path: Path, output: Path) -> str:
     block_type = block.get("type", "section")
     if block_type == "tabs":
-        return render_tabs(block, topic_path)
+        return render_tabs(block, topic_path, output)
     if block_type == "overview":
         return render_overview(block)
     if block_type == "path":
         return render_path(block)
     if block_type == "grid":
-        return render_grid(block, topic_path)
+        return render_grid(block, topic_path, output)
     if block_type == "callout":
         return render_callout(block)
     if block_type == "resources":
         return render_resources(block, output)
-    return render_section(block, topic_path)
+    return render_section(block, topic_path, output)
 
 
 def _topic_progress_meta(topic: dict) -> tuple[str, int]:

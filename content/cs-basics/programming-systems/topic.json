@@ -1,45 +1,101 @@
 {
   "title": "编程语言与工程基础",
-  "subtitle": "Binary · 编译链接 · 智能指针 · 面向对象 · 内存管理 · C++ 系统编程",
-  "tags": [
-    "cpp",
-    "binary",
-    "compiler",
-    "oop",
-    "memory",
-    "systems"
-  ],
+  "subtitle": "Binary · 编译链接 · 智能指针 · 面向对象 · 内存管理 · 值类别 · STL · 并发 · 现代 C++",
+  "kicker": "C++ & Systems",
+  "tags": ["cpp", "binary", "compiler", "oop", "memory", "systems", "concurrency", "stl"],
   "output": "pages/cs-basics/programming-systems/index.html",
   "layout": [
     {
       "type": "tabs",
       "id": "cs-programming-tabs",
       "title": "编程语言与工程基础",
-      "items": [
+      "groups": [
         {
-          "title": "Binary 与编译链接",
-          "description": "源码到进程、ELF、动态库、ABI",
-          "file": "01-binary-linking.md"
+          "title": "编译链接与二进制",
+          "items": [
+            {
+              "title": "Binary 与编译链接",
+              "description": "源码到进程、ELF、动态库、ABI",
+              "file": "01-binary-linking.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "编译链接与智能指针",
+              "description": "编译四阶段、静态/动态库、智能指针要素、gdb 调试死锁",
+              "file": "05-cpp-compile-smartptr.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "C++ 系统编程",
-          "description": "RAII、智能指针、并发、性能排查",
-          "file": "02-cpp-systems.md"
+          "title": "C++ 面向对象与内存",
+          "items": [
+            {
+              "title": "面向对象",
+              "description": "封装继承多态、访问控制、三种继承、虚函数与虚函数表",
+              "file": "03-cpp-oop.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "内存管理",
+              "description": "内存分布、mmap 加载权重、段错误、内存泄漏检测",
+              "file": "04-cpp-memory.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 15
+            },
+            {
+              "title": "C++ 系统编程",
+              "description": "RAII、智能指针、并发、性能排查",
+              "file": "02-cpp-systems.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 18
+            }
+          ]
         },
         {
-          "title": "编译链接与智能指针",
-          "description": "编译四阶段、静态/动态库、智能指针要素、gdb 调试死锁",
-          "file": "05-cpp-compile-smartptr.md"
-        },
-        {
-          "title": "面向对象",
-          "description": "封装继承多态、访问控制、三种继承、虚函数与虚函数表",
-          "file": "03-cpp-oop.md"
-        },
-        {
-          "title": "内存管理",
-          "description": "内存分布、mmap 加载权重、段错误、内存泄漏检测",
-          "file": "04-cpp-memory.md"
+          "title": "C++ 进阶专题",
+          "items": [
+            {
+              "title": "值类别与移动语义",
+              "description": "左值/右值、五边形值类别、右值引用、std::move、完美转发、RVO、Rule of 0/3/5",
+              "file": "06-cpp-value-move.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            },
+            {
+              "title": "STL 容器深度剖析",
+              "description": "vector 三指针/扩容、string SSO、deque 分段数组、unordered_map、迭代器失效",
+              "file": "07-cpp-stl-containers.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            },
+            {
+              "title": "C++ 并发与内存模型",
+              "description": "mutex/RAII lock、condition_variable、future/promise、atomic、六种 memory_order、CAS",
+              "file": "08-cpp-concurrency.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
+            },
+            {
+              "title": "现代 C++ 特性（11/14/17/20）",
+              "description": "lambda、shared_ptr 控制块、weak_ptr、optional/variant/string_view、Concepts/Ranges/Coroutines",
+              "file": "09-cpp-modern-features.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 28
+            }
+          ]
         }
       ]
     }

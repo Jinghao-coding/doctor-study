@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs><marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#333"/></marker></defs>
+  <text x="350" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a2e">利用率-延迟曲线 (M/M/1 模型)</text>
+  <line x1="80" y1="290" x2="650" y2="290" stroke="#333" stroke-width="1.5" marker-end="url(#ax)"/>
+  <line x1="80" y1="290" x2="80" y2="50" stroke="#333" stroke-width="1.5" marker-end="url(#ax)"/>
+  <text x="660" y="295" font-size="11">利用率 ρ = λ/μ</text>
+  <text x="35" y="50" font-size="11">等待时间 Wq</text>
+  <text x="80" y="310" text-anchor="middle" font-size="10" fill="#888">0%</text>
+  <text x="194" y="310" text-anchor="middle" font-size="10" fill="#888">20%</text>
+  <text x="308" y="310" text-anchor="middle" font-size="10" fill="#888">40%</text>
+  <text x="422" y="310" text-anchor="middle" font-size="10" fill="#888">60%</text>
+  <text x="536" y="310" text-anchor="middle" font-size="10" fill="#dc3545">80%</text>
+  <text x="640" y="310" text-anchor="middle" font-size="10" fill="#dc3545">100%</text>
+  <line x1="536" y1="50" x2="536" y2="290" stroke="#dc3545" stroke-width="1" stroke-dasharray="4" opacity="0.5"/>
+  <text x="540" y="70" font-size="10" fill="#dc3545">危险区(>80%)</text>
+  <text x="540" y="84" font-size="9" fill="#dc3545">延迟暴涨</text>
+  <line x1="422" y1="50" x2="422" y2="290" stroke="#e6a700" stroke-width="1" stroke-dasharray="4" opacity="0.5"/>
+  <text x="340" y="70" font-size="10" fill="#856404">推荐区(50-70%)</text>
+  <text x="340" y="84" font-size="9" fill="#856404">低延迟,有突发余量</text>
+  <path d="M80,280 C200,278 350,270 480,240 C520,220 550,170 580,100 C600,50 630,40 640,50" fill="none" stroke="#28a745" stroke-width="2.5"/>
+  <path d="M80,285 C200,280 350,275 480,255 C530,240 560,200 590,140 C615,80 635,50 645,55" fill="none" stroke="#0066cc" stroke-width="2" stroke-dasharray="6,3"/>
+  <circle cx="536" cy="165" r="4" fill="#dc3545"/>
+  <text x="544" y="160" font-size="10" fill="#dc3545">拐点~75-80%</text>
+  <rect x="80" y="320" width="540" height="25" rx="5" fill="#f8f9fa" stroke="#eee"/>
+  <text x="100" y="337" font-size="10" fill="#28a745">━ M/M/1 Wq = ρ/(μ(1-ρ))</text>
+  <text x="280" y="337" font-size="10" fill="#0066cc">╌ M/G/1 (服务时间方差大 → 曲线更陡)</text>
+  <text x="500" y="337" font-size="10" fill="#666">批训练:80-90%;在线推理:50-70%</text>
+</svg>

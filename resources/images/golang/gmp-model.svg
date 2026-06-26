@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a6fa5"/>
+    </marker>
+    <style>
+      .label{font-size:13px;fill:#333}
+      .title{font-size:15px;font-weight:600;fill:#1a1a2e}
+      .small{font-size:11px;fill:#666}
+      .box{rx:8;ry:8;stroke-width:1.5}
+      .queue{fill:#fff3cd;stroke:#e6a700}
+      .thread{fill:#d4edda;stroke:#28a745}
+      .proc{fill:#cce5ff;stroke:#0066cc}
+      .gor{fill:#f8d7da;stroke:#dc3545}
+      .desc{fill:#f5f5f5}
+    </style>
+  </defs>
+  <text x="450" y="30" text-anchor="middle" class="title" font-size="18">Go GMP 调度模型</text>
+  <rect x="40" y="55" width="100" height="420" class="box proc" fill="#e8f0fe"/>
+  <text x="90" y="80" text-anchor="middle" class="title">OS Threads (M)</text>
+  <text x="90" y="98" text-anchor="middle" class="small">M = Machine</text>
+  <rect x="50" y="115" width="80" height="45" rx="6" fill="#b6d4fe" stroke="#0066cc" stroke-width="1.5"/>
+  <text x="90" y="142" text-anchor="middle" class="label">M0</text>
+  <text x="90" y="150" x="90" text-anchor="middle" class="small">(绑定 P0)</text>
+  <rect x="50" y="190" width="80" height="45" rx="6" fill="#b6d4fe" stroke="#0066cc" stroke-width="1.5"/>
+  <text x="90" y="217" text-anchor="middle" class="label">M1</text>
+  <text x="90" y="225" text-anchor="middle" class="small">(绑定 P1)</text>
+  <rect x="50" y="265" width="80" height="45" rx="6" fill="#b6d4fe" stroke="#0066cc" stroke-width="1.5"/>
+  <text x="90" y="292" text-anchor="middle" class="label">M2</text>
+  <text x="90" y="300" text-anchor="middle" class="small">(spinning)</text>
+  <rect x="50" y="340" width="80" height="45" rx="6" fill="#b6d4fe" stroke="#0066cc" stroke-width="1.5" opacity="0.5"/>
+  <text x="90" y="367" text-anchor="middle" class="label">M3...</text>
+  <text x="90" y="455" text-anchor="middle" class="small">syscall 阻塞时</text>
+  <text x="90" y="467" text-anchor="middle" class="small">P 剥离,handoff</text>
+  <rect x="170" y="55" width="340" height="420" class="box thread" fill="#eafaf1"/>
+  <text x="340" y="80" text-anchor="middle" class="title">Processors (P) — GOMAXPROCS 个</text>
+  <rect x="185" y="100" width="150" height="180" rx="8" fill="#d5f5e3" stroke="#28a745" stroke-width="1.5"/>
+  <text x="260" y="122" text-anchor="middle" class="title">P0 Local Queue</text>
+  <rect x="195" y="133" width="130" height="28" rx="5" fill="#f8d7da" stroke="#dc3545"/><text x="260" y="152" text-anchor="middle" class="label">G1 (running)</text>
+  <rect x="195" y="167" width="130" height="28" rx="5" fill="#fff" stroke="#dc3545"/><text x="260" y="186" text-anchor="middle" class="label">G3 runnable</text>
+  <rect x="195" y="200" width="130" height="28" rx="5" fill="#fff" stroke="#dc3545"/><text x="260" y="219" text-anchor="middle" class="label">G5 runnable</text>
+  <rect x="195" y="233" width="130" height="28" rx="5" fill="#fff" stroke="#dc3545" opacity="0.5"/><text x="260" y="252" text-anchor="middle" class="small">...max 256</text>
+  <text x="260" y="275" text-anchor="middle" class="small">当前执行 G1</text>
+  <rect x="355" y="100" width="140" height="180" rx="8" fill="#d5f5e3" stroke="#28a745" stroke-width="1.5"/>
+  <text x="425" y="122" text-anchor="middle" class="title">P1 Local Queue</text>
+  <rect x="365" y="133" width="120" height="28" rx="5" fill="#f8d7da" stroke="#dc3545"/><text x="425" y="152" text-anchor="middle" class="label">G2 (running)</text>
+  <rect x="365" y="167" width="120" height="28" rx="5" fill="#fff" stroke="#dc3545"/><text x="425" y="186" text-anchor="middle" class="label">G4 runnable</text>
+  <rect x="365" y="200" width="120" height="28" rx="5" fill="#fff" stroke="#dc3545" opacity="0.5"/><text x="425" y="219" text-anchor="middle" class="small">...</text>
+  <text x="425" y="275" text-anchor="middle" class="small">当前执行 G2</text>
+  <rect x="185" y="300" width="310" height="155" rx="8" fill="#fff3cd" stroke="#e6a700" stroke-width="1.5"/>
+  <text x="340" y="322" text-anchor="middle" class="title">Global Run Queue (GRQ)</text>
+  <rect x="195" y="335" width="90" height="28" rx="5" fill="#fff" stroke="#e6a700"/><text x="240" y="354" text-anchor="middle" class="label">G6</text>
+  <rect x="295" y="335" width="90" height="28" rx="5" fill="#fff" stroke="#e6a700"/><text x="340" y="354" text-anchor="middle" class="label">G7</text>
+  <rect x="395" y="335" width="90" height="28" rx="5" fill="#fff" stroke="#e6a700"/><text x="440" y="354" text-anchor="middle" class="label">G8</text>
+  <text x="340" y="390" text-anchor="middle" class="small">每 61 次调度检查 GRQ</text>
+  <text x="340" y="407" text-anchor="middle" class="small">P 队列为空时:先偷一半→GRQ→Netpoll</text>
+  <text x="340" y="430" text-anchor="middle" class="small">Work-stealing:从其他 P 偷一半 G</text>
+  <rect x="540" y="55" width="330" height="420" class="box gor" fill="#fef5f5"/>
+  <text x="705" y="80" text-anchor="middle" class="title">Goroutines (G)</text>
+  <text x="705" y="97" text-anchor="middle" class="small">初始栈 2KB,可动态扩缩,M:N 映射到 M</text>
+  <rect x="555" y="115" width="90" height="38" rx="6" fill="#f8d7da" stroke="#dc3545"/><text x="600" y="139" text-anchor="middle" class="label">G1 执行中</text>
+  <rect x="660" y="115" width="90" height="38" rx="6" fill="#f8d7da" stroke="#dc3545"/><text x="705" y="139" text-anchor="middle" class="label">G2 执行中</text>
+  <rect x="765" y="115" width="90" height="38" rx="6" fill="#fff" stroke="#dc3545"/><text x="810" y="139" text-anchor="middle" class="label">G3 就绪</text>
+  <rect x="555" y="165" width="90" height="38" rx="6" fill="#fff" stroke="#dc3545"/><text x="600" y="189" text-anchor="middle" class="label">G4 就绪</text>
+  <rect x="660" y="165" width="90" height="38" rx="6" fill="#fff" stroke="#dc3545"/><text x="705" y="189" text-anchor="middle" class="label">G5 就绪</text>
+  <rect x="765" y="165" width="90" height="38" rx="6" fill="#fff" stroke="#e6a700"/><text x="810" y="189" text-anchor="middle" class="label">G6 GRQ</text>
+  <rect x="555" y="240" width="300" height="110" rx="8" fill="#e8f5e9" stroke="#28a745" stroke-width="1"/>
+  <text x="705" y="262" text-anchor="middle" class="title" font-size="13">调度规则</text>
+  <text x="570" y="282" class="small">1. runqget:从本地队列取 G</text>
+  <text x="570" y="299" class="small">2. 每 61 次:从 GRQ 取</text>
+  <text x="570" y="316" class="small">3. findrunnable:work-stealing</text>
+  <text x="570" y="333" class="small">4. 检查 netpoll (epoll) I/O ready G</text>
+  <rect x="555" y="370" width="300" height="85" rx="8" fill="#fff3cd" stroke="#e6a700" stroke-width="1"/>
+  <text x="705" y="392" text-anchor="middle" class="title" font-size="13">Syscall 处理</text>
+  <text x="570" y="412" class="small">G 进入 syscall → P 与 M 解绑</text>
+  <text x="570" y="429" class="small">P 交给空闲 M 或创建新 M(handoff)</text>
+  <text x="570" y="446" class="small">syscall 返回 → G 放回队列,M 缓存或销毁</text>
+  <line x1="150" y1="137" x2="185" y2="147" stroke="#4a6fa5" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="335" y1="147" x2="555" y2="134" stroke="#4a6fa5" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M260,280 Q260,295 280,298 L310,298 Q330,298 340,295" stroke="#e6a700" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+</svg>

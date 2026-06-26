@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs><style>.t{font-size:12px;font-weight:600}.l{font-size:10px;fill:#444}.s{font-size:9px;fill:#888}</style></defs>
+  <text x="375" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a2e">LLM 量化方案对比:精度、大小与速度</text>
+  <line x1="60" y1="280" x2="700" y2="280" stroke="#333" stroke-width="1.5"/>
+  <line x1="60" y1="40" x2="60" y2="280" stroke="#333" stroke-width="1.5"/>
+  <text x="60" y="30" text-anchor="middle" class="l">精度↑</text>
+  <text x="700" y="300" text-anchor="end" class="l">模型大小 / 速度↑</text>
+  <text x="60" y="295" text-anchor="middle" class="s">最高</text>
+  <text x="700" y="295" text-anchor="middle" class="s">最大/最快</text>
+  <rect x="60" y="60" width="80" height="50" rx="5" fill="#28a745" opacity="0.85"/>
+  <text x="100" y="80" text-anchor="middle" class="t" fill="#fff">FP32</text>
+  <text x="100" y="95" text-anchor="middle" class="l" fill="#fff">基准 1x</text>
+  <text x="100" y="107" text-anchor="middle" class="s" fill="#fff">4 字节</text>
+  <rect x="160" y="75" width="80" height="50" rx="5" fill="#5cb85c" opacity="0.85"/>
+  <text x="200" y="95" text-anchor="middle" class="t" fill="#fff">FP16/BF16</text>
+  <text x="200" y="110" text-anchor="middle" class="l" fill="#fff">~1x 精度</text>
+  <text x="200" y="122" text-anchor="middle" class="s" fill="#fff">2 字节</text>
+  <rect x="260" y="95" width="80" height="50" rx="5" fill="#ffc107" opacity="0.85"/>
+  <text x="300" y="115" text-anchor="middle" class="t" fill="#333">FP8 E4M3</text>
+  <text x="300" y="130" text-anchor="middle" class="l" fill="#333">近无损</text>
+  <text x="300" y="142" text-anchor="middle" class="s" fill="#333">1 字节(H100)</text>
+  <rect x="360" y="110" width="80" height="50" rx="5" fill="#fd7e14" opacity="0.85"/>
+  <text x="400" y="130" text-anchor="middle" class="t" fill="#fff">W8A8</text>
+  <text x="400" y="145" text-anchor="middle" class="l" fill="#fff">INT8,需校准</text>
+  <text x="400" y="157" text-anchor="middle" class="s" fill="#fff">1 字节+速度↑</text>
+  <rect x="460" y="130" width="90" height="50" rx="5" fill="#dc3545" opacity="0.85"/>
+  <text x="505" y="148" text-anchor="middle" class="t" fill="#fff">W4A16 (GPTQ/AWQ)</text>
+  <text x="505" y="163" text-anchor="middle" class="l" fill="#fff">weight-only</text>
+  <text x="505" y="175" text-anchor="middle" class="s" fill="#fff">~0.5 字节</text>
+  <rect x="570" y="155" width="90" height="50" rx="5" fill="#c82333" opacity="0.85"/>
+  <text x="615" y="173" text-anchor="middle" class="t" fill="#fff">W4A8</text>
+  <text x="615" y="188" text-anchor="middle" class="l" fill="#fff">INT4 权重+INT8 激活</text>
+  <text x="615" y="200" text-anchor="middle" class="s" fill="#fff">~0.5 字节+速度</text>
+  <rect x="680" y="180" width="60" height="50" rx="5" fill="#721c24" opacity="0.85"/>
+  <text x="710" y="198" text-anchor="middle" class="t" fill="#fff">W4A4</text>
+  <text x="710" y="213" text-anchor="middle" class="l" fill="#fff">研究中</text>
+  <text x="710" y="225" text-anchor="middle" class="s" fill="#fff">~0.25B</text>
+  <line x1="60" y1="240" x2="700" y2="240" stroke="#28a745" stroke-width="2" stroke-dasharray="5"/>
+  <text x="70" y="255" class="s" fill="#28a745">精度线:FP16 训练基线精度</text>
+  <rect x="60" y="260" width="14" height="12" rx="2" fill="#ffc107"/><text x="80" y="270" class="s">FP8(H100 原生,低精度损失)</text>
+  <rect x="60" y="275" width="14" height="12" rx="2" fill="#dc3545"/><text x="80" y="285" class="s">W4A16(GPTQ/AWQ)最常用部署方案,4× 显存压缩</text>
+  <text x="400" y="310" text-anchor="middle" class="l">Weight-only(WxA16):显存压缩为主;Weight-Activation(WxAx):显存压缩+计算加速(需 INT8 Tensor Core)</text>
+</svg>

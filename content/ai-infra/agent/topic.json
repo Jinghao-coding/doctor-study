@@ -58,9 +58,37 @@
               "time": 18
             }
           ]
+        },
+        {
+          "title": "深度专题",
+          "items": [
+            {
+              "title": "高级 Agent 范式",
+              "description": "Reflexion、Self-Ask、ToT、LATS、Plan-and-Execute 对比",
+              "file": "05-agent-paradigms-deep.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 20
+            },
+            {
+              "title": "高级 RAG 技术",
+              "description": "分块策略、混合检索、查询变换、Graph RAG、评估",
+              "file": "06-rag-advanced.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 25
+            },
+            {
+              "title": "Function Calling 深度",
+              "description": "API 消息格式、并行调用、Structured Output、最佳实践",
+              "file": "07-function-calling-api.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 20
+            }
+          ]
         }
       ]
     }
   ],
-  "sections": []
-}
+  "sections": []}

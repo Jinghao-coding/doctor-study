@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 580" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#555"/></marker>
+    <style>.s{fill:#fff;stroke:#333;stroke-width:1.5;rx:18}.l{font-size:10px;text-anchor:middle}.t{font-size:13px;font-weight:600;text-anchor:middle}.st{stroke:#666;stroke-width:1.2;fill:none;marker-end:url(#arr)}</style>
+  </defs>
+  <text x="350" y="22" class="t" font-size="15" fill="#1a1a2e">TCP 状态机 (Client 主动关闭路径)</text>
+  <ellipse cx="350" cy="55" rx="50" ry="22" class="s" fill="#f0f0f0"/>
+  <text x="350" y="52" class="t">CLOSED</text>
+  <text x="350" y="66" class="l">无连接</text>
+  <ellipse cx="200" cy="125" rx="60" ry="22" class="s" fill="#cce5ff"/>
+  <text x="200" y="122" class="t">LISTEN</text>
+  <text x="200" y="136" class="l">服务端监听</text>
+  <ellipse cx="200" cy="200" rx="65" ry="22" class="s" fill="#fff3cd"/>
+  <text x="200" y="197" class="t">SYN_RCVD</text>
+  <text x="200" y="211" class="l">收到 SYN,已发 SYN+ACK</text>
+  <ellipse cx="500" cy="125" rx="60" ry="22" class="s" fill="#d4edda"/>
+  <text x="500" y="122" class="t">SYN_SENT</text>
+  <text x="500" y="136" class="l">客户端发 SYN</text>
+  <ellipse cx="350" cy="280" rx="75" ry="22" class="s" fill="#d4edda" stroke="#28a745" stroke-width="2"/>
+  <text x="350" y="277" class="t" fill="#155724">ESTABLISHED</text>
+  <text x="350" y="291" class="l">连接建立,数据传输</text>
+  <ellipse cx="150" cy="370" rx="65" ry="22" class="s" fill="#f8d7da"/>
+  <text x="150" y="367" class="t" fill="#721c24">FIN_WAIT_1</text>
+  <text x="150" y="381" class="l">主动关闭:发 FIN</text>
+  <ellipse cx="550" cy="370" rx="65" ry="22" class="s" fill="#f8d7da"/>
+  <text x="550" y="367" class="t" fill="#721c24">CLOSE_WAIT</text>
+  <text x="550" y="381" class="l">被动关闭:收 FIN,发 ACK</text>
+  <ellipse cx="150" cy="445" rx="65" ry="22" class="s" fill="#fff3cd"/>
+  <text x="150" y="442" class="t" fill="#856404">FIN_WAIT_2</text>
+  <text x="150" y="456" class="l">收到 ACK,等对端 FIN</text>
+  <ellipse cx="550" cy="445" rx="60" ry="22" class="s" fill="#f8d7da"/>
+  <text x="550" y="442" class="t" fill="#721c24">LAST_ACK</text>
+  <text x="550" y="456" class="l">发 FIN,等最后 ACK</text>
+  <ellipse cx="150" cy="520" rx="65" ry="22" class="s" fill="#e2d9f3" stroke="#6f42c1" stroke-width="2"/>
+  <text x="150" y="517" class="t" fill="#4a235a">TIME_WAIT</text>
+  <text x="150" y="531" class="l">2MSL 等待,确保最后 ACK 到达</text>
+  <path d="M350,77 L350,100 L230,112" class="st"/>
+  <text x="285" y="90" class="l" font-size="9">服务端:被动打开</text>
+  <path d="M350,77 L450,112" class="st"/>
+  <text x="440" y="95" class="l" font-size="9">客户端:connect()/SYN</text>
+  <path d="M200,147 L200,178" class="st"/>
+  <text x="230" y="167" class="l" font-size="9">收 SYN,发 SYN+ACK</text>
+  <path d="M250,195 L440,135" class="st"/>
+  <text x="370" y="155" class="l" font-size="9">客户端:收 SYN+ACK,发 ACK</text>
+  <path d="M500,147 L400,263" class="st"/>
+  <text x="470" y="200" class="l" font-size="9">收 SYN+ACK,发 ACK</text>
+  <path d="M245,210 L300,260" class="st"/>
+  <text x="250" y="245" class="l" font-size="9">收 ACK</text>
+  <path d="M300,302 L200,350" class="st"/>
+  <text x="230" y="330" class="l" font-size="9" fill="#dc3545">主动关闭:close()/FIN</text>
+  <path d="M400,302 L500,350" class="st"/>
+  <text x="480" y="330" class="l" font-size="9" fill="#dc3545">被动关闭:收 FIN,发 ACK</text>
+  <path d="M150,392 L150,423" class="st"/>
+  <text x="175" y="412" class="l" font-size="9">收到 ACK</text>
+  <path d="M550,392 L550,423" class="st"/>
+  <text x="575" y="412" class="l" font-size="9">应用 close()/发 FIN</text>
+  <path d="M215,445 L485,445" class="st"/>
+  <text x="350" y="437" class="l" font-size="9">收到对端 FIN,发 ACK</text>
+  <path d="M150,467 L150,498" class="st"/>
+  <text x="180" y="487" class="l" font-size="9">收到对端 FIN,发 ACK</text>
+  <path d="M550,467 L215,512" class="st" stroke-dasharray="4"/>
+  <text x="400" y="500" class="l" font-size="9">收到最后 ACK → CLOSED</text>
+  <path d="M150,542 L150,555 L320,555 L350,302" class="st" stroke-dasharray="4"/>
+  <text x="240" y="568" class="l" font-size="9" fill="#6f42c1">2MSL 超时 → CLOSED</text>
+  <rect x="30" y="565" width="640" height="12" rx="3" fill="#f8f9fa" stroke="#eee"/>
+  <text x="350" y="575" text-anchor="middle" font-size="9" fill="#888">红色路径=FIN 关闭,蓝色=TIME_WAIT(2MSL),绿色=ESTABLISHED 数据传输态</text>
+</svg>

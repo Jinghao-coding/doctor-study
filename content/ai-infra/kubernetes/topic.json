@@ -1,6 +1,6 @@
 {
   "title": "Kubernetes 面试学习",
-  "subtitle": "架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA · 扩展与工程化",
+  "subtitle": "架构主链路 · 调度资源 · Scheduler 内部机制 · Workload Controller · 网络存储 · 安全多租户 · 排障稳定性 · AI Infra GPU/DRA · 扩展与工程化 · 深度原理",
   "kicker": "Platform Infrastructure",
   "tags": [
     "k8s",
@@ -15,6 +15,8 @@
     "kustomize",
     "gpu",
     "dra",
+    "etcd",
+    "cni",
     "interview"
   ],
   "output": "pages/ai-infra/kubernetes/index.html",
@@ -181,6 +183,59 @@
               "level": "精通",
               "priority": 2,
               "time": 18
+            }
+          ]
+        },
+        {
+          "title": "深度原理与基础设施",
+          "items": [
+            {
+              "title": "etcd 内部原理",
+              "description": "Raft 共识、MVCC/Revision/Compaction、watch 机制、boltDB、性能调优",
+              "file": "10-etcd-internals.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 28
+            },
+            {
+              "title": "Informer 与 WorkQueue",
+              "description": "Reflector→DeltaFIFO→Indexer→Controller 全链路、RateLimitingQueue、Reconcile 循环",
+              "file": "11-informer-workqueue.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 30
+            },
+            {
+              "title": "CNI 与 kube-proxy 深度",
+              "description": "CNI 规范、跨节点 Pod 通信、Calico/Cilium/Flannel、iptables/IPVS/eBPF、EndpointSlice",
+              "file": "12-cni-kube-proxy-deep.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 28
+            },
+            {
+              "title": "API Server 请求链路",
+              "description": "AuthN/AuthZ/Admission/Validation/Storage 五阶段、RBAC、Webhook、APF、乐观并发",
+              "file": "13-api-server-deep.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 28
+            },
+            {
+              "title": "Karpenter 与自动扩缩容",
+              "description": "CA vs Karpenter、NodePool/EC2NodeClass、Consolidation、HPA/VPA/PDB/KEDA、GPU 场景",
+              "file": "14-karpenter-autoscaling.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 28
+            },
+            {
+              "title": "Node 生命周期与运维",
+              "description": "TLS Bootstrap、Node Condition/Lease、Drain、NPD、taint、驱逐阈值、Probe、优雅终止",
+              "file": "15-node-lifecycle.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 30
             }
           ]
         }

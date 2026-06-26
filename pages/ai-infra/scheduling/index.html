@@ -7,27 +7,27 @@
 <title>任务调度理论 · doctor-study</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
-<link rel="stylesheet" href="../../../assets/style.css?v=1781710946">
+<link rel="stylesheet" href="../../../assets/style.css?v=1782459867">
 </head>
 <body>
 <nav class="topnav">
-<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机基础">基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机基础知识</span><small>cs-basics / os / networking</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与 Agent">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
+<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机基础">基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机基础知识</span><small>cs-basics / os / networking</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler / etcd</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory / queueing</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与 Agent">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
 </nav>
 <div class="app-shell">
 <aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机基础">基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机基础知识"><span>计算机基础知识</span><small>cs-basics · os</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link active" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与 Agent">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
   <main class="wrap">
-  <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Scheduling Theory</div><h1>任务调度理论</h1><p class="sub">目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 面试题精讲</p><div class="hero-tags"><span>scheduling</span><span>theory</span><span>fairness</span><span>batch</span><span>topology</span></div></div></section>
+  <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">Scheduling Theory</div><h1>任务调度理论</h1><p class="sub">目标函数 · 经典算法 · 多资源公平 · 批调度 · 拓扑感知 · 排队论 · 架构演进 · 面试题精讲</p><div class="hero-tags"><span>scheduling</span><span>theory</span><span>fairness</span><span>batch</span><span>topology</span><span>queueing</span><span>borg</span></div></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="scheduling-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 6</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">任务调度理论</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="任务调度理论"><details class="tab-group" open data-group-id="scheduling-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">理论基础</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="scheduling-tabs-tab-1" data-initial="01" data-mid="scheduling-tabs::01-classic-algorithms-md" data-level="基础" title="经典调度算法" aria-controls="scheduling-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">经典调度算法</span><span class="tab-desc">FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-2" data-initial="02" data-mid="scheduling-tabs::02-objectives-metrics-md" data-level="基础" title="目标函数与评价指标" aria-controls="scheduling-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">目标函数与评价指标</span><span class="tab-desc">JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="scheduling-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">公平性与批调度</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-3" data-initial="03" data-mid="scheduling-tabs::03-fairness-multiresource-md" data-level="进阶" title="多资源公平调度" aria-controls="scheduling-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多资源公平调度</span><span class="tab-desc">Max-Min、DRF、Elastic Quota、借用、回收与队列治理</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-4" data-initial="04" data-mid="scheduling-tabs::04-batch-gang-backfill-md" data-level="进阶" title="批调度、Gang 与 Backfill" aria-controls="scheduling-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">批调度、Gang 与 Backfill</span><span class="tab-desc">Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="scheduling-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">AI 集群与面试</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-5" data-initial="05" data-mid="scheduling-tabs::05-topology-aware-scheduling-md" data-level="精通" title="拓扑感知调度" aria-controls="scheduling-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">拓扑感知调度</span><span class="tab-desc">NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-6" data-initial="06" data-mid="scheduling-tabs::idx-6" data-level="精通" title="GPU 调度场景题库" aria-controls="scheduling-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 调度场景题库</span><span class="tab-desc">按工业场景归类：异构、多租户、Gang/Backfill、抢占、碎片、拓扑、混部、弹性训练、海量小作业</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 70 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="scheduling-tabs-panel-1" aria-labelledby="scheduling-tabs-tab-1" data-mid="scheduling-tabs::01-classic-algorithms-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>经典调度算法</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<section class="tabs-shell" data-tabs data-tabs-id="scheduling-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 9</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">任务调度理论</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="任务调度理论"><details class="tab-group" open data-group-id="scheduling-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">理论基础</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="scheduling-tabs-tab-1" data-initial="01" data-mid="scheduling-tabs::01-classic-algorithms-md" data-level="基础" title="经典调度算法" aria-controls="scheduling-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">经典调度算法</span><span class="tab-desc">FIFO/SJF/SRTF/EDF、DRF、Gang、Bin Packing</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-2" data-initial="02" data-mid="scheduling-tabs::02-objectives-metrics-md" data-level="基础" title="目标函数与评价指标" aria-controls="scheduling-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">目标函数与评价指标</span><span class="tab-desc">JCT、等待时间、吞吐、利用率、公平性、SLO、抢占代价</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="scheduling-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">公平性与批调度</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-3" data-initial="03" data-mid="scheduling-tabs::03-fairness-multiresource-md" data-level="进阶" title="多资源公平调度" aria-controls="scheduling-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多资源公平调度</span><span class="tab-desc">Max-Min、DRF、Elastic Quota、借用、回收与队列治理</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-4" data-initial="04" data-mid="scheduling-tabs::04-batch-gang-backfill-md" data-level="进阶" title="批调度、Gang 与 Backfill" aria-controls="scheduling-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">批调度、Gang 与 Backfill</span><span class="tab-desc">Gang Scheduling、Backfill、抢占、Checkpoint、弹性训练</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="scheduling-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">AI 集群与面试</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-5" data-initial="05" data-mid="scheduling-tabs::05-topology-aware-scheduling-md" data-level="精通" title="拓扑感知调度" aria-controls="scheduling-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">拓扑感知调度</span><span class="tab-desc">NUMA、PCIe、NVLink、RDMA、并行策略与 GPU 放置</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-6" data-initial="06" data-mid="scheduling-tabs::idx-6" data-level="精通" title="GPU 调度场景题库" aria-controls="scheduling-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 调度场景题库</span><span class="tab-desc">按工业场景归类：异构、多租户、Gang/Backfill、抢占、碎片、拓扑、混部、弹性训练、海量小作业</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 70 min</span></span></button></div></details><details class="tab-group" open data-group-id="scheduling-tabs-grp-4"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">调度理论与架构演进</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-7" data-initial="07" data-mid="scheduling-tabs::10-queueing-theory-md" data-level="精通" title="排队论基础" aria-controls="scheduling-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">排队论基础</span><span class="tab-desc">Little&#x27;s Law、Kendall 记号、M/M/1、M/M/c、M/G/1、利用率-延迟曲线、SRPT</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-8" data-initial="08" data-mid="scheduling-tabs::11-scheduler-architecture-evolution-md" data-level="精通" title="调度架构演进" aria-controls="scheduling-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">调度架构演进</span><span class="tab-desc">集中式/双层/共享态/混合调度：Borg、Mesos、Omega、Firmament</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 25 min</span></span></button><button class="tab-button" type="button" role="tab" id="scheduling-tabs-tab-9" data-initial="09" data-mid="scheduling-tabs::12-spot-instance-scheduling-md" data-level="精通" title="Spot / 抢占式实例调度" aria-controls="scheduling-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Spot / 抢占式实例调度</span><span class="tab-desc">Spot 经济模型、中断检测、checkpoint-on-revocation、训练/推理策略、Karpenter/Kueue</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 28 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="scheduling-tabs-panel-1" aria-labelledby="scheduling-tabs-tab-1" data-mid="scheduling-tabs::01-classic-algorithms-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>经典调度算法</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>经典调度算法（FIFO/SJF/SRTF/EDF/RR/优先级）是所有调度系统的排序基础，关键不是背名字，而是说清每个算法的最优条件、失败条件，以及在 GPU 集群里如何分成&quot;排序层（谁先被考虑）+ 放置层（放到哪里，Bin Packing vs Spread）&quot;组合使用。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>经典调度算法：从直觉到数学</h3>
 <p>经典调度算法是所有调度系统的基础。不管你用的是 K8S 默认调度器、Volcano 还是自研调度器，底层的排序逻辑一定逃不出这几个经典算法的思想。面试中，面试官期望你不只是知道算法名字，还能说清楚：<strong>为什么这个算法最优？最优的条件是什么？在什么条件下它会失败？</strong></p>
@@ -52,35 +52,35 @@
 <p><strong>怎么理解</strong>：超市排队。先来先结账，不管你买 1 件还是 100 件。</p>
 <p><strong>优点</strong>：实现最简单，不需要任何预测信息（不需要知道任务运行多久），天然公平（按到达顺序）。</p>
 <p><strong>致命问题：Head-of-line blocking</strong>：如果队首是一个 10 小时的训练任务，后面 100 个 5 分钟的实验任务全部被阻塞。</p>
-<p><strong>面试中怎么答</strong>：FIFO 是所有调度器的默认起点。面试时不要说"FIFO 不好"——要说"FIFO 在什么场景下够用，什么场景下不够"。对于同质任务（运行时间差不多），FIFO 就够了。对于异质任务（短实验 + 长训练），FIFO 的 head-of-line blocking 就不可接受了。</p>
+<p><strong>面试中怎么答</strong>：FIFO 是所有调度器的默认起点。面试时不要说&quot;FIFO 不好&quot;——要说&quot;FIFO 在什么场景下够用，什么场景下不够&quot;。对于同质任务（运行时间差不多），FIFO 就够了。对于异质任务（短实验 + 长训练），FIFO 的 head-of-line blocking 就不可接受了。</p>
 
 <h4>2. SJF（Shortest Job First）</h4>
 <p><strong>定义</strong>：运行时间最短的任务优先调度。不可抢占——一旦开始就必须跑完。</p>
 <p><strong>核心性质：SJF 最小化平均等待时间</strong></p>
-<p><strong>直觉证明</strong>：假设队列里有任务 A(1h) 和 B(10h)。如果先 A 后 B：A 等 0h，B 等 1h，平均等待 = 0.5h。如果先 B 后 A：B 等 0h，A 等 10h，平均等待 = 5h。短任务排前面，它们的等待时间短（因为本身短），长任务无论排哪里都要等，放后面只增加一个"短任务的执行时间"。所以短任务优先永远不劣。</p>
+<p><strong>直觉证明</strong>：假设队列里有任务 A(1h) 和 B(10h)。如果先 A 后 B：A 等 0h，B 等 1h，平均等待 = 0.5h。如果先 B 后 A：B 等 0h，A 等 10h，平均等待 = 5h。短任务排前面，它们的等待时间短（因为本身短），长任务无论排哪里都要等，放后面只增加一个&quot;短任务的执行时间&quot;。所以短任务优先永远不劣。</p>
 <p><strong>致命问题：饥饿</strong>：如果短任务源源不断到达，长任务可能永远排不上。</p>
 <p><strong>前提条件</strong>：必须知道任务的运行时间。在 GPU 集群里，用户声明、历史统计或在线预测可以提供这个信息。</p>
-<p><strong>面试中怎么答</strong>：面试官问"为什么 SJF 最优"，你应该：(1) 说"它最小化平均等待时间"；(2) 用简单的数字例子说明；(3) 补"但它会导致饥饿，需要 aging 或配额保障来缓解"。</p>
+<p><strong>面试中怎么答</strong>：面试官问&quot;为什么 SJF 最优&quot;，你应该：(1) 说&quot;它最小化平均等待时间&quot;；(2) 用简单的数字例子说明；(3) 补&quot;但它会导致饥饿，需要 aging 或配额保障来缓解&quot;。</p>
 
 <h4>3. SRTF（Shortest Remaining Time First）</h4>
 <p><strong>定义</strong>：SJF 的抢占版本。按<strong>剩余</strong>时间排序，新来的短作业可以打断正在执行的长作业。</p>
 <p><strong>和 SJF 的本质区别</strong>：SJF 按总执行时间排序，任务一旦开始就不可中断。SRTF 按剩余时间排序，每当新任务到达时重新排序，可以抢占。</p>
 <p><strong>什么时候比 SJF 更好</strong>：当任务到达时间不确定时。例如多 agent 工作流中，不断有新 stage 到达。SRTF 可以让新来的短 stage 立即执行，避免被正在执行的长 stage 阻塞。</p>
 <p><strong>额外代价</strong>：(1) 需要抢占机制；(2) 需要更精确的剩余时间预测；(3) 抢占本身的成本（训练任务可能需要回滚到 checkpoint）。</p>
-<p><strong>怎么理解</strong>：SJF 像"餐厅只接受预约，上桌了就不赶人走"。SRTF 像"急诊室分诊——新来了更急的病人，正在处理的可以先放一放"。</p>
+<p><strong>怎么理解</strong>：SJF 像&quot;餐厅只接受预约，上桌了就不赶人走&quot;。SRTF 像&quot;急诊室分诊——新来了更急的病人，正在处理的可以先放一放&quot;。</p>
 
 <h4>4. EDF（Earliest Deadline First）</h4>
 <p><strong>定义</strong>：截止时间最近的任务优先调度。可抢占。</p>
-<p><strong>适用场景</strong>：有明确 deadline 的任务。如实时系统、数据 Pipeline（"明早 8 点前必须跑完"）、模型发布倒计时。</p>
+<p><strong>适用场景</strong>：有明确 deadline 的任务。如实时系统、数据 Pipeline（&quot;明早 8 点前必须跑完&quot;）、模型发布倒计时。</p>
 <p><strong>最优性</strong>：在任务可抢占且 deadline 可知的前提下，EDF 是最优的——如果 EDF 都调不了，没有任何算法能调。</p>
-<p><strong>局限</strong>：(1) 需要知道 deadline；(2) 系统过载时，所有接近 deadline 的任务会"集体崩溃"；(3) GPU 训练任务通常没有明确的 deadline，所以 EDF 在 GPU 集群中用得少。</p>
-<p><strong>怎么理解</strong>：EDF 像"赶飞机"——谁离登机时间最近谁先走安检。</p>
+<p><strong>局限</strong>：(1) 需要知道 deadline；(2) 系统过载时，所有接近 deadline 的任务会&quot;集体崩溃&quot;；(3) GPU 训练任务通常没有明确的 deadline，所以 EDF 在 GPU 集群中用得少。</p>
+<p><strong>怎么理解</strong>：EDF 像&quot;赶飞机&quot;——谁离登机时间最近谁先走安检。</p>
 
 <h4>5. Round Robin</h4>
 <p><strong>定义</strong>：每个任务分配一个时间片，时间片用完就换下一个任务。循环往复。</p>
 <p><strong>优点</strong>：绝对公平——每个任务获得相等的 CPU 时间。</p>
 <p><strong>局限</strong>：(1) 上下文切换开销大——GPU 训练任务切换代价极高（模型加载 + NCCL 重建），不适合频繁切换；(2) 时间片大小难选——太小浪费切换时间，太大又退化成 FIFO。</p>
-<p><strong>GPU 集群里几乎不用</strong>：因为 GPU 任务不能"切一小段就换"。但"按队列轮转调度"的思想（如 Kueue 的 ClusterQueue 轮转）是 Round Robin 的变体。</p>
+<p><strong>GPU 集群里几乎不用</strong>：因为 GPU 任务不能&quot;切一小段就换&quot;。但&quot;按队列轮转调度&quot;的思想（如 Kueue 的 ClusterQueue 轮转）是 Round Robin 的变体。</p>
 
 <h4>6. 优先级调度</h4>
 <p><strong>定义</strong>：按静态或动态优先级排序调度。优先级可以基于业务重要性、紧急程度、资源效率等。</p>
@@ -109,7 +109,7 @@
 <div class="flow-step"><div class="flow-index">04</div><div class="flow-title">抢占阶段</div><div class="flow-desc">优先级 + 代价感知</div></div>
 </div>
 
-<p>面试中，你要说清楚"每个决策点用了哪个算法的什么思想"，而不是笼统地说"用了 SJF"。</p>
+<p>面试中，你要说清楚&quot;每个决策点用了哪个算法的什么思想&quot;，而不是笼统地说&quot;用了 SJF&quot;。</p>
 </div>
 <div class="card card-w">
 <h3>Bin Packing vs Spread</h3>
@@ -153,9 +153,9 @@
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>三种思路：</p>
 <ol>
-<li><strong>预测驱动排序</strong>：SRTF/SJF 让短任务先执行，减少被长任务阻塞的概率。这解决的是"队首长任务阻塞后面短任务"的问题。</li>
-<li><strong>抢占</strong>：长任务阻塞时强制让位给高优先级任务。这解决的是"正在执行的任务不能被打断"的问题。</li>
-<li><strong>多队列</strong>：不同类型任务分开排队，互不干扰。这解决的是"不同类型任务对延迟要求不同"的问题。</li>
+<li><strong>预测驱动排序</strong>：SRTF/SJF 让短任务先执行，减少被长任务阻塞的概率。这解决的是&quot;队首长任务阻塞后面短任务&quot;的问题。</li>
+<li><strong>抢占</strong>：长任务阻塞时强制让位给高优先级任务。这解决的是&quot;正在执行的任务不能被打断&quot;的问题。</li>
+<li><strong>多队列</strong>：不同类型任务分开排队，互不干扰。这解决的是&quot;不同类型任务对延迟要求不同&quot;的问题。</li>
 </ol></div>
 <div class="qa-section"><div class="qa-section-title">组合使用</div><p>实际系统中常常同时使用多种：SRTF 排序 + 抢占 + 分队列。例如 K8S 调度器有多个 Queue（ActiveQ、BackoffQ、UnschedulableQ），在 ActiveQ 内部按优先级排序，高优先级任务可以触发 preemption。</p></div>
 <div class="qa-summary">面试要点：三种思路各有适用场景，实际系统是组合使用的。</div>
@@ -165,10 +165,10 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: SJF 为什么最优？会有什么问题？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">最优性证明（直觉版）</div><p>SJF 最小化平均等待时间。把短任务排前面，它们的等待时间短（因为本身短，不会让后面等太久）。长任务无论排哪里都要等前面的任务，放后面只增加一个"短任务的执行时间"，放前面却让所有后面的人都多等它的长时间。所以短任务优先永远不劣。</p></div>
+<div class="qa-section"><div class="qa-section-title">最优性证明（直觉版）</div><p>SJF 最小化平均等待时间。把短任务排前面，它们的等待时间短（因为本身短，不会让后面等太久）。长任务无论排哪里都要等前面的任务，放后面只增加一个&quot;短任务的执行时间&quot;，放前面却让所有后面的人都多等它的长时间。所以短任务优先永远不劣。</p></div>
 <div class="qa-section"><div class="qa-section-title">问题：饥饿</div><p>如果短任务源源不断到达，长任务可能永远排不上。一个训练 20 小时的大任务，如果前面总有 5 分钟的实验任务插队，它可能等一天都启动不了。</p></div>
 <div class="qa-section"><div class="qa-section-title">解决</div><p>(1) <strong>Aging</strong>：等待时间越长优先级越高。等了 N 小时的长任务优先级会超过刚到的短任务。(2) <strong>配额保障</strong>：每个租户至少获得一定比例的调度机会。(3) <strong>词典序排序</strong>：先看保障度（是否满足配额），再看运行时间。保障度不足的任务优先，同保障度内按 SJF 排序。</p></div>
-<div class="qa-summary">面试要点：说清楚最优性 + 饥饿问题 + 三种解决思路。不要只说"SJF 最优"而忽略饥饿。</div>
+<div class="qa-summary">面试要点：说清楚最优性 + 饥饿问题 + 三种解决思路。不要只说&quot;SJF 最优&quot;而忽略饥饿。</div>
 </div>
 </div>
 
@@ -176,8 +176,8 @@
 <div class="qa-q">Q: 抢占的代价有哪些？怎么降低？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">代价</div><p>(1) <strong>进度浪费</strong>：被抢占作业已完成的计算全部丢失（除非有 checkpoint）。一个训练了 20 小时、3 小时没 checkpoint 的任务被抢占，回滚到 17 小时前的状态。(2) <strong>重启开销</strong>：重新排队、加载模型/数据、重建 NCCL 通信组——可能需要 5-30 分钟。(3) <strong>系统开销</strong>：保存状态、清理资源、通知相关组件。</p></div>
-<div class="qa-section"><div class="qa-section-title">降低代价</div><p>(1) <strong>Checkpoint 机制</strong>：定期保存进度，减少进度损失。代价是 I/O 开销。(2) <strong>代价基抢占</strong>：选择沉没成本最小的牺牲者——checkpoint 新鲜、运行时间短的任务优先被抢占。(3) <strong>在自然间隔抢占</strong>：在 stage 边界、epoch 结束时抢占，进度损失为零。需要训练框架配合。(4) <strong>优雅终止</strong>：通知任务"请 checkpoint 后退出"，给 5 分钟优雅期。(5) <strong>弹性训练</strong>：缩减 world size 而非杀掉整个任务，释放部分 GPU 但训练继续。</p></div>
-<div class="qa-summary">面试要点：抢占不是免费的。列出具体代价，再给出具体降低方案，比只说"可以做抢占"更有区分度。</div>
+<div class="qa-section"><div class="qa-section-title">降低代价</div><p>(1) <strong>Checkpoint 机制</strong>：定期保存进度，减少进度损失。代价是 I/O 开销。(2) <strong>代价基抢占</strong>：选择沉没成本最小的牺牲者——checkpoint 新鲜、运行时间短的任务优先被抢占。(3) <strong>在自然间隔抢占</strong>：在 stage 边界、epoch 结束时抢占，进度损失为零。需要训练框架配合。(4) <strong>优雅终止</strong>：通知任务&quot;请 checkpoint 后退出&quot;，给 5 分钟优雅期。(5) <strong>弹性训练</strong>：缩减 world size 而非杀掉整个任务，释放部分 GPU 但训练继续。</p></div>
+<div class="qa-summary">面试要点：抢占不是免费的。列出具体代价，再给出具体降低方案，比只说&quot;可以做抢占&quot;更有区分度。</div>
 </div>
 </div>
 
@@ -188,10 +188,10 @@
 <ol>
 <li><strong>碎片化</strong>：某些维度剩余很多，但另一个维度不够，整个节点不可用。例如一个节点剩 7 GPU 但内存用完了，那 7 GPU 也是浪费的。</li>
 <li><strong>耦合性</strong>：GPU 任务通常也需要大量 CPU 做数据预处理。一个任务分配了 8 GPU 但 CPU 不够，数据加载跟不上，GPU 在等数据。</li>
-<li><strong>异构性</strong>：不同 GPU 型号性能差异大。1 张 H100 ≈ 4 张 V100，但调度器可能只看到"1 张 GPU"。</li>
+<li><strong>异构性</strong>：不同 GPU 型号性能差异大。1 张 H100 ≈ 4 张 V100，但调度器可能只看到&quot;1 张 GPU&quot;。</li>
 </ol></div>
 <div class="qa-section"><div class="qa-section-title">解决思路</div><p>DRF 从理论上解决公平性，但实际中还需要拓扑感知（NVLink 拓扑）、亲和性约束（CPU-GPU NUMA）和异构资源表达（GPU flavor）。</p></div>
-<div class="qa-summary">面试要点：多维资源调度的核心挑战是"碎片化 + 耦合性 + 异构性"，不是简单地"维度多了"。</div>
+<div class="qa-summary">面试要点：多维资源调度的核心挑战是&quot;碎片化 + 耦合性 + 异构性&quot;，不是简单地&quot;维度多了&quot;。</div>
 </div>
 </div>
 
@@ -199,23 +199,23 @@
 <div class="qa-q">Q: 调度延迟和调度质量的 trade-off？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心矛盾</div><p>更好的调度决策需要更多信息（拓扑、负载预测、历史数据）和更多计算（更复杂的打分函数），但用户不想等太久——任务提交后应该尽快开始。</p></div>
-<div class="qa-section"><div class="qa-section-title">四种解决方式</div><p>(1) <strong>两阶段调度</strong>：Filter 快速排除明显不行的（几十毫秒），Score 只在少量候选中精选（几百毫秒）。大部分节点在 Filter 阶段就被淘汰了。(2) <strong>缓存</strong>：Informer 本地缓存节点和 Pod 信息，避免每次调度都查 API Server。(3) <strong>近似算法</strong>：不需要最优解，"足够好"就行。例如只对 top-K 候选节点做详细打分。(4) <strong>异步</strong>：Bind 阶段异步执行，不阻塞下一个 Pod 的调度周期。调度器和 binder 是并行工作的。</p></div>
+<div class="qa-section"><div class="qa-section-title">四种解决方式</div><p>(1) <strong>两阶段调度</strong>：Filter 快速排除明显不行的（几十毫秒），Score 只在少量候选中精选（几百毫秒）。大部分节点在 Filter 阶段就被淘汰了。(2) <strong>缓存</strong>：Informer 本地缓存节点和 Pod 信息，避免每次调度都查 API Server。(3) <strong>近似算法</strong>：不需要最优解，&quot;足够好&quot;就行。例如只对 top-K 候选节点做详细打分。(4) <strong>异步</strong>：Bind 阶段异步执行，不阻塞下一个 Pod 的调度周期。调度器和 binder 是并行工作的。</p></div>
 <div class="qa-section"><div class="qa-section-title">K8S 的实际做法</div><p>K8S scheduler 的一个 scheduling cycle 约 10-100ms。它用 Informer cache + 两阶段 Filter/Score + 异步 Bind 来保证延迟可接受。</p></div>
-<div class="qa-summary">面试要点：调度是"质量 vs 延迟"的 trade-off，K8S 用缓存 + 两阶段 + 近似 + 异步来平衡。</div>
+<div class="qa-summary">面试要点：调度是&quot;质量 vs 延迟&quot;的 trade-off，K8S 用缓存 + 两阶段 + 近似 + 异步来平衡。</div>
 </div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"你怎么选择调度算法"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;你怎么选择调度算法&quot;，怎么回答？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">回答框架</div><p>不要说"我选 XX 算法"，而要说"我根据场景选择"：</p>
+<div class="qa-section"><div class="qa-section-title">回答框架</div><p>不要说&quot;我选 XX 算法&quot;，而要说&quot;我根据场景选择&quot;：</p>
 <ol>
 <li><strong>先定场景</strong>：推理/训练/实验平台？不同场景对延迟、吞吐、公平性的要求不同。</li>
 <li><strong>再看约束</strong>：是否有 gang 需求？是否有 deadline？是否需要预测运行时间？</li>
 <li><strong>然后选排序策略</strong>：同质任务用 FIFO，异质任务用优先级 + SJF，有 deadline 用 EDF。</li>
 <li><strong>最后说组合</strong>：实际系统是组合使用的——排序用 SJF/DRF，准入用 Gang/Quota，放置用 Bin Packing + 拓扑打分，抢占用代价感知。</li>
 </ol></div>
-<div class="qa-section"><div class="qa-section-title">面试金句</div><p>"调度算法的选择不是非此即彼，而是根据场景在经典算法的基础上组合和调整。关键是说清楚每个决策点用了什么思想、为什么这样选。"</p></div>
+<div class="qa-section"><div class="qa-section-title">面试金句</div><p>&quot;调度算法的选择不是非此即彼，而是根据场景在经典算法的基础上组合和调整。关键是说清楚每个决策点用了什么思想、为什么这样选。&quot;</p></div>
 </div>
 </div>
 </div>
@@ -223,16 +223,16 @@
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::01-classic-algorithms-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::01-classic-algorithms-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">目标函数与评价指标</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-2" aria-labelledby="scheduling-tabs-tab-2" data-mid="scheduling-tabs::02-objectives-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>目标函数与评价指标</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>调度本质是多目标优化问题，学算法前要先想清楚优化什么：Waiting Time、JCT、Makespan、Throughput、Utilization、Fairness、SLO violation、Preemption Cost 各代表不同视角，而且互相冲突（公平 vs 利用率、短作业优先 vs 长作业饥饿、拓扑最优 vs 调度延迟），所以要按场景先定硬约束再定优化目标——在线推理把 SLO 当硬约束，离线训练优化 JCT 和利用率。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>为什么调度要先定目标函数</h3>
-<p>很多人学调度会直接跳到算法——"怎么排序、怎么打分、怎么抢占"。但调度本质上是一个<strong>多目标优化问题</strong>：你在优化某个指标的同时，必然在牺牲另一个指标。如果不确定优化什么，算法就无从谈起。</p>
+<p>很多人学调度会直接跳到算法——&quot;怎么排序、怎么打分、怎么抢占&quot;。但调度本质上是一个<strong>多目标优化问题</strong>：你在优化某个指标的同时，必然在牺牲另一个指标。如果不确定优化什么，算法就无从谈起。</p>
 <p>举个例子：同样的集群，如果你优化<strong>平均 JCT</strong>，短作业优先（SJF）是最好的；但如果你优化<strong>公平性</strong>，SJF 会让长作业饥饿。两个目标都合理，但策略完全不同。</p>
 <p>所以学调度的第一步，不是学算法，而是搞清楚<strong>每个指标衡量什么、谁在用它、它和别的指标怎么冲突</strong>。</p>
 </div>
@@ -240,54 +240,54 @@
 <h3>核心指标详解</h3>
 
 <h4>1. Waiting Time（等待时间）</h4>
-<p>定义：从任务提交到任务开始执行的时间。注意是"开始执行"，不是"执行完毕"。</p>
+<p>定义：从任务提交到任务开始执行的时间。注意是&quot;开始执行&quot;，不是&quot;执行完毕&quot;。</p>
 <p>为什么重要：它衡量的是<strong>用户感知的响应速度</strong>。一个实验提交后等了 2 小时才开始跑，体验就很差。对于交互式任务、开发调试和在线推理，等待时间是最直接的体验指标。</p>
-<p>面试中怎么用：当面试官问"你的调度器如何改善用户体验"，如果你的系统侧重排队策略，waiting time 就是你最该展示的指标。但要注意，降低等待时间不等于降低 JCT——一个任务可能等 1 分钟就启动了，但跑了 10 小时。</p>
-<p>怎么理解：想象你在超市排队。Waiting time 就是你从拿号到开始结账的时间。前面人少就快，前面有个人买了一整车东西就慢。SJF 相当于"买得少的人先结账"。</p>
+<p>面试中怎么用：当面试官问&quot;你的调度器如何改善用户体验&quot;，如果你的系统侧重排队策略，waiting time 就是你最该展示的指标。但要注意，降低等待时间不等于降低 JCT——一个任务可能等 1 分钟就启动了，但跑了 10 小时。</p>
+<p>怎么理解：想象你在超市排队。Waiting time 就是你从拿号到开始结账的时间。前面人少就快，前面有个人买了一整车东西就慢。SJF 相当于&quot;买得少的人先结账&quot;。</p>
 
 <h4>2. JCT（Job Completion Time）</h4>
 <p>定义：从任务提交到任务完成的总时间 = waiting time + execution time。</p>
-<p>为什么重要：对于离线训练、批处理和 HPC 任务，用户最关心的是"我什么时候能拿到结果"，而不是"什么时候开始跑"。JCT 是 AI 训练调度论文里最常用的指标。</p>
-<p>面试中怎么用：面试官问"你的调度策略对训练任务有什么好处"，你应该从 JCT 切入，但要分解成 waiting time 和 execution time 分别说明。例如拓扑感知调度不改变等待时间，但通过减少通信开销来降低 execution time，从而降低 JCT。</p>
+<p>为什么重要：对于离线训练、批处理和 HPC 任务，用户最关心的是&quot;我什么时候能拿到结果&quot;，而不是&quot;什么时候开始跑&quot;。JCT 是 AI 训练调度论文里最常用的指标。</p>
+<p>面试中怎么用：面试官问&quot;你的调度策略对训练任务有什么好处&quot;，你应该从 JCT 切入，但要分解成 waiting time 和 execution time 分别说明。例如拓扑感知调度不改变等待时间，但通过减少通信开销来降低 execution time，从而降低 JCT。</p>
 <p>怎么理解：JCT = 排队时间 + 跑的时间。改善排队靠排序和准入策略，改善跑的时间靠拓扑放置和资源分配。</p>
 
 <h4>3. Makespan</h4>
-<p>定义：一批任务中，最后一个完成的时间。衡量的是"整批活什么时候干完"。</p>
-<p>为什么重要：在批处理场景下，运维更关心"这批任务什么时候全部跑完"而不是单个任务体验。例如一个数据 Pipeline 要在明早 8 点前跑完，makespan 就是关键指标。</p>
-<p>面试中怎么用：问"你怎么衡量一个批调度系统的效率"时，makespan 是答案之一，但要补一句——它和公平性冲突，因为最优 makespan 可能意味着某些任务被无限推迟。</p>
-<p>怎么理解：Makespan 是站在管理员视角，JCT 是站在用户视角。两个视角对"好调度"的定义不同。</p>
+<p>定义：一批任务中，最后一个完成的时间。衡量的是&quot;整批活什么时候干完&quot;。</p>
+<p>为什么重要：在批处理场景下，运维更关心&quot;这批任务什么时候全部跑完&quot;而不是单个任务体验。例如一个数据 Pipeline 要在明早 8 点前跑完，makespan 就是关键指标。</p>
+<p>面试中怎么用：问&quot;你怎么衡量一个批调度系统的效率&quot;时，makespan 是答案之一，但要补一句——它和公平性冲突，因为最优 makespan 可能意味着某些任务被无限推迟。</p>
+<p>怎么理解：Makespan 是站在管理员视角，JCT 是站在用户视角。两个视角对&quot;好调度&quot;的定义不同。</p>
 
 <h4>4. Throughput（吞吐量）</h4>
 <p>定义：单位时间内完成的任务数，或单位时间内处理的 token/images 数。</p>
 <p>为什么重要：集群运营商和平台团队最关心吞吐，因为它直接对应资源产出效率。同样 100 张 GPU，如果调度策略能让每天完成的训练任务数从 50 增加到 80，相当于节省了 37.5% 的硬件成本。</p>
 <p>面试中怎么用：不要把吞吐和利用率混淆——吞吐是产出，利用率是资源使用率。高利用率不一定意味着高吞吐（可能在跑低效任务），但低利用率通常意味着吞吐也不高。</p>
-<p>怎么理解：吞吐 = 集群的"产出速度"。利用率 = 集群的"忙碌程度"。忙碌不等于高效。</p>
+<p>怎么理解：吞吐 = 集群的&quot;产出速度&quot;。利用率 = 集群的&quot;忙碌程度&quot;。忙碌不等于高效。</p>
 
 <h4>5. Utilization（资源利用率）</h4>
 <p>定义：已使用资源 / 总资源。常见的有 GPU 利用率、CPU 利用率、内存利用率、网络带宽利用率。</p>
 <p>为什么重要：GPU 利用率是 AI Infra 里最常被关注的指标。一个 8 卡 A100 节点的 GPU 利用率如果只有 30%，意味着 70% 的算力在闲置，而一张 A100 售价超过 1 万美元。</p>
-<p>常见误区：高利用率 ≠ 好调度。如果一个调度器把所有任务都塞到少数节点上，利用率确实高，但可能牺牲了拓扑质量、公平性或故障隔离。利用率是一个"不该太低，但也不是越高越好"的指标。</p>
-<p>面试中怎么用：当面试官问"怎么提高 GPU 利用率"，你应该先问"什么类型的任务"。在线推理可以通过 continuous batching 提高；离线训练可以通过 bin packing 减少碎片；GPU sharing 可以让小任务合用一张卡。但每种方法都有代价——bin packing 可能增加故障爆炸半径，GPU sharing 可能有性能干扰。</p>
+<p>常见误区：高利用率 ≠ 好调度。如果一个调度器把所有任务都塞到少数节点上，利用率确实高，但可能牺牲了拓扑质量、公平性或故障隔离。利用率是一个&quot;不该太低，但也不是越高越好&quot;的指标。</p>
+<p>面试中怎么用：当面试官问&quot;怎么提高 GPU 利用率&quot;，你应该先问&quot;什么类型的任务&quot;。在线推理可以通过 continuous batching 提高；离线训练可以通过 bin packing 减少碎片；GPU sharing 可以让小任务合用一张卡。但每种方法都有代价——bin packing 可能增加故障爆炸半径，GPU sharing 可能有性能干扰。</p>
 
 <h4>6. Fairness（公平性）</h4>
 <p>定义：不同用户或团队之间资源分配的均衡程度。常用指标包括 dominant share 的基尼系数、max-min fairness 偏差、SLO violation 率等。</p>
-<p>为什么重要：多租户 GPU 集群里，如果只用 throughput 做目标，调度器会偏向"资源效率高"的大团队，小团队的任务可能永远排不上。公平性保证每个团队都能获得合理份额。</p>
-<p>面试中怎么用：公平性通常和利用率冲突。面试时要说明"怎么定义公平"比"要不要公平"更重要。是按 GPU 数量公平，还是按 dominant share 公平，还是按配额保障度公平？不同的定义会导致不同的策略。</p>
+<p>为什么重要：多租户 GPU 集群里，如果只用 throughput 做目标，调度器会偏向&quot;资源效率高&quot;的大团队，小团队的任务可能永远排不上。公平性保证每个团队都能获得合理份额。</p>
+<p>面试中怎么用：公平性通常和利用率冲突。面试时要说明&quot;怎么定义公平&quot;比&quot;要不要公平&quot;更重要。是按 GPU 数量公平，还是按 dominant share 公平，还是按配额保障度公平？不同的定义会导致不同的策略。</p>
 <p>怎么理解：公平不是均分。团队 A 有 100 个 researcher，团队 B 有 5 个 researcher，均分 50/50 对 B 来说过于慷慨。按人头、按配额、按保障度是三种不同的公平定义。</p>
 
 <h4>7. SLO Violation Rate（服务等级违约率）</h4>
 <p>定义：不满足服务等级目标（如延迟 P99 &lt; 200ms、任务 24h 内完成）的请求或任务比例。</p>
 <p>为什么重要：在线推理场景下，SLO 是最核心的约束。GPU 调度不能只追求利用率，而要保证推理服务的 tail latency 满足 SLO。</p>
-<p>面试中怎么用：如果面试官问"在线推理和离线训练怎么混部"，SLO violation rate 就是衡量混部是否成功的指标。推理的 SLO 是硬约束，训练可以弹性让步。</p>
+<p>面试中怎么用：如果面试官问&quot;在线推理和离线训练怎么混部&quot;，SLO violation rate 就是衡量混部是否成功的指标。推理的 SLO 是硬约束，训练可以弹性让步。</p>
 
 <h4>8. Preemption Cost（抢占代价）</h4>
 <p>定义：抢占一个正在运行的任务所造成的进度损失、重启成本和系统开销。</p>
-<p>为什么重要：传统调度论文里抢占就是"杀掉低优先级，运行高优先级"，但在 AI 训练里，一个训练任务被抢占后可能要回滚到数小时前的 checkpoint，重新加载模型和数据，重建 NCCL 通信组。这些代价远大于一个在线服务 Pod 被驱逐后重启。</p>
-<p>面试中怎么用：如果你研究的是训练任务调度，抢占代价是你必须要考虑的维度。面试时应该说明"代价基抢占"怎么选择牺牲者——不是简单看优先级，而是看 checkpoint 新鲜度、运行时长、释放资源量和重启成本。</p>
+<p>为什么重要：传统调度论文里抢占就是&quot;杀掉低优先级，运行高优先级&quot;，但在 AI 训练里，一个训练任务被抢占后可能要回滚到数小时前的 checkpoint，重新加载模型和数据，重建 NCCL 通信组。这些代价远大于一个在线服务 Pod 被驱逐后重启。</p>
+<p>面试中怎么用：如果你研究的是训练任务调度，抢占代价是你必须要考虑的维度。面试时应该说明&quot;代价基抢占&quot;怎么选择牺牲者——不是简单看优先级，而是看 checkpoint 新鲜度、运行时长、释放资源量和重启成本。</p>
 </div>
 <div class="card card-d">
 <h3>不同场景的指标优先级</h3>
-<p>面试中最常问的问题之一就是"这个指标在你的场景里排第几"。没有统一答案，但可以按场景给出典型排序：</p>
+<p>面试中最常问的问题之一就是&quot;这个指标在你的场景里排第几&quot;。没有统一答案，但可以按场景给出典型排序：</p>
 
 <h4>在线推理场景</h4>
 <ol>
@@ -335,7 +335,7 @@
 <p>SJF/SRTF 能降低平均 JCT，但长作业可能永远排不上。解决方式是 aging（等待越久优先级越高）或配额保障（每个租户至少获得一定比例的调度机会）。</p>
 
 <h4>拓扑最优 vs 调度延迟</h4>
-<p>等待同机柜或同 NVLink 资源可以提升训练性能，但会增加排队时间。如果所有任务都要求"最优拓扑"，大部分时间 GPU 在等完美组合而不是干活。解决方式是设定可接受的拓扑质量阈值，超过阈值就不等了。</p>
+<p>等待同机柜或同 NVLink 资源可以提升训练性能，但会增加排队时间。如果所有任务都要求&quot;最优拓扑&quot;，大部分时间 GPU 在等完美组合而不是干活。解决方式是设定可接受的拓扑质量阈值，超过阈值就不等了。</p>
 
 <h4>抢占效率 vs 进度损失</h4>
 <p>抢占可以快速释放资源给高优先级任务，但训练任务的 checkpoint 可能是 1 小时前的，被抢占意味着 1 小时的计算白费。解决方式是代价基抢占——优先抢占 checkpoint 新鲜、运行时间短的任务。</p>
@@ -370,7 +370,7 @@
 </div>
 <div class="card card-m">
 <h3>回答结构</h3>
-<p>当面试官问"你怎么衡量调度系统的好坏"，用这个框架回答：</p>
+<p>当面试官问&quot;你怎么衡量调度系统的好坏&quot;，用这个框架回答：</p>
 <ol>
 <li><strong>先定场景</strong>——推理、训练、实验平台、大模型预训练？不同场景的指标优先级不同。</li>
 <li><strong>再说核心指标</strong>——选 2-3 个最重要的，说清楚定义和为什么重要。</li>
@@ -379,7 +379,7 @@
 </ol>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"JCT 和 waiting time 有什么区别"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;JCT 和 waiting time 有什么区别&quot;，怎么回答？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">定义区别</div><p>JCT = waiting time + execution time。Waiting time 只衡量排队，JCT 衡量从提交到完成的全部时间。</p></div>
 <div class="qa-section"><div class="qa-section-title">策略含义不同</div><p>降低 waiting time 靠排队策略（排序、准入、抢占）。降低 execution time 靠放置策略（拓扑、资源分配、GPU sharing）。降低 JCT 需要两者配合。</p></div>
@@ -391,7 +391,7 @@
 <div class="qa-q">Q: GPU 利用率高是不是就说明调度好？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">不一定</div><p>高利用率可能意味着：(1) 确实调度合理，资源被高效使用；(2) 任务都挤在少数节点，牺牲了拓扑和故障隔离；(3) GPU 在做无效计算，例如 NCCL 等待、数据加载瓶颈或 MPS 干扰。</p></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p>看利用率的同时看吞吐、JCT 和 SLO。如果利用率高但吞吐低，说明 GPU 在"忙但没产出"。如果利用率高但 JCT 也在增加，说明调度可能在做过度装箱。</p></div>
+<div class="qa-section"><div class="qa-section-title">怎么判断</div><p>看利用率的同时看吞吐、JCT 和 SLO。如果利用率高但吞吐低，说明 GPU 在&quot;忙但没产出&quot;。如果利用率高但 JCT 也在增加，说明调度可能在做过度装箱。</p></div>
 <div class="qa-summary">面试要点：利用率是必要条件但不是充分条件。要结合产出指标一起看。</div>
 </div>
 </div>
@@ -404,16 +404,16 @@
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"你的调度器优化了什么指标，牺牲了什么"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;你的调度器优化了什么指标，牺牲了什么&quot;，怎么回答？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">回答结构</div><p>(1) 优化了什么：明确说指标名，例如"优化了 P90 JCT，降低了 25%"。(2) 牺牲了什么：例如"在极端负载下，短作业的 waiting time 略有增加，因为我们优先调度 gang 任务"。(3) 为什么可接受：例如"增加的 waiting time 在 5 分钟以内，但 gang 任务的 JCT 改善了 30%，整体集群利用率提高了 15%"。</p></div>
-<div class="qa-section"><div class="qa-section-title">为什么这样回答好</div><p>面试官不期望你优化所有指标，但期望你说清楚权衡。能说清楚"牺牲了什么、为什么可接受"比"什么都优化了"更有说服力。</p></div>
+<div class="qa-section"><div class="qa-section-title">回答结构</div><p>(1) 优化了什么：明确说指标名，例如&quot;优化了 P90 JCT，降低了 25%&quot;。(2) 牺牲了什么：例如&quot;在极端负载下，短作业的 waiting time 略有增加，因为我们优先调度 gang 任务&quot;。(3) 为什么可接受：例如&quot;增加的 waiting time 在 5 分钟以内，但 gang 任务的 JCT 改善了 30%，整体集群利用率提高了 15%&quot;。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么这样回答好</div><p>面试官不期望你优化所有指标，但期望你说清楚权衡。能说清楚&quot;牺牲了什么、为什么可接受&quot;比&quot;什么都优化了&quot;更有说服力。</p></div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Makespan 和平均 JCT 有什么区别？优化一个会改善另一个吗？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">定义</div><p>Makespan 是"最后一个任务什么时候完成"，平均 JCT 是"所有任务的平均完成时间"。Makespan 是管理员视角，平均 JCT 是用户视角。</p></div>
+<div class="qa-section"><div class="qa-section-title">定义</div><p>Makespan 是&quot;最后一个任务什么时候完成&quot;，平均 JCT 是&quot;所有任务的平均完成时间&quot;。Makespan 是管理员视角，平均 JCT 是用户视角。</p></div>
 <div class="qa-section"><div class="qa-section-title">关系</div><p>优化平均 JCT 通常会让短任务先跑（SJF），但这可能推迟长任务的完成时间，从而增加 makespan。反过来，如果优化 makespan，可能需要所有任务并行跑，但这会增加资源竞争和通信开销，单个任务的 JCT 不一定改善。</p></div>
 <div class="qa-section"><div class="qa-section-title">什么时候用哪个</div><p>批处理和数据 Pipeline 关心 makespan；交互式训练和实验平台关心平均 JCT；多租户平台还要看公平性。</p></div>
 </div>
@@ -422,17 +422,17 @@
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::02-objectives-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::02-objectives-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">经典调度算法</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">多资源公平调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-3" aria-labelledby="scheduling-tabs-tab-3" data-mid="scheduling-tabs::03-fairness-multiresource-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>多资源公平调度</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>多资源公平的核心是怎么在多维资源空间里定义&quot;公平&quot;：从单资源的 Max-Min Fairness 和 Proportional Share 起步，DRF 用 dominant share（每个用户占比最高的那维资源）做公平定义并保证 Sharing Incentive/Envy-freeness/Pareto Efficiency 三性质，工程上再用 Elastic Quota（min/max）和 QAD（保障度连续值）落地，最后叠加异构 GPU、拓扑、弹性和抢占代价四个 GPU 集群特有难点。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>多资源公平：调度方向的核心基本功</h3>
-<p>GPU 集群不是单资源系统。一个训练任务同时消耗 GPU、CPU、内存、网络、存储带宽和拓扑位置。多资源公平要解决的问题是：当不同租户的资源需求形态不同，系统如何定义"公平"。</p>
-<p>为什么这个问题难？因为"公平"本身就没有唯一答案。团队 A 跑 CV 任务需要大量 GPU 但很少内存，团队 B 跑 NLP 任务 GPU 和内存需求差不多。如果只看 GPU 数量均分，B 觉得 CPU 被忽视；如果只看内存均分，A 觉得 GPU 被忽视。所以核心问题是：<strong>在多维资源空间里，怎么定义"公平"这个概念</strong>。</p>
+<p>GPU 集群不是单资源系统。一个训练任务同时消耗 GPU、CPU、内存、网络、存储带宽和拓扑位置。多资源公平要解决的问题是：当不同租户的资源需求形态不同，系统如何定义&quot;公平&quot;。</p>
+<p>为什么这个问题难？因为&quot;公平&quot;本身就没有唯一答案。团队 A 跑 CV 任务需要大量 GPU 但很少内存，团队 B 跑 NLP 任务 GPU 和内存需求差不多。如果只看 GPU 数量均分，B 觉得 CPU 被忽视；如果只看内存均分，A 觉得 GPU 被忽视。所以核心问题是：<strong>在多维资源空间里，怎么定义&quot;公平&quot;这个概念</strong>。</p>
 </div>
 <div class="card card-s">
 <h3>基础概念：从单资源公平到多资源公平</h3>
@@ -447,18 +447,18 @@
 <li>剩余 60 张分给 2 人，每人 30。用户 1 需要 50 但只拿到 30，用户 4 需要 40 也拿到 30。</li>
 <li>最终：用户 1 = 30，用户 2 = 30，用户 3 = 15，用户 4 = 30。</li>
 </ol>
-<p><strong>怎么理解</strong>：Max-Min Fairness 就像分蛋糕——先均分，吃不完的人把多余的分给不够的人，反复进行直到没有人能拿到更多。它保证"最穷的人尽可能不穷"。</p>
-<p><strong>局限</strong>：只处理单一资源。如果集群有 GPU 和 CPU 两种资源，用户 A 需要 (8 GPU, 2 CPU)，用户 B 需要 (2 GPU, 8 CPU)，Max-Min Fairness 不知道怎么在两个维度上同时定义"公平"。</p>
+<p><strong>怎么理解</strong>：Max-Min Fairness 就像分蛋糕——先均分，吃不完的人把多余的分给不够的人，反复进行直到没有人能拿到更多。它保证&quot;最穷的人尽可能不穷&quot;。</p>
+<p><strong>局限</strong>：只处理单一资源。如果集群有 GPU 和 CPU 两种资源，用户 A 需要 (8 GPU, 2 CPU)，用户 B 需要 (2 GPU, 8 CPU)，Max-Min Fairness 不知道怎么在两个维度上同时定义&quot;公平&quot;。</p>
 
 <h4>Proportional Share（按比例分配）</h4>
 <p><strong>定义</strong>：按权重分配资源。团队 A 权重 3，团队 B 权重 1，那 A 拿 75% 的资源，B 拿 25%。</p>
-<p><strong>适用场景</strong>：适合有明确组织权重的治理场景，比如公司级"大团队多分，小团队少分"。</p>
-<p><strong>局限</strong>：权重是人为设定的，不自动处理多维瓶颈。如果团队 A 权重高但只消耗 GPU，团队 B 权重低但 CPU 是瓶颈，按权重分 GPU 可能对 B 来说 CPU 完全不够。Proportional Share 不理解"哪种资源是瓶颈"。</p>
-<p><strong>怎么理解</strong>：Proportional Share 像"按出资比例分红"，简单直接但不关心每个股东实际缺什么。</p>
+<p><strong>适用场景</strong>：适合有明确组织权重的治理场景，比如公司级&quot;大团队多分，小团队少分&quot;。</p>
+<p><strong>局限</strong>：权重是人为设定的，不自动处理多维瓶颈。如果团队 A 权重高但只消耗 GPU，团队 B 权重低但 CPU 是瓶颈，按权重分 GPU 可能对 B 来说 CPU 完全不够。Proportional Share 不理解&quot;哪种资源是瓶颈&quot;。</p>
+<p><strong>怎么理解</strong>：Proportional Share 像&quot;按出资比例分红&quot;，简单直接但不关心每个股东实际缺什么。</p>
 </div>
 <div class="card card-d">
 <h3>DRF（Dominant Resource Fairness）详解</h3>
-<p>DRF 是多资源公平调度的基石算法，由 Ghodsi et al. 2011 提出。几乎所有面试里问到"多资源公平"都期望你从 DRF 开始回答。</p>
+<p>DRF 是多资源公平调度的基石算法，由 Ghodsi et al. 2011 提出。几乎所有面试里问到&quot;多资源公平&quot;都期望你从 DRF 开始回答。</p>
 
 <h4>核心思想</h4>
 <p>每个用户的<strong>主导资源</strong>（dominant resource）是它在所有资源维度中占比最高的那一维。DRF 试图让不同用户的 dominant share 尽量接近，而不是让某个维度的资源被某个用户独占。</p>
@@ -487,7 +487,7 @@
 <li><strong>Envy-freeness（无嫉妒）</strong>：没有任何用户会觉得别人的分配比自己的更好。A 不会想和 B 换。</li>
 <li><strong>Pareto Efficiency（帕累托效率）</strong>：不存在另一种分配方式能让某个用户更好而不让其他用户更差。</li>
 </ol>
-<p><strong>怎么理解这三个性质</strong>：Sharing Incentive 是"参与比不参与更好"；Envy-freeness 是"没有后悔"；Pareto Efficiency 是"没有浪费"。三个一起保证"公平且高效"。</p>
+<p><strong>怎么理解这三个性质</strong>：Sharing Incentive 是&quot;参与比不参与更好&quot;；Envy-freeness 是&quot;没有后悔&quot;；Pareto Efficiency 是&quot;没有浪费&quot;。三个一起保证&quot;公平且高效&quot;。</p>
 
 <h4>DRF 在 GPU 集群中的应用</h4>
 <p>GPU 集群的资源维度通常是 <code>&lt;GPU, CPU, 内存, 网络带宽&gt;</code>。一个训练任务的 dominant resource 通常是 GPU，但如果一个任务只用 1 GPU 但消耗大量 CPU 做数据预处理，那 CPU 可能是它的 dominant resource。</p>
@@ -505,7 +505,7 @@
 <li>B 想启动新任务需要 10 张 GPU。此时 B 的 min 已满足，它可以借用 A 空闲的 20 张。B 的使用量变为 60，不超过 max=80。</li>
 <li>后来 A 提交了新任务需要 20 张 GPU。调度器需要从 B 那里回收 20 张（B 借用了 A 的配额），让 A 的使用量从 10 增加到 30（达到 min）。</li>
 </ul>
-<p><strong>怎么理解</strong>：Elastic Quota 像"公司工位"。你的团队保障有 30 个工位（min），但上限是 60 个（max）。如果你只坐了 10 个，其他团队可以临时坐。但你回来的时候，坐你工位的人必须让出来。</p>
+<p><strong>怎么理解</strong>：Elastic Quota 像&quot;公司工位&quot;。你的团队保障有 30 个工位（min），但上限是 60 个（max）。如果你只坐了 10 个，其他团队可以临时坐。但你回来的时候，坐你工位的人必须让出来。</p>
 <p><strong>关键难点</strong>：回收策略。从谁那里回收？回收多少？回收的任务怎么处理？这直接决定了 Elastic Quota 在生产环境是否可用。</p>
 
 <h4>QAD（Quota Assurance Degree）</h4>
@@ -513,11 +513,11 @@
 <p><strong>和 Elastic Quota 的区别</strong>：Elastic Quota 用 min/max 做离散阈值，QAD 用连续值表达保障程度。</p>
 <p><strong>为什么 QAD 更好</strong>：</p>
 <ul>
-<li><strong>更细粒度</strong>：不是"满足/不满足"的二值判断，而是"满足到什么程度"。调度器可以设 QAD 阈值（如 ≥ 0.95），低于这个值就触发回收。</li>
-<li><strong>更适合做抢占决策</strong>：抢占谁的资源？看哪个借用者的 QAD 最低、哪个保障租户的 QAD 最不满足。这比简单的"超过 min 就回收"更精确。</li>
+<li><strong>更细粒度</strong>：不是&quot;满足/不满足&quot;的二值判断，而是&quot;满足到什么程度&quot;。调度器可以设 QAD 阈值（如 ≥ 0.95），低于这个值就触发回收。</li>
+<li><strong>更适合做抢占决策</strong>：抢占谁的资源？看哪个借用者的 QAD 最低、哪个保障租户的 QAD 最不满足。这比简单的&quot;超过 min 就回收&quot;更精确。</li>
 <li><strong>更容易做渐进式回收</strong>：不需要一次性把所有借用资源都回收回来，而是回收到 QAD 达标为止。</li>
 </ul>
-<p><strong>怎么理解</strong>：QAD 像"手机电量百分比"。不是说"有电/没电"，而是告诉你"还剩 90%"。调度器看到 QAD < 0.95，就知道需要开始"充电"了。</p>
+<p><strong>怎么理解</strong>：QAD 像&quot;手机电量百分比&quot;。不是说&quot;有电/没电&quot;，而是告诉你&quot;还剩 90%&quot;。调度器看到 QAD < 0.95，就知道需要开始"充电"了。</p>
 
 <h4>三者关系总结</h4>
 <table>
@@ -529,29 +529,29 @@
 </div>
 <div class="card card-s">
 <h3>GPU 集群里的公平性难点</h3>
-<p>理论算法在 GPU 集群里会遇到哪些"理论没覆盖"的问题？面试中如果你能说出这些，说明你不只是背了算法，而是理解了工程现实。</p>
+<p>理论算法在 GPU 集群里会遇到哪些&quot;理论没覆盖&quot;的问题？面试中如果你能说出这些，说明你不只是背了算法，而是理解了工程现实。</p>
 
 <h4>1. 异构 GPU：1 张 H100 ≠ 1 张 V100</h4>
-<p><strong>问题</strong>：DRF 的基本假设是同类资源可互换。但 H100 的算力约是 V100 的 4 倍。如果一个用户分到 8 张 V100，另一个分到 8 张 H100，按数量看"公平"了，但实际算力差距巨大。</p>
+<p><strong>问题</strong>：DRF 的基本假设是同类资源可互换。但 H100 的算力约是 V100 的 4 倍。如果一个用户分到 8 张 V100，另一个分到 8 张 H100，按数量看&quot;公平&quot;了，但实际算力差距巨大。</p>
 <p><strong>解决思路</strong>：(1) 按 GPU flavor 分开计算 dominant share——H100 是一种资源，V100 是另一种。(2) 用算力等价因子归一化——1 H100 ≈ 4 V100，然后按归一化后的量做公平分配。(3) Kueue 的 ResourceFlavor 天然支持这种拆分。</p>
-<p><strong>面试怎么答</strong>：先说"异构 GPU 打破了 DRF 同类资源可互换的假设"，然后给出 2-3 种解决思路，最后说"选择哪种取决于集群异构程度和运维复杂度"。</p>
+<p><strong>面试怎么答</strong>：先说&quot;异构 GPU 打破了 DRF 同类资源可互换的假设&quot;，然后给出 2-3 种解决思路，最后说&quot;选择哪种取决于集群异构程度和运维复杂度&quot;。</p>
 
 <h4>2. 拓扑资源：同样是 8 张 GPU，性能可能差 2 倍</h4>
 <p><strong>问题</strong>：8 张 GPU 在同一节点 NVLink 互联，和 8 张 GPU 分散在 4 个节点，训练吞吐可能差 2 倍以上。DRF 不区分拓扑位置。</p>
-<p><strong>解决思路</strong>：拓扑在 Score 阶段叠加，不在 Fairness 阶段处理。Fairness 只管"数量公平"，Topology 只管"位置优化"。</p>
+<p><strong>解决思路</strong>：拓扑在 Score 阶段叠加，不在 Fairness 阶段处理。Fairness 只管&quot;数量公平&quot;，Topology 只管&quot;位置优化&quot;。</p>
 <p><strong>面试怎么答</strong>：DRF 保证份额公平，拓扑保证性能最优，两者是不同层面的问题。不要试图在 DRF 里加入拓扑——会让问题无解。</p>
 
 <h4>3. 任务弹性：4 卡能跑，8 卡也能跑</h4>
-<p><strong>问题</strong>：有些训练任务可以弹性伸缩（4/8/16 卡都行），有些必须固定 world size。如果只看"分配了多少 GPU"，弹性任务可能总是拿到更多。</p>
-<p><strong>解决思路</strong>：弹性任务的 GPU 需求按"目标 world size"算 dominant share，而不是按"实际拿到多少"。这样弹性任务借到额外 GPU 不会影响公平性计算。</p>
+<p><strong>问题</strong>：有些训练任务可以弹性伸缩（4/8/16 卡都行），有些必须固定 world size。如果只看&quot;分配了多少 GPU&quot;，弹性任务可能总是拿到更多。</p>
+<p><strong>解决思路</strong>：弹性任务的 GPU 需求按&quot;目标 world size&quot;算 dominant share，而不是按&quot;实际拿到多少&quot;。这样弹性任务借到额外 GPU 不会影响公平性计算。</p>
 
 <h4>4. 抢占成本：长时间训练被抢占代价极高</h4>
 <p><strong>问题</strong>：DRF 不理解抢占代价。如果为了满足另一个用户的 dominant share 而抢占一个训练了 20 小时的任务，公平性指标改善了，但实际产出可能变差了。</p>
-<p><strong>解决思路</strong>：在抢占决策中叠加代价感知——不是简单地选 dominant share 最高的抢占，而是选"释放资源量 / 抢占代价"比值最高的牺牲者。</p>
+<p><strong>解决思路</strong>：在抢占决策中叠加代价感知——不是简单地选 dominant share 最高的抢占，而是选&quot;释放资源量 / 抢占代价&quot;比值最高的牺牲者。</p>
 </div>
 <div class="card card-m">
 <h3>从公平性到队列设计</h3>
-<p>面试中经常问"怎么设计一个多租户 GPU 集群的队列系统"。这里把公平性理论映射到工程实现。</p>
+<p>面试中经常问&quot;怎么设计一个多租户 GPU 集群的队列系统&quot;。这里把公平性理论映射到工程实现。</p>
 
 <h4>队列五大能力</h4>
 <table>
@@ -566,7 +566,7 @@
 <h4>队列设计的面试回答框架</h4>
 <ol>
 <li><strong>先说 Quota</strong>：每个队列有保障配额（min）和上限（max），min 是硬承诺，max 是弹性天花板。</li>
-<li><strong>再说 Borrowing</strong>：空闲资源允许借用，但标记为"可回收"——保障租户需要时必须能拿回来。</li>
+<li><strong>再说 Borrowing</strong>：空闲资源允许借用，但标记为&quot;可回收&quot;——保障租户需要时必须能拿回来。</li>
 <li><strong>然后说 Reclaim</strong>：回收策略是关键——优先回收 QAD 低的借用者、沉没成本小的任务、checkpoint 新鲜的任务。</li>
 <li><strong>再说 Admission</strong>：Gang 任务要准入控制——没有足够资源就不让任何 Pod 启动，避免 partial allocation。</li>
 <li><strong>最后说 Hierarchy</strong>：公司/部门/团队三级队列，权重在各级分配。</li>
@@ -603,16 +603,16 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么只用 ResourceQuota 不够做 GPU 多租户调度？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">核心回答</div><p>Namespace ResourceQuota 是静态上限——"你最多用这么多"。但 GPU 多租户需要：(1) 排队——满了之后不是拒绝，而是排队等待；(2) 公平分享——不同租户按份额或 dominant share 分配；(3) 借用与回收——空闲资源允许借用，但保障租户需要时能拿回来；(4) Gang admission——一组 Pod 要么全放行，要么全排队；(5) 按 GPU flavor 区分配额——A100 和 H100 不能混着算。ResourceQuota 做不到这些。</p></div>
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>Namespace ResourceQuota 是静态上限——&quot;你最多用这么多&quot;。但 GPU 多租户需要：(1) 排队——满了之后不是拒绝，而是排队等待；(2) 公平分享——不同租户按份额或 dominant share 分配；(3) 借用与回收——空闲资源允许借用，但保障租户需要时能拿回来；(4) Gang admission——一组 Pod 要么全放行，要么全排队；(5) 按 GPU flavor 区分配额——A100 和 H100 不能混着算。ResourceQuota 做不到这些。</p></div>
 <div class="qa-section"><div class="qa-section-title">为什么这样设计</div><p>ResourceQuota 是 K8S 早期为在线服务设计的，假设每个 Pod 独立运行、资源需求固定、不需要排队。GPU 训练任务打破了所有这些假设。</p></div>
-<div class="qa-summary">面试要点：ResourceQuota 是"静态上限"，GPU 多租户需要的是"动态排队+公平+借用回收+Gang 准入"。</div>
+<div class="qa-summary">面试要点：ResourceQuota 是&quot;静态上限&quot;，GPU 多租户需要的是&quot;动态排队+公平+借用回收+Gang 准入&quot;。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: DRF 的 dominant share 计算过程，能手动推一遍吗？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">场景</div><p>集群 <code>&lt;9 CPU, 18 GB 内存&gt;</code>。用户 A 任务需要 <code>&lt;1 CPU, 4 GB&gt;</code>，用户 B 任务需要 <code>&lt;3 CPU, 1 GB&gt;</code>。</p></div>
-<div class="qa-section"><div class="qa-section-title">推演</div><p>A 的主导资源是内存（4/18 > 1/9），B 的主导资源是 CPU（3/9 > 1/18）。DRF 优先给 dominant share 低的用户分配。</p>
+<div class="qa-section"><div class="qa-section-title">推演</div><p>A 的主导资源是内存（4/18 &gt; 1/9），B 的主导资源是 CPU（3/9 &gt; 1/18）。DRF 优先给 dominant share 低的用户分配。</p>
 <p>Round 1: A(0,0) B(0,0) → 给 A → A=(1/9, 4/18), dominant=4/18</p>
 <p>Round 2: A=4/18 B=0 → 给 B → B=(3/9, 1/18), dominant=3/9</p>
 <p>Round 3: A=4/18 B=3/9 → 给 A → A=(2/9, 8/18), dominant=8/18</p>
@@ -629,14 +629,14 @@
 <div class="qa-section"><div class="qa-section-title">从谁那里回收</div><p>优先选择：(1) 借用量最大的队列——他们超出保障最多，回收对他们的 QAD 影响最小；(2) 正在运行的任务中沉没成本最低的——刚启动不久的、checkpoint 新鲜的；(3) 优先级最低的任务。</p></div>
 <div class="qa-section"><div class="qa-section-title">回收多少</div><p>渐进式回收，不是一次全收。目标是让保障租户的 QAD 恢复到阈值（如 0.95）。例如保障租户差 5 张 GPU，就回收 5 张，不多收。</p></div>
 <div class="qa-section"><div class="qa-section-title">回收的任务怎么处理</div><p>三种方式：(1) 优雅终止——等任务 checkpoint 后停止（延迟最高但对用户最友好）；(2) 检查点后终止——触发一次紧急 checkpoint，然后停止；(3) 立即终止——对低优先级或短任务适用。具体选哪种取决于任务的 checkpoint 频率和优先级。</p></div>
-<div class="qa-summary">面试要点：回收不是简单的"杀掉低优先级"，而是要考虑沉没成本、渐进式回收和优雅终止。</div>
+<div class="qa-summary">面试要点：回收不是简单的&quot;杀掉低优先级&quot;，而是要考虑沉没成本、渐进式回收和优雅终止。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 如果两个用户的 dominant resource 一样怎么办？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>DRF 退化成单资源公平分配。如果两个用户的 dominant resource 都是 GPU，那 DRF 等价于在 GPU 维度上做 Max-Min Fairness。这不是 bug，而是 DRF 在特定负载下的自然行为。</p></div>
-<div class="qa-section"><div class="qa-section-title">实际影响</div><p>GPU 集群里很多用户的主导资源都是 GPU。这时候 DRF 的多资源优势不明显，更像是"GPU 数量的 Max-Min Fairness"。但加入 CPU、内存、网络带宽后，不同用户的 dominant resource 就会分化。</p></div>
+<div class="qa-section"><div class="qa-section-title">实际影响</div><p>GPU 集群里很多用户的主导资源都是 GPU。这时候 DRF 的多资源优势不明显，更像是&quot;GPU 数量的 Max-Min Fairness&quot;。但加入 CPU、内存、网络带宽后，不同用户的 dominant resource 就会分化。</p></div>
 <div class="qa-summary">面试要点：说清楚 DRF 在不同负载下的退化行为，比单纯背算法更能展示理解深度。</div>
 </div>
 </div>
@@ -644,36 +644,36 @@
 <div class="qa-q">Q: DRF 的 Sharing Incentive 性质是什么意思？为什么重要？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">定义</div><p>Sharing Incentive：每个用户在共享系统里分到的资源，不少于把总资源均分后自己独占那一份。即：参与共享不比独占差。</p></div>
-<div class="qa-section"><div class="qa-section-title">为什么重要</div><p>这是公平性的底线。如果某个用户发现"我参与共享拿到的资源还不如我自己独占 1/N 集群"，他就没有动力参与共享，整个多租户系统的基础就崩了。</p></div>
-<div class="qa-section"><div class="qa-section-title">反例</div><p>如果用"按 GPU 数量均分"，但某个用户需要的资源主要是内存（他的任务每个只需要 1 GPU 但要 64GB 内存），均分 GPU 后他拿到的内存可能远低于 1/N。这时 Sharing Incentive 被违反了——他参与共享不如独占。DRF 通过看 dominant resource 来保证这一点。</p></div>
-<div class="qa-summary">面试要点：Sharing Incentive 是"参与共享的最低动力"，DRF 通过 dominant share 来保证这一点。</div>
+<div class="qa-section"><div class="qa-section-title">为什么重要</div><p>这是公平性的底线。如果某个用户发现&quot;我参与共享拿到的资源还不如我自己独占 1/N 集群&quot;，他就没有动力参与共享，整个多租户系统的基础就崩了。</p></div>
+<div class="qa-section"><div class="qa-section-title">反例</div><p>如果用&quot;按 GPU 数量均分&quot;，但某个用户需要的资源主要是内存（他的任务每个只需要 1 GPU 但要 64GB 内存），均分 GPU 后他拿到的内存可能远低于 1/N。这时 Sharing Incentive 被违反了——他参与共享不如独占。DRF 通过看 dominant resource 来保证这一点。</p></div>
+<div class="qa-summary">面试要点：Sharing Incentive 是&quot;参与共享的最低动力&quot;，DRF 通过 dominant share 来保证这一点。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"你怎么设计多租户 GPU 集群的公平性"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;你怎么设计多租户 GPU 集群的公平性&quot;，怎么回答？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">回答框架（4 步）</div>
 <ol>
-<li><strong>定义公平</strong>：先说在 GPU 集群里"公平"是多维的——GPU、CPU、内存、拓扑。用 DRF 的 dominant share 定义公平。</li>
+<li><strong>定义公平</strong>：先说在 GPU 集群里&quot;公平&quot;是多维的——GPU、CPU、内存、拓扑。用 DRF 的 dominant share 定义公平。</li>
 <li><strong>工程实现</strong>：DRF 是理论，工程上用 Elastic Quota + QAD。min 保障、max 上限、空闲借用、QAD 驱动回收。</li>
 <li><strong>GPU 特有问题</strong>：异构 GPU 按 flavor 分开算、拓扑在 Score 叠加、弹性任务按目标 world size 算、抢占要代价感知。</li>
 <li><strong>验证方法</strong>：用 dominant share 的基尼系数或 QAD 分布衡量公平性，用 JCT 和利用率衡量效率，看公平性和效率的 trade-off。</li>
 </ol>
 </div>
-<div class="qa-section"><div class="qa-section-title">面试金句</div><p>"公平性不是均分，而是在多维资源空间里让每个用户的瓶颈资源都不吃亏。DRF 解决了定义问题，Elastic Quota + QAD 解决了工程实现问题，异构 GPU 和拓扑是 GPU 集群特有的延伸。"</p></div>
+<div class="qa-section"><div class="qa-section-title">面试金句</div><p>&quot;公平性不是均分，而是在多维资源空间里让每个用户的瓶颈资源都不吃亏。DRF 解决了定义问题，Elastic Quota + QAD 解决了工程实现问题，异构 GPU 和拓扑是 GPU 集群特有的延伸。&quot;</p></div>
 </div>
 </div>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::03-fairness-multiresource-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::03-fairness-multiresource-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">目标函数与评价指标</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">批调度、Gang 与 Backfill</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-4" aria-labelledby="scheduling-tabs-tab-4" data-mid="scheduling-tabs::04-batch-gang-backfill-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>批调度、Gang 与 Backfill</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层：Gang Scheduling 是 all-or-nothing 准入语义（防 partial allocation 导致 GPU 空转），Backfill 是队列利用率优化（保护队头大任务 reservation 的前提下让短任务插空），Bin Packing 是节点放置策略，Checkpoint-aware Preemption 是代价感知的运行时回收，配合 Elastic Training 还能用缩容代替杀任务。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>批调度：训练任务和普通在线服务的分水岭</h3>
 <p>分布式训练、HPC 和大规模批任务通常不是单 Pod 独立运行，而是一组进程共同完成一个 job。批调度关注的不只是单个 Pod 能否放下，还包括一组 Pod 是否能同时启动、是否会造成资源碎片、是否会让大作业长期排队。</p>
@@ -856,7 +856,7 @@ for job in queue.after(head):
 <tr><td>资源碎片</td><td>当前放置不会破坏大块资源</td><td>当前放置会打散完整 8 卡节点</td></tr>
 <tr><td>预测置信度</td><td>不知道未来资源何时释放</td><td>能可靠预测 reservation window</td></tr>
 </table>
-<div class="formula">$$\text{schedule now if } \text{waiting\_cost} > \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
+<div class="formula">$$\text{schedule now if } \text{waiting\_cost} &gt; \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
 <p>工程实现通常不是精确求解，而是设阈值：拓扑质量分数达到阈值就运行；等待超过超时时间就降级；高优任务可以抢占或预留。</p>
 </div>
 <div class="card card-s">
@@ -879,7 +879,7 @@ for job in queue.after(head):
 </div>
 <div class="card card-w">
 <h3>Checkpoint-aware Preemption 详解</h3>
-<p>抢占在 AI 训练里不能只看优先级，还要看沉没成本。一个已经训练 20 小时但 3 小时没 checkpoint 的任务，被抢占代价可能远高于刚启动 5 分钟的任务。面试中如果只说"抢占低优先级"，是不够的——需要说清楚"代价感知抢占"。</p>
+<p>抢占在 AI 训练里不能只看优先级，还要看沉没成本。一个已经训练 20 小时但 3 小时没 checkpoint 的任务，被抢占代价可能远高于刚启动 5 分钟的任务。面试中如果只说&quot;抢占低优先级&quot;，是不够的——需要说清楚&quot;代价感知抢占&quot;。</p>
 
 <h4>传统抢占 vs 代价感知抢占</h4>
 <table>
@@ -887,7 +887,7 @@ for job in queue.after(head):
 <tr><td>选择标准</td><td>优先级最低</td><td>抢占代价最低</td></tr>
 <tr><td>考虑因素</td><td>只有优先级</td><td>沉没成本、checkpoint 新鲜度、重启成本</td></tr>
 <tr><td>释放效率</td><td>可能杀了一个大任务才释放 1 张 GPU</td><td>选择释放资源量/代价比值最高的牺牲者</td></tr>
-<tr><td>用户感知</td><td>"我跑了好久突然被杀了"</td><td>"刚启动不久就被调度走了，还算合理"</td></tr>
+<tr><td>用户感知</td><td>&quot;我跑了好久突然被杀了&quot;</td><td>&quot;刚启动不久就被调度走了，还算合理&quot;</td></tr>
 </table>
 
 <h4>抢占代价的五个维度</h4>
@@ -913,13 +913,13 @@ for job in queue.after(head):
 <p>选择 Y：虽然只释放 4 张 GPU（刚好够用），但 checkpoint 新鲜、运行时间短，抢占代价最低。如果需要 8 张 GPU，就选 X。</p>
 
 <h4>优雅抢占 vs 强制抢占</h4>
-<p><strong>优雅抢占</strong>：通知任务"请尽快 checkpoint 并退出"。任务收到信号后做一次 checkpoint，然后主动退出。优点：进度零损失；缺点：等待时间不确定。</p>
+<p><strong>优雅抢占</strong>：通知任务&quot;请尽快 checkpoint 并退出&quot;。任务收到信号后做一次 checkpoint，然后主动退出。优点：进度零损失；缺点：等待时间不确定。</p>
 <p><strong>强制抢占</strong>：直接杀掉 Pod。优点：立即释放资源；缺点：进度可能回滚到上次 checkpoint。</p>
 <p><strong>实际做法</strong>：给一个优雅期（如 5 分钟），超时未退出则强制杀掉。这样既给任务机会做 checkpoint，又不会无限等待。</p>
 </div>
 <div class="card card-m">
 <h3>弹性训练与调度</h3>
-<p>弹性训练把"固定 world size"变成"可变 world size"，可以缓解资源碎片和排队时间。调度器不一定要等到 64 张 GPU 才启动任务，而是可以先用 32 张运行，后续资源释放后再扩容。</p>
+<p>弹性训练把&quot;固定 world size&quot;变成&quot;可变 world size&quot;，可以缓解资源碎片和排队时间。调度器不一定要等到 64 张 GPU 才启动任务，而是可以先用 32 张运行，后续资源释放后再扩容。</p>
 
 <h4>弹性训练怎么工作</h4>
 <p><strong>传统训练</strong>：world_size=64 固定，必须凑齐 64 张 GPU 才能启动。NCCL 通信组在启动时确定，运行中不变。</p>
@@ -965,9 +965,9 @@ for job in queue.after(head):
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Gang Scheduling 会导致大作业饥饿吗？怎么解决？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">问题</div><p>会。如果集群里小任务源源不断，每次释放的 GPU 都被小任务抢占，大 gang 可能永远凑不齐资源。这叫"大作业饥饿"。</p></div>
+<div class="qa-section"><div class="qa-section-title">问题</div><p>会。如果集群里小任务源源不断，每次释放的 GPU 都被小任务抢占，大 gang 可能永远凑不齐资源。这叫&quot;大作业饥饿&quot;。</p></div>
 <div class="qa-section"><div class="qa-section-title">解决思路</div><p>(1) <strong>资源预留</strong>：为大 gang 预留资源，不允许小任务占用预留部分。(2) <strong>Aging</strong>：等待时间越长，gang 的调度优先级越高，最终总能排到队首。(3) <strong>Backfill 约束</strong>：小任务 backfill 时必须保证不推迟 gang 的预计启动时间。(4) <strong>弹性训练</strong>：降低 minAvailable，用更少的 GPU 启动，减少等待时间。</p></div>
-<div class="qa-summary">面试要点：Gang 的饥饿问题是经典面试题。要从"预留、aging、backfill 约束、弹性"四个角度给出解法。</div>
+<div class="qa-summary">面试要点：Gang 的饥饿问题是经典面试题。要从&quot;预留、aging、backfill 约束、弹性&quot;四个角度给出解法。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -975,8 +975,8 @@ for job in queue.after(head):
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>三个原因：</p>
 <ol>
-<li><strong>GPU 任务通常是独占整卡</strong>：CPU 任务可以只占 0.5 核，留下 0.5 核给别人。但 GPU 任务通常独占整卡，不像 CPU 可以"挤一挤"。所以 GPU 集群的 backfill 窗口更难找——只有整卡空闲时才能 backfill。</li>
-<li><strong>Gang 语义增加了约束</strong>：不是"1 个 Pod 能放就行"，而是"一组 Pod 必须同时能放"。大 gang 等待期间，碎片可能分散在不同节点，小 gang 也放不进去。</li>
+<li><strong>GPU 任务通常是独占整卡</strong>：CPU 任务可以只占 0.5 核，留下 0.5 核给别人。但 GPU 任务通常独占整卡，不像 CPU 可以&quot;挤一挤&quot;。所以 GPU 集群的 backfill 窗口更难找——只有整卡空闲时才能 backfill。</li>
+<li><strong>Gang 语义增加了约束</strong>：不是&quot;1 个 Pod 能放就行&quot;，而是&quot;一组 Pod 必须同时能放&quot;。大 gang 等待期间，碎片可能分散在不同节点，小 gang 也放不进去。</li>
 <li><strong>拓扑约束</strong>：即使有空闲 GPU，如果拓扑位置不合适（如跨节点太多），backfill 任务的性能可能很差，不值得跑。</li>
 </ol></div>
 <div class="qa-section"><div class="qa-section-title">怎么缓解</div><p>GPU sharing（MPS/time-slicing）可以创造 backfill 机会——让小任务和已有任务合用同一张卡。代价是可能的性能干扰。</p></div>
@@ -989,11 +989,11 @@ for job in queue.after(head):
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>checkpoint 频率低意味着 checkpoint age 可能很大，抢占代价高。调整策略：</p>
 <ol>
 <li><strong>优先抢占刚启动的任务</strong>：它们没有太多进度可损失。</li>
-<li><strong>触发紧急 checkpoint</strong>：通知任务"请立即做一次 checkpoint"，等待完成后抢占。虽然增加了延迟，但避免了小时级的进度损失。</li>
+<li><strong>触发紧急 checkpoint</strong>：通知任务&quot;请立即做一次 checkpoint&quot;，等待完成后抢占。虽然增加了延迟，但避免了小时级的进度损失。</li>
 <li><strong>考虑优雅抢占</strong>：给任务更多时间来 checkpoint 和退出。如果是训练任务，5-10 分钟的优雅期可能换来巨大的进度保护。</li>
 <li><strong>调整 checkpoint 频率策略</strong>：如果集群经常需要抢占，可以建议用户提高 checkpoint 频率，或者平台提供自动异步 checkpoint。</li>
 </ol></div>
-<div class="qa-summary">面试要点：低 checkpoint 频率让抢占代价飙升。解决方案不是"不做抢占"，而是"做代价感知抢占 + 优雅终止 + 紧急 checkpoint"。</div>
+<div class="qa-summary">面试要点：低 checkpoint 频率让抢占代价飙升。解决方案不是&quot;不做抢占&quot;，而是&quot;做代价感知抢占 + 优雅终止 + 紧急 checkpoint&quot;。</div>
 </div>
 </div>
 <div class="card card-m">
@@ -1068,7 +1068,7 @@ for job in queue.after(head):
 </ul>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"你怎么设计训练任务的抢占策略"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;你怎么设计训练任务的抢占策略&quot;，怎么回答？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">回答框架</div>
 <ol>
@@ -1078,23 +1078,23 @@ for job in queue.after(head):
 <li><strong>最后说弹性训练</strong>：如果任务支持弹性，可以缩减 world size 而不是杀掉，释放部分 GPU 但训练继续。</li>
 </ol>
 </div>
-<div class="qa-section"><div class="qa-section-title">面试金句</div><p>"训练任务的抢占不是简单的优先级排序，而是代价优化问题。好的抢占策略选择'最值得杀'的牺牲者——释放资源多、进度损失少、重启成本低。"</p></div>
+<div class="qa-section"><div class="qa-section-title">面试金句</div><p>&quot;训练任务的抢占不是简单的优先级排序，而是代价优化问题。好的抢占策略选择&#x27;最值得杀&#x27;的牺牲者——释放资源多、进度损失少、重启成本低。&quot;</p></div>
 </div>
 </div>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::04-batch-gang-backfill-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::04-batch-gang-backfill-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">多资源公平调度</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">拓扑感知调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-5" aria-labelledby="scheduling-tabs-tab-5" data-mid="scheduling-tabs::05-topology-aware-scheduling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>拓扑感知调度</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>拓扑感知调度优化的不是 GPU 数量，而是 rank 通信图到硬件数据路径图的映射代价：节点内 NVLink/NVSwitch 比跨机 InfiniBand 快 10-50 倍，而通信又占训练时间 30-50%，所以 Tensor Parallel/MoE 必须放进同一 NVLink 域、GPU 与 NIC 要做 NUMA 对齐，再用拓扑质量阈值在等待时间和训练性能之间权衡。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>拓扑感知调度：GPU 集群调度的核心差异点</h3>
-<p>普通 CPU 调度通常只关心资源数量是否足够，而 GPU 训练调度必须关心"资源之间的连接关系"。同样是 8 张 GPU，同机 NVSwitch、同机 PCIe、跨机 RDMA、跨机柜网络，对训练吞吐的影响完全不同。</p>
+<p>普通 CPU 调度通常只关心资源数量是否足够，而 GPU 训练调度必须关心&quot;资源之间的连接关系&quot;。同样是 8 张 GPU，同机 NVSwitch、同机 PCIe、跨机 RDMA、跨机柜网络，对训练吞吐的影响完全不同。</p>
 <p>为什么拓扑这么重要？因为大模型训练的通信时间可能占到总训练时间的 30-50%。如果 8 张 GPU 在同一节点用 NVLink 互联，AllReduce 一个 1GB 的梯度张量可能只需要 0.5ms；但如果 8 张 GPU 分散在 4 个节点走 InfiniBand，同样的操作可能需要 5ms。10 倍的差距，乘以每步训练都要做一次，最终训练速度可能差 2 倍以上。</p>
 </div>
 <div class="card card-s">
@@ -1134,7 +1134,7 @@ for job in queue.after(head):
 </div>
 <div class="card card-d">
 <h3>不同并行策略的拓扑偏好</h3>
-<p>这是拓扑感知调度最核心的知识点。面试中经常问"为什么张量并行要放在同节点"。下面的表格解释了每种并行策略为什么有特定的拓扑偏好。</p>
+<p>这是拓扑感知调度最核心的知识点。面试中经常问&quot;为什么张量并行要放在同节点&quot;。下面的表格解释了每种并行策略为什么有特定的拓扑偏好。</p>
 
 <table>
 <tr><th>并行策略</th><th>通信模式</th><th>通信频率</th><th>通信量/步</th><th>放置偏好</th><th>为什么</th></tr>
@@ -1152,11 +1152,11 @@ for job in queue.after(head):
 <li><strong>PP = 4</strong>：跨 4 个节点做流水线，P2P 通信量小，走 InfiniBand 即可</li>
 <li><strong>DP = 2</strong>：2 组流水线做数据并行，每个 micro-batch 结束同步梯度</li>
 </ul>
-<p><strong>调度含义</strong>：调度器需要知道这个任务需要 4 个"完整节点"（每个节点 8 GPU 全用），而不是 32 个散落的 GPU。如果只给 4 张 GPU 在同一节点、28 张分散在其他节点，TP=8 就做不了。</p>
+<p><strong>调度含义</strong>：调度器需要知道这个任务需要 4 个&quot;完整节点&quot;（每个节点 8 GPU 全用），而不是 32 个散落的 GPU。如果只给 4 张 GPU 在同一节点、28 张分散在其他节点，TP=8 就做不了。</p>
 </div>
 <div class="card card-w">
 <h3>拓扑感知调度的实现路径</h3>
-<p>面试中经常问"怎么在 K8S 里实现拓扑感知调度"。答案不是唯一的，要看你的集群规模和精度需求。</p>
+<p>面试中经常问&quot;怎么在 K8S 里实现拓扑感知调度&quot;。答案不是唯一的，要看你的集群规模和精度需求。</p>
 
 <h4>5 种实现方式对比</h4>
 <table>
@@ -1174,7 +1174,7 @@ for job in queue.after(head):
 </div>
 <div class="card card-m">
 <h3>拓扑调度的目标函数</h3>
-<p>拓扑感知调度不是"让所有任务都拿到最优拓扑"——那会导致大量 GPU 在等完美组合。而是要找到一个<strong>可接受的拓扑质量</strong>，在等待时间和训练性能之间权衡。</p>
+<p>拓扑感知调度不是&quot;让所有任务都拿到最优拓扑&quot;——那会导致大量 GPU 在等完美组合。而是要找到一个<strong>可接受的拓扑质量</strong>，在等待时间和训练性能之间权衡。</p>
 
 <h4>五种目标</h4>
 <table>
@@ -1187,16 +1187,16 @@ for job in queue.after(head):
 </table>
 
 <h4>怎么理解这些目标的冲突</h4>
-<p>最小通信代价和最小碎片是矛盾的：把通信密集的 worker 都放在一起（最小通信代价），可能导致大块 GPU 组被拆散（碎片化增加）。实际中通常的做法是：设定一个拓扑质量阈值（如"至少 70% 的 worker 在同节点或同机柜"），超过阈值就不等了。</p>
+<p>最小通信代价和最小碎片是矛盾的：把通信密集的 worker 都放在一起（最小通信代价），可能导致大块 GPU 组被拆散（碎片化增加）。实际中通常的做法是：设定一个拓扑质量阈值（如&quot;至少 70% 的 worker 在同节点或同机柜&quot;），超过阈值就不等了。</p>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不能只用 node label 表达 GPU 拓扑？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>Node Label 只能表达节点级静态属性（如 GPU 型号、机架位置），但表达不了三类关键的设备级关系：</p>
 <ol>
-<li><strong>GPU 之间的互联关系</strong>："GPU 0 和 GPU 1 之间有 NVLink，但 GPU 0 和 GPU 2 之间走 PCIe"。这决定了哪些 GPU 组合更适合张量并行。</li>
-<li><strong>GPU 与 NUMA 节点的亲和性</strong>："GPU 0 离 NUMA 节点 0 更近，数据加载应该用 NUMA 0 的 CPU"。这影响 host-device copy 的延迟。</li>
-<li><strong>MIG slice 的归属</strong>："MIG slice 1c.0 和 1c.1 属于同一张物理 GPU，不能同时分配给不同任务"。这是资源互斥约束。</li>
+<li><strong>GPU 之间的互联关系</strong>：&quot;GPU 0 和 GPU 1 之间有 NVLink，但 GPU 0 和 GPU 2 之间走 PCIe&quot;。这决定了哪些 GPU 组合更适合张量并行。</li>
+<li><strong>GPU 与 NUMA 节点的亲和性</strong>：&quot;GPU 0 离 NUMA 节点 0 更近，数据加载应该用 NUMA 0 的 CPU&quot;。这影响 host-device copy 的延迟。</li>
+<li><strong>MIG slice 的归属</strong>：&quot;MIG slice 1c.0 和 1c.1 属于同一张物理 GPU，不能同时分配给不同任务&quot;。这是资源互斥约束。</li>
 </ol></div>
 <div class="qa-section"><div class="qa-section-title">怎么解决</div><p>用 Scheduler Plugin 在 Filter/Score 阶段读取拓扑数据（如 DCGM 导出的 NVLink 拓扑），或用 DRA 的 ResourceSlice 结构化表达。</p></div>
 <div class="qa-summary">面试要点：Label 是节点级的，GPU 拓扑是设备级的。级别不同，Label 做不了。</div>
@@ -1206,8 +1206,8 @@ for job in queue.after(head):
 <div class="qa-q">Q: 如果集群资源不够让所有任务都拿到最优拓扑，怎么权衡？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>设拓扑质量阈值，而不是追求全局最优。</p></div>
-<div class="qa-section"><div class="qa-section-title">具体做法</div><p>(1) <strong>定义拓扑质量分数</strong>：如"同节点 GPU 占比 × 1.0 + 同机柜 GPU 占比 × 0.5 + 跨机柜 GPU 占比 × 0.1"。(2) <strong>设可接受阈值</strong>：如"拓扑分数 ≥ 0.7 就不等了，直接调度"。(3) <strong>超时降级</strong>：等待最优拓扑超过 30 分钟，自动降级到次优拓扑。(4) <strong>按并行策略区分</strong>：TP 任务要求高拓扑质量（阈值 0.9），DP 任务可以低一些（阈值 0.5）。</p></div>
-<div class="qa-summary">面试要点：不是"最优或不变"，而是"设定可接受的质量阈值，超阈值就调"。</div>
+<div class="qa-section"><div class="qa-section-title">具体做法</div><p>(1) <strong>定义拓扑质量分数</strong>：如&quot;同节点 GPU 占比 × 1.0 + 同机柜 GPU 占比 × 0.5 + 跨机柜 GPU 占比 × 0.1&quot;。(2) <strong>设可接受阈值</strong>：如&quot;拓扑分数 ≥ 0.7 就不等了，直接调度&quot;。(3) <strong>超时降级</strong>：等待最优拓扑超过 30 分钟，自动降级到次优拓扑。(4) <strong>按并行策略区分</strong>：TP 任务要求高拓扑质量（阈值 0.9），DP 任务可以低一些（阈值 0.5）。</p></div>
+<div class="qa-summary">面试要点：不是&quot;最优或不变&quot;，而是&quot;设定可接受的质量阈值，超阈值就调&quot;。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -1224,19 +1224,19 @@ for job in queue.after(head):
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官问"为什么张量并行必须放在同节点"，怎么回答？</div>
+<div class="qa-q">Q: 面试官问&quot;为什么张量并行必须放在同节点&quot;，怎么回答？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">核心回答</div><p>因为张量并行每一层的前向和反向都要做 AllReduce/AllGather，通信频率远高于其他并行策略。一个 70 层的 Transformer，每步训练要做 70 × 2 = 140 次集合通信。如果走 InfiniBand（延迟 ~5μs），每次通信的延迟累积到 0.7ms/步。如果走 NVLink（延迟 ~0.5μs），只有 0.07ms/步。乘以数万步训练，差距巨大。</p></div>
 <div class="qa-section"><div class="qa-section-title">补充</div><p>不只是延迟，带宽也是问题。NVLink 带宽 900 GB/s，InfiniBand 只有 ~50 GB/s。张量并行每次通信的激活值可能达到 GB 级别，带宽不够会严重拖慢训练。</p></div>
-<div class="qa-summary">面试金句："张量并行的通信频率是'每层每步'，不是'每步一次'。这个量级的通信只有 NVLink 承受得起。"</div>
+<div class="qa-summary">面试金句：&quot;张量并行的通信频率是&#x27;每层每步&#x27;，不是&#x27;每步一次&#x27;。这个量级的通信只有 NVLink 承受得起。&quot;</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: DRA 怎么解决拓扑表达问题？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">核心回答</div><p>DRA 引入了 ResourceSlice，可以结构化地描述每个设备的属性和设备间的关系。一个 ResourceSlice 可以说"这个节点有 8 张 GPU，其中 GPU 0-3 通过 NVLink 互联，GPU 4-7 通过 NVLink 互联，但两组之间走 PCIe"。调度器可以根据这些信息做设备级的拓扑匹配。</p></div>
-<div class="qa-section"><div class="qa-section-title">和 Device Plugin 的区别</div><p>Device Plugin 只能报告设备列表（如 nvidia.com/gpu: 8），不能表达设备之间的关系。DRA 的 ResourceSlice 可以报告结构化的设备拓扑。这是从"资源计数"到"资源关系"的进化。</p></div>
-<div class="qa-summary">面试要点：Device Plugin 是"我有 8 张 GPU"，DRA 是"我有 8 张 GPU，它们之间是这样连接的"。</div>
+<div class="qa-section"><div class="qa-section-title">核心回答</div><p>DRA 引入了 ResourceSlice，可以结构化地描述每个设备的属性和设备间的关系。一个 ResourceSlice 可以说&quot;这个节点有 8 张 GPU，其中 GPU 0-3 通过 NVLink 互联，GPU 4-7 通过 NVLink 互联，但两组之间走 PCIe&quot;。调度器可以根据这些信息做设备级的拓扑匹配。</p></div>
+<div class="qa-section"><div class="qa-section-title">和 Device Plugin 的区别</div><p>Device Plugin 只能报告设备列表（如 nvidia.com/gpu: 8），不能表达设备之间的关系。DRA 的 ResourceSlice 可以报告结构化的设备拓扑。这是从&quot;资源计数&quot;到&quot;资源关系&quot;的进化。</p></div>
+<div class="qa-summary">面试要点：Device Plugin 是&quot;我有 8 张 GPU&quot;，DRA 是&quot;我有 8 张 GPU，它们之间是这样连接的&quot;。</div>
 </div>
 </div>
 <div class="card card-m">
@@ -1307,7 +1307,7 @@ for job in queue.after(head):
 <p>GPU 调度场景题不要只背“队列、打分、抢占”这些概念。面试官通常在考三件事：你能不能把业务场景讲具体，能不能把 GPU 从“几张卡”拆成显存、算力、拓扑、成本、租户配额等可调度条件，能不能说明方案落到 Kubernetes 节点标签、资源池、准入层和调度器扩展时到底做哪些动作。</p>
 <p>回答时建议按这个顺序展开：<strong>先澄清任务类型和约束 -&gt; 解释资源和任务画像 -&gt; 说调度链路怎么改 -&gt; 说异常和回退 -&gt; 说指标如何证明有效</strong>。这样每个场景都能讲到 8-10 分钟，而不是只报几个名词。</p>
 <h2>常用术语先解释</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>术语</th><th>白话解释</th><th>在回答里怎么用</th></tr>
 <tr><td>资源规格 / 卡型资源池</td><td>把同样叫 GPU 的资源按型号、显存、网络、成本、节点池区分开</td><td>H100 80GB、A100 40GB、A10 24GB 是不同资源规格，不能只当成 <code>nvidia.com/gpu=1</code></td></tr>
 <tr><td>node pool</td><td>一批同质或用途相近的节点池</td><td>在线推理池、离线训练池、H100 高端池、A10 低成本池</td></tr>
@@ -1316,9 +1316,9 @@ for job in queue.after(head):
 <tr><td>Backfill</td><td>在不影响大任务预约启动的前提下，让短任务填资源空洞</td><td>64 卡任务还差 16 卡时，用 1-2 卡短任务临时填空</td></tr>
 <tr><td>抢占代价</td><td>抢掉一个任务带来的进度损失和恢复成本</td><td>GPU 训练抢占要看 checkpoint 新鲜度、运行时长、模型加载成本</td></tr>
 <tr><td>拓扑感知</td><td>调度时考虑 GPU 与 GPU、GPU 与 NIC 的物理连接关系</td><td>TP 更想放同节点 NVSwitch，跨节点会被 RDMA 和交换机瓶颈限制</td></tr>
-</table>
+</table></div>
 <h2>场景题总览</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>场景</th><th>面试官真正想看</th><th>关键词</th></tr>
 <tr><td>异构 GPU 调度</td><td>你是否能把 GPU 从“数量”升级成卡型 / 显存 / 性能 / 拓扑资源</td><td>节点标签、资源池、型号匹配、性能归一</td></tr>
 <tr><td>多租户配额</td><td>你是否理解公平和利用率冲突</td><td>quota、fairshare、cohort、借用、回收</td></tr>
@@ -1331,7 +1331,7 @@ for job in queue.after(head):
 <tr><td>海量小 GPU 作业</td><td>你是否能考虑调度器吞吐和显存切分</td><td>fractional GPU、best-fit、batch scheduling</td></tr>
 <tr><td>弹性训练</td><td>你是否能把调度和训练框架语义结合</td><td>min/max workers、elastic quota、world size</td></tr>
 <tr><td>故障恢复</td><td>你是否能把调度和稳定性闭环</td><td>DCGM、Xid、drain、reschedule、checkpoint</td></tr>
-</table>
+</table></div>
 <h2>通用回答骨架</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">澄清场景</div><div class="flow-desc">训练/推理/评测/小作业，单 Pod 还是多 Pod，在线还是离线</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">定义资源</div><div class="flow-desc">GPU 型号、显存、CPU、内存、网络、存储、拓扑、故障域</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">确定硬约束</div><div class="flow-desc">显存够、型号兼容、Gang 满足、SLO 不破、租户 quota 不越界</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">选择目标</div><div class="flow-desc">吞吐、等待时间、JCT、公平性、SLO、利用率、成本</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">设计策略</div><div class="flow-desc">队列排序、准入、Filter/Score、Backfill、抢占、弹性</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">工程落地</div><div class="flow-desc">GPU 插件、节点标签、准入控制、调度扩展、资源看板和监控指标</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">验证效果</div><div class="flow-desc">queue time、JCT、GPU util、fragmentation、SLO violation、preemption cost</div></div></div>
 <h2>1. 异构 GPU 调度</h2>
@@ -1345,7 +1345,7 @@ for job in queue.after(head):
 <h3>10 分钟回答展开</h3>
 <ol><li><strong>资源侧建模</strong></li></ol>
 <p>先在集群侧维护 GPU 资源目录，而不是只看 Kubernetes 的 extended resource。每个节点或节点池记录：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>字段</th><th>例子</th><th>为什么重要</th></tr>
 <tr><td>型号</td><td>A10 / A100 / H100</td><td>决定算力、支持精度和成本</td></tr>
 <tr><td>显存</td><td>24GB / 40GB / 80GB</td><td>决定模型能不能放下</td></tr>
@@ -1353,14 +1353,14 @@ for job in queue.after(head):
 <tr><td>网络</td><td>普通以太网 / IB / RDMA</td><td>决定跨节点训练性能</td></tr>
 <tr><td>成本</td><td>每小时价格或内部成本权重</td><td>避免小任务浪费高端卡</td></tr>
 <tr><td>健康状态</td><td>正常 / Xid 频发 / ECC 风险</td><td>避免把任务调到坏卡</td></tr>
-</table>
+</table></div>
 <p>这里最容易混的是“发现卡型”和“改资源名”。可以先拆成三个问题：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>问题</th><th>谁负责</th><th>结果是什么</th></tr>
 <tr><td>K8S 知道有几张 GPU</td><td>NVIDIA device plugin</td><td>节点 <code>allocatable</code> 里出现 <code>nvidia.com/gpu: 8</code></td></tr>
 <tr><td>K8S 知道是什么卡型</td><td>GPU Feature Discovery + Node Feature Discovery</td><td>节点 label 里出现 <code>nvidia.com/gpu.product</code>、<code>nvidia.com/gpu.memory</code></td></tr>
 <tr><td>是否把资源改名 / 切成共享份额</td><td>device plugin 的 ConfigMap</td><td>例如把 <code>nvidia.com/gpu</code> 暴露成 <code>nvidia.com/gpu.shared</code>，或者把一张卡切成多个 time-slicing 副本</td></tr>
-</table>
+</table></div>
 <p>所以，ConfigMap 确实存在，但它主要配置 device plugin “怎么暴露资源”，不是凭空告诉集群“这台机器是 H100”。卡型信息仍然来自节点上的发现组件读取真实硬件，然后写 Node label。平台再根据这些 label 把节点归入 A10、A100、H100 等资源池；健康状态由 DCGM / Xid 监控实时回写，坏卡自动从可调度资源池里摘掉。</p>
 <p>管理员视角可以这样讲：</p>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">安装 NVIDIA 驱动和容器运行时</div><div class="flow-desc">节点上的容器能访问 GPU</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">部署 NVIDIA device plugin</div><div class="flow-desc">kubelet 看到 nvidia.com/gpu 这种可分配资源</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">配置 device plugin ConfigMap</div><div class="flow-desc">配 MIG、time-slicing、renameByDefault 等资源暴露方式</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">部署 Node Feature Discovery</div><div class="flow-desc">集群具备给 Node 写硬件特征 label 的能力</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">启用 GPU Feature Discovery</div><div class="flow-desc">读取 GPU 型号、显存、架构、MIG 状态并生成 nvidia.com/* label</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">检查节点标签和资源名</div><div class="flow-desc">看 allocatable 里的 nvidia.com/gpu / nvidia.com/gpu.shared，以及 label 里的 gpu.product / gpu.memory</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">配置资源池/准入规则</div><div class="flow-desc">调度层用这些标签区分 A10/A100/H100，而不是让用户直接写复杂 label</div></div></div>
@@ -1377,7 +1377,7 @@ sharing:
 <p>这表示一张物理 GPU 可以被暴露成 4 个 time-slicing 份额；如果 <code>renameByDefault: true</code>，资源名会从 <code>nvidia.com/gpu</code> 变成类似 <code>nvidia.com/gpu.shared</code>。但它并不负责判断这张物理卡是 A10 还是 H100，卡型仍然看节点 label。</p>
 <ol><li><strong>任务侧画像</strong></li></ol>
 <p>用户不能只填“几张 GPU”。平台要提供更结构化的提交入口，例如：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>任务字段</th><th>示例</th><th>调度含义</th></tr>
 <tr><td>最低显存</td><td><code>&gt;=40GB</code></td><td>低于这个值直接过滤</td></tr>
 <tr><td>可接受卡型</td><td><code>A100-80G, H100-80G</code></td><td>A10 不进入候选</td></tr>
@@ -1385,7 +1385,7 @@ sharing:
 <tr><td>是否需要高速互联</td><td><code>need_nvlink=true</code></td><td>多卡任务优先同节点 NVLink / NVSwitch</td></tr>
 <tr><td>精度要求</td><td><code>fp8_required=false</code></td><td>FP8 必须 H100，BF16 可用 A100</td></tr>
 <tr><td>任务类型</td><td>训练 / 推理 / 评测 / Notebook</td><td>决定抢占、SLO 和队列策略</td></tr>
-</table>
+</table></div>
 <ol><li><strong>调度链路</strong></li></ol>
 <p>可以分成准入、过滤、打分三步：</p>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">准入阶段</div><div class="flow-desc">先判断租户 quota 和对应卡型资源池是否允许进入队列</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">过滤阶段</div><div class="flow-desc">过滤掉显存不够、型号不兼容、拓扑不满足、健康异常的节点</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">打分阶段</div><div class="flow-desc">在候选节点中按成本、等待时间、碎片程度、拓扑质量综合打分</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">绑定阶段</div><div class="flow-desc">绑定具体节点或资源池，并记录这次任务用了哪个卡型</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">反馈阶段</div><div class="flow-desc">采集 OOM、运行时长、GPU 利用率，用于修正任务画像</div></div></div>
@@ -1398,14 +1398,14 @@ forbidden: [a10-24g]</code></pre>
 <p>如果 H100 紧张，就可以降到 A100；但 70B 推理如果最低显存 80GB，就不能降到 A10。这里体现的是“硬约束”和“偏好”的区别：显存够不够是硬约束，H100 还是 A100 是偏好或成本选择。</p>
 <ol><li><strong>指标验证</strong></li></ol>
 <p>落地后不能只说“更智能”。要看：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>指标</th><th>说明</th></tr>
 <tr><td>高端卡错配率</td><td>H100 被低需求任务占用的比例是否下降</td></tr>
 <tr><td>OOM 重试率</td><td>因显存不匹配导致的失败是否下降</td></tr>
 <tr><td>各卡型资源池等待时间</td><td>A10/A100/H100 是否出现单个池子严重拥塞</td></tr>
 <tr><td>单位任务成本</td><td>同类任务平均 GPU 成本是否下降</td></tr>
 <tr><td>性能归一吞吐</td><td>同任务在不同卡型上的吞吐是否符合预期</td></tr>
-</table>
+</table></div>
 <ol><li><strong>性能归一与跨型号配额</strong></li></ol>
 <p>异构集群的配额和公平不能只数“卡数”，因为 1 张 H100 ≠ 1 张 A10。常见做法是给每种卡型一个等价系数（compute-equivalent unit），例如以 A100 为基准，H100 记 2.x、A10 记 0.3，配额、计费、fairshare 都按归一后的 GPU 当量计算。要点是：归一系数和 workload 相关（训练、推理、FP8 任务的相对加速比不同），所以系数应按任务类型分档或定期用真实 benchmark 校准，不能写死一个常数。面试时强调一句：“归一是为了让不同型号可比较和可计费，不是物理真值。”</p>
 <h3>面试追问</h3>
@@ -1437,12 +1437,12 @@ forbidden: [a10-24g]</code></pre>
 <p>面试官问：你怎么设计多租户 GPU 配额系统？</p>
 <h3>先把公平说具体</h3>
 <p>公平不是“大家平均分”。工业里更常见的是三层语义：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>语义</th><th>白话解释</th><th>例子</th></tr>
 <tr><td>guarantee / deserved quota</td><td>这个团队应该被保障的资源</td><td>推荐团队至少应有 200 卡</td></tr>
 <tr><td>borrowing / over-quota</td><td>别人不用时，我可以临时多用</td><td>广告临时借推荐空闲的 80 卡</td></tr>
 <tr><td>reclaim / preemption</td><td>原主人要用时，借用者要归还</td><td>推荐晚上提交任务，广告 over-quota 任务被回收</td></tr>
-</table>
+</table></div>
 <h3>10 分钟回答展开</h3>
 <ol><li><strong>队列模型</strong></li></ol>
 <p>每个团队对应一个队列，队列上配置保障配额、最大可借额度、权重和优先级。不要只在 Namespace 上做限制，因为 Namespace 更偏权限边界，Queue 才是调度资源治理边界。</p>
@@ -1451,22 +1451,22 @@ forbidden: [a10-24g]</code></pre>
 <p>任务进入队列时先判断它属于哪个团队、请求哪个卡型资源池、当前队列是否在保障额度内。如果在保障额度内，优先准入；如果超过保障额度，要看共享池是否有空闲，以及该队列是否允许借用。</p>
 <ol><li><strong>公平排序</strong></li></ol>
 <p>当多个队列都想借资源时，不按简单 FIFO，而按 fairshare 或 quota debt 排序。可以这样解释：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>场景</th><th>排序倾向</th></tr>
 <tr><td>队列长期低于保障配额</td><td>应优先补齐</td></tr>
 <tr><td>队列已经大量 over-quota</td><td>借用优先级降低</td></tr>
 <tr><td>高优先级线上修复任务</td><td>可以临时插队，但要有审计</td></tr>
 <tr><td>低优先级实验任务</td><td>可以使用空闲资源，但可抢占</td></tr>
-</table>
+</table></div>
 <ol><li><strong>回收策略</strong></li></ol>
 <p>回收是这题的重点。不能说“直接抢占”。GPU 训练抢占很贵，所以要分层：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>回收方式</th><th>适用情况</th></tr>
 <tr><td>等待自然结束</td><td>原队列不急，借用任务很快结束</td></tr>
 <tr><td>禁止新借用</td><td>先停止 over-quota 队列继续扩大占用</td></tr>
 <tr><td>优雅抢占</td><td>通知任务 checkpoint，给宽限期</td></tr>
 <tr><td>强制抢占</td><td>高优任务、SLO 或配额严重违约时使用</td></tr>
-</table>
+</table></div>
 <ol><li><strong>观测和解释</strong></li></ol>
 <p>多租户系统最怕“团队觉得不公平”。所以要能解释：某个任务为什么排队、为什么被抢占、当前队列在保障内还是借用中、预计多久能获得资源。</p>
 <h3>面试追问</h3>
@@ -1484,14 +1484,14 @@ forbidden: [a10-24g]</code></pre>
 <h3>10 分钟回答展开</h3>
 <ol><li><strong>把 Pod 组建模成一个整体</strong></li></ol>
 <p>平台需要引入 <code>PodGroup</code>、<code>Workload</code> 或 Job 级抽象，记录：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>字段</th><th>示例</th><th>含义</th></tr>
 <tr><td>minAvailable</td><td>8</td><td>至少 8 个 worker 到齐才启动</td></tr>
 <tr><td>totalReplicas</td><td>8</td><td>目标 worker 数</td></tr>
 <tr><td>resource per replica</td><td>1 GPU + CPU + memory</td><td>单 worker 资源需求</td></tr>
 <tr><td>queue</td><td>team-a-training</td><td>所属队列</td></tr>
 <tr><td>priority</td><td>high / normal / low</td><td>抢占和排序依据</td></tr>
-</table>
+</table></div>
 <ol><li><strong>准入阶段先判断整组是否可满足</strong></li></ol>
 <p>不要让 Pod 先进入默认调度再卡住，而是在准入阶段判断：当前队列和资源池是否能同时满足 8 张 GPU、CPU、内存和拓扑要求。满足才放行，不满足就留在队列里。</p>
 <ol><li><strong>预留和超时</strong></li></ol>
@@ -1501,13 +1501,13 @@ forbidden: [a10-24g]</code></pre>
 <p>Gang 会带来队头阻塞。比如 64 卡任务暂时凑不齐，不能让空闲 48 卡一直空着。可以允许短任务 backfill，但前提是不破坏大 gang 的预约启动时间。</p>
 <ol><li><strong>异常处理</strong></li></ol>
 <p>启动后如果某个 worker 失败，要看训练框架是否支持弹性：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>情况</th><th>处理</th></tr>
 <tr><td>不支持弹性 world size</td><td>整个 Job 重启或从 checkpoint 恢复</td></tr>
 <tr><td>支持 min/max worker</td><td>缩到 min 继续跑，后续再扩容</td></tr>
 <tr><td>单节点故障</td><td>标记坏节点，重新调度缺失 worker</td></tr>
 <tr><td>rendezvous 超时</td><td>清理半启动 Pod，避免资源泄漏</td></tr>
-</table>
+</table></div>
 <h3>常见追问</h3>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Gang Scheduling 的缺点是什么？</div>
@@ -1528,22 +1528,22 @@ forbidden: [a10-24g]</code></pre>
 <p>调度器先估计 64 卡任务最早什么时候能启动。估计依据包括：当前空闲资源、运行中任务预计结束时间、队列配额、可抢占任务、节点拓扑。</p>
 <ol><li><strong>选择可回填任务</strong></li></ol>
 <p>小任务能不能 backfill，不只看卡数，还要看它是否会破坏预约：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>条件</th><th>说明</th></tr>
 <tr><td>预计运行时间短</td><td>必须能在大任务预约时间前结束</td></tr>
 <tr><td>可抢占或可重试</td><td>估计错误时可以快速让出资源</td></tr>
 <tr><td>资源形状匹配碎片</td><td>适合填 1-2 卡、小显存、零散 CPU/内存</td></tr>
 <tr><td>不占关键拓扑块</td><td>不拆掉即将给 64 卡任务用的完整节点组</td></tr>
-</table>
+</table></div>
 <ol><li><strong>运行时长如何估计</strong></li></ol>
 <p>工业里用户填的时长经常不准，可以用多路信息：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>来源</th><th>用法</th></tr>
 <tr><td>用户声明</td><td>作为初始上限，但不完全相信</td></tr>
 <tr><td>历史同类任务</td><td>按镜像、入口命令、数据集、模型大小预测</td></tr>
 <tr><td>在线进度</td><td>任务跑起来后修正剩余时间</td></tr>
 <tr><td>超时策略</td><td>超过声明时长后降低优先级或标为不可 backfill</td></tr>
-</table>
+</table></div>
 <ol><li><strong>防止大任务饿死</strong></li></ol>
 <p>要给队首任务 aging 和 reservation。也可以设置 backfill 窗口，比如距离预约启动只剩 5 分钟时，不再放新的小任务进去。</p>
 <ol><li><strong>指标验证</strong></li></ol>
@@ -1556,7 +1556,7 @@ forbidden: [a10-24g]</code></pre>
 <p>GPU 抢占可以做，但不能像 CPU 短任务那样粗暴。训练任务被 kill 以后可能损失几个小时进度，还要重新拉镜像、加载数据、初始化 NCCL、恢复 checkpoint。所以抢占策略应该是“代价感知的资源回收”，不是简单按优先级杀 Pod。</p>
 <h3>10 分钟回答展开</h3>
 <p>victim 选择要考虑：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>含义</th></tr>
 <tr><td>优先级</td><td>低优任务优先被抢</td></tr>
 <tr><td>是否借用资源</td><td>over-quota / borrowed 任务优先被回收</td></tr>
@@ -1565,15 +1565,15 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>释放资源匹配度</td><td>释放的 GPU 型号、数量、拓扑是否正好满足 incoming</td></tr>
 <tr><td>重启成本</td><td>镜像、数据、NCCL 初始化、模型加载成本</td></tr>
 <tr><td>是否 gang</td><td>避免只杀分布式任务的一部分</td></tr>
-</table>
+</table></div>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">找候选 victim</div><div class="flow-desc">低优先级、借用资源、可抢占</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">估算收益</div><div class="flow-desc">释放 GPU 数量、型号、拓扑、CPU/内存</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">估算代价</div><div class="flow-desc">checkpoint age、运行时长、重启成本、SLO 影响</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">选择集合</div><div class="flow-desc">最小代价满足 incoming gang</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">优雅终止</div><div class="flow-desc">通知 checkpoint，超时强杀</div></div></div>
 <p>落地时可以分三层：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>层次</th><th>策略</th></tr>
 <tr><td>候选过滤</td><td>不抢线上推理、不抢保障配额内高优训练，优先找 over-quota 和低优任务</td></tr>
 <tr><td>代价打分</td><td>checkpoint 越新、已运行越短、释放资源越匹配，越适合作 victim</td></tr>
 <tr><td>执行协议</td><td>先发 preempt notice，给任务保存 checkpoint 的宽限期，超时后强杀</td></tr>
-</table>
+</table></div>
 <h3>面试追问</h3>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不能只按 PriorityClass 抢？</div>
@@ -1586,14 +1586,14 @@ forbidden: [a10-24g]</code></pre>
 <h3>先解释碎片不是一种</h3>
 <p>GPU 碎片不是只有“卡数碎片”。AI 任务常见的是多维碎片：GPU 数量、显存、CPU、内存、NVLink 拓扑、队列配额任何一个维度不连续，都会让大任务跑不起来。</p>
 <h3>10 分钟回答展开</h3>
-<table>
+<div class="table-scroll"><table>
 <tr><th>碎片类型</th><th>例子</th><th>治理方式</th></tr>
 <tr><td>卡数碎片</td><td>每节点剩 1 卡，8 卡任务跑不了</td><td>bin packing、reservation、defrag</td></tr>
 <tr><td>显存碎片</td><td>同卡剩余显存零散，小显存作业能跑，大显存作业不能跑</td><td>best-fit、fractional GPU 分桶</td></tr>
 <tr><td>多维碎片</td><td>GPU 有剩余但 CPU/内存不够</td><td>多维打分、CPU/GPU 配比感知</td></tr>
 <tr><td>拓扑碎片</td><td>卡数够但 NVLink 域被拆散</td><td>保留完整 clique / node group</td></tr>
 <tr><td>队列碎片</td><td>某队列有资源但无任务，另队列排队</td><td>elastic quota / borrowing</td></tr>
-</table>
+</table></div>
 <p>回答时先说碎片的类型，再说策略组合：放置阶段用 bin packing 保留大块；队列阶段用 backfill 填小洞；资源池阶段按卡型 / topology 分池；长期用 defrag 或迁移低优任务整理资源。</p>
 <p>更具体地说，可以分成四个动作：</p>
 <ol><li><strong>调度时尽量紧凑放置</strong>：小任务优先 best-fit 到已经被使用的节点，保留完整空节点给大任务。</li><li><strong>按拓扑保留大块资源</strong>：8 卡 NVSwitch 节点不要随便拆给零散任务；可以维护 full-node pool。</li><li><strong>用 Backfill 填短洞</strong>：短任务可以填碎片，但不能破坏大任务 reservation。</li><li><strong>低峰期整理资源</strong>：对可抢占、checkpoint 新鲜的低优任务做迁移或重启，整理出连续节点。</li></ol>
@@ -1608,13 +1608,13 @@ forbidden: [a10-24g]</code></pre>
 <h3>先解释性能差在哪里</h3>
 <p>GPU 训练不是只消耗计算，还大量消耗通信。张量并行 TP 的通信频率很高，几乎每层都有 AllReduce / AllGather。如果 8 张卡在同一 NVSwitch 域，通信走节点内高速互联；如果跨多机，就要走 NIC、RDMA、交换机，延迟和带宽都差很多。</p>
 <h3>10 分钟回答展开</h3>
-<table>
+<div class="table-scroll"><table>
 <tr><th>并行策略</th><th>通信特征</th><th>放置偏好</th></tr>
 <tr><td>TP</td><td>每层高频 AllReduce/AllGather</td><td>同节点 NVLink/NVSwitch</td></tr>
 <tr><td>PP</td><td>相邻 stage 传 activation</td><td>相邻 stage 尽量近</td></tr>
 <tr><td>DP</td><td>每步梯度 AllReduce</td><td>可跨节点，但需要 RDMA</td></tr>
 <tr><td>EP/MoE</td><td>All-to-All</td><td>避免跨拥塞域</td></tr>
-</table>
+</table></div>
 <p>落地方式：</p>
 <ul><li>短期：node label + scheduler plugin + GPU/NIC/NUMA 拓扑缓存。</li><li>中期：device plugin 上报拓扑信息，调度器自定义 Score。</li><li>长期：DRA / ResourceSlice 表达设备级属性和拓扑。</li></ul>
 <p>更具体的调度链路可以这样说：</p>
@@ -1631,23 +1631,23 @@ forbidden: [a10-24g]</code></pre>
 <h3>先定原则</h3>
 <p>在线推理的 SLO 是硬约束，离线训练是可让步任务。混部的目标不是“所有任务都尽量塞满”，而是在不破坏 P99 / TTFT / TPOT 的前提下吃掉低峰资源。</p>
 <h3>10 分钟回答展开</h3>
-<table>
+<div class="table-scroll"><table>
 <tr><th>隔离方式</th><th>隔离强度</th><th>适用场景</th></tr>
 <tr><td>物理节点隔离</td><td>最强</td><td>核心在线推理，严格 SLO</td></tr>
 <tr><td>MIG</td><td>强</td><td>A100/H100 上推理 + 小任务混部</td></tr>
 <tr><td>MPS</td><td>中</td><td>可接受一定干扰的多进程共享</td></tr>
 <tr><td>Time slicing</td><td>弱</td><td>离线推理、实验任务</td></tr>
 <tr><td>只按优先级抢占</td><td>弱</td><td>可重试低优训练任务</td></tr>
-</table>
+</table></div>
 <p>回答要点：</p>
 <ol><li>推理 SLO 是硬约束，训练是可让步任务。</li><li>先用节点池或 MIG 保护强 SLO 推理。</li><li>对可混部场景，用限额、优先级、监控和自动驱逐保护推理。</li><li>观测 P99、TPOT、GPU memory、SM/HBM、context switch 和训练吞吐。</li></ol>
 <p>可以把方案拆成三档：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>档位</th><th>场景</th><th>方案</th></tr>
 <tr><td>核心在线服务</td><td>搜索、广告、支付风控等强 SLO</td><td>物理隔离或独占 MIG，不和训练混</td></tr>
 <tr><td>普通在线推理</td><td>P99 有要求但低峰明显</td><td>低峰允许可抢占离线任务进入，指标异常自动驱逐</td></tr>
 <tr><td>离线推理/评测</td><td>SLO 弱，吞吐优先</td><td>MPS / time slicing / fractional GPU 提高利用率</td></tr>
-</table>
+</table></div>
 <p>混部还需要运行时控制：训练任务必须带低优先级、可抢占、显存上限；推理服务指标异常时，调度器或控制器触发驱逐；被驱逐训练任务从 checkpoint 或任务队列重试。</p>
 <h3>面试追问</h3>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -1661,12 +1661,12 @@ forbidden: [a10-24g]</code></pre>
 <h3>10 分钟回答展开</h3>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">资源画像</div><div class="flow-desc">actual gpu_mem/cpu/mem/duration</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">GPU 卡型分池</div><div class="flow-desc">型号和显存容量隔离</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">候选索引</div><div class="flow-desc">remaining memory buckets + machine residual CPU/mem</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Best-fit</div><div class="flow-desc">减少显存碎片，保留大块资源</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Batch scheduling</div><div class="flow-desc">支撑几千万作业规模</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">反馈预测</div><div class="flow-desc">修正用户申报，降低 OOM 和过度预留</div></div></div>
 <p>展开时要补充三点：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>问题</th><th>具体回答</th></tr>
 <tr><td>为什么不能一作业一 GPU</td><td>小作业只用几 GB 显存，独占会造成显存和 SM 浪费</td></tr>
 <tr><td>为什么不能简单超卖</td><td>用户申报不准，同卡 OOM 会互相影响，还会挤占 CPU/内存</td></tr>
 <tr><td>调度器怎么扛吞吐</td><td>候选节点索引、批量调度、增量缓存、按剩余显存 bucket 做 best-fit</td></tr>
-</table>
+</table></div>
 <h2>10. 弹性训练调度</h2>
 <h3>典型题目</h3>
 <p>一个推荐模型训练任务最好用 8 个 worker，但 4 个 worker 也能先跑，只是速度慢一点。用户希望资源紧张时先用 4 卡启动，夜间资源多了扩到 8 卡；如果某个节点故障，也希望先缩到 6 卡继续，而不是整个任务失败。</p>
@@ -1674,7 +1674,7 @@ forbidden: [a10-24g]</code></pre>
 <h3>先说明弹性不是调度器单独能做</h3>
 <p>弹性训练需要三方配合：调度器负责资源变化，训练框架负责 world size 变化后的 rendezvous 和数据切分，任务代码负责 batch size、学习率、checkpoint 等语义一致性。只说“调度器扩缩容 Pod”是不完整的。</p>
 <h3>10 分钟回答展开</h3>
-<table>
+<div class="table-scroll"><table>
 <tr><th>问题</th><th>方案</th></tr>
 <tr><td>如何表达弹性</td><td><code>min/target/max</code> workers，或 elastic workload</td></tr>
 <tr><td>如何准入</td><td>至少满足 min 才启动，target/max 作为扩容目标</td></tr>
@@ -1682,7 +1682,7 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>如何缩容</td><td>节点故障或抢占时减少 worker，继续训练</td></tr>
 <tr><td>一致性风险</td><td>world size 变化影响 batch size、学习率、BN、数据切分</td></tr>
 <tr><td>调度风险</td><td>扩容不能无限抢占别人，要受 quota/fairshare 约束</td></tr>
-</table>
+</table></div>
 <p>具体链路：</p>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">提交任务</div><div class="flow-desc">声明 min=4 target=8 max=8</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">准入启动</div><div class="flow-desc">资源达到 min 后先启动</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">运行监控</div><div class="flow-desc">观察训练吞吐、队列资源、故障事件</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">扩容</div><div class="flow-desc">空闲资源满足 fairshare 时增加 worker，并触发 rendezvous</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">缩容</div><div class="flow-desc">节点故障或配额回收时减少 worker，训练框架重建通信组</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">语义修正</div><div class="flow-desc">调整 global batch、学习率、数据 shard、checkpoint 元信息</div></div></div>
 <h3>面试追问</h3>
@@ -1701,7 +1701,7 @@ forbidden: [a10-24g]</code></pre>
 <p>指标：</p>
 <ul><li>GPU Xid / ECC / temperature / power。</li><li>NVLink error、PCIe replay、IB symbol error。</li><li>Node condition、kubelet/runtime health。</li><li>任务失败率、重试率、checkpoint 恢复时间。</li></ul>
 <p>落地动作可以更具体：</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>阶段</th><th>动作</th></tr>
 <tr><td>采集</td><td>DCGM 采集 Xid/ECC/温度/功耗，网络侧采集 IB 错误和丢包</td></tr>
 <tr><td>判定</td><td>区分临时抖动、可恢复错误、需要隔离的硬故障</td></tr>
@@ -1709,34 +1709,34 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>调度</td><td>Filter 阶段排除坏资源，Score 阶段降低风险节点权重</td></tr>
 <tr><td>运行中恢复</td><td>触发重调度、弹性缩容或 checkpoint 恢复</td></tr>
 <tr><td>闭环</td><td>维修后通过 burn-in 测试，再自动或人工恢复调度</td></tr>
-</table>
+</table></div>
 <h3>面试追问</h3>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不能所有失败都直接重试？</div>
 <div class="qa-a"><p>如果根因是坏卡或坏网络，直接重试可能又调回同一类资源，形成失败风暴。故障感知调度要先隔离异常资源，再决定任务是重试、缩容、迁移还是从 checkpoint 恢复。</p></div>
 </div>
 <h2>工业落地层次</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>层次</th><th>适合回答的点</th></tr>
 <tr><td>Kubernetes 基础层</td><td>Device plugin 注册 GPU 数量，Node label 表达卡型和硬件特征，scheduler 做 Filter/Score/Preemption</td></tr>
 <tr><td>批调度层</td><td>Job / PodGroup / Queue / Reservation 表达分布式训练、队列公平和大任务预约</td></tr>
 <tr><td>平台准入层</td><td>根据租户、任务画像、卡型资源池、配额和优先级决定任务能不能进入调度</td></tr>
 <tr><td>调度扩展层</td><td>深度定制拓扑、干扰预测、显存切分、抢占代价和训练框架语义</td></tr>
 <tr><td>监控闭环层</td><td>DCGM、Xid、NCCL、队列等待、GPU 利用率和成本指标反向修正策略</td></tr>
-</table>
+</table></div>
 <h2>参考资料</h2>
 <ul><li>Kubernetes docs: scheduler framework、PriorityClass、preemption、node affinity。</li><li>NVIDIA k8s-device-plugin docs: device plugin、MIG strategy、time-slicing。</li><li>NVIDIA GPU Feature Discovery docs: GPU feature labels、NFD integration。</li><li>NVIDIA GPU Operator docs: device plugin、Node Feature Discovery、GPU Feature Discovery、MIG Manager、DCGM Exporter。</li><li>Volcano docs: Gang Scheduling、Queue Resource Management、Binpack、Preempt / Reclaim。</li></ul>
 <h2>关联模块</h2>
 <ul><li><code>多资源公平调度</code>：DRF、Elastic Quota、借用和回收。</li><li><code>批调度、Gang 与 Backfill</code>：组调度、回填、抢占和 checkpoint。</li><li><code>拓扑感知调度</code>：GPU/NIC/NUMA/NVLink/RDMA 放置。</li><li><code>海量小显存 GPU 作业调度</code>：短作业高吞吐和 fractional GPU 装箱。</li></ul></div><div class="subtab-panel" role="tabpanel" id="scheduling-tabs-panel-6-subpanel-2" aria-labelledby="scheduling-tabs-panel-6-sub-2" hidden><h2>一句话结论</h2>
 <p>GPU 集群调度不是&quot;找一台有空 GPU 的机器&quot;，而是在 workload 语义、多资源公平、拓扑质量、GPU 碎片、抢占代价和可观测之间做权衡；一个完整调度器要回答五个决策点：谁先调度（QueueSort）、能不能启动（Admit）、放到哪里（Placement）、是否抢占（Preemption）、运行后如何回收重试（运行时控制）。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统类</td></tr>
 <tr><td>解决问题</td><td>围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-m">
 <h3>调度面试题精讲：直接回答问题，不讲路线图</h3>
 <p>这一页只解决一个问题：面试官问到 AI Infra / GPU 集群调度时，应该怎么理解、怎么回答、怎么展开。每个问题都按“核心概念 → 标准回答 → 设计落点 → 常见追问”的方式组织。</p>
@@ -1864,7 +1864,7 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>优先级</td><td>高优/交互式任务</td><td>低优/best-effort 任务</td></tr>
 <tr><td>预测置信度</td><td>不知道何时有更好资源</td><td>能预测某批资源很快释放</td></tr>
 </table>
-<div class="formula">$$\text{schedule now if } \text{waiting\_cost} > \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
+<div class="formula">$$\text{schedule now if } \text{waiting\_cost} &gt; \text{performance\_loss} + \text{fragmentation\_cost}$$</div>
 <p><strong>标准回答：</strong>我会给每个候选 placement 计算拓扑质量和碎片代价；如果当前 placement 的性能损失和碎片代价小于继续等待的成本，就立即运行；否则做 reservation，并允许短任务 backfill。</p>
 </div>
 <div class="card card-s">
@@ -1899,13 +1899,13 @@ forbidden: [a10-24g]</code></pre>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="subtab-panel" role="tabpanel" id="scheduling-tabs-panel-6-subpanel-3" aria-labelledby="scheduling-tabs-panel-6-sub-3" hidden><h2>一句话结论</h2>
 <p>多租户 GPU 调度系统的设计主线是「在公平和效率之间持续权衡」：用 QAD 连续保障度替代二元配额、DRA 弹性借用闲置资源、词典序排序先补最欠缺的租户、代价基抢占和干扰感知合用提利用率，并以 K8s Scheduler Plugin 落地。答题要先分 workload 和资源维度，再讲队列、调度流水线和 AI 特有点。</p>
 <h2>复习定位</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>内容</th></tr>
 <tr><td>所属模块</td><td>任务调度理论</td></tr>
 <tr><td>章节类型</td><td>系统设计类</td></tr>
 <tr><td>解决问题</td><td>围绕 GPU 集群调度、多租户公平、海量短作业装箱和吞吐优化形成可复述设计题框架。</td></tr>
 <tr><td>面试抓手</td><td>回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。</td></tr>
-</table>
+</table></div>
 <div class="card card-d">
 <h3>题目</h3>
 <p>设计一个多团队共享的 GPU 训练集群调度系统，要求公平且高效。</p>
@@ -2071,7 +2071,7 @@ forbidden: [a10-24g]</code></pre>
 <p>已有一个 GPU 集群调度平台，现在要在这个平台基础上优化调度策略。集群由一批机器组成，每台机器有若干张 GPU 卡；GPU 型号不同，显存容量不同；每台机器的 CPU、内存和 GPU 配比也不固定，也就是“一张卡对应多少 CPU / host memory”并不一致。</p>
 <p>作业侧的特点是：每天有几千万个作业，每个作业本质上是一个 C++ 进程；每个作业只占几 GB GPU 显存，通常打不满一张卡，同时还会消耗一定 CPU 和 host memory；单个作业运行几分钟到几十分钟，运行完成后释放资源。题目目标是在平台已经存在的前提下，把这些海量短作业更高效地调度到 GPU 卡和机器上，提高整体资源利用率，并最大化作业吞吐量。</p>
 <h2>输入、输出与约束</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>类别</th><th>内容</th><th>需要澄清的点</th></tr>
 <tr><td>输入资源</td><td>机器、GPU 型号、GPU 显存、CPU、host memory、当前占用</td><td>是否能拿到每张卡剩余显存和每台机器剩余 CPU/内存</td></tr>
 <tr><td>输入作业</td><td>C++ 进程、GPU 显存需求、CPU/内存需求、预计运行时长、优先级</td><td>作业资源是用户申报、历史画像，还是平台可预测</td></tr>
@@ -2079,19 +2079,19 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>硬约束</td><td>显存必须够，CPU/内存必须够，GPU 型号必须兼容</td><td>显存是主瓶颈，但不是唯一约束</td></tr>
 <tr><td>优化目标</td><td>GPU 显存利用率、作业吞吐、队列等待时间、失败率</td><td>不能只看平均 GPU-Util</td></tr>
 <tr><td>规模约束</td><td>每天几千万作业</td><td>调度器自身吞吐和候选召回效率非常关键</td></tr>
-</table>
+</table></div>
 <h2>非目标</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>非目标</th><th>为什么先不做</th></tr>
 <tr><td>从零设计调度平台</td><td>题设说平台已经存在，重点是改造调度策略和观测闭环</td></tr>
 <tr><td>大模型训练 Gang Scheduling</td><td>本题作业是单进程短作业，不是多 worker 同起同停</td></tr>
 <tr><td>复杂拓扑感知训练调度</td><td>每个作业只占几 GB 显存，核心矛盾先是同卡装箱和机器多维配比</td></tr>
 <tr><td>只追求单作业性能最优</td><td>目标是整体吞吐和利用率，允许在可控范围内做同卡并发</td></tr>
-</table>
+</table></div>
 <h2>一句话结论</h2>
 <p>这个场景的本质是<strong>海量短作业在异构 GPU 集群上的在线多维装箱问题</strong>。调度器不是给每个作业独占一张 GPU，而是把 GPU 显存当成主要可切分资源，同时把 CPU 和 host memory 作为硬约束；先补齐资源画像和调度观测，再做 GPU flavor 分池、候选机器快速索引、显存主导 best-fit / bin packing、短作业 backfill 和运行时反馈校准，最后再引入预测和批量调度优化吞吐。</p>
 <h2>题目边界</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>维度</th><th>题设信息</th><th>调度含义</th></tr>
 <tr><td>集群</td><td>多台机器，每台若干 GPU，GPU 型号和显存不同</td><td>需要按 GPU flavor / memory capacity 分池</td></tr>
 <tr><td>配比</td><td>每台机器 CPU/内存/GPU 配比不固定</td><td>不能只看 GPU 显存，还要防 CPU/内存成为残余瓶颈</td></tr>
@@ -2099,7 +2099,7 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>资源</td><td>每个作业用几 GB 显存，同时消耗 CPU/内存</td><td>显存是主瓶颈，但必须做多维约束过滤</td></tr>
 <tr><td>目标</td><td>提高整体资源利用效率、最大化吞吐</td><td>优先减少 GPU 显存碎片和机器残余资源浪费</td></tr>
 <tr><td>前提</td><td>平台已经存在</td><td>不是从零造平台，而是分阶段改造调度策略和观测闭环</td></tr>
-</table>
+</table></div>
 <h2>总体思路</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">先建画像</div><div class="flow-desc">作业资源需求、运行时长、GPU 型号、机器 CPU/内存/GPU 配比</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">再分资源池</div><div class="flow-desc">按 GPU 型号/显存容量/机器配比拆池，避免强弱卡混用</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">做快速匹配</div><div class="flow-desc">维护每张卡剩余显存和机器剩余 CPU/内存的索引</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">在线装箱</div><div class="flow-desc">显存主导 best-fit，CPU/内存做硬约束，减少碎片</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">短作业回填</div><div class="flow-desc">用预计时长短的作业填碎片，避免大块资源空等</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">反馈校准</div><div class="flow-desc">采集实际显存峰值、CPU/内存、运行时长，修正画像</div></div></div>
 <h2>先做什么</h2>
@@ -2107,27 +2107,27 @@ forbidden: [a10-24g]</code></pre>
 <h3>第一步：把问题量化，而不是先改算法</h3>
 <p>已有平台上最先做的是观测和画像。没有资源画像，调度器只能按用户申报或静态规则调度，很容易出现显存碎片、CPU/内存残余无法利用、某些 GPU 型号过热、队列延迟变长等问题。</p>
 </div>
-<table>
+<div class="table-scroll"><table>
 <tr><th>要采集什么</th><th>为什么</th></tr>
 <tr><td>每个作业 requested / actual GPU memory peak</td><td>判断申报是否保守，建立显存预测或修正系数</td></tr>
 <tr><td>CPU cores、RSS memory、I/O、运行时长分布</td><td>做多维约束和短作业 backfill</td></tr>
 <tr><td>GPU 型号、总显存、当前剩余显存、显存碎片</td><td>做 flavor 分池和 best-fit</td></tr>
 <tr><td>机器 CPU/内存/GPU 配比</td><td>找出“GPU 有剩余但 CPU/内存不够”的结构性碎片</td></tr>
 <tr><td>队列等待时间、调度耗时、失败/重试原因</td><td>判断瓶颈在资源不足、匹配算法还是调度器吞吐</td></tr>
-</table>
+</table></div>
 <h2>资源建模</h2>
 <div class="card card-s">
 <h3>资源向量</h3>
 <p>每个作业可以抽象成 <code>(gpu_mem, cpu, host_mem, duration, gpu_flavor_constraint)</code>，每张 GPU / 每台机器维护剩余向量。匹配时 GPU 显存是主排序维度，CPU 和 host memory 是硬约束。</p>
 </div>
-<table>
+<div class="table-scroll"><table>
 <tr><th>模型</th><th>作用</th><th>注意点</th></tr>
 <tr><td>GPU flavor</td><td>区分 A10/A100/H100 等不同显存和性能</td><td>不同卡性能不同，吞吐目标不能只看作业数</td></tr>
 <tr><td>GPU memory slice</td><td>每个作业几 GB 显存，可在同卡放多个进程</td><td>需要 runtime 隔离和显存上限，否则 OOM 会互相影响</td></tr>
 <tr><td>CPU / host memory</td><td>C++ 进程也吃 CPU 和内存</td><td>机器配比异构时，CPU/内存会造成“剩余显存不可用”</td></tr>
 <tr><td>duration</td><td>几分钟到几十分钟</td><td>可用于短作业优先、backfill 和释放时间预测</td></tr>
 <tr><td>interference</td><td>同卡多进程可能有 SM/HBM/PCIe 干扰</td><td>不能只按显存装满，还要监控性能退化</td></tr>
-</table>
+</table></div>
 <h2>调度算法</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">入队</div><div class="flow-desc">校验资源画像，按 GPU flavor / 优先级 / 时长分队列</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">候选召回</div><div class="flow-desc">从索引里找剩余显存足够且 CPU/内存足够的机器和 GPU</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">硬约束过滤</div><div class="flow-desc">GPU 型号、显存、CPU、host memory、租户/故障域</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">打分排序</div><div class="flow-desc">best-fit 显存、减少机器残余碎片、保持负载均衡</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">绑定启动</div><div class="flow-desc">原子扣减资源，启动 C++ 进程，设置显存/CPU/内存限制</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">运行反馈</div><div class="flow-desc">采集峰值和时长，完成后释放资源并更新预测</div></div></div>
 <div class="card card-d">
@@ -2138,17 +2138,17 @@ forbidden: [a10-24g]</code></pre>
 <h3>为什么不是简单 first-fit</h3>
 <p>first-fit 容易把小显存作业随机塞到大显存卡上，造成大作业找不到连续剩余显存。best-fit 会优先消耗最贴近需求的碎片，保留大块显存给后续大作业。</p>
 </div>
-<table>
+<div class="table-scroll"><table>
 <tr><th>策略</th><th>适合点</th><th>风险</th></tr>
 <tr><td>First Fit</td><td>实现简单、调度快</td><td>碎片大，异构资源浪费明显</td></tr>
 <tr><td>Best Fit</td><td>减少显存碎片</td><td>需要维护高效索引，局部最优</td></tr>
 <tr><td>Best Fit Decreasing</td><td>批量调度时更稳定</td><td>等待成批会增加一点调度延迟</td></tr>
 <tr><td>Backfill</td><td>利用短作业填碎片</td><td>需要运行时长估计，估错会影响后续作业</td></tr>
 <tr><td>Load Balancing</td><td>避免热点机器</td><td>可能牺牲装箱效率</td></tr>
-</table>
+</table></div>
 <h2>高吞吐工程实现</h2>
 <p>这个题有“每天几千万作业”的量级，回答时必须提调度器自身吞吐。</p>
-<table>
+<div class="table-scroll"><table>
 <tr><th>模块</th><th>做法</th></tr>
 <tr><td>资源索引</td><td>按 GPU flavor 建池；每个池维护按剩余显存排序的 GPU set；机器维度维护 CPU/内存剩余</td></tr>
 <tr><td>批量调度</td><td>每轮取一批 pending jobs，批内排序和匹配，减少锁和数据库/API 往返</td></tr>
@@ -2156,26 +2156,26 @@ forbidden: [a10-24g]</code></pre>
 <tr><td>分片调度器</td><td>按资源池、租户或队列 shard，多实例并行调度</td></tr>
 <tr><td>热路径缓存</td><td>避免每个作业全量扫描所有机器，候选召回只查相关 flavor / memory bucket</td></tr>
 <tr><td>限流与降级</td><td>高峰期先用近似 best-fit，观测恢复后再做更精细 defrag</td></tr>
-</table>
+</table></div>
 <h2>后做什么</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">阶段 1</div><div class="flow-desc">资源画像、峰值采集、队列等待和碎片指标</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">阶段 2</div><div class="flow-desc">GPU flavor 分池、显存 best-fit、多维硬约束过滤</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">阶段 3</div><div class="flow-desc">批量调度、短作业 backfill、运行时长估计</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">阶段 4</div><div class="flow-desc">预测 requested memory/duration，自动修正用户申报</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">阶段 5</div><div class="flow-desc">干扰感知、碎片整理、跨池迁移或重启策略</div></div></div>
-<table>
+<div class="table-scroll"><table>
 <tr><th>阶段</th><th>目标</th><th>产出</th></tr>
 <tr><td>1. Baseline</td><td>先知道浪费在哪里</td><td>GPU memory utilization、CPU/memory residual、queue time、失败原因</td></tr>
 <tr><td>2. 装箱</td><td>提高显存利用率</td><td>flavor pool、best-fit、candidate index</td></tr>
 <tr><td>3. 吞吐</td><td>支撑几千万作业规模</td><td>batch scheduling、scheduler shard、cache reserve</td></tr>
 <tr><td>4. 预测</td><td>降低过度申报和 OOM</td><td>memory peak estimator、duration estimator、安全余量</td></tr>
 <tr><td>5. 治理</td><td>长期稳定运行</td><td>defrag、干扰检测、SLO/告警、容量规划</td></tr>
-</table>
+</table></div>
 <h2>关键权衡</h2>
-<table>
+<div class="table-scroll"><table>
 <tr><th>权衡</th><th>回答口径</th></tr>
 <tr><td>利用率 vs 隔离</td><td>同卡多进程能提高显存利用率，但要限制显存、CPU 和监控干扰</td></tr>
 <tr><td>装箱效率 vs 调度延迟</td><td>几千万作业不能每次全局最优，必须用索引和近似算法</td></tr>
 <tr><td>显存利用 vs CPU/内存残余</td><td>主维度是显存，但 CPU/内存配比异构会让剩余显存不可用</td></tr>
 <tr><td>大作业 vs 小作业</td><td>大显存作业优先保留大块，小作业用 backfill 填碎片</td></tr>
 <tr><td>预测激进 vs OOM</td><td>预测可减少保守申报，但必须加安全余量和失败回退</td></tr>
-</table>
+</table></div>
 <h2>图形化回答</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">作业队列</div><div class="flow-desc">job=(gpu_mem,cpu,mem,duration,flavor)</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">画像修正</div><div class="flow-desc">actual peak + runtime feedback</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">资源池索引</div><div class="flow-desc">flavor -&gt; remaining gpu memory buckets</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">多维过滤</div><div class="flow-desc">GPU memory + machine CPU/memory + policy</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Best-Fit 打分</div><div class="flow-desc">最小剩余显存 + 最少机器残余碎片</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">绑定执行</div><div class="flow-desc">reserve -&gt; launch process -&gt; monitor -&gt; release</div></div></div>
 <h2>回答结构</h2>
@@ -2208,7 +2208,887 @@ forbidden: [a10-24g]</code></pre>
 <div class="qa-a"><p>看四类指标：GPU 显存利用率和碎片率、作业吞吐和 queue time、CPU/内存残余资源浪费、失败率/OOM/重试率。不能只看平均 GPU-Util，因为这个场景主瓶颈是显存装箱和作业调度吞吐。</p></div>
 </div>
 <h2>关联模块</h2>
-<ul><li><code>多租户 GPU 调度</code>：提供 GPU 调度系统设计的通用框架。</li><li><code>任务调度理论</code>：提供 bin packing、SJF、backfill、多资源公平等算法背景。</li><li><code>性能预测与建模</code>：提供显存峰值和运行时长预测的后续优化方向。</li><li><code>GPU 硬件与资源共享</code>：提供同卡多进程、显存隔离和利用率诊断背景。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::idx-6" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::idx-6" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">拓扑感知调度</span></button></div></div></article></div></section>
+<ul><li><code>多租户 GPU 调度</code>：提供 GPU 调度系统设计的通用框架。</li><li><code>任务调度理论</code>：提供 bin packing、SJF、backfill、多资源公平等算法背景。</li><li><code>性能预测与建模</code>：提供显存峰值和运行时长预测的后续优化方向。</li><li><code>GPU 硬件与资源共享</code>：提供同卡多进程、显存隔离和利用率诊断背景。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::idx-6" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::idx-6" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">拓扑感知调度</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">排队论基础</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-7" aria-labelledby="scheduling-tabs-tab-7" data-mid="scheduling-tabs::10-queueing-theory-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>排队论基础</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>排队论（Queueing Theory）是容量规划和延迟分析的数学基础：Little&#x27;s Law 给了&quot;到达率 × 停留时间 = 平均队列长度&quot;的普适关系；M/M/1 和 M/G/1 模型揭示了&quot;利用率接近 1 时等待时间指数增长&quot;和&quot;服务时间方差会放大排队&quot;这两个关键直觉，直接指导 GPU 集群目标利用率设定和工作负载隔离策略。</p>
+<h2>复习定位</h2>
+<div class="table-scroll"><table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>任务调度理论</td></tr>
+<tr><td>章节类型</td><td>理论 + 工程实践</td></tr>
+<tr><td>解决问题</td><td>用排队论解释利用率-延迟曲线、混合工作负载排队问题、容量规划和准入控制</td></tr>
+<tr><td>面试抓手</td><td>先给 Little&#x27;s Law 直觉，再讲 M/M/1 和 M/G/1 的关键公式，最后落到 AI Infra 的工程决策</td></tr>
+</table></div>
+<div class="card card-m">
+<h3>Little&#x27;s Law：排队论的基础恒等式</h3>
+<p>Little&#x27;s Law 是排队论中最普适、最有用的公式，<strong>不需要任何假设</strong>，适用于任何稳定的排队系统：</p>
+<pre><code>L = λ × W</code></pre>
+<p>其中：</p>
+<ul>
+<li><strong>L</strong>：系统中（排队中 + 服务中）的平均顾客数（或平均任务数、平均请求数）</li>
+<li><strong>λ</strong>：长期平均到达率（单位时间到达的顾客/任务数）</li>
+<li><strong>W</strong>：顾客在系统中平均停留时间（等待时间 + 服务时间）</li>
+</ul>
+<p><strong>直觉理解</strong>：想象一个 GPU 集群，每小时来 100 个任务（λ = 100 个/小时），每个任务从提交到完成平均要 0.5 小时（W = 0.5 小时，即 30 分钟），那么系统中平均有 L = 100 × 0.5 = 50 个任务在同时运行或等待。这就像水管：流入速度 × 水在管中停留时间 = 管中存水量。</p>
+</div>
+<div class="card card-d">
+<h3>Little&#x27;s Law 在 AI Infra 的应用</h3>
+
+<h4>1. 容量规划</h4>
+<p><strong>问题</strong>：在线推理集群，QPS = 1000，每个请求平均处理时间（含排队）是 100ms，需要多少并发槽位？</p>
+<pre><code>L = λ × W = 1000/s × 0.1s = 100</code></pre>
+<p><strong>结论</strong>：系统需要至少容纳 100 个并发请求。如果每个 GPU 能处理 20 并发，那么至少需要 5 张 GPU。</p>
+
+<h4>2. 队列深度估算</h4>
+<p><strong>问题</strong>：离线训练集群，每小时提交 20 个训练任务，平均每个任务从提交到开始运行要等 2 小时，队列平均有多长？</p>
+<pre><code>L = 20 个/小时 × 2 小时 = 40 个任务在排队或运行</code></pre>
+
+<h4>3. 排队时间反推</h4>
+<p><strong>问题</strong>：如果你观察到队列平均有 30 个任务等待，到达率是每小时 10 个，那么平均等待时间是多少？</p>
+<pre><code>W = L / λ = 30 / 10 = 3 小时</code></pre>
+<p><strong>面试注意</strong>：Little&#x27;s Law 没有假设到达分布或服务时间分布，也不需要系统是 Markovian，对任何稳定系统都成立。这是它最强大的地方。</p>
+</div>
+<div class="card card-s">
+<h3>Kendall 记号：描述排队模型的标准语言</h3>
+<p>Kendall notation 用 <code>A/S/c/N</code> 来描述排队模型：</p>
+<table>
+<tr><th>符号</th><th>含义</th><th>常见取值</th></tr>
+<tr><td>A</td><td>到达过程（Arrival）</td><td>M（Markovian/Poisson 到达，记忆性）、D（Deterministic 确定）、G（General 一般）</td></tr>
+<tr><td>S</td><td>服务时间分布（Service）</td><td>M（Exponential 指数分布，记忆性）、D（确定）、G（一般）</td></tr>
+<tr><td>c</td><td>服务台数量（Servers）</td><td>1, 2, ..., c</td></tr>
+<tr><td>N</td><td>队列容量（可选）</td><td>∞（默认，无限队列）、N（有限，满了就拒绝）</td></tr>
+</table>
+<p><strong>记忆性（Memoryless Property）</strong>：指数分布的关键性质是&quot;无记忆&quot;——已经等了 t 时间，剩余等待时间的分布和刚开始等时一样。这就是 M 的含义。</p>
+</div>
+<div class="card card-m">
+<h3>M/M/1：单服务台模型，利用率-延迟曲线的来源</h3>
+<p>M/M/1 是最简单也是最重要的排队模型：Poisson 到达、指数服务时间、1 个服务台。</p>
+
+<h4>核心公式</h4>
+<pre><code>ρ = λ / μ          # 利用率（utilization）
+Wq = ρ / (μ(1-ρ))  # 排队等待时间（不含服务时间）
+W = 1 / (μ - λ)    # 系统总时间 = 等待 + 服务</code></pre>
+<p>其中：</p>
+<ul>
+<li><strong>μ</strong>：服务率（单位时间能服务完的任务数）</li>
+<li><strong>ρ</strong>：利用率，必须 &lt; 1 系统才稳定</li>
+</ul>
+
+<h4>关键现象：利用率接近 1 时等待时间爆炸</h4>
+<p>看数值例子，假设 μ = 10 个/小时（服务率固定）：</p>
+<table>
+<tr><th>到达率 λ</th><th>利用率 ρ</th><th>排队时间 Wq</th><th>等待 vs ρ=0.5</th></tr>
+<tr><td>5/小时</td><td>50%</td><td>0.1 小时 = 6 分钟</td><td>基准</td></tr>
+<tr><td>7/小时</td><td>70%</td><td>0.23 小时 ≈ 14 分钟</td><td>2.3 倍</td></tr>
+<tr><td>8/小时</td><td>80%</td><td>0.4 小时 = 24 分钟</td><td>4 倍</td></tr>
+<tr><td>9/小时</td><td>90%</td><td>0.9 小时 = 54 分钟</td><td>9 倍</td></tr>
+<tr><td>9.5/小时</td><td>95%</td><td>1.9 小时 = 114 分钟</td><td>19 倍</td></tr>
+<tr><td>9.9/小时</td><td>99%</td><td>9.9 小时 ≈ 10 小时</td><td>99 倍</td></tr>
+</table>
+<p><strong>这就是曲棍球棒（hockey-stick）曲线</strong>：利用率在 0-70% 时延迟增长平缓，超过 80% 后等待时间急速上升，ρ→1 时 Wq→∞。</p>
+
+<img src="../../../resources/images/scheduling/utilization-latency-curve.svg" alt="利用率-延迟曲线（M/M/1）" loading="lazy">
+
+<h4>AI Infra 启示</h4>
+<div class="card-w">
+<p><strong>GPU 集群绝不能追求 95%+ 利用率</strong>：</p>
+<ul>
+<li><strong>在线推理集群</strong>：目标利用率 50-70%，因为对延迟敏感，需要预留 headroom 应对突发流量</li>
+<li><strong>离线批处理训练</strong>：可以推高到 80-90%，因为对排队延迟容忍度高，但超过 90% 还是会导致队列雪崩</li>
+<li><strong>为什么不能 99% 利用率</strong>：因为到达率不是恒定的，总有波动。平均 90% 利用率意味着峰值时可能到 99%，等待时间直接爆炸。这就是为什么需要<strong>准入控制（Admission Control）</strong>——当集群已经高负载时，拒绝或排队新任务，而不是全部放进来让所有人都慢。</li>
+</ul>
+</div>
+</div>
+<div class="card card-d">
+<h3>M/M/c：多服务台模型与 Erlang-C</h3>
+<p>M/M/c 有 c 个相同的并行服务台，这更符合真实的 GPU 集群（多台机器、多张 GPU）。</p>
+
+<h4>关键指标</h4>
+<ul>
+<li><strong>利用率</strong>：ρ = λ / (cμ)，必须 &lt; 1</li>
+<li><strong>Erlang-C 公式</strong>：计算&quot;一个到达的任务需要等待&quot;的概率 P(wait)，这是呼叫中心、客服排队系统设计的核心公式</li>
+<li><strong>多服务台的好处</strong>：同样的总服务能力，多台并行比单台快。例如 c=2、μ=5（总服务能力 10）比 c=1、μ=10 的等待时间短。因为单台被占时新任务只能等，两台时另一台可能空闲。</li>
+</ul>
+
+<h4>AI 集群直觉</h4>
+<p>GPU 集群本质上是 M/M/c 模型：c 是 GPU 总数（或某种 GPU 型号数量）。Erlang-C 可以估算&quot;提交一个任务需要排队的概率&quot;。但实际 AI 集群比 M/M/c 复杂：任务大小不同（1 GPU 到 1024 GPU）、有 Gang 调度需求、服务时间分布不是指数分布，所以更多用 M/G/1 的直觉。</p>
+</div>
+<div class="card card-m">
+<h3>M/G/1：服务时间有方差时排队会更糟</h3>
+<p>M/G/1 是&quot;Poisson 到达、一般（任意）服务时间分布、单服务台&quot;模型。这是<strong>最接近真实 AI 集群的简单模型</strong>，因为真实的任务运行时间不是指数分布——有 5 分钟的小实验，也有 10 天的大训练，方差很大。</p>
+
+<h4>Pollaczek-Khinchine 公式</h4>
+<pre><code>Wq = (λ · E[S²]) / (2 · (1 - ρ))</code></pre>
+<p>其中：</p>
+<ul>
+<li><strong>E[S]</strong>：服务时间 S 的期望（平均值）</li>
+<li><strong>E[S²] = Var(S) + (E[S])²</strong>：服务时间的二阶矩，包含了方差信息</li>
+<li><strong>Var(S)</strong>：服务时间方差</li>
+</ul>
+
+<h4>关键洞察：方差放大排队</h4>
+<p>公式告诉我们：<strong>即使平均服务时间 E[S] 和利用率 ρ 相同，服务时间方差 Var(S) 越大，排队等待时间 Wq 就越长</strong>。</p>
+
+<p><strong>数值例子</strong>：λ = 8/小时，E[S] = 0.1 小时（6 分钟），所以 ρ = 0.8：</p>
+<table>
+<tr><th>场景</th><th>服务时间分布</th><th>E[S²]</th><th>Wq</th></tr>
+<tr><td>所有任务都是 6 分钟</td><td>确定分布（Var=0）</td><td>0.01</td><td>(8×0.01)/(2×0.2) = 0.2 小时 = 12 分钟</td></tr>
+<tr><td>一半 3 分钟，一半 9 分钟</td><td>两点分布（有方差）</td><td>0.015</td><td>(8×0.015)/(2×0.2) = 0.3 小时 = 18 分钟</td></tr>
+<tr><td>一半 1 分钟，一半 11 分钟</td><td>大方差</td><td>0.061</td><td>(8×0.061)/(2×0.2) ≈ 1.22 小时 ≈ 73 分钟</td></tr>
+</table>
+<p><strong>同样的平均服务时间、同样的 80% 利用率，仅仅因为&quot;长短任务混跑&quot;，排队时间从 12 分钟变成 73 分钟——涨了 6 倍！</strong></p>
+
+<h4>AI Infra 直接启示</h4>
+<div class="card-w">
+<ul>
+<li><strong>在线和离线必须分离</strong>：Prefill（短，几十到几百 ms）和 Decode（长，几秒到几十秒）不要用同一个队列；在线推理（短，SLO 严格）和离线训练（长，无 SLO）必须分开。混合跑不仅方差大，而且长任务会阻塞短任务，违反短任务的 SLO。</li>
+<li><strong>大小训练任务尽量分离</strong>：小实验（几分钟到几小时）和大训练（几天到几周）分队列，避免小实验被大任务堵死，也避免大任务被大量小任务插队导致饥饿。</li>
+<li><strong>预测误差的影响</strong>：对短任务运行时间估计过准很重要，对长任务估计误差影响相对小——因为 M/G/1 公式里是 E[S²]，短任务的 S² 本来就小，估计偏差带来的方差影响相对更大。</li>
+</ul>
+</div>
+</div>
+<div class="card card-s">
+<h3>调度算法的排队论最优性</h3>
+
+<h4>SRPT/SJF 的最优性</h4>
+<p>在 M/G/1 模型中，<strong>Shortest Remaining Processing Time (SRPT)</strong> 调度策略可以<strong>最小化平均响应时间</strong>。SRPT 是 SRTF 的排队论名称——总是选择剩余处理时间最短的任务，可抢占。</p>
+<p>当任务到达时间相同（batch 场景）时，非抢占的 SJF 也能最小化平均响应时间。</p>
+
+<h4>但最优不等于最公平</h4>
+<p>SRPT/SJF 的问题：<strong>长任务饥饿</strong>。如果短任务持续到达，长任务可能永远排不上。实际系统需要：</p>
+<ol>
+<li><strong>Aging</strong>：等待时间越长，优先级越高，最终超过新来的短任务</li>
+<li><strong>多队列 + 配额保障</strong>：每个租户/类型有最低资源保障，保障用完再按 SRPT 竞争</li>
+<li><strong>公平共享（如 DRF）</strong>：不追求最小化平均响应时间，而是追求公平性</li>
+</ol>
+
+<h4>Processor Sharing (PS) 的角色</h4>
+<p>Processor Sharing（时间片轮转的极限，每个任务获得 1/n 的服务能力）下，所有任务的期望响应时间是相同的，与服务时间分布无关——但代价是平均响应时间比 SRPT 长。这就是为什么公平和效率是 trade-off。</p>
+</div>
+<div class="card card-d">
+<h3>准入控制：什么时候应该拒绝新任务？</h3>
+<p>从 M/M/1 公式我们知道，ρ→1 时 Wq→∞。这意味着当集群已经接近满负载时，<strong>继续接受新任务会让所有人都变慢</strong>——包括已经在运行的任务吗？不，运行中的任务不受影响，但排队中的所有任务等待时间都会变长，而且新加入的任务也加入排队，形成&quot;越满越慢、越慢越堆&quot;的正反馈。</p>
+<p><strong>准入控制策略</strong>：</p>
+<ul>
+<li>当集群利用率超过阈值（如 85%）时，新任务进入排队队列而不是立即调度</li>
+<li>或者根据队列长度拒绝低优先级任务（load shedding）</li>
+<li>在线服务：快速失败比长时间排队更好——排队超过 SLO 就直接拒绝，返回 429/503，让客户端重试或降级</li>
+</ul>
+<p><strong>类比</strong>：高速路堵车时，入口匝道限流（on-ramp metering），不让更多车上来，反而让整体通行更快。如果不限流，高速路彻底堵死，谁都走不了。</p>
+</div>
+<div class="card card-m">
+<h3>排队论面试问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么集群利用率到 80% 以上等待时间会暴涨（用排队论解释）？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心解释：M/M/1 公式</div><p>用 M/M/1 排队模型的等待时间公式：<code>Wq = ρ/(μ(1-ρ))</code>。当利用率 ρ = λ/μ 接近 1 时，分母 (1-ρ) 趋近于 0，排队等待时间 Wq 呈双曲线增长，数学上 ρ→1 时 Wq→∞。</p><p>数值上：ρ=50% 时等待时间基准为 1x；ρ=80% 是 4x；ρ=90% 是 9x；ρ=95% 是 19x。这就是&quot;曲棍球棒曲线&quot;——70% 之前延迟增长平缓，80% 之后急速攀升。</p></div>
+<div class="qa-section"><div class="qa-section-title">直觉理解</div><p>系统总有波动：到达率不是恒定的，任务大小也有差异。平均 80% 利用率意味着忙的时候（流量高峰、大任务扎堆）实际利用率可能瞬时到 95%+，这时候临时形成的队列需要很长时间才能消化。利用率越高，系统消化突发排队的能力越弱。</p></div>
+<div class="qa-section"><div class="qa-section-title">工程结论</div><p>GPU 集群目标利用率：在线推理 50-70%（需要低延迟 SLO），离线训练 80-90%（可容忍排队），绝不要追求 95%+。同时需要准入控制——集群高负载时排队或拒绝新任务，而不是全部放进来让大家一起慢。</p></div>
+<div class="qa-summary">面试要点：给公式 + 数值例子 + 直觉 + 工程建议，不要只说&quot;因为排队&quot;。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Little&#x27;s Law 怎么用在容量规划上？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">公式</div><p><code>L = λ × W</code>——系统中平均并发数 = 到达率 × 平均停留时间。这个公式不需要任何分布假设，对任何稳定系统都成立。</p></div>
+<div class="qa-section"><div class="qa-section-title">容量规划例子</div><p>在线推理场景：QPS = 1000（λ = 1000/s），每个请求从进入到返回平均 100ms（W = 0.1s，含排队和服务），那么系统需要同时处理 L = 1000 × 0.1 = 100 个并发请求。如果单 GPU 能承载 20 并发（考虑 KV Cache、batch size），至少需要 5 张 GPU；再考虑冗余和峰值，通常留 30-50% headroom，配 7-8 张。</p><p>离线训练场景：每天提交 100 个训练任务（λ ≈ 4.17/小时），要求平均等待不超过 2 小时（W = 2 小时），那么集群平均要容纳 L = 4.17 × 2 ≈ 8 个任务。如果每个任务平均用 8 张 GPU，集群需要 64 张 GPU 以上才能满足这个等待时间目标。</p></div>
+<div class="qa-section"><div class="qa-section-title">反向使用</div><p>观察现有系统队列长度 L 和到达率 λ，可以反推平均等待时间 W = L/λ——这比直接统计等待时间更简单。</p></div>
+<div class="qa-summary">面试要点：Little&#x27;s Law 是容量规划的第一性原理，用具体的 GPU 场景举例比抽象解释更有说服力。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么大小 job 混跑会导致排队更严重？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心解释：M/G/1 Pollaczek-Khinchine 公式</div><p>M/G/1 排队模型的等待时间公式：<code>Wq = (λ·E[S²])/(2(1-ρ))</code>，其中 E[S²] = Var(S) + (E[S])²。这说明：<strong>即使平均服务时间 E[S] 和利用率 ρ 完全相同，服务时间方差 Var(S) 越大，排队等待时间就越长</strong>。</p></div>
+<div class="qa-section"><div class="qa-section-title">数值例子</div><p>假设平均服务时间都是 6 分钟，ρ=80%：所有任务都是 6 分钟（方差为 0），排队 12 分钟；一半 3 分钟一半 9 分钟（方差 9），排队 18 分钟；一半 1 分钟一半 11 分钟（大方差），排队 73 分钟——涨了 6 倍。</p></div>
+<div class="qa-section"><div class="qa-section-title">AI Infra 中的具体场景</div><p>(1) Prefill（几十到几百 ms）和 Decode（几秒）混跑——方差大，短请求被长请求阻塞。(2) 在线推理（毫秒到秒级）和离线训练（小时到天级）混跑——在线 SLO 无法保证。(3) 小实验（几分钟）和大训练（几天）混跑——小实验排队长，大任务也可能被小任务插队饥饿。</p></div>
+<div class="qa-section"><div class="qa-section-title">工程结论</div><p>必须按任务类型分队列：在线/离线分离、大小任务分离、不同 SLO 等级分离。分队列后每个队列内部服务时间方差小，排队时间自然降低。这比优化调度算法更有效。</p></div>
+<div class="qa-summary">面试要点：用 M/G/1 公式说明&quot;方差伤害&quot;，举具体的 AI 场景，给出&quot;分队列&quot;的解决方案。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU 集群目标利用率应该多少？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">分场景回答</div><table>
+<tr><th>工作负载类型</th><th>目标利用率</th><th>原因</th></tr>
+<tr><td>在线推理（延迟敏感）</td><td>50-70%</td><td>需要 headroom 应对突发流量（流量可能瞬时翻倍），延迟 SLO 严格，排队代价高</td></tr>
+<tr><td>离线批处理训练</td><td>80-90%</td><td>排队延迟可以容忍，高利用率意味着更低成本，但超过 90% 会导致队列雪崩</td></tr>
+<tr><td>开发/实验平台</td><td>60-80%</td><td>用户期望快速启动（交互式体验），又希望不浪费资源，介于两者之间</td></tr>
+<tr><td>混部集群</td><td>70-85%</td><td>用离线任务填在线的闲时资源（潮汐部署），在线高负载时抢占离线</td></tr>
+</table></div>
+<div class="qa-section"><div class="qa-section-title">为什么不能追求 95%+？</div><p>(1) M/M/1 告诉我们 ρ→1 时等待时间指数增长；(2) 负载不是恒定的，平均 95% 意味着峰值时必然过载，队列雪崩；(3) 高利用率下故障恢复慢——一个节点挂了，它的任务需要迁移，而其他节点都很忙，迁移的任务排很久才能重启。</p></div>
+<div class="qa-section"><div class="qa-section-title">成本 vs 体验的 trade-off</div><p>利用率每提高 10%，基础设施成本降低约 10%，但排队延迟可能增长 2-3 倍。在线服务宁可多花点机器钱也要保证体验（用户延迟高就走了），离线任务可以用排队换成本。</p></div>
+<div class="qa-summary">面试要点：分场景给数字，解释背后的排队论原因，提到成本-延迟 trade-off。</div>
+</div>
+</div>
+</div>
+<h2>关联模块</h2>
+<ul><li><code>经典调度算法</code>：FIFO/SJF/SRTF 的排序逻辑，与 SRPT 最优性对应</li><li><code>Kubernetes 调度器扩展</code>：调度器队列设计、Preemption、调度性能调优</li><li><code>多租户 GPU 调度</code>：DRF 公平性、多队列设计、配额保障</li><li><code>LLM 推理系统</code>：Prefill/Decode 分离、batching、SLO 保证</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::10-queueing-theory-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::10-queueing-theory-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">GPU 调度场景题库</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">调度架构演进</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-8" aria-labelledby="scheduling-tabs-tab-8" data-mid="scheduling-tabs::11-scheduler-architecture-evolution-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>调度架构演进</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>集群调度器架构经历了&quot;集中式（Borg/K8s）→ 两级调度（Mesos/YARN）→ 共享状态（Omega）→ 混合/分布式（Firmament）&quot;的演进，核心矛盾是&quot;全局最优决策 vs 可扩展性 vs 并行调度&quot;。AI 训练集群（万卡规模、Gang 调度、拓扑感知）更适合集中式 + 缓存 + 乐观并发的 Borg 风格架构，而不是纯分布式调度。</p>
+<h2>复习定位</h2>
+<div class="table-scroll"><table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>任务调度理论</td></tr>
+<tr><td>章节类型</td><td>架构演进 + 系统设计</td></tr>
+<tr><td>解决问题</td><td>理解四种经典调度器架构的设计权衡，Borg/Omega/Mesos/Firmament 的核心区别，AI 集群为什么选集中式</td></tr>
+<tr><td>面试抓手</td><td>用对比表讲清四种架构的 trade-off，最后落到 AI 训练集群的设计选择</td></tr>
+</table></div>
+<div class="card card-m">
+<h3>为什么调度器架构重要？</h3>
+<p>调度器的架构决定了三个核心问题：</p>
+<ol>
+<li><strong>决策质量（Optimality）</strong>：能否做出全局最优的放置决策？还是只能看到局部信息？</li>
+<li><strong>可扩展性（Scalability）</strong>：集群规模到 1 万、10 万节点时还能工作吗？每秒能调度多少任务？</li>
+<li><strong>并发度（Concurrency）</strong>：多个调度器/多个框架能不能并行做决策？冲突怎么解决？</li>
+</ol>
+<p>这三个目标是互相矛盾的：全局最优需要看所有信息，但全局信息在大规模下难维护；并行决策提高吞吐，但会产生冲突。不同架构就是在这个三角中做不同的权衡。</p>
+</div>
+<div class="card card-s">
+<h3>架构一：集中式/单体调度器（Centralized/Monolithic）</h3>
+<p><strong>代表系统</strong>：Google Borg、Kubernetes 默认调度器、早期 Hadoop MapReduce</p>
+
+<h4>核心设计</h4>
+<p>所有调度决策都由<strong>一个中央调度器进程</strong>做出。所有任务提交到全局队列，调度器按顺序处理，一个一个地做&quot;可行性检查（Filter）+ 打分（Score）+ 绑定（Bind）&quot;。</p>
+
+<h4>Borg 的关键设计</h4>
+<ul>
+<li><strong>Cell 规模</strong>：单个 Borg cell 可以管理上万台机器，同时运行数千个作业、数十万个任务</li>
+<li><strong>两阶段调度</strong>：先做 feasibility check（过滤掉不满足资源/约束的节点），再做 scoring（对可行节点按优先级、资源匹配度、抢占代价等打分），选最高分节点</li>
+<li><strong>共享状态缓存</strong>：调度器有本地缓存（watch API Server），不需要每次都查全量状态，提高调度吞吐</li>
+<li><strong>优先级 + 抢占</strong>：高优先级任务可以抢占低优先级任务，保证线上服务质量</li>
+<li><strong>资源回收（Reclamation）</strong>：对低优先级任务使用的&quot;预留但未使用&quot;的资源进行回收，给高优任务用</li>
+</ul>
+
+<h4>K8s 默认调度器</h4>
+<p>K8s kube-scheduler 是典型的集中式调度器：</p>
+<ul>
+<li>单进程运行，通过 Informer 缓存集群状态</li>
+<li>调度周期：Scheduling Queue → Filter → Score → Reserve → Permit → Bind</li>
+<li>默认串行调度一个 Pod，可通过 scheduler framework 扩展</li>
+<li>v1.26+ 支持 Scheduler Profile，可配置多个不同配置的调度器，但本质还是&quot;多个集中式调度器&quot;，每个调度器还是单进程串行</li>
+</ul>
+
+<h4>优缺点</h4>
+<table>
+<tr><th>维度</th><th>评价</th></tr>
+<tr><td>决策质量</td><td>高——能看到全局状态，做出全局最优（或近似最优）决策</td></tr>
+<tr><td>实现复杂度</td><td>低——所有逻辑在一个进程里，没有分布式一致性问题</td></tr>
+<tr><td>可扩展性</td><td>有瓶颈——单进程调度吞吐有限，万级节点集群需要性能优化（缓存、增量调度、近似算法）</td></tr>
+<tr><td>多框架支持</td><td>差——所有任务类型都要适配同一套调度逻辑，框架定制难</td></tr>
+</table>
+
+<div class="card card-d">
+<p><strong>Borg 怎么解决单进程瓶颈？</strong></p>
+<ul>
+<li><strong>乐观并发</strong>：调度时基于缓存做决策，Bind 时如果资源已被占用就重试，不需要全局锁</li>
+<li><strong>分 Cell</strong>：不是一个大集群管所有机器，而是分成多个独立的 cell（每个 cell 几万台机器），每个 cell 有自己的调度器</li>
+<li><strong>批量调度</strong>：对同类型的小任务做批量调度，减少重复计算</li>
+<li><strong>得分近似</strong>：不需要绝对最优，对 top-K 节点做精确打分，其余快速过滤</li>
+</ul>
+</div>
+</div>
+<div class="card card-s">
+<h3>架构二：两级调度（Two-Level / Two-Tier）</h3>
+<p><strong>代表系统</strong>：Apache Mesos、Hadoop YARN</p>
+
+<h4>核心设计思想</h4>
+<p>把调度分成两层：</p>
+<ol>
+<li><strong>第一层（中央 Resource Master）</strong>：决定&quot;给哪个框架多少资源&quot;，负责资源分配和公平性</li>
+<li><strong>第二层（框架调度器 Application Master）</strong>：决定&quot;把这些资源给我的哪个任务、启动在哪里&quot;，框架自己做任务调度</li>
+</ol>
+<p>关键机制是<strong>资源 Offer（资源邀约）</strong>：Master 主动给框架发 Offer（&quot;我这儿有这些空闲资源，你要不要？&quot;），框架接受或拒绝。</p>
+
+<h4>Mesos 具体工作流程</h4>
+<pre><code>1. Slave 节点上报空闲资源给 Mesos Master
+2. Master 按 DRF（Dominant Resource Fairness）算法决定给哪个 Framework 发 Offer
+3. Master 向 Framework Scheduler 发送 Resource Offer
+4. Framework 检查 Offer：符合自己需求就 Accept，否则 Decline
+5. Accept 的话，Framework 告诉 Master 在哪些节点上启动哪些 Task
+6. Master 把 Task 发给对应 Slave 的 Executor 启动</code></pre>
+
+<h4>DRF 公平性</h4>
+<p>Mesos 用 DRF 做多资源公平分配：每个框架有一个&quot;主导资源（Dominant Share）&quot;——对 CPU 密集型框架是 CPU 份额，对内存密集型是内存份额，对 GPU 训练是 GPU 份额。DRF 让所有框架的主导资源份额相等，这是多资源下的 max-min 公平。</p>
+
+<h4>优缺点</h4>
+<table>
+<tr><th>维度</th><th>评价</th></tr>
+<tr><td>多框架支持</td><td>非常好——Hadoop/Spark/MPI/在线服务都可以接入，每个框架有自己的调度逻辑</td></tr>
+<tr><td>可扩展性</td><td>好——框架并行调度，Master 只做资源分配不做任务调度，压力小</td></tr>
+<tr><td>决策质量</td><td>低——框架只能看到 Master 给自己的 Offer，看不到全局资源；&quot;Pessimistic Offer&quot;策略下给了一个框架的资源其他框架暂时不能用，资源利用率低</td></tr>
+<tr><td>优先级反转风险</strong>：高——低优框架拿了 Offer 但不释放，高优框架等不到资源；或者框架拒绝了 Offer 但资源在 Offer 期间被锁</td></tr>
+<tr><td>实现复杂度</td><td>中——两层之间需要协议，框架需要自己实现调度逻辑</td></tr>
+</table>
+
+<div class="card card-w">
+<p><strong>Mesos Offer 机制的问题</strong>：</p>
+<ul>
+<li><strong>悲观并发（Pessimistic Concurrency）</strong>：资源 Offer 发给一个框架后，这些资源在被接受/拒绝/超时前，其他框架看不到——相当于被锁住了，利用率低</li>
+<li><strong>框架信息不全</strong>：框架不知道&quot;下一个 Offer 什么时候来&quot;、&quot;还有多少资源&quot;，可能做出次优决策（比如接受一个不够大的 Offer，因为怕等不到更好的）</li>
+<li><strong>不适合 Gang Scheduling</strong>：大的分布式训练需要同时拿到 N 张 GPU，但 Offer 是分批给的，框架很难凑齐 Gang</li>
+</ul>
+<p>这也是为什么 Mesos 在 AI 训练场景用得不多——Gang 调度和拓扑感知需要全局视图。</p>
+</div>
+</div>
+<div class="card card-s">
+<h3>架构三：共享状态调度（Shared-State）</h3>
+<p><strong>代表系统</strong>：Google Omega、Microsoft Apollo</p>
+
+<h4>核心设计思想</h4>
+<p>针对两级调度&quot;框架看不到全局状态&quot;和集中式&quot;单进程瓶颈&quot;的问题，Omega 提出了<strong>共享状态 + 乐观并发控制</strong>：</p>
+<ol>
+<li><strong>全集群状态复制</strong>：每个调度器（可以有多个，每个可以负责不同类型任务）都有一份完整的、一致的集群状态副本（通过 Paxos/Raft 类共识协议复制）</li>
+<li><strong>并行独立决策</strong>：每个调度器基于自己看到的全局状态，<strong>独立、并行地</strong>做调度决策，不需要等 Master 分配 Offer</li>
+<li><strong>事务提交冲突解决</strong>：调度器做出决策后，以<strong>事务（Transaction）</strong>的形式提交到共享状态存储。如果两个调度器的决策冲突（比如同时把同一个任务/资源分配给了不同地方），其中一个事务会 abort，重试即可</li>
+</ol>
+<p><strong>和 Mesos 的本质区别</strong>：Mesos 是&quot;悲观锁&quot;——Offer 期间资源被锁；Omega 是&quot;乐观并发&quot;——大家都能看、都能改，冲突了再重试。</p>
+<p><strong>和集中式的本质区别</strong>：集中式只有一个调度器做决策；Omega 可以有多个调度器并行做决策，每个都看全局状态。</p>
+
+<h4>工作流程</h4>
+<pre><code>1. 所有 Cell State 通过 Paxos 复制到每个 Scheduler 副本
+2. Scheduler A 和 Scheduler B 同时看到全局空闲资源
+3. Scheduler A 决策：任务 X 放节点 1，生成事务 T1
+4. Scheduler B 决策：任务 Y 放节点 1，生成事务 T2
+5. T1 先提交成功，节点 1 资源被标记为已用
+6. T2 提交时发现节点 1 资源不足，abort，Scheduler B 基于新状态重新决策
+7. Scheduler B 重试：任务 Y 放节点 2，提交成功</code></pre>
+
+<h4>优缺点</h4>
+<table>
+<tr><th>维度</th><th>评价</th></tr>
+<tr><td>决策质量</td><td>高——每个调度器都能看到全局状态，和集中式一样</td></tr>
+<tr><td>并发度</td><td>高——多个调度器并行决策，没有中央瓶颈</td></tr>
+<tr><td>多框架支持</td><td>好——不同框架可以有自己的调度器，共享全局视图</td></tr>
+<tr><td>冲突问题</td><td>高负载下冲突率高，大量事务 abort 重试，反而降低吞吐（thrashing）</td></tr>
+<tr><td>实现复杂度</td><td>高——需要分布式共识、事务冲突检测、重试机制</td></tr>
+</table>
+
+<div class="card card-w">
+<p><strong>Omega 的冲突问题（Conflict Thrashing）</strong>：</p>
+<p>当集群负载很高、空闲资源很少时，多个调度器都盯着同一块空闲资源，大家都做决策、提交冲突、abort、重试——调度器都在忙着重试，有效吞吐反而下降。这和数据库高并发写时的锁冲突类似。Omega 的解法是：</p>
+<ul>
+<li>不同调度器负责不同类型的任务，减少资源竞争</li>
+<li>高优先级任务的事务优先提交，减少低优任务的无效重试</li>
+<li>冲突退避：abort 后等一会再重试，不要立即重试</li>
+</ul>
+</div>
+</div>
+<div class="card card-s">
+<h3>架构四：混合/分布式/优化调度（Hybrid/Distributed）</h3>
+<p><strong>代表系统</strong>：Firmament、K8s 多调度器、Volcano/Kueue（队列层）</p>
+
+<h4>Firmament：基于最小费用最大流的全局优化</h4>
+<p>Firmament 把调度问题形式化为<strong>min-cost max-flow（最小费用最大流）</strong>问题：</p>
+<ul>
+<li>构造一个流网络：源点 → 任务节点 → 机器节点 → 汇点</li>
+<li>边的容量：任务到机器的边容量为 1（一个任务放一台机器），机器到汇点的容量是机器的资源量</li>
+<li>边的费用：任务放某台机器的代价（不满足亲和性代价高、满足局部性代价低、抢占代价等）</li>
+<li>求 min-cost max-flow，就能得到全局最优的放置方案</li>
+</ul>
+<p>Firmament 可以做到<strong>接近全局最优</strong>的决策质量，同时流算法的增量更新让它有不错的扩展性。Google 的一部分 Borg 调度逻辑已经使用了类似的优化方法。</p>
+<p><strong>局限</strong>：流算法有计算开销，万级任务规模需要近似和增量优化；Gang 调度等复杂约束需要特殊建模。</p>
+
+<h4>K8s 多调度器（Multiple Schedulers）</h4>
+<p>K8s 从 v1.x 就支持运行多个调度器：</p>
+<ul>
+<li>Pod 通过 <code>spec.schedulerName</code> 指定用哪个调度器</li>
+<li>不同调度器可以有完全不同的 Filter/Score 插件和策略</li>
+<li>例如：默认调度器处理普通 Pod，GPU 调度器处理 GPU 任务，批处理调度器处理 AI 训练任务</li>
+</ul>
+<p>这其实是一种&quot;共享状态&quot;的轻量实现——所有调度器都 watch 同一个 API Server，看到相同的集群状态，调度决策通过 Bind 时的资源检查来解决冲突（相当于乐观并发）。但 K8s 本身不做事务冲突的自动重试，需要调度器自己处理。</p>
+</div>
+<div class="card card-d">
+<h3>Volcano/Kueue 是什么？不是全功能调度器</h3>
+<p>面试中经常被问：Volcano、Kueue、YuniKorn 这些是调度器吗？答案是：<strong>它们主要是队列/批处理层，运行在 K8s 默认调度器之上</strong>，不是替代 kube-scheduler。</p>
+<table>
+<tr><th>组件</th><th>定位</th><th>核心能力</th></tr>
+<tr><td>K8s kube-scheduler</td><td>核心调度器</td><td>Pod→Node 放置、Filter/Score/Bind、资源分配</td></tr>
+<tr><td>Volcano</td><td>批调度增强</td><td>Gang Scheduling、Queue、公平性、DRF、Job/TaskGroup 管理</td></tr>
+<tr><td>Kueue</td><td>队列层（Job 排队）</td><td>多租户队列、配额/公平、Preemption、Job 准入控制，不做 Pod 放置</td></tr>
+<tr><td>YuniKorn</td><td>资源调度器</td><td>可以替代 kube-scheduler，也可以作为 K8s 调度器插件，侧重分层队列和公平</td></tr>
+</table>
+<p><strong>关键区分</strong>：</p>
+<ul>
+<li>Kueue 不做 Pod 放到哪个 Node 的决策——它只决定&quot;哪个 Job 先放行、放行多少资源&quot;，放行后的 Pod 还是交给 kube-scheduler 去放节点</li>
+<li>Volcano 有自己的调度器（volcano-scheduler）可以替代 kube-scheduler，但大多数场景是配合使用</li>
+</ul>
+</div>
+<div class="card card-m">
+<h3>四种架构对比表</h3>
+<table>
+<tr><th>架构类型</th><th>并发决策</th><th>决策全局最优性</th><th>可扩展性</th><th>实现复杂度</th><th>多框架支持</th><th>典型系统</th></tr>
+<tr><td>集中式/单体</td><td>低（串行）</td><td>高（全局视图）</td><td>中（单进程瓶颈，但可通过缓存/分 Cell 扩展）</td><td>低</td><td>差（单一调度逻辑）</td><td>Borg, K8s 默认调度器</td></tr>
+<tr><td>两级/双层</td><td>高（框架并行）</td><td>低（框架只看 Offer）</td><td>高（Master 轻量）</td><td>中</td><td>好（框架自定义逻辑）</td><td>Mesos, YARN</td></tr>
+<tr><td>共享状态</td><td>高（多调度器并行）</td><td>高（全视图复制）</td><td>中高（高负载冲突 thrashing）</td><td>高（需要共识/事务）</td><td>好（多调度器）</td><td>Omega, Apollo</td></tr>
+<tr><td>混合/分布式</td><td>中高（取决于具体设计）</td><td>非常高（优化算法）</td><td>中（流算法开销）</td><td>高</td><td>中</td><td>Firmament, K8s 多调度器</td></tr>
+</table>
+</div>
+<div class="card card-d">
+<h3>演进趋势与 AI Infra 的选择</h3>
+
+<h4>架构演进脉络</h4>
+<pre><code>集中式 → 两级调度 → 共享状态 → 混合/多调度器
+(Borg)    (Mesos)     (Omega)    (Firmament/K8s)</code></pre>
+<p>演进方向不是&quot;后者替代前者&quot;，而是&quot;针对不同场景选择合适架构&quot;：</p>
+<ul>
+<li>小规模集群/统一工作负载：集中式最简单最可靠</li>
+<li>多种异构框架（Hadoop/Spark/MPI/Web Service）：两级调度或共享状态</li>
+<li>需要极致调度质量：全局优化（Firmament 风格）</li>
+</ul>
+
+<h4>AI 训练集群为什么适合集中式（Borg 风格）？</h4>
+<p>大规模 AI 训练（万卡级别）有几个特殊需求：</p>
+<ol>
+<li><strong>Gang Scheduling</strong>：分布式训练需要同时拿到所有 GPU（all-or-nothing），要么一个 Job 的 N 张卡全到位，要么一个都不启动——否则拿到部分卡的任务只能空等，浪费资源。两级调度的 Offer 机制很难凑齐 Gang。</li>
+<li><strong>拓扑感知</strong>：多机训练需要考虑 NVLink/NVSwitch/机架/网络拓扑（同机 &gt; 同机架 &gt; 同 Spine），这需要全局视图才能做最优放置——局部视图下做不了拓扑优化。</li>
+<li><strong>碎片化问题</strong>：GPU 是稀缺资源，碎片化（每个节点剩 1-2 张卡，但需要 8 卡的任务放不进去）代价极高，全局 Bin Packing 比局部决策减少碎片。</li>
+<li><strong>故障域感知</strong>：大训练 Job 的 Worker 要分散到不同故障域，避免一个机架断电整个 Job 挂掉，这也需要全局视图。</li>
+<li><strong>任务类型相对统一</strong>：AI 集群主要是训练 Job（和少量推理/开发），不像 Borg/Mesos 时代有 MapReduce/Spark/Web Service/Cron 等五花八门的框架，不需要强&quot;多框架自定义调度&quot;能力。</li>
+</ol>
+<p><strong>结论</strong>：万卡级 AI 训练集群，通常采用 Borg 风格的<strong>集中式调度 + 本地缓存 + 乐观并发 + 分 Cell/分区</strong>架构：</p>
+<ul>
+<li>调度器有全局视图，做 Gang/拓扑/碎片优化</li>
+<li>通过缓存、批量调度、近似算法解决单进程性能瓶颈</li>
+<li>规模太大时分多个 Cell/分区，每个分区独立调度</li>
+<li>上层用 Kueue/Volcano 做队列管理、多租户公平、配额，底层还是集中式放置</li>
+</ul>
+</div>
+<div class="card card-m">
+<h3>调度器架构面试问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Borg 和 K8s Scheduler 有什么区别？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心定位</div><p>Borg 是 Google 内部使用了十多年的生产级集群管理系统，经过了万台规模、百万任务的验证；K8s 是 Borg 的开源&quot;精神续作&quot;，设计思想来自 Borg，但更通用、更可扩展。</p></div>
+<div class="qa-section"><div class="qa-section-title">具体差异</div><table>
+<tr><th>维度</th><th>Borg</th><th>K8s Default Scheduler</th></tr>
+<tr><td>规模</td><td>单 Cell 万台机器，数十万个任务</td><td>官方支持 5k 节点规模，更大规模需要调优</td></tr>
+<tr><td>资源模型</td><td>细粒度，有资源回收（reclamation）——可以用低优任务的预留资源</td><td>requests/limits 模型，没有原生 reclamation，需要靠 PriorityClass/Preemption</td></tr>
+<tr><td>调度算法</td><td>多年优化的成熟逻辑，有全局优化、批量调度、碎片整理等</td><td>可扩展的 Framework 插件，默认插件相对简单，高级能力靠 Volcano 等扩展</td></tr>
+<tr><td>Gang 调度</td><td>原生支持</td><td>不原生支持，需要 Volcano/Kueue</td></tr>
+<tr><td>高可用性</td><td>调度器有热备，故障快速切换</td><td>多副本选主，但单副本调度</td></tr>
+<tr><td>扩展性</td><td>内部系统，扩展靠 Google 工程师</td><td>高度可扩展——Scheduler Framework、Webhook、自定义调度器</td></tr>
+</table></div>
+<div class="qa-section"><div class="qa-section-title">面试要点</div><p>不要说&quot;K8s 是 Borg 的开源版&quot;，要说&quot;K8s 借鉴了 Borg 的设计思想（Pod/Service/Node、优先级抢占、两阶段调度），但为了通用性和扩展性，在默认实现上简化了很多大规模场景下的高级能力（如 Gang、资源回收、全局优化），这些能力需要通过 Volcano/Kueue 等扩展组件补充。&quot;</p></div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 两级调度（Mesos/YARN）的优缺点？适合什么场景？不适合什么场景？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">优点</div><p>(1) 多框架支持好——不同计算框架（Hadoop MapReduce、Spark、MPI、Web 服务）可以有自己的调度逻辑，不需要改中央调度器。(2) 可扩展性好——中央 Master 只做资源 Offer 和公平分配，任务级调度由框架自己做，Master 压力小。(3) 框架隔离——一个框架调度器出问题不影响其他框架。</p></div>
+<div class="qa-section"><div class="qa-section-title">缺点</div><p>(1) 框架看不到全局资源——只能看到 Master 发给自己的 Offer，做不了全局最优决策，特别是拓扑感知和 Gang 调度。(2) 悲观 Offer 锁资源——Offer 发给框架后、被接受/拒绝前，资源被临时锁定，利用率低。(3) 优先级反转——低优框架拿着 Offer 不释放，高优框架等不到资源。(4) 响应延迟——框架要等 Offer，Offer 是周期性发的，任务启动延迟高。</p></div>
+<div class="qa-section"><div class="qa-section-title">适合场景</div><p>多种异构计算框架并存的大数据集群——例如同时跑 Hadoop、Spark、Storm，每个框架有自己的调度需求，统一调度器难以适配所有框架。</p></div>
+<div class="qa-section"><div class="qa-section-title">不适合场景</div><p>AI 训练集群——因为需要 Gang Scheduling（同时拿 N 张卡）、拓扑感知（NVLink/机架）、全局碎片优化，这些都需要全局视图，Mesos 的 Offer 机制很难做好。</p></div>
+<div class="qa-summary">面试要点：说清两级调度的核心是&quot;Master 管资源分配，框架管任务调度&quot;，优点是多框架和扩展性，缺点是局部视图和 Offer 锁资源。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Omega 的 shared-state 怎么解决冲突？和乐观锁/悲观锁是什么关系？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心机制：乐观并发控制（Optimistic Concurrency Control, OCC）</div><p>(1) 每个调度器都有一份全集群状态副本，基于这份状态&quot;乐观地&quot;做决策，不加锁。(2) 决策结果以事务形式提交给共享状态存储。(3) 提交时检查：事务涉及的资源是否被其他事务修改过？如果没有，提交成功；如果冲突（资源已被占用），事务 abort，调度器基于最新状态重新做决策。</p></div>
+<div class="qa-section"><div class="qa-section-title">和悲观锁的对比</div><table>
+<tr><th></th><th>悲观并发（Mesos Offer）</th><th>乐观并发（Omega）</th></tr>
+<tr><td>思想</td><td>先锁资源，再做决策，别人用不了</td><td>先做决策，提交时检查冲突</td></tr>
+<tr><td>冲突少（低负载）时</td><td>性能差——锁等待开销大</td><td>性能好——无锁并行</td></tr>
+<tr><td>冲突多（高负载）时</td><td>性能还行——锁保证不冲突</td><td>性能差——大量 abort/retry（thrashing）</td></tr>
+<tr><td>决策质量</td><td>低——可能锁了不用</td><td>高——基于全视图决策</td></tr>
+</table></div>
+<div class="qa-section"><div class="qa-section-title">类比</div><p>悲观锁像&quot;会议室预约&quot;——先预约锁时间，别人在这个时间不能用；乐观锁像&quot;谁先到谁用&quot;——大家都去会议室，发现已经有人了就等会再来。预约保证你能用但可能浪费（预约了没人来），无锁效率高但人多的时候大家都在抢。</p></div>
+<div class="qa-summary">面试要点：Omega 用乐观并发，核心是&quot;全状态复制 + 并行决策 + 事务提交 + 冲突重试&quot;，对比 Mesos 悲观 Offer 的优劣势。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 AI 训练集群适合 centralized scheduler？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">AI 训练的特殊需求</div><p>大规模分布式训练（特别是万卡级 LLM 训练）有几个核心需求，这些需求天然适合集中式调度：</p>
+<ol>
+<li><strong>Gang Scheduling（all-or-nothing）</strong>：分布式训练要求所有 Worker 同时启动、同时通信。一个 1024 卡的 Job，要么 1024 张卡同时到位，要么一张都不要启动——否则拿到部分卡的 Worker 只能空等其他 Worker，浪费资源还容易超时。全局视图才能检查&quot;是否有 1024 张卡能凑成符合拓扑的 Gang&quot;，两级调度的局部 Offer 做不到。</li>
+<li><strong>拓扑感知放置</strong>：多机多卡训练的通信性能高度依赖拓扑——同机 NVLink &gt; 同机架 RDMA &gt; 跨机架网络。最优放置需要全局计算拓扑匹配度，局部决策（如 Mesos 框架只看 Offer）做不了全局拓扑优化。</li>
+<li><strong>碎片化控制</strong>：GPU 极其昂贵，碎片化（每个节点剩 1-2 张卡，凑不出 8 卡任务）是最大浪费之一。集中式全局 Bin Packing 可以最大程度减少碎片，局部决策容易导致&quot;每个节点都剩一点，但谁都用不了&quot;。</li>
+<li><strong>故障域分散</strong>：大训练 Job 的 Worker 要分散到不同机架/电源域/交换机，避免单点故障导致整个 Job 失败。这也需要全局视图。</li>
+</ol></div>
+<div class="qa-section"><div class="qa-section-title">那可扩展性怎么办？</div><p>Borg 已经证明：集中式调度配合(1)本地状态缓存减少 API Server 压力、(2)乐观并发 Bind 而不是全局锁、(3)批量调度和近似算法减少计算、(4)分 Cell（每个 Cell 几千到几万台），完全可以支撑超大规模集群。AI 集群任务类型相对统一（主要是训练 Job，不像 Borg 混跑 Web/MapReduce/ cron），单调度器压力更小。</p></div>
+<div class="qa-section"><div class="qa-section-title">实际架构</div><p>实际的万卡 AI 集群通常是：上层用 Kueue/Volcano 做队列管理、多租户公平、配额（Job 排队和准入），底层用集中式调度器（优化过的 kube-scheduler 或自研）做 Pod→Node 的放置和 Gang/拓扑优化——本质还是&quot;Borg 风格集中式 + 上层队列层&quot;。</p></div>
+<div class="qa-summary">面试要点：从 Gang/拓扑/碎片/故障域四个需求出发，说明为什么全局视图必要；再回答可扩展性问题，提缓存/乐观/分 Cell 等优化手段；最后说实际架构是&quot;上层队列 + 下层集中式放置&quot;。</div>
+</div>
+</div>
+</div>
+<h2>关联模块</h2>
+<ul><li><code>Kubernetes 调度器扩展</code>：Scheduler Framework、插件机制、队列设计，K8s 调度器实现细节</li><li><code>批处理与 Gang 调度</code>：Gang Scheduling 机制、Backfill 算法、资源回收</li><li><code>拓扑感知调度</code>：NVLink/NVSwitch/机架拓扑、网络拓扑感知</li><li><code>多租户 GPU 调度</code>：DRF 公平性、多队列、配额管理</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::11-scheduler-architecture-evolution-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::11-scheduler-architecture-evolution-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">排队论基础</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Spot / 抢占式实例调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="scheduling-tabs-panel-9" aria-labelledby="scheduling-tabs-tab-9" data-mid="scheduling-tabs::12-spot-instance-scheduling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Spot / 抢占式实例调度</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 28 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>Spot/抢占式实例是云 GPU 成本优化的核心手段（便宜 60-80%），但会被随时回收（30s-2min 警告）。关键模式是&quot;Checkpoint-on-Revocation&quot;：检测回收信号 → 快速保存 checkpoint → 优雅终止 → 自动重新提交。分布式训练需要协调所有 Worker 同时 checkpoint，配合 Spot+On-Demand 混合部署、跨 AZ/实例类型分散来降低回收相关性，最终算清&quot;Spot 便宜价格 - 重算浪费&quot;是否真的划算。</p>
+<h2>复习定位</h2>
+<div class="table-scroll"><table>
+<tr><th>维度</th><th>内容</th></tr>
+<tr><td>所属模块</td><td>任务调度理论</td></tr>
+<tr><td>章节类型</td><td>工程实践 + 成本优化</td></tr>
+<tr><td>解决问题</td><td>理解 Spot 实例经济学、回收机制、Checkpoint 策略、分布式训练容错、K8s 集成和成本 trade-off</td></tr>
+<tr><td>面试抓手</td><td>先讲成本差，再讲回收时的 Checkpoint 流程，然后说分布式训练的额外挑战，最后算 break-even 和风险矩阵</td></tr>
+</table></div>
+<div class="card card-m">
+<h3>云 GPU 经济学：为什么 Spot 便宜？</h3>
+<p>云厂商的 IDC 里总有大量空闲计算资源（用户的 On-Demand 实例没跑满、预留实例没卖完、新购机器还没上架等），与其让这些资源空着耗电，不如便宜卖出去——但有个条件：<strong>当 On-Demand 用户需要资源时，Spot 实例可以被随时回收</strong>。这就是 Spot/Preemptible/抢占式实例的本质：<strong>用可被中断换取低价</strong>。</p>
+
+<h4>价格对比（参考，随时间区域变动）</h4>
+<table>
+<tr><th>实例类型</th><th>A100 80GB 大概价格（小时）</th><th>相对 On-Demand</th><th>回收警告时间</th><th>是否会被回收</th></tr>
+<tr><td>On-Demand（按需）</td><td>~$3.0-4.0</td><td>100%</td><td>N/A</td><td>不会（除非你欠费/违规）</td></tr>
+<tr><td>Reserved/Commitment（预留）</td><td>~$1.8-2.4</td><td>60-70%（1-3年合约）</td><td>N/A</td><td>不会</td></tr>
+<tr><td>Spot/Preemptible（抢占式）</td><td>~$0.8-1.5</td><td>20-40%</td><td>30s-2min</td><td>会，价格或容量变化时</td></tr>
+</table>
+<p><strong>关键数字</strong>：Spot 比 On-Demand 便宜 60-80%。如果能把重算浪费控制在 20% 以内，总成本只有 On-Demand 的 50% 甚至更低——这对大规模训练（几千卡跑几周）来说是百万级别的成本节省。</p>
+</div>
+<div class="card card-s">
+<h3>Spot 回收机制：什么时候会被 kick 掉？</h3>
+
+<h4>回收原因</h4>
+<ol>
+<li><strong>容量回收（Capacity Reclamation）</strong>：On-Demand 用户需要资源，Spot 实例被赶走。这是最常见原因，热门 GPU 类型（A100/H100）在白天业务高峰时容量紧张。</li>
+<li><strong>价格超过出价</strong>：Spot 价格是浮动的（随供需变化），如果你的出价低于当前市场价格，实例会被回收。设置&quot;出价 = On-Demand 价格&quot;可以规避这个原因，只承担容量回收风险。</li>
+<li><strong>硬件维护/退役</strong>：云厂商需要维护物理机时，Spot 实例优先被迁移/回收（On-Demand 通常会被热迁移）。</li>
+</ol>
+
+<h4>中断率参考</h4>
+<p>不同实例类型、不同可用区（AZ）的中断率差异很大：</p>
+<ul>
+<li>热门 GPU（A100/H100）：5-20% 周中断率（一周内被回收的概率）</li>
+<li>不那么热门的 GPU（如 T4、A10G、旧型号 V100）：1-5% 周中断率</li>
+<li>CPU 实例：通常更低，1-10%</li>
+<li>多个 AZ/多种实例类型混合：可以降低&quot;同时被回收&quot;的概率（协方差低）</li>
+</ul>
+
+<h4>回收信号检测</h4>
+<table>
+<tr><th>云厂商</th><th>回收警告机制</th><th>警告时间</th></tr>
+<tr><td>AWS EC2 Spot</td><td>轮询 Instance Metadata Service (IMDS) <code>http://169.254.169.254/latest/meta-data/spot/instance-action</code>；也可以通过 EventBridge 事件通知</td><td>2 分钟</td></tr>
+<tr><td>GCP Preemptible/Spot VM</td><td>发送 <code>SIGTERM</code> 信号给所有进程；也可以轮询 Metadata Server</td><td>30 秒（Preemptible）/ 即时后30秒（Spot 可变）</td></tr>
+<tr><td>Azure Spot VM</td><td>轮询 Metadata Service <code>http://169.254.169.254/metadata/scheduledevents</code>；Scheduled Events 提前通知</td><td>30 秒</td></tr>
+<tr><td>阿里云抢占式实例</td><td>实例元数据 + 云监控事件通知</td><td>1-5 分钟（可配置）</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>核心模式：Checkpoint-on-Revocation</h3>
+<p>用 Spot 跑训练的标准工作流程：</p>
+<pre><code>          ┌─────────────────────────────────────────┐
+          │                                         │
+          ▼                                         │
+    提交训练 Job ──► 申请 Spot 实例 ──► 启动训练    │
+          │                              │         │
+          │                              ├─ 周期性 Checkpoint（每 N 分钟/step）
+          │                              │         │
+          │                              ▼         │
+          │                     收到回收信号？──No──┘
+          │                              │ Yes
+          │                              ▼
+          │                     触发紧急 Checkpoint
+          │                              │
+          │                              ▼
+          │                     优雅终止（Cleanup）
+          │                              │
+          └──────────────────────────────┘
+                                 自动重新提交</code></pre>
+
+<h4>关键步骤详解</h4>
+
+<h5>1. 信号检测与处理</h5>
+<p>训练进程需要注册 SIGTERM 信号处理器（GCP）或启动一个后台线程轮询 Metadata（AWS/Azure）。一旦检测到回收信号：</p>
+<ul>
+<li>立即停止接受新的 batch</li>
+<li>完成当前正在处理的 batch（不要在 step 中间保存，容易损坏 checkpoint）</li>
+<li>触发 checkpoint 保存</li>
+<li>Checkpoint 保存完成后，发送释放信号，让 Job 标记为失败/需要重启</li>
+</ul>
+<p><strong>重要</strong>：警告时间只有 30s-2min！Checkpoint 保存必须在这个时间内完成。HDFS/S3/对象存储上传大 checkpoint（几十 GB 到几百 GB）可能需要几分钟，因此：</p>
+<ul>
+<li>平时周期性 checkpoint 到本地 SSD/内存盘，紧急时只需要把最新 checkpoint 上传到共享存储</li>
+<li>或者持续异步上传 checkpoint，紧急时只需要等当前上传完成</li>
+<li>模型+优化器状态 checkpoint 做分片，多 Worker 并行写，加快保存速度</li>
+</ul>
+
+<h5>2. 周期性 Checkpoint 策略</h5>
+<p>不能等回收信号来了才做第一次 checkpoint——需要平时就定期保存。Checkpoint 频率是一个 trade-off：</p>
+<table>
+<tr><th>Checkpoint 频率</th><th>丢失工作量</th><th>Checkpoint 开销</th><th>适用场景</th></tr>
+<tr><td>每 1 小时</td><td>平均 30 分钟重算</td><td>低</td><td>中断率低、checkpoint 很大（如大模型训练）</td></tr>
+<tr><td>每 15 分钟</td><td>平均 7.5 分钟重算</td><td>中</td><td>大多数场景</td></tr>
+<tr><td>每 5 分钟</td><td>平均 2.5 分钟重算</td><td>高</td><td>中断率高、checkpoint 小、单步计算代价高</td></tr>
+</table>
+<p><strong>经验公式</strong>：选择 checkpoint 间隔，使得&quot;checkpoint 保存开销&quot;约等于&quot;预期丢失重算开销&quot;——<code>保存时间 ≈ (1/中断率) 内的平均丢失时间</code>。但实际上，大多数团队直接配置为每 10-30 分钟，或按 step 数（如每 1000 step）。</p>
+
+<h5>3. 自动重试机制</h5>
+<p>Checkpoint 保存后，Job 应该由调度器/工作流管理器（如 Argo Workflows、KubeFlow、Volcano Job、Airflow）自动重新提交，从最新 checkpoint 恢复。重启时可能需要：</p>
+<ul>
+<li>申请新的 Spot 实例（可能换 AZ、换实例类型）</li>
+<li>加载 checkpoint 到新实例</li>
+<li>重建数据加载器、NCCL 通信组</li>
+<li>继续训练</li>
+</ul>
+<p>不要让人工介入——Spot 回收是常态，必须完全自动化。</p>
+</div>
+<div class="card card-d">
+<h3>分布式训练的 Spot 容错策略</h3>
+<p>单卡训练的 Checkpoint-on-Revocation 很简单，但分布式训练（多机多卡）要复杂得多：<strong>一个 Worker 被回收，整个 Job 都要停</strong>（因为 NCCL 通信环断了，所有 Worker 都会 hang 或 crash）。</p>
+
+<h4>策略一：协调 Checkpoint（Elastic Training 弹性训练）</h4>
+<p>标准做法：</p>
+<ol>
+<li>任意一个 Worker 检测到回收信号，立即通知所有其他 Worker（通过 NCCL 带外通信、共享存储标记、或 rendezvous 服务）</li>
+<li>所有 Worker 同步停止训练，在当前 step 边界共同保存 checkpoint</li>
+<li>所有 Worker 优雅退出</li>
+<li>Job 控制器自动重新提交，申请新的 Worker（数量可能相同也可能不同，弹性训练支持 world size 变化）</li>
+<li>新的 Worker 组加载 checkpoint，重新初始化，继续训练</li>
+</ol>
+<p><strong>框架支持</strong>：</p>
+<ul>
+<li><strong>PyTorch</strong>：TorchElastic（<code>torchrun</code>）原生支持弹性训练，Worker 变化时自动 rendezvous 重启</li>
+<li><strong>DeepSpeed</strong>：支持 checkpoint 分片保存和恢复，配合弹性训练可以处理 Worker 增减</li>
+<li><strong>Megatron-LM</strong>：有自己的 checkpoint 和容错机制</li>
+<li><strong>JAX/Flax</strong>：通过 Orbax 等库做 checkpoint</li>
+</ul>
+
+<h4>策略二：Spot + On-Demand 混合部署</h4>
+<p>把<strong>关键节点放在 On-Demand</strong>，<strong>Worker 用 Spot</strong>：</p>
+<ul>
+<li>Parameter Server / Coordinator / Scheduler：On-Demand，永远不回收——这些节点挂了整个集群状态丢失，代价最大</li>
+<li>训练 Worker：Spot，可以被回收，回收后只需要 Worker 组重建</li>
+<li>混合 Gang Scheduling：允许部分 Gang 用 Spot，容忍一定的 Worker 流失</li>
+</ul>
+<p>更极端一点：关键 Rank（如 Rank 0，负责 checkpoint 保存、日志、coordination）放 On-Demand，其余 Worker 放 Spot。Rank 0 不丢，checkpoint 机制就更可靠。</p>
+
+<h4>策略三：Spot Fleet / 多实例类型分散</h4>
+<p>&quot;不要把鸡蛋放在一个篮子里&quot;：</p>
+<ol>
+<li><strong>跨可用区（AZ）</strong>：在多个 AZ 申请实例，不同 AZ 的容量回收是不相关的——所有 AZ 同时回收的概率极低</li>
+<li><strong>跨实例类型</strong>：不要只申请 A100，同时申请 A100-80G、A100-40G（如果模型放得下）、甚至 A10G 做混合部署，不同实例类型的回收不相关</li>
+<li><strong>Spot Fleet / Auto Scaling Group</strong>：配置云厂商的 Spot Fleet，自动在多个实例类型/AZ 中选最便宜最可用的组合</li>
+</ol>
+<p><strong>弹性训练的好处</strong>：如果支持弹性 world size，那么不需要等所有 Worker 都回来——只要拿到足够多的新 Spot 实例，就可以恢复训练（world size 变小，吞吐降低，但至少训练继续，不会空等）。</p>
+
+<h4>策略四：出价策略</h4>
+<p>简单但有效：<strong>把 Spot 出价设为 On-Demand 价格</strong>。这样不会因为价格上涨被回收，只会因为容量不足被回收。容量回收是真的资源不够，价格问题只是你出价不够高——用 On-Demand 价格出价可以消除价格因素导致的回收，剩下的只有容量回收，中断率会明显降低。</p>
+<p>毕竟 Spot 价格到 On-Demand 的时候，不如直接用 On-Demand 了。</p>
+</div>
+<div class="card card-s">
+<h3>推理服务能跑在 Spot 上吗？</h3>
+<p><strong>结论：在线推理不建议直接用 Spot，但离线批处理推理/异步推理可以</strong>。</p>
+
+<h4>为什么在线推理难用 Spot？</h4>
+<ul>
+<li><strong>延迟 SLO</strong>：在线推理有严格的延迟 SLO（P99 < 几百 ms），Spot 被回收时 2 分钟内实例就没了——正在处理的请求会失败，新请求无法路由</li>
+<li><strong>冷启动开销</strong>：加载大模型（LLM 几十 GB）需要几十秒到几分钟，新实例启动后不能立刻接流量</li>
+<li><strong>KV Cache 丢失</strong>：推理实例的 KV Cache 都在本地 GPU 内存里，实例回收后 Cache 全丢，新实例需要重建</li>
+</ul>
+
+<h4>什么推理场景可以用 Spot？</h4>
+<ol>
+<li><strong>离线批处理推理 / Batch Inference</strong>：比如&quot;晚上把昨天的日志全部过一遍模型&quot;、&quot;给 1 亿张图片打标签&quot;。这种任务没有严格延迟要求，可以拆分、可以重试、可以 checkpoint 进度，和训练一样——非常适合 Spot。</li>
+<li><strong>异步推理 / 消息队列驱动</strong>：请求进队列，Worker 从队列取处理，Worker 挂了请求不丢，重新入队给其他 Worker 处理。只要队列保留足够长的时间，Spot 挂了不丢请求。</li>
+<li><strong>Warm Pool Standby 热备</strong>：主要容量用 On-Demand，额外用 Spot 实例做&quot;额外算力&quot;处理突发流量。Spot 被回收时，On-Demand 容量还在，只是降容不宕机。Spot 加进来提升吞吐，被回收时 graceful drain，把正在处理的请求处理完再退出。</li>
+</ol>
+
+<h4>Spot + On-Demand 混合推理策略</h4>
+<pre><code>                    ┌─────────────────────┐
+                    │  Load Balancer      │
+                    └─────────┬───────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              ▼                               ▼
+     ┌─────────────────┐             ┌─────────────────┐
+     │ On-Demand 池    │             │ Spot 池         │
+     │ （基础容量）    │◄────────────┤ （弹性突发容量）│
+     │ 永远在线        │   回收时    │ 处理多余流量    │
+     │ 保证 SLO        │   drain     │ 挂了不影响服务  │
+     └─────────────────┘             └─────────────────┘</code></pre>
+<p>On-Demand 承载保底流量（如按历史 P50 流量预留），Spot 承载流量尖峰。Spot 实例收到回收信号时，停止接新请求，处理完正在处理的请求后退出——这需要服务支持 graceful shutdown 和连接 draining（K8s 有 preStop hook + readinessProbe 可以做）。</p>
+</div>
+<div class="card card-s">
+<h3>Kubernetes 集成：Kueue/Karpenter/Descheduler</h3>
+<p>在 K8s 上用 Spot GPU 需要几个组件配合：</p>
+
+<h4>1. 节点标签与污点（Taint/Toleration）</h4>
+<p>Spot 节点应该被标记 capacity-type=spot 并加上污点，避免不支持容错的工作负载误调度上来：</p>
+<pre><code>nodeSelector:
+  node.kubernetes.io/instance-type: p4d.24xlarge  # A100
+  karpenter.sh/capacity-type: spot                 # Spot 实例
+tolerations:
+- key: "karpenter.sh/capacity-type"
+  operator: "Equal"
+  value: "spot"
+  effect: "NoSchedule"</code></pre>
+
+<h4>2. Karpenter：自动扩缩容 Spot 节点</h4>
+<p>Karpenter 是 AWS 开源的 K8s 节点自动扩缩容工具（替代 Cluster Autoscaler），可以：</p>
+<ul>
+<li>根据待调度 Pod 的需求，自动申请最合适的 Spot 实例类型（在用户配置的多实例类型中选最可用最便宜的）</li>
+<li>自动处理 Spot 节点回收——收到中断通知后自动 cordon + drain，把 Pod 驱逐到其他节点</li>
+<li>支持 Spot diversification（跨实例类型/AZ 分散）</li>
+</ul>
+<p>Karpenter 配置示例：</p>
+<pre><code>requirements:
+- key: karpenter.sh/capacity-type
+  operator: In
+  values: ["spot", "on-demand"]  # 优先 Spot，不行 fallback On-Demand
+- key: node.kubernetes.io/instance-type
+  operator: In
+  values: ["p4d.24xlarge", "p4de.24xlarge", "p3dn.24xlarge"]  # 多实例类型</code></pre>
+
+<h4>3. Kueue：队列级 Spot 管理与 Preemption</h4>
+<p>Kueue 通过 ClusterQueue 和 ResourceQuota 管理 Spot/On-Demand 配额：</p>
+<ul>
+<li>把 Spot 资源作为一个独立的 resource flavor，有自己的配额</li>
+<li>支持 Preemption：当集群资源紧张、或 On-Demand 有更高优先级任务需要资源时，可以抢占 Spot 任务</li>
+<li>Reclaimable Spot：Spot 任务被抢占时自动 checkpoint 并重新排队</li>
+</ul>
+
+<h4>4. Pod 优雅终止：preStop Hook</h4>
+<p>Pod 被驱逐时（无论是 Spot 回收还是抢占），K8s 会发 SIGTERM，然后等 <code>terminationGracePeriodSeconds</code> 后强杀（SIGKILL）。给训练 Pod 配置足够的优雅终止时间：</p>
+<pre><code>terminationGracePeriodSeconds: 300  # 给 5 分钟做 checkpoint 和 cleanup
+containers:
+- name: trainer
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "python /scripts/trigger_checkpoint_and_wait.py"]</code></pre>
+<p>preStop 脚本执行 checkpoint 并等待保存完成，然后退出；退出后 K8s 才会删除 Pod。</p>
+
+<h4>5. Descheduler：主动 Spot 驱逐</h4>
+<p>Descheduler 可以根据策略主动驱逐 Pod，比如：</p>
+<ul>
+<li>Spot 价格上涨时主动驱逐，换更便宜的实例</li>
+<li>低优先级 Spot 任务占着资源，高优任务来了需要让位置</li>
+<li>节点利用率过低时，迁移 Pod 到其他节点缩容</li>
+</ul>
+</div>
+<div class="card card-d">
+<h3>成本模型：Spot 真的划算吗？Break-Even 分析</h3>
+<p>Spot 不是稳赚不赔——被回收后要重算，重算浪费时间和钱。算一下 break-even：</p>
+
+<pre><code>总成本(Spot) = Spot 单价 × 运行时间 × (1 + 浪费率 Waste Ratio)
+总成本(On-Demand) = On-Demand 单价 × 运行时间
+
+当 总成本(Spot) &lt; 总成本(On-Demand) 时划算：
+  Spot 单价 × (1 + Waste Ratio) &lt; On-Demand 单价
+  1 + Waste Ratio &lt; On-Demand / Spot 单价
+  Waste Ratio &lt; (On-Demand / Spot 单价) - 1</code></pre>
+
+<p><strong>数值例子</strong>：On-Demand = $3/h，Spot = $1/h（3折）：</p>
+<table>
+<tr><th>Waste Ratio（重算浪费比例）</th><th>实际每小时成本</th><th>vs On-Demand</th></tr>
+<tr><td>0%（完全不浪费）</td><td>$1.00</td><td>省 67%</td></tr>
+<tr><td>20%</td><td>$1.20</td><td>省 60%</td></tr>
+<tr><td>50%</td><td>$1.50</td><td>省 50%</td></tr>
+<tr><td>100%</td><td>$2.00</td><td>省 33%</td></tr>
+<tr><td>200%</td><td>$3.00</td><td>持平</td></tr>
+<tr><td>&gt;200%</td><td>&gt;$3.00</td><td>亏了</td></tr>
+</table>
+<p><strong>结论</strong>：当 Spot 是 On-Demand 的 1/3 价格时，只要浪费率不超过 200%（平均每次回收导致重算 2 倍已运行时间），就比 On-Demand 划算。实践中，如果 checkpoint 频率合理（15-30 分钟）、重启自动化，waste ratio 通常在 5-30%，Spot 非常划算。</p>
+
+<h4>浪费率估算</h4>
+<p>Waste Ratio 取决于：</p>
+<ul>
+<li><strong>Checkpoint 间隔</strong>：最坏情况丢失 checkpoint 间隔内的全部计算，平均丢失间隔/2</li>
+<li><strong>Checkpoint 保存开销</strong>：保存 checkpoint 本身花的时间（读写共享存储）</li>
+<li><strong>重启开销</strong>：重新申请实例、加载模型、重建 NCCL 通信组、数据加载器 warm-up 的时间（通常 1-10 分钟）</li>
+<li><strong>中断频率</strong>：越频繁被回收，重启和 checkpoint 开销占比越高</li>
+</ul>
+<p><strong>公式近似</strong>：<code>Waste Ratio ≈ (MTTR / MTTF) + (Checkpoint时间 / Checkpoint间隔)</code>，其中 MTTR 是平均修复/重启时间，MTTF 是平均无故障时间（平均多久被回收一次）。</p>
+</div>
+<div class="card card-w">
+<h3>风险矩阵：什么任务适合跑 Spot？</h3>
+<table>
+<tr><th>任务类型</th><th>Spot 适用性</th><th>原因</th><th>建议</th></tr>
+<tr><td>开发/实验 Job（&lt;1小时）</td><td>✅ 非常适合</td><td>运行时间短，被回收概率低（MTTF 通常几小时到几天），就算被回收重跑代价也小</td><td>直接用 Spot，甚至可以不用 checkpoint</td></tr>
+<tr><td>中小规模训练（几小时到1天）</td><td>✅ 适合</td><td>Checkpoint 做好，重启几次也能跑完，成本节省明显</td><td>周期性 checkpoint + 自动重试</td></tr>
+<tr><td>分布式训练（多机多卡）</td><td>⚠️ 需要改造</td><td>一个 Worker 挂全 Job 重启，协调 checkpoint 复杂，但成本节省巨大</td><td>弹性训练 + 关键节点 On-Demand + 多 AZ/实例类型分散</td></tr>
+<tr><td>大规模生产训练（几天到几周，千卡）</td><td>⚠️ Spot+On-Demand 混合</td><td>全 Spot 风险太高（每天都可能被回收几次，重启开销大），全 On-Demand 太贵</td><td>关键 Rank/PS 用 On-Demand，Worker 用 Spot 混搭；或者按比例 30% On-Demand + 70% Spot</td></tr>
+<tr><td>在线推理服务（有严格 SLO）</td><td>❌ 不适合直接用</td><td>回收导致请求失败、冷启动慢、SLO 无法保证</td><td>用 On-Demand 做基础容量，Spot 做弹性突发</td></tr>
+<tr><td>离线批处理推理</td><td>✅ 非常适合</td><td>没有严格延迟，可以拆任务、重试、checkpoint 进度</td><td>直接用 Spot，配合任务队列</td></tr>
+<tr><td>异步/队列驱动推理</td><td>✅ 适合</td><td>请求不丢，Worker 挂了重入队</td><td>MQ 保证消息不丢，Spot 作为 Worker 池</td></tr>
+</table>
+
+<div class="card-r">
+<h4>Spot 反模式（不要这么做）</h4>
+<ul>
+<li><strong>没有 checkpoint 就跑长训练</strong>：一被回收几天进度没了，浪费的算力比 Spot 省的钱多得多</li>
+<li><strong>所有 Worker 只在一个 AZ/一个实例类型</strong>：这个 AZ/实例类型容量紧张时，所有 Worker 同时被回收，Job 完全中断</li>
+<li><strong>Checkpoint 只写本地盘</strong>：实例被回收本地盘也没了，checkpoint 白做了；checkpoint 必须写共享持久存储（S3/HDFS/NFS/EFS）</li>
+<li><strong>Checkpoint 保存时间比警告时间长</strong>：30 秒警告但 checkpoint 要存 5 分钟，最后 SIGKILL 来了 checkpoint 没存完，文件损坏</li>
+<li><strong>单 Worker 挂了不处理，等所有 Worker 都超时</strong>：一个 Spot 被回收，其他 Worker 空等 NCCL 超时（可能 30 分钟），浪费算力；应该有快速失败机制</li>
+</ul>
+</div>
+</div>
+<div class="card card-m">
+<h3>Spot 实例调度面试问答</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Spot 实例被回收了训练怎么办？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">标准流程：Checkpoint-on-Revocation</div><ol>
+<li><strong>检测回收信号</strong>：GCP 收 SIGTERM，AWS/Azure 轮询 Metadata Service 或事件通知，警告时间 30s-2min。</li>
+<li><strong>优雅停止</strong>：停止接新 batch，完成当前 step（不要在 step 中间保存，避免 checkpoint 损坏）。</li>
+<li><strong>紧急保存 Checkpoint</strong>：把模型权重、优化器状态、训练进度（epoch/step、数据加载器位置、随机种子等）保存到持久共享存储（S3/HDFS/EFS），不能写本地盘。</li>
+<li><strong>Cleanup 退出</strong>：释放资源，通知调度器/Job 控制器这个 Job 中断了。</li>
+<li><strong>自动重新提交</strong>：工作流系统（Argo/KubeFlow/Volcano）检测到 Job 失败，自动重新提交，申请新实例。</li>
+<li><strong>恢复训练</strong>：新实例加载最新 checkpoint，重建数据加载器、NCCL 通信组，从 checkpoint 的 step 继续训练。</li>
+</ol></div>
+<div class="qa-section"><div class="qa-section-title">关键细节</div><p>(1) 平时必须做周期性 checkpoint（每 10-30 分钟），不能等回收信号才第一次存——回收了进度全丢。(2) Checkpoint 保存必须在警告窗口内完成，大 checkpoint 做分片多进程并行写、本地 SSD 缓存、异步上传。(3) 整个流程必须完全自动化，不需要人工介入。</p></div>
+<div class="qa-summary">面试要点：按&quot;信号检测 → 优雅停 → Checkpoint → 重试 → 恢复&quot;流程讲，提周期性 checkpoint、持久存储、自动化这几个关键点。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 分布式训练怎么应对 spot 回收？一个 Worker 挂了怎么办？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">问题本质</div><p>分布式训练（数据并行/张量并行）NCCL 通信是 all-reduce/all-gather 等集合通信，一个 Worker 挂了通信环断了，其他所有 Worker 会 hang 或 crash——单卡的&quot;自己 checkpoint 自己重启&quot;不够，需要协调所有 Worker。</p></div>
+<div class="qa-section"><div class="qa-section-title">核心策略</div><ol>
+<li><strong>协同 Checkpoint + 弹性训练</strong>：任何一个 Worker 检测到回收信号，立即通知所有 Rank（通过带外通信、共享存储标记、或 rendezvous）；所有 Worker 同步在 step 边界共同保存分片 checkpoint，然后一起退出；Job 控制器自动重新提交，新的 Worker 组 rendezvous、加载 checkpoint、恢复训练。框架用 TorchElastic、DeepSpeed、Megatron 的弹性训练能力支持 world size 变化。</li>
+<li><strong>关键节点 On-Demand，Worker Spot 混合</strong>：Coordinator/Rank 0/Parameter Server 放 On-Demand 不回收（这些节点状态最关键），计算 Worker 用 Spot；Rank 0 负责 checkpoint 协调，它不丢整个 checkpoint 流程更可靠。</li>
+<li><strong>多 AZ/多实例类型分散</strong>：Spot Fleet 在多个可用区、多个兼容实例类型（如 A100-40G/80G、甚至跨代）分散申请，降低同时被回收的概率——不同 AZ 的容量是独立的。</li>
+<li><strong>出价 = On-Demand 价格</strong>：消除因价格上涨导致的回收，只承担真正的容量回收风险，中断率降低。</li>
+<li><strong>快速失败机制</strong>：不要等 NCCL 默认超时（通常 30 分钟），检测到一个 Worker 失联后快速触发全 Job 停止和 checkpoint，减少空等浪费。</li>
+</ol></div>
+<div class="qa-summary">面试要点：先说分布式的特殊性（一个挂全挂），然后按&quot;协同checkpoint + 混合部署 + 分散风险 + 快速失败&quot;四个策略讲，提 TorchElastic 等框架支持。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Spot 和 on-demand 比例怎么定？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">核心 trade-off</div><p>Spot 便宜但会被回收（需要重算），On-Demand 贵但稳定。比例取决于：(1) 任务对中断的容忍度（checkpoint 做得好不好、重启开销大不大）；(2) 训练时长；(3) 业务对完成时间确定性的要求。</p></div>
+<div class="qa-section"><div class="qa-section-title">经验比例</div><table>
+<tr><th>场景</th><th>On-Demand 比例</th><th>Spot 比例</th><th>原因</th></tr>
+<tr><td>开发实验（短，可重跑）</td><td>0%</td><td>100%</td><td>跑的时间短，被回收概率低；就算回收了重跑代价小，不需要保留 On-Demand</td></tr>
+<tr><td>中小规模训练（几小时-1天）</td><td>0-20%</td><td>80-100%</td><td>Checkpoint 做好，重启几次也能跑完，全 Spot 最省成本</td></tr>
+<tr><td>大规模分布式训练（几天-几周，千卡）</td><td>20-40%</td><td>60-80%</td><td>关键节点（Rank 0/PS/Coordinator）必须 On-Demand；计算 Worker 混合；全 Spot 风险太高，重启开销太大影响总完工时间</td></tr>
+<tr><td>有截止日期的生产训练</td><td>40-60%</td><td>40-60%</td><td>不能无限等重启，需要足够的 On-Demand 容量保证进度稳定，Spot 作为加速补充</td></tr>
+<tr><td>在线推理</td><td>100%（基础）+ 0-50% Spot（弹性）</td><td>只用 On-Demand 保底，Spot 做突发</td><td>SLO 不能破，Spot 挂了 On-Demand 还能服务</td></tr>
+</table></div>
+<div class="qa-section"><div class="qa-section-title">成本 break-even 计算</div><p>实际选择时算一下账：假设 Spot 3折，重算浪费 20%，那么 Spot 实际成本是 On-Demand 的 0.3 × 1.2 = 36%——省 64%。如果 On-Demand 占 30%、Spot 占 70%，平均成本是 0.3×100% + 0.7×36% ≈ 55%——相当于全 On-Demand 打 5.5 折，同时风险可控。</p><p>如果训练很重要怕 Spot 中断影响交付时间，可以预留 100% On-Demand 作为&quot;保底资源池&quot;——On-Demand 跑基础进度，有额外 Spot 就加进去加速，Spot 回收了不影响 On-Demand 继续跑（弹性训练缩容）。</p></div>
+<div class="qa-summary">面试要点：分场景给比例，讲清 trade-off，用成本 break-even 数字说话，不要给固定答案。</div>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 推理服务可以用 spot 吗？</div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">结论：分场景</div><p><strong>有严格延迟 SLO 的在线推理不建议直接跑 Spot</strong>，但<strong>离线批推理、异步推理可以</strong>，<strong>在线推理可以用 Spot 做弹性补充但不能做主力</strong>。</p></div>
+<div class="qa-section"><div class="qa-section-title">为什么在线推理直接用 Spot 不行？</div><p>(1) <strong>SLO 无法保证</strong>：Spot 被回收时 2 分钟内就没了，正在处理的请求直接失败，新请求无法路由；(2) <strong>冷启动慢</strong>：LLM 几十 GB 模型加载到 GPU 需要几十秒到几分钟，新实例不能立刻接流量；(3) <strong>KV Cache 丢失</strong>：本地 KV Cache 全丢，即使流量切走，新实例没有 Cache 性能下降。</p></div>
+<div class="qa-section"><div class="qa-section-title">哪些推理场景可以用 Spot？</div><ol>
+<li><strong>离线 Batch Inference</strong>：如&quot;夜间批量跑昨日数据推理&quot;、&quot;给数据集打标签&quot;——没有延迟要求，可以拆分、重试、checkpoint 进度，和训练一样，完全适合 Spot。</li>
+<li><strong>异步/消息队列推理</strong>：请求先进 MQ（Kafka/RabbitMQ），Worker 从队列消费处理，结果异步返回。Worker 挂了请求不丢，重新入队给其他 Worker；Spot 作为 Worker 池非常合适。</li>
+<li><strong>在线推理 Spot 弹性池（Warm Pool）</strong>：主力容量用 On-Demand 保证 SLO（按 P50-P70 流量预留），额外用 Spot 实例处理流量尖峰。Spot 收到回收信号时，先从 LB 摘流量（readiness fail），处理完正在处理的请求（graceful connection draining），再退出。Spot 加进来提升吞吐，被回收时只是降容不宕机。</li>
+</ol></div>
+<div class="qa-summary">面试要点：不要直接说&quot;可以&quot;或&quot;不可以&quot;，要分三种场景（在线SLO/离线batch/弹性补充）分别回答，讲清楚每种场景的原因和做法。</div>
+</div>
+</div>
+</div>
+<h2>关联模块</h2>
+<ul><li><code>批处理与 Gang 调度</code>：Gang Scheduling、Backfill，分布式作业调度</li><li><code>Kubernetes 调度器扩展</code>：Preemption、PriorityClass、调度框架，K8s 抢占与驱逐</li><li><code>分布式训练容错</code>：Checkpoint、弹性训练、故障恢复</li><li><code>集群管理：容错</code>：更广泛的容错机制设计</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="scheduling-tabs::12-spot-instance-scheduling-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="scheduling-tabs::12-spot-instance-scheduling-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">调度架构演进</span></button></div></div></article></div></section>
   </main>
 </div>
 <footer class="site-footer">

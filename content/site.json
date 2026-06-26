@@ -2,54 +2,19 @@
   "title": "doctor-study",
   "subtitle": "毕业准备 · 面试 / 项目 / 简历 / 学习笔记总入口",
   "nav": [
-    {
-      "title": "首页",
-      "href": "index.html"
-    },
-    {
-      "title": "论文工作",
-      "href": "pages/ai-infra/papers/index.html"
-    },
-    {
-      "title": "GPU",
-      "href": "pages/ai-infra/gpu/index.html"
-    },
-    {
-      "title": "Transformer 基础",
-      "href": "pages/ai-infra/transformer/index.html"
-    },
-    {
-      "title": "LLM 推理系统",
-      "href": "pages/ai-infra/llm-inference/index.html"
-    },
-    {
-      "title": "Kubernetes 核心",
-      "href": "pages/ai-infra/kubernetes/index.html"
-    },
-    {
-      "title": "任务调度理论",
-      "href": "pages/ai-infra/scheduling/index.html"
-    },
-    {
-      "title": "分布式训练",
-      "href": "pages/ai-infra/distributed-training/index.html"
-    },
-    {
-      "title": "GPU 集群管理",
-      "href": "pages/ai-infra/cluster-management/index.html"
-    },
-    {
-      "title": "性能预测与建模",
-      "href": "pages/ai-infra/performance-prediction/index.html"
-    },
-    {
-      "title": "计算机基础",
-      "href": "pages/cs-basics/index.html"
-    },
-    {
-      "title": "AI Agent",
-      "href": "pages/ai-infra/agent/index.html"
-    }
+    {"title": "首页", "href": "index.html"},
+    {"title": "论文工作", "href": "pages/ai-infra/papers/index.html"},
+    {"title": "GPU", "href": "pages/ai-infra/gpu/index.html"},
+    {"title": "Transformer 基础", "href": "pages/ai-infra/transformer/index.html"},
+    {"title": "LLM 推理系统", "href": "pages/ai-infra/llm-inference/index.html"},
+    {"title": "Kubernetes 核心", "href": "pages/ai-infra/kubernetes/index.html"},
+    {"title": "任务调度理论", "href": "pages/ai-infra/scheduling/index.html"},
+    {"title": "分布式训练", "href": "pages/ai-infra/distributed-training/index.html"},
+    {"title": "GPU 集群管理", "href": "pages/ai-infra/cluster-management/index.html"},
+    {"title": "性能预测与建模", "href": "pages/ai-infra/performance-prediction/index.html"},
+    {"title": "计算机基础", "href": "pages/cs-basics/index.html"},
+    {"title": "Go 语言", "href": "pages/cs-basics/golang/index.html"},
+    {"title": "AI Agent", "href": "pages/ai-infra/agent/index.html"}
   ],
   "topics": [
     {
@@ -58,11 +23,7 @@
       "source": "content/ai-infra/papers/topic.json",
       "output": "pages/ai-infra/papers/index.html",
       "description": "Maestro 与 DeepShare 两篇论文工作的背景、系统设计、实验结果和高频问答。",
-      "tags": [
-        "papers",
-        "maestro",
-        "deepshare"
-      ],
+      "tags": ["papers", "maestro", "deepshare"],
       "color": "c1"
     },
     {
@@ -71,11 +32,7 @@
       "source": "content/ai-infra/gpu/topic.json",
       "output": "pages/ai-infra/gpu/index.html",
       "description": "GPU 架构、A100/H100/H200 对比、HBM/NVLink、MIG、MPS、时间片、CUDA VMM 等硬件与资源复用基础。",
-      "tags": [
-        "gpu",
-        "hardware",
-        "sharing"
-      ],
+      "tags": ["gpu", "hardware", "sharing"],
       "color": "c2"
     },
     {
@@ -84,11 +41,7 @@
       "source": "content/ai-infra/transformer/topic.json",
       "output": "pages/ai-infra/transformer/index.html",
       "description": "Transformer 整体架构、Embedding/位置编码/Tokenizer、Self-Attention 与 Multi-Head、手撕代码、梯度稳定性与面试高频题。",
-      "tags": [
-        "transformer",
-        "attention",
-        "tokenizer"
-      ],
+      "tags": ["transformer", "attention", "tokenizer"],
       "color": "c5"
     },
     {
@@ -96,12 +49,8 @@
       "slug": "ai-infra/llm-inference",
       "source": "content/ai-infra/llm-inference/topic.json",
       "output": "pages/ai-infra/llm-inference/index.html",
-      "description": "Prefill/Decode、TTFT/TPOT、KV 缓存、PagedAttention、FlashAttention、连续批处理、投机解码与推理引擎。",
-      "tags": [
-        "llm",
-        "inference",
-        "kv-cache"
-      ],
+      "description": "Prefill/Decode、TTFT/TPOT、KV 缓存、PagedAttention、FlashAttention、连续批处理、投机解码、量化、多 LoRA 服务与推理引擎。",
+      "tags": ["llm", "inference", "kv-cache", "quantization"],
       "color": "c1"
     },
     {
@@ -109,11 +58,8 @@
       "slug": "ai-infra/kubernetes",
       "source": "content/ai-infra/kubernetes/topic.json",
       "output": "pages/ai-infra/kubernetes/index.html",
-      "description": "控制面、数据面、Scheduling Framework、调度队列、抢占、QoS、Device Plugin 与 Informer。",
-      "tags": [
-        "k8s",
-        "scheduler"
-      ],
+      "description": "架构、API 对象、调度框架、GPU Device Plugin、etcd Raft/MVCC、Informer 机制、CNI/kube-proxy、API Server 链路、Karpenter 与节点生命周期。",
+      "tags": ["k8s", "scheduler", "etcd", "cni"],
       "color": "c3"
     },
     {
@@ -121,11 +67,8 @@
       "slug": "ai-infra/scheduling",
       "source": "content/ai-infra/scheduling/topic.json",
       "output": "pages/ai-infra/scheduling/index.html",
-      "description": "FIFO/SJF/SRTF/EDF、DRF、Max-Min Fairness、Gang scheduling、Bin Packing、Backfill 与抢占代价。",
-      "tags": [
-        "scheduling",
-        "theory"
-      ],
+      "description": "FIFO/SJF/EDF、DRF、Gang Scheduling、Bin Packing、排队论（Little's Law/M/M/1）、调度架构演进（Borg/Mesos/Omega/Firmament）与 Spot 实例调度。",
+      "tags": ["scheduling", "theory", "queueing", "borg"],
       "color": "c4"
     },
     {
@@ -134,11 +77,7 @@
       "source": "content/ai-infra/distributed-training/topic.json",
       "output": "pages/ai-infra/distributed-training/index.html",
       "description": "数据并行、张量并行、流水线并行、专家并行、ZeRO、梯度同步与通信优化等训练核心知识。",
-      "tags": [
-        "training",
-        "parallelism",
-        "zero"
-      ],
+      "tags": ["training", "parallelism", "zero"],
       "color": "c5"
     },
     {
@@ -147,11 +86,7 @@
       "source": "content/ai-infra/cluster-management/topic.json",
       "output": "pages/ai-infra/cluster-management/index.html",
       "description": "Volcano、Yunikorn、Kueue、多租户配额、GPU 拓扑与 NCCL、故障恢复与 Checkpoint。",
-      "tags": [
-        "cluster",
-        "volcano",
-        "fault-tolerance"
-      ],
+      "tags": ["cluster", "volcano", "fault-tolerance"],
       "color": "c1"
     },
     {
@@ -160,10 +95,7 @@
       "source": "content/ai-infra/performance-prediction/topic.json",
       "output": "pages/ai-infra/performance-prediction/index.html",
       "description": "树模型 vs 深度学习、特征工程、回归/分类指标、安全裕度、在线校准和 Concept Drift。",
-      "tags": [
-        "prediction",
-        "ml-for-systems"
-      ],
+      "tags": ["prediction", "ml-for-systems"],
       "color": "c2"
     },
     {
@@ -171,26 +103,26 @@
       "slug": "cs-basics",
       "source": "content/cs-basics/topic.json",
       "output": "pages/cs-basics/index.html",
-      "description": "统一整理操作系统、组成原理、网络、Linux/容器、编程工程、分布式与 AI Infra 基础，按左侧目录切换复习。",
-      "tags": [
-        "cs-basics",
-        "os",
-        "networking"
-      ],
+      "description": "操作系统、计算机网络（TCP/UDP/拥塞控制/QUIC）、C++ 值类别/STL/并发/现代特性、Go 语言、数据结构与算法、AI 框架基础。",
+      "tags": ["cs-basics", "os", "networking", "cpp", "golang"],
       "color": "c4"
+    },
+    {
+      "title": "Go 语言基础与工程",
+      "slug": "cs-basics/golang",
+      "source": "content/cs-basics/golang/topic.json",
+      "output": "pages/cs-basics/golang/index.html",
+      "description": "GMP 调度模型、M:N 并发、CSP 与 Channel、三色标记 GC、Interface 鸭式类型、error/panic/recover、go modules、pprof 与面试高频题。",
+      "tags": ["golang", "gmp", "concurrency", "gc", "interview"],
+      "color": "c3"
     },
     {
       "title": "AI Agent",
       "slug": "ai-infra/agent",
       "source": "content/ai-infra/agent/topic.json",
       "output": "pages/ai-infra/agent/index.html",
-      "description": "ReAct、Plan-Execute、CoT/ToT、记忆系统、工具调用、Function Calling、RAG、多 Agent 协作、LangChain/LangGraph 与面试高频题。",
-      "tags": [
-        "agent",
-        "llm",
-        "react",
-        "rag"
-      ],
+      "description": "ReAct、Reflexion、ToT、LATS、记忆系统、工具调用与 Function Calling、高级 RAG（分块/混合检索/重排/GraphRAG）、多 Agent 协作与面试高频题。",
+      "tags": ["agent", "llm", "react", "rag"],
       "color": "c1"
     }
   ]

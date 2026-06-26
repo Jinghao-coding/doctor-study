@@ -32,12 +32,12 @@ Infra 面试里的容器运行时问题，重点不是“Docker 命令怎么用�
 ## 运行时链路图
 
 <figure class="figure">
-<img src="../../resources/images/container-runtime/containerd-runtime-chain.svg" alt="Kubernetes 到 containerd、shim、runc 和 Linux kernel 的容器运行时链路" loading="lazy">
+<img src="../../../resources/images/container-runtime/containerd-runtime-chain.svg" alt="Kubernetes 到 containerd、shim、runc 和 Linux kernel 的容器运行时链路" loading="lazy">
 <figcaption>本站整理的节点侧运行时链路：kubelet 通过 CRI 调 containerd，containerd 管 sandbox、镜像、snapshot 和 task，shim 托管容器进程，runc 调 Linux kernel 创建容器。</figcaption>
 </figure>
 
 <figure class="figure">
-<img src="../../resources/images/container-runtime/containerd-cri-architecture.png" alt="containerd 官方 CRI plugin architecture" loading="lazy">
+<img src="../../../resources/images/container-runtime/containerd-cri-architecture.png" alt="containerd 官方 CRI plugin architecture" loading="lazy">
 <figcaption>containerd 官方 CRI plugin 架构图。来源：containerd docs, Architecture of The CRI Plugin, CC-BY-4.0。</figcaption>
 </figure>
 

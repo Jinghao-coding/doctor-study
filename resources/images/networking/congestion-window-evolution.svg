@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs>
+    <style>.t{font-size:13px;font-weight:600}.l{font-size:11px;fill:#444}.s{font-size:10px;fill:#888}.ax{stroke:#333;stroke-width:1.5}</style>
+  </defs>
+  <text x="375" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a2e">TCP 拥塞窗口演进 (Tahoe → Reno → CUBIC → BBR)</text>
+  <line x1="80" y1="260" x2="700" y2="260" class="ax" marker-end="url(#a)"/>
+  <line x1="80" y1="260" x2="80" y2="50" class="ax" marker-end="url(#a)"/>
+  <text x="710" y="265" class="l">RTT / 时间</text>
+  <text x="45" y="50" class="l">cwnd</text>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#333"/></marker></defs>
+  <text x="80" y="280" class="s">0</text>
+  <line x1="80" y1="250" x2="700" y2="250" stroke="#eee"/>
+  <polyline points="100,245 120,230 140,200 160,170 180,140 200,115 220,105 230,245" fill="none" stroke="#dc3545" stroke-width="2"/>
+  <text x="230" y="258" text-anchor="middle" class="s" fill="#dc3545">丢包</text>
+  <text x="160" y="130" class="l" fill="#dc3545">慢启动(指数)</text>
+  <polyline points="260,245 275,225 290,210 310,195 330,185 350,178 370,175 380,180 385,180 385,245" fill="none" stroke="#28a745" stroke-width="2"/>
+  <text x="310" y="165" class="l" fill="#28a745">拥塞避免(线性)</text>
+  <text x="385" y="258" text-anchor="middle" class="s" fill="#28a745">丢包</text>
+  <path d="M420,245 C440,225 460,180 500,150 C540,135 560,140 580,160 C600,180 620,170 650,155" fill="none" stroke="#0066cc" stroke-width="2"/>
+  <text x="530" y="130" class="l" fill="#0066cc">CUBIC 三次函数增长</text>
+  <path d="M420,200 C430,180 440,160 460,150 L460,150 L500,148 L540,148 L580,150" fill="none" stroke="#e6a700" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="500" y="138" text-anchor="middle" class="s" fill="#856404">BBR:BDP 附近平稳</text>
+  <rect x="100" y="60" width="160" height="35" rx="5" fill="#f8d7da" stroke="#dc3545"/>
+  <text x="180" y="75" text-anchor="middle" class="l" fill="#721c24">Tahoe:cwnd=1 慢启动重传</text>
+  <text x="180" y="89" text-anchor="middle" class="s">ssthresh = cwnd/2</text>
+  <rect x="280" y="60" width="170" height="35" rx="5" fill="#d4edda" stroke="#28a745"/>
+  <text x="365" y="75" text-anchor="middle" class="l" fill="#155724">Reno:Fast Retransmit+Recovery</text>
+  <text x="365" y="89" text-anchor="middle" class="s">不回 1,ssthresh=cwnd/2</text>
+  <rect x="470" y="60" width="250" height="35" rx="5" fill="#cce5ff" stroke="#0066cc"/>
+  <text x="595" y="75" text-anchor="middle" class="l" fill="#004085">CUBIC:与 RTT 无关的三次曲线;BBR:基于带宽×RTT 模型</text>
+  <text x="595" y="89" text-anchor="middle" class="s">Linux 默认 CUBIC;长肥管道优选 BBR</text>
+</svg>

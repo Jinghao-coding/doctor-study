@@ -1,13 +1,8 @@
 {
   "title": "LLM 推理系统",
-  "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 性能优化 · 引擎选型",
+  "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 量化 · 投机解码 · 多 LoRA · 性能优化 · 引擎选型",
   "kicker": "Serving System",
-  "tags": [
-    "llm",
-    "inference",
-    "kv-cache",
-    "serving"
-  ],
+  "tags": ["llm", "inference", "kv-cache", "serving", "quantization", "speculative"],
   "output": "pages/ai-infra/llm-inference/index.html",
   "layout": [
     {
@@ -125,17 +120,33 @@
               "time": 15
             },
             {
-              "title": "优化技术",
+              "title": "优化技术概览",
               "description": "Batching、量化、投机解码、Prefix Cache",
               "file": "07-optimization-techniques.md",
               "level": "精通",
               "priority": 1,
               "time": 20
+            },
+            {
+              "title": "投机解码",
+              "description": "Draft+Verify、拒绝采样、Medusa/EAGLE/Lookahead、Tree Attention",
+              "file": "12-speculative-decoding.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
+            },
+            {
+              "title": "模型量化",
+              "description": "W4A16/W8A8、GPTQ/AWQ/SmoothQuant/FP8、per-tensor/channel/group、KV cache 量化",
+              "file": "13-quantization.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 22
             }
           ]
         },
         {
-          "title": "引擎与面试",
+          "title": "多模型服务与引擎",
           "items": [
             {
               "title": "推理引擎对比",
@@ -144,6 +155,14 @@
               "level": "精通",
               "priority": 2,
               "time": 18
+            },
+            {
+              "title": "多 LoRA 服务",
+              "description": "LoRA 原理、Punica BGMV、S-LoRA、权重管理、vLLM 多 LoRA 配置",
+              "file": "17-lora-serving.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 25
             },
             {
               "title": "系统设计：多模型 LLM 推理",

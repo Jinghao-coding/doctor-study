@@ -1,0 +1,38 @@
+{
+  "title": "Go 语言基础与工程",
+  "subtitle": "GMP 调度 · 并发模型 · 内存 GC · Interface · 错误处理 · 面试高频题",
+  "kicker": "Go Language",
+  "tags": ["golang", "concurrency", "gmp", "gc", "interview"],
+  "output": "pages/cs-basics/golang/index.html",
+  "layout": [{
+    "type": "tabs",
+    "id": "golang-tabs",
+    "title": "Go 语言基础与工程",
+    "groups": [
+      {
+        "title": "语言基础",
+        "items": [
+          {"title": "Go 语言概览与特性", "description": "设计哲学、与 C++/Java/Python 对比、适用场景", "file": "01-overview.md", "level": "基础", "priority": 1, "time": 12},
+          {"title": "类型系统与 Interface", "description": "值语义、struct、interface 鸭式类型、类型断言、nil interface 陷阱", "file": "02-types-interfaces.md", "level": "基础", "priority": 1, "time": 15},
+          {"title": "错误处理与 Panic", "description": "error 接口、errors.Is/As、panic/recover、defer 执行顺序", "file": "03-error-panic.md", "level": "基础", "priority": 1, "time": 12}
+        ]
+      },
+      {
+        "title": "并发编程",
+        "items": [
+          {"title": "GMP 调度模型", "description": "Goroutine、M:N 调度、G/M/P 三要素、work-stealing、syscall 处理", "file": "04-gmp-scheduler.md", "level": "精通", "priority": 1, "time": 25},
+          {"title": "Channel 与并发同步", "description": "CSP 模型、buffered/unbuffered channel、select、sync.Mutex/RWMutex/WaitGroup/Once、context 取消", "file": "05-concurrency.md", "level": "进阶", "priority": 1, "time": 25},
+          {"title": "并发模式与坑点", "description": "worker pool、pipeline、fan-in/fan-out、for range 闭包坑、goroutine 泄漏、nil channel 阻塞", "file": "06-concurrency-patterns.md", "level": "精通", "priority": 1, "time": 20}
+        ]
+      },
+      {
+        "title": "内存与工程",
+        "items": [
+          {"title": "内存管理与 GC", "description": "TCMalloc 风格内存分配、三色标记清除 GC、写屏障、STW、逃逸分析", "file": "07-memory-gc.md", "level": "精通", "priority": 1, "time": 22},
+          {"title": "Go 工程实践", "description": "go modules、项目结构、单元测试 benchmark、pprof 性能分析、常见面试题汇总", "file": "08-engineering-qa.md", "level": "进阶", "priority": 2, "time": 20}
+        ]
+      }
+    ]
+  }],
+  "sections": []
+}

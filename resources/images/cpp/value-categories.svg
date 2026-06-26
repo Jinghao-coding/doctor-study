@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <defs>
+    <style>.t{font-size:14px;font-weight:600;fill:#1a1a2e}.l{font-size:12px;fill:#333}.s{font-size:10px;fill:#888}</style>
+  </defs>
+  <text x="300" y="25" text-anchor="middle" class="t">C++ 值类别 (Value Categories)</text>
+  <rect x="40" y="50" width="520" height="80" rx="12" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="300" y="75" text-anchor="middle" class="t">glvalue (generalized lvalue)</text>
+  <text x="300" y="95" text-anchor="middle" class="s">有身份(identity),可以被定位(有地址)</text>
+  <text x="300" y="115" text-anchor="middle" class="s">可以多态,可以是不完整类型</text>
+  <rect x="60" y="150" width="230" height="70" rx="10" fill="#d4edda" stroke="#28a745" stroke-width="2"/>
+  <text x="175" y="173" text-anchor="middle" class="t">lvalue</text>
+  <text x="175" y="192" text-anchor="middle" class="s">有身份 + 不可被移动</text>
+  <text x="175" y="208" text-anchor="middle" class="s">变量名、`str[0]`、`*ptr`、`++x`</text>
+  <rect x="310" y="150" width="230" height="70" rx="10" fill="#fff3cd" stroke="#e6a700" stroke-width="2"/>
+  <text x="425" y="173" text-anchor="middle" class="t">xvalue (expiring)</text>
+  <text x="425" y="192" text-anchor="middle" class="s">有身份 + 可被移动</text>
+  <text x="425" y="208" text-anchor="middle" class="s">`std::move(x)`、返回右值引用的函数调用</text>
+  <rect x="170" y="240" width="260" height="50" rx="10" fill="#f8d7da" stroke="#dc3545" stroke-width="2"/>
+  <text x="300" y="262" text-anchor="middle" class="t">prvalue (pure rvalue)</text>
+  <text x="300" y="280" text-anchor="middle" class="s">无身份 + 可被移动;`42`、`x+y`、lambda、临时对象</text>
+  <line x1="175" y1="130" x2="175" y2="150" stroke="#28a745" stroke-width="1.5"/>
+  <line x1="425" y1="130" x2="425" y2="150" stroke="#e6a700" stroke-width="1.5"/>
+  <line x1="300" y1="130" x2="300" y2="240" stroke="#dc3545" stroke-width="1.5" stroke-dasharray="4"/>
+  <rect x="460" y="45" width="120" height="20" rx="4" fill="#fff" stroke="#4a6fa5"/>
+  <text x="520" y="59" text-anchor="middle" class="s">rvalue = prvalue ∪ xvalue</text>
+  <path d="M470,65 Q550,120 535,185" stroke="#999" stroke-width="1" fill="none" stroke-dasharray="3"/>
+  <path d="M520,65 Q520,120 450,185" stroke="#999" stroke-width="1" fill="none" stroke-dasharray="3"/>
+</svg>

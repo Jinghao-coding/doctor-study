@@ -952,6 +952,8 @@ p { margin: 0.6rem 0; color: var(--txt); line-height: 1.75; }
   margin: 1.15rem 0;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--t-fast);
+  min-width: 0;
+  overflow-x: auto;
 }
 .card:hover { box-shadow: var(--shadow-md); }
 
@@ -1039,12 +1041,39 @@ table td {
   border-bottom: 1px solid var(--border);
   vertical-align: top;
   color: var(--txt);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+table td code {
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 table tr:last-child td { border-bottom: none; }
 table tr:last-child td:first-child { border-radius: 0 0 0 var(--r-lg); }
 table tr:last-child td:last-child { border-radius: 0 0 var(--r-lg) 0; }
 table tr:nth-child(even) { background: var(--soft); }
 table tr:hover { background: var(--soft-2); }
+
+/* Wide tables get horizontal scroll wrapper */
+.table-scroll {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--card-solid);
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll > table {
+  margin: 0;
+  min-width: 100%;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+.table-scroll > table th:first-child { border-radius: var(--r-lg) 0 0 0; }
+.table-scroll > table th:last-child { border-radius: 0 var(--r-lg) 0 0; }
+.table-scroll > table tr:last-child td:first-child { border-radius: 0 0 0 var(--r-lg); }
+.table-scroll > table tr:last-child td:last-child { border-radius: 0 0 var(--r-lg) 0; }
 
 /* Compact table variant */
 .table-sm { font-size: 0.82rem; }
@@ -1074,9 +1103,11 @@ pre {
   padding: 1.1rem 1.2rem;
   margin: 1rem 0;
   overflow-x: auto;
+  max-width: 100%;
   font-size: 0.84rem;
   line-height: 1.6;
   box-shadow: var(--shadow-xs);
+  -webkit-overflow-scrolling: touch;
 }
 pre code {
   background: none;
