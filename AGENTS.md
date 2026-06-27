@@ -38,7 +38,7 @@ source .venv/bin/activate
 4. `index.html` 和 `pages/**/*.html` 是生成产物，但需要提交到 git，方便 GitHub 静态展示。
 5. 删除主题或章节时，要同时删除内容源、配置注册项和旧生成产物。
 6. 不要提交 `.venv/`、`__pycache__/`、`*.pyc` 等本地环境文件。
-7. 未经用户要求，不要自动 commit、push 或重写历史。
+7. 每次实质性修改完成并通过验证后，必须将变更 commit 并 push 到远程 GitHub（`main` 分支），保持远程仓库始终是最新状态。commit message 使用中文，简要概括本次改动内容。禁止提交 `.venv/`、`__pycache__/`、`*.pyc` 等本地环境文件。
 
 ## 当前架构
 
@@ -505,7 +505,8 @@ uv run python -m http.server 8000
 
 ## Git 与发布规则
 
-- 用户没有明确要求时，不要自动 commit 或 push。
+- 修改完成、构建验证通过后，主动执行 `git add -A && git commit -m "中文描述" && git push`，推送到远程 `main` 分支。
+- commit message 使用中文，简洁概括本次改动要点（如"feat: 补充论文面试问答"、"fix: 修复表格溢出"）。
 - 提交前先查看：
 
 ```bash
@@ -516,6 +517,7 @@ git diff --stat
 - `.venv/`、`__pycache__/`、`*.pyc` 不应出现在 git 中。
 - `content/`、`templates/`、`tools/`、`assets/`、`resources/`、`index.html`、`pages/` 都需要提交。
 - `pages/` 虽然是生成产物，但当前静态站点展示依赖它，因此不要加入 `.gitignore`。
+- 不要运行 `git reset --hard`、`git push --force` 等破坏性命令，除非用户明确要求。
 
 ## 禁止事项
 
@@ -523,7 +525,7 @@ git diff --stat
 - 不要把具体学习内容写进 `templates/`。
 - 不要让单个 Markdown 文件无限膨胀；内容多时继续拆文件。
 - 不要删除用户未确认要删除的内容。
-- 不要运行 `git reset --hard`、`git checkout --` 等破坏性命令，除非用户明确要求。
+- 不要运行 `git reset --hard`、`git push --force` 等破坏性命令，除非用户明确要求。
 - 不要提交 `.venv/` 或 Python 缓存。
 
 ## Agent 标准工作流
@@ -534,4 +536,5 @@ git diff --stat
 4. 定位并编辑 `content/`、`templates/`、`assets/` 或 `tools/` 中的最小必要文件。
 5. 运行 `uv run python tools/build_site.py`。
 6. 检查生成页面、内部链接和 `git status --short`。
-7. 用简短总结告诉用户改了什么、如何预览、是否需要 commit / push。
+7. 用简短总结告诉用户改了什么、如何预览。
+8. 执行 `git add -A && git commit -m "中文描述" && git push`，将所有变更推送到远程 `main` 分支。
