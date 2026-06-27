@@ -24,7 +24,8 @@
 <p>端到端推理链路要从用户请求进入服务开始，一直讲到 token 流式返回和资源释放。自回归推理是 GPT 类语言模型的基本范式，Transformer 提供 Attention 和 FFN 的计算骨架：先 Prefill 并行读完整 Prompt（compute-bound），再 Decode 逐 token 生成（memory-bound）。</p>
 <h3>完整推理链路概览</h3>
 <p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
-<img src="../../../resources/images/llm-inference/e2e-inference-pipeline.svg" alt="LLM 端到端推理链路" style="width:100%;max-width:960px;margin:12px 0 20px 0;border-radius:8px;" loading="lazy"/>
+<img src="../../../resources/images/llm-inference/e2e-inference-pipeline.svg" alt="LLM 端到端推理链路" style="width:100%;max-width:960px;margin:12px 0 8px 0;border-radius:8px;" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 20px 0;">示意图：6 阶段推理端到端链路（Prefill/Decode 两阶段、KV Cache 增长、SLO 指标标注）</p>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">① 请求封装</div><div class="flow-desc">组织 system/user/assistant 消息 + generation params</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">② Tokenization</div><div class="flow-desc">BPE/tiktoken 分词 → token IDs + BOS/EOS/chat template</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">③ 推理调度</div><div class="flow-desc">排队、优先级、Continuous Batching、KV Cache 预算、Chunked Prefill</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">④ Prefill</div><div class="flow-desc">并行处理完整 prompt，建立初始 KV Cache → compute-bound → TTFT</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">⑤ Decode</div><div class="flow-desc">逐 token 自回归循环，持续更新 KV Cache → memory-bound → TPOT</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">⑥ 采样返回</div><div class="flow-desc">greedy/top-k/top-p 采样 → detokenize → SSE/WebSocket 流式输出</div></div></div>
 <div class="card card-m">
 <h3>核心定位：为什么推理是&quot;两阶段&quot;而不是&quot;一阶段&quot;？</h3>
@@ -48,7 +49,9 @@
 <li>KV 缓存管理</li>
 <li>流式返回</li>
 </ul>
-<p>从系统视角看：用户输入 → prompt 模板展开 → tokenization → 请求调度/batching → 送入模型。vLLM 架构至少有 1 个 API server 负责 HTTP 和 tokenization，1 个 engine core 负责 scheduler 和 KV cache 管理，N 个 GPU worker 执行前向计算。</p>
+<p>从系统视角看：用户输入 → prompt 模板展开 → tokenization → 请求调度/batching → 送入模型。vLLM 架构至少有 1 个 API server 负责 HTTP 和 tokenization，1 个 engine core 负责 scheduler 和 KV cache 管理，N 个 GPU worker 执行前向计算（如下图，单节点 TP=4 共 6 个进程）。</p>
+<img src="../../../resources/images/llm-inference/vllm-v1-arch-4gpu.png" alt="vLLM V1 单节点 4 卡进程架构" style="width:100%;max-width:800px;margin:12px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">来源：vLLM 官方文档 Architecture Overview（docs.vllm.ai）</p>
 <div class="card card-s">
 <h3>Continuous Batching（动态批处理/连续批处理）：推理吞吐的核心来源</h3>
 <p>传统 <strong>Static Batching</strong>：等一批请求都到齐了才一起推理，这一批中所有请求都生成结束后才接入下一批。问题是&quot;等最慢的请求&quot;——短请求被长请求拖尾，GPU 在等待期间空闲。</p>
@@ -1270,6 +1273,10 @@ for each column W[:, i]:
 <div class="card card-s">
 <h3>子系统二：KV Cache 内存管理（PagedAttention 详解）</h3>
 <p>KV Cache 是显存第一稀缺资源。PagedAttention 把 KV 像 OS 虚拟内存一样按 block 管理，把碎片率从 60-80% 压到 &lt; 4%。</p>
+
+<img src="../../../resources/images/llm-inference/pagedattention-fig2-memory-waste.png" alt="PagedAttention 论文：不同推理系统 KV Cache 内存浪费对比" style="width:100%;max-width:640px;margin:8px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 12px 0;">来源：PagedAttention 论文（SOSP&#x27;23）Figure 2：现有系统 KV Cache 利用率仅 20-38%</p>
+
 <p><strong>核心数据结构：</strong></p>
 <ul>
 <li><code>BlockManager</code>：维护物理 block 池（gpu_blocks、cpu_blocks），用 free list 管理空闲块，引用计数管理共享。</li>
@@ -1968,6 +1975,10 @@ response = client.chat.completions.create(
 <div class="qa-q">Q1: 怎么估算一个 LLM 推理服务的显存需求？</div>
 <div class="qa-a">
 <p><strong>显存 = 模型权重 + KV Cache + 激活/Workspace + CUDA Graph 开销</strong></p>
+
+<img src="../../../resources/images/llm-inference/pagedattention-fig1-memory-layout.png" alt="A100 GPU 上 LLM 推理显存布局（PagedAttention 论文 Figure 1）" style="width:100%;max-width:640px;margin:8px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 12px 0;">来源：PagedAttention 论文（SOSP&#x27;23）Figure 1：13B 模型在 A100-40GB 上权重占 65%、KV Cache 约 30%</p>
+
 <div class="qa-section"><div class="qa-section-title">模型权重</div><p>参数量 × bytes_per_param。BF16/FP16 是 2 bytes/param；INT8/W8A8 是 1 byte/param；W4A16/AWQ 是约 0.5 bytes/param + 少量元数据。例：70B BF16 ≈ 140GB，70B W4A16 ≈ 35GB + overhead。</p></div>
 <div class="qa-section"><div class="qa-section-title">KV Cache</div><p>2 × layers × kv_heads × head_dim × seq_len × bytes × batch。Llama-3-70B：80层, 8 KV heads(GQA), head_dim=128，BF16 KV = 2×80×8×128×2 bytes/token = 327,680 bytes/token ≈ 320KB/token。batch=64, seq=4096 → 320KB × 64 × 4096 ≈ 80GB。FP8 KV 减半到 ~40GB。</p></div>
 <div class="qa-section"><div class="qa-section-title">激活/Workspace</div><p>Prefill 阶段临时激活，约 1-5GB 取决于 batch 和 seq；Decode 阶段很小。FlashAttention 的 workspace 通常几百 MB。</p></div>

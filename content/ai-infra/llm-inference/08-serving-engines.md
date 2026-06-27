@@ -31,6 +31,10 @@
 <div class="card card-s">
 <h3>子系统二：KV Cache 内存管理（PagedAttention 详解）</h3>
 <p>KV Cache 是显存第一稀缺资源。PagedAttention 把 KV 像 OS 虚拟内存一样按 block 管理，把碎片率从 60-80% 压到 &lt; 4%。</p>
+
+<img src="../../../resources/images/llm-inference/pagedattention-fig2-memory-waste.png" alt="PagedAttention 论文：不同推理系统 KV Cache 内存浪费对比" style="width:100%;max-width:640px;margin:8px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 12px 0;">来源：PagedAttention 论文（SOSP'23）Figure 2：现有系统 KV Cache 利用率仅 20-38%</p>
+
 <p><strong>核心数据结构：</strong></p>
 <ul>
 <li><code>BlockManager</code>：维护物理 block 池（gpu_blocks、cpu_blocks），用 free list 管理空闲块，引用计数管理共享。</li>

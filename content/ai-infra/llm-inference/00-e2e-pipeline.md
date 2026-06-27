@@ -5,7 +5,8 @@
 <h3>完整推理链路概览</h3>
 <p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
 
-<img src="../../../resources/images/llm-inference/e2e-inference-pipeline.svg" alt="LLM 端到端推理链路" style="width:100%;max-width:960px;margin:12px 0 20px 0;border-radius:8px;" loading="lazy"/>
+<img src="../../../resources/images/llm-inference/e2e-inference-pipeline.svg" alt="LLM 端到端推理链路" style="width:100%;max-width:960px;margin:12px 0 8px 0;border-radius:8px;" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 20px 0;">示意图：6 阶段推理端到端链路（Prefill/Decode 两阶段、KV Cache 增长、SLO 指标标注）</p>
 
 ```flow
 ① 请求封装 | 组织 system/user/assistant 消息 + generation params
@@ -40,7 +41,10 @@
 <li>KV 缓存管理</li>
 <li>流式返回</li>
 </ul>
-<p>从系统视角看：用户输入 → prompt 模板展开 → tokenization → 请求调度/batching → 送入模型。vLLM 架构至少有 1 个 API server 负责 HTTP 和 tokenization，1 个 engine core 负责 scheduler 和 KV cache 管理，N 个 GPU worker 执行前向计算。</p>
+<p>从系统视角看：用户输入 → prompt 模板展开 → tokenization → 请求调度/batching → 送入模型。vLLM 架构至少有 1 个 API server 负责 HTTP 和 tokenization，1 个 engine core 负责 scheduler 和 KV cache 管理，N 个 GPU worker 执行前向计算（如下图，单节点 TP=4 共 6 个进程）。</p>
+
+<img src="../../../resources/images/llm-inference/vllm-v1-arch-4gpu.png" alt="vLLM V1 单节点 4 卡进程架构" style="width:100%;max-width:800px;margin:12px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">来源：vLLM 官方文档 Architecture Overview（docs.vllm.ai）</p>
 
 <div class="card card-s">
 <h3>Continuous Batching（动态批处理/连续批处理）：推理吞吐的核心来源</h3>

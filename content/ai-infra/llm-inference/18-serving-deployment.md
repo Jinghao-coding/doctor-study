@@ -161,6 +161,10 @@
 <div class="qa-q">Q1: 怎么估算一个 LLM 推理服务的显存需求？</div>
 <div class="qa-a">
 <p><strong>显存 = 模型权重 + KV Cache + 激活/Workspace + CUDA Graph 开销</strong></p>
+
+<img src="../../../resources/images/llm-inference/pagedattention-fig1-memory-layout.png" alt="A100 GPU 上 LLM 推理显存布局（PagedAttention 论文 Figure 1）" style="width:100%;max-width:640px;margin:8px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 12px 0;">来源：PagedAttention 论文（SOSP'23）Figure 1：13B 模型在 A100-40GB 上权重占 65%、KV Cache 约 30%</p>
+
 <div class="qa-section"><div class="qa-section-title">模型权重</div><p>参数量 × bytes_per_param。BF16/FP16 是 2 bytes/param；INT8/W8A8 是 1 byte/param；W4A16/AWQ 是约 0.5 bytes/param + 少量元数据。例：70B BF16 ≈ 140GB，70B W4A16 ≈ 35GB + overhead。</p></div>
 <div class="qa-section"><div class="qa-section-title">KV Cache</div><p>2 × layers × kv_heads × head_dim × seq_len × bytes × batch。Llama-3-70B：80层, 8 KV heads(GQA), head_dim=128，BF16 KV = 2×80×8×128×2 bytes/token = 327,680 bytes/token ≈ 320KB/token。batch=64, seq=4096 → 320KB × 64 × 4096 ≈ 80GB。FP8 KV 减半到 ~40GB。</p></div>
 <div class="qa-section"><div class="qa-section-title">激活/Workspace</div><p>Prefill 阶段临时激活，约 1-5GB 取决于 batch 和 seq；Decode 阶段很小。FlashAttention 的 workspace 通常几百 MB。</p></div>
