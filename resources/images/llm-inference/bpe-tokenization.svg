@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+  <defs>
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#4a5568"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">BPE（Byte-Pair Encoding）分词：从字符到 Subword 的迭代合并</text>
+  <text x="450" y="50" text-anchor="middle" font-size="11" fill="#718096">核心思想：从字符出发，每次合并语料中出现频率最高的相邻 token 对，直到词汇表达目标大小</text>
+
+  <!-- ===== TOP: Three granularity comparison ===== -->
+  <rect x="30" y="68" width="840" height="100" rx="10" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1" filter="url(#sh)"/>
+  <text x="50" y="88" font-size="12" font-weight="700" fill="#2d3748">为什么要 Subword？三种分词粒度对比（以 "unhappiness" 为例）</text>
+
+  <!-- Character level -->
+  <rect x="50" y="98" width="250" height="58" rx="6" fill="#fed7d7" stroke="#fc8181" stroke-width="1"/>
+  <text x="62" y="115" font-size="10" font-weight="700" fill="#c53030">字符级 Character-level</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#742a2a">
+    <rect x="62" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="69.5" y="134" text-anchor="middle">u</text>
+    <rect x="79" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="86.5" y="134" text-anchor="middle">n</text>
+    <rect x="96" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="103.5" y="134" text-anchor="middle">h</text>
+    <rect x="113" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="120.5" y="134" text-anchor="middle">a</text>
+    <rect x="130" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="137.5" y="134" text-anchor="middle">p</text>
+    <rect x="147" y="122" width="15" height="16" rx="2" fill="#fff" stroke="#fc8181"/><text x="154.5" y="134" text-anchor="middle">p</text>
+    <text x="168" y="134" font-size="11" fill="#c53030">… 11 tokens</text>
+    <text x="62" y="150" font-size="8.5" fill="#9b2c2c" font-family="inherit">❌ 序列太长，语义太碎</text>
+  </g>
+
+  <!-- Word level -->
+  <rect x="320" y="98" width="250" height="58" rx="6" fill="#fefcbf" stroke="#ecc94b" stroke-width="1"/>
+  <text x="332" y="115" font-size="10" font-weight="700" fill="#975a16">词级 Word-level</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#744210">
+    <rect x="332" y="122" width="100" height="16" rx="2" fill="#fff" stroke="#ecc94b"/><text x="382" y="134" text-anchor="middle">unhappiness</text>
+    <text x="440" y="134" font-size="11" fill="#975a16">1 token</text>
+    <text x="332" y="150" font-size="8.5" fill="#975a16" font-family="inherit">❌ OOV 未登录词 = &lt;UNK&gt;，新词无法处理</text>
+  </g>
+
+  <!-- Subword (BPE) level -->
+  <rect x="590" y="98" width="270" height="58" rx="6" fill="#c6f6d5" stroke="#48bb78" stroke-width="1.5"/>
+  <text x="602" y="115" font-size="10" font-weight="700" fill="#22543d">Subword（BPE）✓</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#22543d">
+    <rect x="602" y="122" width="28" height="16" rx="2" fill="#fff" stroke="#48bb78" stroke-width="1.2"/><text x="616" y="134" text-anchor="middle">un</text>
+    <rect x="633" y="122" width="38" height="16" rx="2" fill="#fff" stroke="#48bb78" stroke-width="1.2"/><text x="652" y="134" text-anchor="middle">happ</text>
+    <rect x="674" y="122" width="32" height="16" rx="2" fill="#fff" stroke="#48bb78" stroke-width="1.2"/><text x="690" y="134" text-anchor="middle">iness</text>
+    <text x="715" y="134" font-size="11" fill="#22543d">3 tokens</text>
+    <text x="602" y="150" font-size="8.5" fill="#22543d" font-family="inherit">✓ 常见词整词保留，罕见词可拆为已知子词</text>
+  </g>
+
+  <!-- ===== MIDDLE: BPE merge example ===== -->
+  <text x="50" y="196" font-size="13" font-weight="700" fill="#2b6cb0">BPE 训练过程：以语料 "low lower lowest newer wider" 为例</text>
+  <text x="50" y="212" font-size="10" fill="#718096">从字符出发，每轮统计相邻对频率，合并最高频对，形成新 token，迭代 N 次直至词汇表达标大小</text>
+
+  <!-- Merge steps table -->
+  <!-- Header -->
+  <rect x="30" y="222" width="840" height="28" rx="6" fill="#2b6cb0"/>
+  <text x="50" y="241" font-size="11" font-weight="700" fill="#fff">Step</text>
+  <text x="110" y="241" font-size="11" font-weight="700" fill="#fff">当前 Token 序列</text>
+  <text x="440" y="241" font-size="11" font-weight="700" fill="#fff">最高频相邻对</text>
+  <text x="620" y="241" font-size="11" font-weight="700" fill="#fff">合并为新 Token</text>
+  <text x="790" y="241" font-size="11" font-weight="700" fill="#fff">词频</text>
+
+  <!-- Step 0 (Initial) -->
+  <rect x="30" y="250" width="840" height="36" fill="#ebf8ff" stroke="#bee3f8"/>
+  <text x="50" y="273" font-size="11" font-weight="700" fill="#2b6cb0">初始</text>
+  <text x="110" y="273" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">l o w _   l o w e r _   l o w e s t _   n e w e r _   w i d e r _</text>
+  <text x="440" y="273" font-size="10" fill="#a0aec0">—</text>
+  <text x="620" y="273" font-size="10" fill="#a0aec0">（按字符切分 + 词尾标记 _）</text>
+
+  <!-- Step 1: merge (l,o) -> "lo" -->
+  <rect x="30" y="286" width="840" height="36" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="30" y="286" width="46" height="36" fill="#f0fff4" stroke="#c6f6d5"/>
+  <text x="53" y="309" font-size="11" font-weight="700" fill="#276749">Merge 1</text>
+  <text x="110" y="309" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748"><tspan fill="#38a169" font-weight="700">lo</tspan> w _   <tspan fill="#38a169" font-weight="700">lo</tspan> w e r _   <tspan fill="#38a169" font-weight="700">lo</tspan> w e s t _   n e w e r _   w i d e r _</text>
+  <text x="440" y="309" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">(l, o)</text>
+  <rect x="610" y="297" width="56" height="18" rx="4" fill="#38a169"/><text x="638" y="310" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700" fill="#fff">"lo"</text>
+  <text x="800" y="309" font-size="10" font-weight="700" fill="#38a169">3 次</text>
+
+  <!-- Step 2: merge (lo,w) -> "low" -->
+  <rect x="30" y="322" width="840" height="36" fill="#f7fafc" stroke="#e2e8f0"/>
+  <rect x="30" y="322" width="46" height="36" fill="#f0fff4" stroke="#c6f6d5"/>
+  <text x="53" y="345" font-size="11" font-weight="700" fill="#276749">Merge 2</text>
+  <text x="110" y="345" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748"><tspan fill="#38a169" font-weight="700">low</tspan> _   <tspan fill="#38a169" font-weight="700">low</tspan> e r _   <tspan fill="#38a169" font-weight="700">low</tspan> e s t _   n e w e r _   w i d e r _</text>
+  <text x="440" y="345" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">(lo, w)</text>
+  <rect x="610" y="333" width="56" height="18" rx="4" fill="#38a169"/><text x="638" y="346" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700" fill="#fff">"low"</text>
+  <text x="800" y="345" font-size="10" font-weight="700" fill="#38a169">3 次</text>
+
+  <!-- Step 3: merge (e,r) -> "er" (appears 3 times) -->
+  <rect x="30" y="358" width="840" height="36" fill="#fff" stroke="#e2e8f0"/>
+  <rect x="30" y="358" width="46" height="36" fill="#f0fff4" stroke="#c6f6d5"/>
+  <text x="53" y="381" font-size="11" font-weight="700" fill="#276749">Merge 3</text>
+  <text x="110" y="381" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">low _   low <tspan fill="#38a169" font-weight="700">er</tspan> _   low e s t _   n e w <tspan fill="#38a169" font-weight="700">er</tspan> _   w i d <tspan fill="#38a169" font-weight="700">er</tspan> _</text>
+  <text x="440" y="381" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">(e, r) _</text>
+  <rect x="610" y="369" width="56" height="18" rx="4" fill="#38a169"/><text x="638" y="382" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700" fill="#fff">"er"</text>
+  <text x="800" y="381" font-size="10" font-weight="700" fill="#38a169">3 次</text>
+
+  <!-- Step N: result -->
+  <rect x="30" y="394" width="840" height="36" fill="#faf5ff" stroke="#d6bcfa" stroke-width="1.5"/>
+  <rect x="30" y="394" width="46" height="36" fill="#805ad5"/>
+  <text x="53" y="417" font-size="11" font-weight="700" fill="#fff">结果</text>
+  <text x="110" y="417" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2d3748">low _   low<tspan fill="#38a169" font-weight="700">er</tspan> _   low<tspan fill="#d69e2e" font-weight="700">est</tspan> _   n<tspan fill="#d69e2e" font-weight="700">ew</tspan><tspan fill="#38a169" font-weight="700">er</tspan> _   w<tspan fill="#d69e2e" font-weight="700">id</tspan><tspan fill="#38a169" font-weight="700">er</tspan> _</text>
+  <text x="440" y="417" font-size="10" fill="#553c9a" font-weight="600">词表逐步扩充 → 编码时应用合并规则</text>
+  <text x="620" y="417" font-size="10" fill="#553c9a" font-weight="600">最终词表 ≈ 50k（GPT-2）/ 100k（LLaMA）</text>
+
+  <!-- ===== BOTTOM: Encoding pipeline & key facts ===== -->
+  <rect x="30" y="448" width="530" height="155" rx="10" fill="#fff" stroke="#cbd5e0" stroke-width="1" filter="url(#sh)"/>
+  <text x="50" y="470" font-size="12" font-weight="700" fill="#2d3748">推理时编码（Encoding）流程：文本 → Token IDs</text>
+
+  <!-- Flow: Text -> Pretokenize -> BPE apply -> IDs -->
+  <rect x="50" y="485" width="110" height="42" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.2"/>
+  <text x="105" y="503" text-anchor="middle" font-size="10" font-weight="700" fill="#2b6cb0">原始文本</text>
+  <text x="105" y="518" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#2c5282">"Hello world!"</text>
+
+  <line x1="160" y1="506" x2="180" y2="506" stroke="#4a5568" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <rect x="185" y="485" width="130" height="42" rx="6" fill="#fefcbf" stroke="#d69e2e" stroke-width="1.2"/>
+  <text x="250" y="503" text-anchor="middle" font-size="10" font-weight="700" fill="#975a16">预分词</text>
+  <text x="250" y="518" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#744210">"Hello" "world" "!"</text>
+
+  <line x1="315" y1="506" x2="335" y2="506" stroke="#4a5568" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <rect x="340" y="485" width="130" height="42" rx="6" fill="#f0fff4" stroke="#38a169" stroke-width="1.2"/>
+  <text x="405" y="503" text-anchor="middle" font-size="10" font-weight="700" fill="#276749">应用 BPE 合并</text>
+  <text x="405" y="518" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#22543d">"Hell" "o" "world" "!"</text>
+
+  <line x1="470" y1="506" x2="490" y2="506" stroke="#4a5568" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <rect x="495" y="485" width="55" height="42" rx="6" fill="#faf5ff" stroke="#805ad5" stroke-width="1.2"/>
+  <text x="522" y="503" text-anchor="middle" font-size="10" font-weight="700" fill="#553c9a">Token IDs</text>
+  <text x="522" y="518" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#553c9a">[123,…]</text>
+
+  <!-- Key points below flow -->
+  <g font-size="9.5" fill="#4a5568">
+    <text x="50" y="548">• <tspan font-weight="700" fill="#2d3748">预分词</tspan>：按规则先切成词（GPT-2 用 regex 按空格/标点切；LLaMA 用 SentencePiece 直接在字节上做）</text>
+    <text x="50" y="564">• <tspan font-weight="700" fill="#2d3748">特殊 token</tspan>：BOS（&lt;s&gt;）、EOS（&lt;/s&gt;）、PAD、UNK 预先加入词表</text>
+    <text x="50" y="580">• <tspan font-weight="700" fill="#2d3748">Chat template</tspan>：推理前先套入 &lt;|im_start|&gt;system/...&lt;|im_end|&gt; 等对话模板</text>
+    <text x="50" y="596">• <tspan font-weight="700" fill="#2d3748">字节级 BPE</tspan>（GPT-2/tiktoken）：初始表是 256 个 byte，不依赖任何预处理，永远不会有 UNK</text>
+  </g>
+
+  <!-- RIGHT: Tokenizer family comparison -->
+  <rect x="580" y="448" width="290" height="155" rx="10" fill="#fff" stroke="#cbd5e0" stroke-width="1" filter="url(#sh)"/>
+  <text x="600" y="470" font-size="12" font-weight="700" fill="#2d3748">主流分词实现</text>
+  <g font-size="9.5" fill="#2d3748">
+    <rect x="595" y="480" width="260" height="22" rx="4" fill="#ebf8ff"/>
+    <text x="605" y="495" font-weight="700" fill="#2b6cb0">tiktoken</text><text x="665" y="495" fill="#4a5568">OpenAI（GPT-3.5/4），字节级 BPE，快</text>
+
+    <rect x="595" y="506" width="260" height="22" rx="4" fill="#f0fff4"/>
+    <text x="605" y="521" font-weight="700" fill="#276749">SentencePiece</text><text x="695" y="521" fill="#4a5568">Google（LLaMA/Gemma），无需空格预切</text>
+
+    <rect x="595" y="532" width="260" height="22" rx="4" fill="#fefcbf"/>
+    <text x="605" y="547" font-weight="700" fill="#975a16">WordPiece</text><text x="675" y="547" fill="#4a5568">Google（BERT），基于似然而非频率合并</text>
+
+    <rect x="595" y="558" width="260" height="22" rx="4" fill="#fffaf0"/>
+    <text x="605" y="573" font-weight="700" fill="#c05621">Unigram LM</text><text x="690" y="573" fill="#4a5568">SentencePiece 可选模式，从大词表逐步删减</text>
+
+    <text x="600" y="596" font-size="9" fill="#718096" font-style="italic">面试常考：BPE 合并基于"频率"；WordPiece 基于</text>
+    <text x="600" y="608" font-size="9" fill="#718096" font-style="italic">互信息/似然增益。GPT 系列用 BPE，BERT 用 WordPiece。</text>
+  </g>
+</svg>

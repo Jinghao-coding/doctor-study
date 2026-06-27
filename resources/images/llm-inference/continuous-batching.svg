@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+  <defs>
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="480" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">Static Batching vs Continuous Batching：为什么 GPU 利用率能从 30% 升到 90%+</text>
+  <text x="480" y="48" text-anchor="middle" font-size="11" fill="#718096">核心区别：调度粒度不同——Static 以"请求"为粒度（等最慢请求完成），Continuous 以"iteration（一步 decode）"为粒度（做完的走，排队的进）</text>
+
+  <!-- ======= TOP: Static Batching (left, red/warn tone) ======= -->
+  <rect x="30" y="68" width="440" height="220" rx="10" fill="#fff5f5" stroke="#fc8181" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="30" y="68" width="440" height="32" rx="10" fill="#e53e3e"/>
+  <path d="M30 92 h440 v8 h-440z" fill="#e53e3e"/>
+  <text x="250" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">❌ Static Batching（静态批处理）</text>
+
+  <!-- Static timeline: batch is fixed -->
+  <text x="50" y="120" font-size="11" font-weight="700" fill="#9b2c2c">调度逻辑：等一批请求到齐 → 固定 batch → 所有人完成后才接下一批</text>
+
+  <!-- Time axis -->
+  <line x1="50" y1="200" x2="440" y2="200" stroke="#cbd5e0" stroke-width="1"/>
+  <text x="46" y="216" font-size="9" fill="#a0aec0">时间 →</text>
+
+  <!-- Batch 1: all requests start together, longest dictates end -->
+  <!-- Req A (short) -->
+  <rect x="60" y="138" width="80" height="16" rx="3" fill="#fc8181"/>
+  <text x="100" y="150" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">Req A</text>
+  <!-- Idle gap for A after finishing -->
+  <rect x="140" y="138" width="190" height="16" rx="0" fill="#fed7d7" stroke-dasharray="2,2" stroke="#fc8181"/>
+  <text x="235" y="150" text-anchor="middle" font-size="8" fill="#c53030" font-style="italic">GPU 空闲浪费</text>
+
+  <!-- Req B (medium) -->
+  <rect x="60" y="158" width="180" height="16" rx="3" fill="#fc8181"/>
+  <text x="150" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">Req B</text>
+  <rect x="240" y="158" width="90" height="16" rx="0" fill="#fed7d7" stroke-dasharray="2,2" stroke="#fc8181"/>
+
+  <!-- Req C (long, dictates batch boundary) -->
+  <rect x="60" y="178" width="270" height="16" rx="3" fill="#c53030"/>
+  <text x="195" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">Req C（最长，决定 batch 边界）</text>
+
+  <!-- Waiting queue for next batch -->
+  <rect x="340" y="138" width="120" height="56" rx="4" fill="#edf2f7" stroke="#a0aec0" stroke-dasharray="3,2"/>
+  <text x="400" y="158" text-anchor="middle" font-size="9" fill="#718096">等待队列</text>
+  <text x="400" y="173" text-anchor="middle" font-size="9" fill="#a0aec0">Req D, E, F...</text>
+  <text x="400" y="186" text-anchor="middle" font-size="8" fill="#fc8181" font-style="italic">必须等 C 完成</text>
+
+  <!-- Problem summary -->
+  <g font-size="10" fill="#9b2c2c">
+    <text x="50" y="240">• <tspan font-weight="700">队头阻塞</tspan>：短请求被长请求拖尾，slot 空等</text>
+    <text x="50" y="256">• <tspan font-weight="700">GPU 利用率低</tspan>：Decode 阶段平均 20~40%（等待期间 SM 空转）</text>
+    <text x="50" y="272">• <tspan font-weight="700">延迟不可控</tspan>：新请求必须等整批结束，P99 抖动大</text>
+  </g>
+
+  <!-- ======= TOP RIGHT: Continuous Batching (green) ======= -->
+  <rect x="490" y="68" width="440" height="220" rx="10" fill="#f0fff4" stroke="#48bb78" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="490" y="68" width="440" height="32" rx="10" fill="#38a169"/>
+  <path d="M490 92 h440 v8 h-440z" fill="#38a169"/>
+  <text x="710" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">✓ Continuous Batching（ORCA, OSDI 2022）</text>
+
+  <text x="510" y="120" font-size="11" font-weight="700" fill="#22543d">调度逻辑：每个 iteration（一步 decode）结束后动态重组 batch，"做完的走、排队的进"</text>
+
+  <!-- Time axis -->
+  <line x1="510" y1="200" x2="900" y2="200" stroke="#cbd5e0" stroke-width="1"/>
+  <text x="506" y="216" font-size="9" fill="#a0aec0">Iteration →</text>
+
+  <!-- Iteration markers -->
+  <g font-size="8" fill="#a0aec0" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+    <text x="530" y="210" text-anchor="middle">t1</text>
+    <text x="590" y="210" text-anchor="middle">t2</text>
+    <text x="650" y="210" text-anchor="middle">t3</text>
+    <text x="710" y="210" text-anchor="middle">t4</text>
+    <text x="770" y="210" text-anchor="middle">t5</text>
+    <text x="830" y="210" text-anchor="middle">t6</text>
+  </g>
+  <!-- Iteration vertical grid -->
+  <g stroke="#e2e8f0" stroke-width="0.8">
+    <line x1="560" y1="130" x2="560" y2="200"/>
+    <line x1="620" y1="130" x2="620" y2="200"/>
+    <line x1="680" y1="130" x2="680" y2="200"/>
+    <line x1="740" y1="130" x2="740" y2="200"/>
+    <line x1="800" y1="130" x2="800" y2="200"/>
+    <line x1="860" y1="130" x2="860" y2="200"/>
+  </g>
+
+  <!-- Slot 1: Req A runs t1-t2, done, then D takes over t3+ -->
+  <rect x="520" y="138" width="95" height="16" rx="3" fill="#48bb78"/>
+  <text x="567" y="150" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">A</text>
+  <!-- A done badge -->
+  <circle cx="620" cy="146" r="7" fill="#e53e3e"/>
+  <text x="620" y="149" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">✓</text>
+  <rect x="625" y="138" width="255" height="16" rx="3" fill="#805ad5"/>
+  <text x="752" y="150" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">D（A 结束后立即插入）</text>
+
+  <!-- Slot 2: Req B runs t1-t4, done, then E -->
+  <rect x="520" y="158" width="215" height="16" rx="3" fill="#48bb78"/>
+  <text x="627" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">B</text>
+  <circle cx="740" cy="166" r="7" fill="#e53e3e"/>
+  <text x="740" y="169" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">✓</text>
+  <rect x="745" y="158" width="135" height="16" rx="3" fill="#805ad5"/>
+  <text x="812" y="170" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">E</text>
+
+  <!-- Slot 3: Req C runs all t1-t6 (longest) -->
+  <rect x="520" y="178" width="360" height="16" rx="3" fill="#276749"/>
+  <text x="700" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">C（最长，持续运行）</text>
+
+  <!-- Advantage summary -->
+  <g font-size="10" fill="#22543d">
+    <text x="510" y="240">• <tspan font-weight="700">无队头阻塞</tspan>：A 在 t2 完成 → D 在下一个 iteration 立即进入</text>
+    <text x="510" y="256">• <tspan font-weight="700">GPU 利用率高</tspan>：batch slot 始终被填满，利用率 70~90%+</text>
+    <text x="510" y="272">• <tspan font-weight="700">关键支撑</tspan>：需要 PagedAttention（vLLM）实现灵活的 KV Cache 分配</text>
+  </g>
+
+  <!-- ======= BOTTOM: Analogy + Chunked Prefill extension ======= -->
+  <rect x="30" y="308" width="900" height="90" rx="10" fill="#fffaf0" stroke="#dd6b20" stroke-width="1.2" filter="url(#sh)"/>
+  <text x="50" y="330" font-size="12" font-weight="700" fill="#7b341e">🍽 餐厅类比</text>
+  <g font-size="10.5" fill="#2d3748">
+    <text x="50" y="350"><tspan font-weight="700" fill="#c53030">Static：</tspan>4 人桌，必须 4 个人都吃完才换下一批客人 → 2 个人已经吃完但干等另外 2 人。</text>
+    <text x="50" y="366"><tspan font-weight="700" fill="#276749">Continuous：</tspan>4 人桌，谁先吃完谁结账走人，服务员立刻在空位安排新客人 → 桌子始终满员。</text>
+    <text x="50" y="382"><tspan font-weight="700" fill="#805ad5">关键前提：</tspan>每道菜（=每个 decode step）独立上菜，吃完一道（生成一个 token）就能结账走人，不用等整桌菜上齐。</text>
+  </g>
+
+  <!-- Chunked Prefill note -->
+  <rect x="30" y="412" width="900" height="72" rx="10" fill="#faf5ff" stroke="#805ad5" stroke-width="1.2" filter="url(#sh)"/>
+  <text x="50" y="434" font-size="12" font-weight="700" fill="#553c9a">⚡ 延伸：Chunked Prefill（解决 Prefill/Decode 混合调度的问题）</text>
+  <g font-size="10.5" fill="#2d3748">
+    <text x="50" y="454">纯 Continuous Batching 中，一个长 prompt 的 Prefill（compute-bound）会和多个 Decode 请求抢占 GPU，导致 Decode 的 TPOT 毛刺。</text>
+    <text x="50" y="470"><tspan font-weight="700" fill="#553c9a">Chunked Prefill（Sarathi-Serve/vLLM）</tspan>：把长 Prefill 切成固定大小 chunk（如 512 token），每个 iteration 可以混合执行 prefill chunk + decode step，</text>
+    <text x="50" y="478" x-shift="14">使得 TTFT 和 TPOT 都更平滑，避免长 prompt 饿死 decode 请求。</text>
+  </g>
+
+  <!-- Numbers bar at bottom -->
+  <rect x="30" y="500" width="900" height="45" rx="8" fill="#2d3748"/>
+  <g font-size="10" fill="#fff" text-anchor="middle">
+    <text x="150" y="520" font-weight="700" font-size="13">36.9×</text>
+    <text x="150" y="536" fill="#a0aec0">ORCA 论文吞吐提升</text>
+    <line x1="270" y1="510" x2="270" y2="540" stroke="#4a5568" stroke-width="1"/>
+    <text x="390" y="520" font-weight="700" font-size="13">~90%</text>
+    <text x="390" y="536" fill="#a0aec0">生产环境 GPU 利用率</text>
+    <line x1="510" y1="510" x2="510" y2="540" stroke="#4a5568" stroke-width="1"/>
+    <text x="630" y="520" font-weight="700" font-size="13">iteration</text>
+    <text x="630" y="536" fill="#a0aec0">调度粒度 = 1 次前向步</text>
+    <line x1="750" y1="510" x2="750" y2="540" stroke="#4a5568" stroke-width="1"/>
+    <text x="860" y="520" font-weight="700" font-size="13">PagedAttention</text>
+    <text x="860" y="536" fill="#a0aec0">支撑灵活 KV 管理</text>
+  </g>
+</svg>

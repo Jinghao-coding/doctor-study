@@ -1,217 +1,234 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 740" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
   <defs>
-    <filter id="shadow" x="-3%" y="-3%" width="106%" height="112%">
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="112%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.10"/>
     </filter>
-    <marker id="arrBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#3182ce"/>
+    <marker id="arrBlue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#3182ce"/>
     </marker>
-    <marker id="arrGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#38a169"/>
+    <marker id="arrGreen" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#38a169"/>
     </marker>
-    <marker id="arrOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#dd6b20"/>
+    <marker id="arrOrange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#dd6b20"/>
     </marker>
-    <marker id="arrPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#805ad5"/>
+    <marker id="arrPurple" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#805ad5"/>
     </marker>
-    <marker id="arrTeal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#319795"/>
+    <marker id="arrTeal" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#319795"/>
     </marker>
-    <marker id="arrGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0,10 3.5,0 7" fill="#a0aec0"/>
+    <marker id="arrGray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0,10 4,0 8" fill="#a0aec0"/>
     </marker>
   </defs>
 
-  <!-- ====== TITLE ====== -->
-  <text x="500" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1a202c">LLM 端到端推理链路：从请求到 Token 流式输出</text>
-  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#718096">自回归推理 = 先 Prefill 并行处理完整 Prompt（compute-bound） → 再 Decode 逐 token 自回归生成（memory-bound）</text>
+  <!-- Background -->
+  <rect width="1080" height="740" fill="#ffffff"/>
 
-  <!-- ====== ROW 1: Pre-GPU stages ====== -->
+  <!-- ====== TITLE ====== -->
+  <text x="540" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1a202c">LLM 端到端推理链路：从用户 Prompt 到 Token 流式输出</text>
+  <text x="540" y="54" text-anchor="middle" font-size="12" fill="#718096">自回归推理 = 先 Prefill 并行读完 Prompt（compute-bound，TTFT） → 再 Decode 逐 token 生成（memory-bound，TPOT）</text>
+
+  <!-- ====== ROW 1: Pre-GPU stages (3 cards + waiting queue) ====== -->
 
   <!-- Stage 1: Request Wrapping (blue) -->
-  <g filter="url(#shadow)">
-    <rect x="30" y="70" width="155" height="100" rx="10" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
-    <rect x="30" y="70" width="155" height="28" rx="10" fill="#3182ce"/>
-    <path d="M30 90 h155 v8 h-155z" fill="#3182ce"/>
-    <text x="107" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">① 请求封装</text>
+  <g filter="url(#sh)">
+    <rect x="30" y="78" width="185" height="120" rx="12" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.8"/>
+    <rect x="30" y="78" width="185" height="32" rx="12" fill="#3182ce"/>
+    <path d="M30 102 h185 v8 h-185z" fill="#3182ce"/>
+    <text x="122" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">① 请求封装</text>
   </g>
-  <g font-size="10" fill="#2d3748">
-    <text x="44" y="118">• 组装 messages</text>
-    <text x="44" y="134">• 采样参数：</text>
-    <text x="50" y="148" font-size="9" fill="#4a5568">  temperature / top_p</text>
-    <text x="50" y="161" font-size="9" fill="#4a5568">  max_tokens / stop</text>
-  </g>
-
-  <!-- Arrow 1→2 -->
-  <line x1="185" y1="120" x2="210" y2="120" stroke="#3182ce" stroke-width="2" marker-end="url(#arrBlue)"/>
-
-  <!-- Stage 2: Tokenization (blue) -->
-  <g filter="url(#shadow)">
-    <rect x="215" y="70" width="155" height="100" rx="10" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
-    <rect x="215" y="70" width="155" height="28" rx="10" fill="#3182ce"/>
-    <path d="M215 90 h155 v8 h-155z" fill="#3182ce"/>
-    <text x="292" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">② Tokenization</text>
-  </g>
-  <g font-size="10" fill="#2d3748">
-    <text x="229" y="118">• BPE / tiktoken 分词</text>
-    <text x="229" y="135" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9.5">"你好" → [123,456,…]</text>
-    <text x="229" y="153">• 添加 BOS/EOS、</text>
-    <text x="233" y="166">  chat template 标记</text>
+  <g font-size="11" fill="#2d3748">
+    <text x="48" y="132">• 组装 system/user/</text>
+    <text x="54" y="148" font-size="11">  assistant 多轮消息</text>
+    <text x="48" y="168">• 采样参数配置：</text>
+    <text x="56" y="184" font-size="10" fill="#4a5568">temperature / top_p</text>
+    <text x="56" y="196" font-size="10" fill="#4a5568">max_tokens / stop</text>
   </g>
 
-  <!-- Arrow 2→3 -->
-  <line x1="370" y1="120" x2="395" y2="120" stroke="#805ad5" stroke-width="2" marker-end="url(#arrPurple)"/>
+  <line x1="215" y1="138" x2="242" y2="138" stroke="#3182ce" stroke-width="2.2" marker-end="url(#arrBlue)"/>
 
-  <!-- Stage 3: Scheduling (purple) -->
-  <g filter="url(#shadow)">
-    <rect x="400" y="70" width="180" height="100" rx="10" fill="#faf5ff" stroke="#805ad5" stroke-width="1.5"/>
-    <rect x="400" y="70" width="180" height="28" rx="10" fill="#805ad5"/>
-    <path d="M400 90 h180 v8 h-180z" fill="#805ad5"/>
-    <text x="490" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">③ 推理调度</text>
+  <!-- Stage 2: Tokenization (blue, bigger, richer) -->
+  <g filter="url(#sh)">
+    <rect x="248" y="78" width="210" height="120" rx="12" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.8"/>
+    <rect x="248" y="78" width="210" height="32" rx="12" fill="#3182ce"/>
+    <path d="M248 102 h210 v8 h-210z" fill="#3182ce"/>
+    <text x="353" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">② Tokenization（分词）</text>
   </g>
-  <g font-size="10" fill="#2d3748">
-    <text x="414" y="118">• 请求排队 / 优先级</text>
-    <text x="414" y="133">• <tspan font-weight="700" fill="#805ad5">Continuous Batching</tspan></text>
-    <text x="418" y="146" font-size="9">  iteration-level 动态组 batch</text>
-    <text x="414" y="160">• KV Cache 预算 / Chunked Prefill</text>
-  </g>
-
-  <!-- Arrow from Scheduler DOWN to GPU (main flow) -->
-  <path d="M490,170 L490,195" stroke="#805ad5" stroke-width="2.5" fill="none" marker-end="url(#arrPurple)"/>
-  <rect x="430" y="176" width="120" height="16" rx="3" fill="#faf5ff"/>
-  <text x="490" y="188" text-anchor="middle" font-size="9" font-weight="600" fill="#805ad5">batch input_ids</text>
-
-  <!-- Waiting queue (dashed side box, NOT in main flow) -->
-  <g filter="url(#shadow)">
-    <rect x="640" y="70" width="130" height="100" rx="10" fill="#f7fafc" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="5,3"/>
-    <text x="705" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#4a5568">⏳ 等待队列</text>
-    <text x="705" y="118" text-anchor="middle" font-size="9" fill="#718096">waiting queue</text>
-    <text x="705" y="138" text-anchor="middle" font-size="9" fill="#a0aec0">多请求等待 Scheduler</text>
-    <text x="705" y="151" text-anchor="middle" font-size="9" fill="#a0aec0">决定哪些进入 batch</text>
-  </g>
-  <!-- Dashed line from scheduler to waiting queue (manages relationship) -->
-  <path d="M580,110 Q610,110 635,110" stroke="#a0aec0" stroke-width="1.2" stroke-dasharray="4,2" fill="none" marker-end="url(#arrGray)"/>
-
-  <!-- ====== ROW 2: GPU COMPUTATION ====== -->
-  <rect x="30" y="205" width="940" height="310" rx="14" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.5" filter="url(#shadow)"/>
-
-  <!-- GPU header bar (dark, only for the title) -->
-  <rect x="30" y="205" width="940" height="38" rx="14" fill="#2d3748"/>
-  <path d="M30 231 h940 v12 h-940z" fill="#2d3748"/>
-  <text x="54" y="229" font-size="14" font-weight="700" fill="#fff">🖥  GPU 计算：Transformer Layers × N</text>
-  <text x="54" y="246" font-size="10" fill="#718096">Embedding → RoPE → 多层 [Self-Attention + FFN + RMSNorm + 残差] → LM Head → Logits</text>
-
-  <!-- ===== Prefill (green) ===== -->
-  <g filter="url(#shadow)">
-    <rect x="55" y="260" width="425" height="200" rx="10" fill="#f0fff4" stroke="#38a169" stroke-width="2"/>
-    <rect x="55" y="260" width="425" height="32" rx="10" fill="#38a169"/>
-    <path d="M55 284 h425 v8 h-425z" fill="#38a169"/>
-    <text x="267" y="282" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">④ Prefill 阶段（Prompt Processing）</text>
+  <g font-size="11" fill="#2d3748">
+    <text x="264" y="132">• 预分词（regex/空格/标点切分）</text>
+    <text x="264" y="150">• <tspan font-weight="700" fill="#2b6cb0">BPE</tspan> 迭代合并高频相邻对</text>
+    <text x="270" y="166" font-size="10" fill="#4a5568">"你好，世界" → [123, 456, ...]</text>
+    <text x="264" y="184">• 添加 BOS/EOS + chat template</text>
+    <text x="270" y="196" font-size="10" fill="#4a5568">&lt;s&gt; / &lt;/s&gt; / &lt;|im_start|&gt;</text>
   </g>
 
-  <g font-size="10.5" fill="#2d3748">
-    <text x="72" y="316" font-weight="700" fill="#276749" font-size="12">核心操作</text>
-    <text x="72" y="334">• 一次性并行处理 <tspan font-weight="700">所有 prompt tokens</tspan></text>
-    <text x="72" y="351">• 为每个位置计算 K/V 向量，<tspan font-weight="700">写入 KV Cache</tspan></text>
-    <text x="72" y="368">• 大矩阵乘法 (GEMM)，GPU 算力吃满</text>
+  <line x1="458" y1="138" x2="485" y2="138" stroke="#805ad5" stroke-width="2.2" marker-end="url(#arrPurple)"/>
 
-    <text x="72" y="392" font-weight="700" fill="#276749" font-size="12">瓶颈属性</text>
-    <text x="72" y="409">• <tspan font-weight="700" fill="#276749">Compute-bound</tspan>：算术强度高</text>
-    <text x="72" y="426">• 关键指标：<tspan font-weight="700">TTFT</tspan>（Time To First Token）</text>
-    <text x="72" y="443">• FlashAttention 降低 HBM 访问量</text>
+  <!-- Stage 3: Scheduling (purple, bigger) -->
+  <g filter="url(#sh)">
+    <rect x="490" y="78" width="240" height="120" rx="12" fill="#faf5ff" stroke="#805ad5" stroke-width="1.8"/>
+    <rect x="490" y="78" width="240" height="32" rx="12" fill="#805ad5"/>
+    <path d="M490 102 h240 v8 h-240z" fill="#805ad5"/>
+    <text x="610" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">③ 推理调度（Scheduler）</text>
+  </g>
+  <g font-size="11" fill="#2d3748">
+    <text x="506" y="132">• 请求排队、优先级、准入控制</text>
+    <text x="506" y="150">• <tspan font-weight="700" fill="#805ad5">Continuous Batching</tspan>：iteration 级动态组 batch</text>
+    <text x="506" y="168">• KV Cache 显存预算 / 分配 / 抢占</text>
+    <text x="506" y="186">• <tspan font-weight="700" fill="#805ad5">Chunked Prefill</tspan>：长 prompt 切块，避免 Decode 饥饿</text>
   </g>
 
-  <!-- Prompt tokens visual (inside Prefill, top-right area) -->
-  <g transform="translate(278, 310)">
-    <rect x="0"   y="0" width="24" height="22" rx="4" fill="#38a169"/>
-    <text x="12"  y="15" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">SYS</text>
-    <rect x="28"  y="0" width="24" height="22" rx="4" fill="#48bb78"/>
-    <text x="40"  y="15" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">U1</text>
-    <rect x="56"  y="0" width="24" height="22" rx="4" fill="#48bb78"/>
-    <text x="68"  y="15" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">U2</text>
-    <rect x="84"  y="0" width="24" height="22" rx="4" fill="#68d391"/>
-    <text x="96"  y="15" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">U3</text>
-    <rect x="112" y="0" width="24" height="22" rx="4" fill="#68d391"/>
-    <text x="124" y="15" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">U4</text>
-    <text x="144" y="16" font-size="14" fill="#276749" font-weight="700">…</text>
-    <rect x="162" y="0" width="24" height="22" rx="4" fill="#fbd38d" stroke="#dd6b20" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <text x="174" y="15" text-anchor="middle" font-size="10" fill="#7b341e" font-weight="700">?</text>
+  <!-- Arrow from Scheduler DOWN to GPU -->
+  <path d="M610,198 L610,228" stroke="#805ad5" stroke-width="2.8" fill="none" marker-end="url(#arrPurple)"/>
+  <rect x="545" y="208" width="130" height="18" rx="4" fill="#faf5ff" stroke="#d6bcfa" stroke-width="1"/>
+  <text x="610" y="221" text-anchor="middle" font-size="10" font-weight="700" fill="#805ad5">batch input_ids</text>
+
+  <!-- Waiting queue (right side, NOT in main flow) -->
+  <g filter="url(#sh)">
+    <rect x="780" y="78" width="170" height="120" rx="12" fill="#f7fafc" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="865" y="108" text-anchor="middle" font-size="13" font-weight="600" fill="#4a5568">⏳ 等待队列</text>
+    <text x="865" y="126" text-anchor="middle" font-size="10" fill="#718096">waiting queue</text>
+    <line x1="800" y1="138" x2="930" y2="138" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="865" y="156" text-anchor="middle" font-size="10" fill="#718096">新请求等待 Scheduler</text>
+    <text x="865" y="172" text-anchor="middle" font-size="10" fill="#718096">决定哪些进入当前 batch</text>
+    <text x="865" y="192" text-anchor="middle" font-size="9" fill="#a0aec0" font-style="italic">有空闲 slot 时立即填入</text>
+  </g>
+  <path d="M730,120 Q755,120 775,120" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="4,2" fill="none" marker-end="url(#arrGray)"/>
+
+  <!-- ====== ROW 2: GPU COMPUTATION (large, light background) ====== -->
+  <rect x="30" y="240" width="1020" height="320" rx="16" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.5" filter="url(#sh)"/>
+
+  <!-- GPU header bar -->
+  <rect x="30" y="240" width="1020" height="42" rx="16" fill="#2d3748"/>
+  <path d="M30 270 h1020 v12 h-1020z" fill="#2d3748"/>
+  <text x="58" y="267" font-size="15" font-weight="700" fill="#fff">🖥  GPU 计算：Transformer Layers × N</text>
+  <text x="58" y="286" font-size="11" fill="#a0aec0">Input Embedding → RoPE 位置编码 → 多层 [Self-Attention + FFN + RMSNorm + 残差连接] → LM Head → Logits（下一 token 概率分布）</text>
+
+  <!-- ===== Prefill (green, left half) ===== -->
+  <g filter="url(#sh)">
+    <rect x="55" y="300" width="470" height="220" rx="12" fill="#f0fff4" stroke="#38a169" stroke-width="2"/>
+    <rect x="55" y="300" width="470" height="36" rx="12" fill="#38a169"/>
+    <path d="M55 328 h470 v8 h-470z" fill="#38a169"/>
+    <text x="290" y="325" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">④ Prefill 阶段（Prompt Processing）</text>
   </g>
 
-  <!-- Arrow Prefill → Decode (labeled badge) -->
-  <line x1="480" y1="360" x2="518" y2="360" stroke="#dd6b20" stroke-width="3" marker-end="url(#arrOrange)"/>
-  <rect x="452" y="340" width="80" height="18" rx="9" fill="#fffaf0" stroke="#dd6b20" stroke-width="1.2"/>
-  <text x="492" y="353" text-anchor="middle" font-size="10" font-weight="700" fill="#dd6b20">首 token 后</text>
+  <g font-size="12" fill="#2d3748">
+    <text x="78" y="360" font-weight="700" fill="#276749" font-size="13">核心操作</text>
+    <text x="78" y="382">• 一次性并行处理 <tspan font-weight="700">完整 prompt 所有 tokens</tspan></text>
+    <text x="78" y="402">• 为每个位置计算 K/V 向量 → <tspan font-weight="700">写入 KV Cache</tspan></text>
+    <text x="78" y="422">• 大矩阵乘法（GEMM）+ FlashAttention → GPU SM 吃满</text>
 
-  <!-- ===== Decode (orange) ===== -->
-  <g filter="url(#shadow)">
-    <rect x="525" y="260" width="425" height="200" rx="10" fill="#fffaf0" stroke="#dd6b20" stroke-width="2"/>
-    <rect x="525" y="260" width="425" height="32" rx="10" fill="#dd6b20"/>
-    <path d="M525 284 h425 v8 h-425z" fill="#dd6b20"/>
-    <text x="737" y="282" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">⑤ Decode 阶段（自回归生成循环）</text>
+    <text x="78" y="452" font-weight="700" fill="#276749" font-size="13">瓶颈属性</text>
+    <text x="78" y="474">• <tspan font-weight="700" fill="#276749">Compute-bound</tspan>（计算密集，吃 GPU 算力）</text>
+    <text x="78" y="494">• 关键指标：<tspan font-weight="700" fill="#276749">TTFT</tspan>（Time To First Token，首 token 延迟）</text>
   </g>
 
-  <g font-size="10.5" fill="#2d3748">
-    <text x="542" y="316" font-weight="700" fill="#7b341e" font-size="12">核心操作</text>
-    <text x="542" y="334">• 每步 <tspan font-weight="700">只输入 1 个新 token</tspan>（刚生成的）</text>
-    <text x="542" y="351">• Q 来自新 token，K/V 从 KV Cache 读取</text>
-    <text x="542" y="368">• 新 token K/V 追加到 Cache，继续循环</text>
-
-    <text x="542" y="392" font-weight="700" fill="#7b341e" font-size="12">瓶颈属性</text>
-    <text x="542" y="409">• <tspan font-weight="700" fill="#7b341e">Memory-bound</tspan>：每步读整个 KV Cache</text>
-    <text x="542" y="426">• 关键指标：<tspan font-weight="700">TPOT</tspan>（Time Per Output Token）</text>
-    <text x="542" y="443">• PagedAttention 减少碎片、提升共享</text>
+  <!-- Prefill token strip visualization -->
+  <g transform="translate(300, 355)">
+    <rect x="0"   y="0" width="40" height="28" rx="5" fill="#38a169"/>
+    <text x="20"  y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">SYS</text>
+    <rect x="46"  y="0" width="36" height="28" rx="5" fill="#48bb78"/>
+    <text x="64"  y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">U₁</text>
+    <rect x="88"  y="0" width="36" height="28" rx="5" fill="#48bb78"/>
+    <text x="106" y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">U₂</text>
+    <rect x="130" y="0" width="36" height="28" rx="5" fill="#68d391"/>
+    <text x="148" y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">U₃</text>
+    <rect x="172" y="0" width="36" height="28" rx="5" fill="#68d391"/>
+    <text x="190" y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">U₄</text>
+    <text x="222" y="20" font-size="18" fill="#276749" font-weight="700">…</text>
+    <rect x="242" y="0" width="40" height="28" rx="5" fill="#fbd38d" stroke="#dd6b20" stroke-width="2" stroke-dasharray="4,2"/>
+    <text x="262" y="18" text-anchor="middle" font-size="14" fill="#7b341e" font-weight="700">?</text>
+    <text x="130" y="46" text-anchor="middle" font-size="9.5" fill="#276749">所有 prompt tokens 一次性并行处理</text>
   </g>
 
-  <!-- Autoregressive loop visual (inside Decode, top-right, COMPACT) -->
-  <g transform="translate(800, 308)">
-    <rect x="0"  y="0" width="20" height="20" rx="3" fill="#9ae6b4" opacity="0.7"/>
-    <text x="10" y="14" text-anchor="middle" font-size="7" fill="#276749" font-weight="700">KV</text>
-    <rect x="24" y="0" width="20" height="20" rx="3" fill="#9ae6b4" opacity="0.7"/>
-    <text x="34" y="14" text-anchor="middle" font-size="7" fill="#276749" font-weight="700">KV</text>
-    <text x="52" y="14" font-size="12" fill="#7b341e" font-weight="700">…</text>
-    <rect x="64" y="0" width="20" height="20" rx="3" fill="#dd6b20"/>
-    <text x="74" y="14" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">新</text>
-    <!-- compact loop arrow above the tokens -->
-    <path d="M74,-4 Q98,-16 98,0 Q98,18 82,20" stroke="#c05621" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
-    <polygon points="82,20 79,14 85,14" fill="#c05621"/>
-    <text x="105" y="5" font-size="8.5" fill="#7b341e" font-weight="600">循环</text>
+  <!-- Arrow Prefill → Decode -->
+  <line x1="525" y1="410" x2="560" y2="410" stroke="#dd6b20" stroke-width="3.5" marker-end="url(#arrOrange)"/>
+  <rect x="495" y="386" width="100" height="22" rx="11" fill="#fffaf0" stroke="#dd6b20" stroke-width="1.5"/>
+  <text x="545" y="401" text-anchor="middle" font-size="11" font-weight="700" fill="#dd6b20">首 token 后 →</text>
+
+  <!-- ===== Decode (orange, right half) ===== -->
+  <g filter="url(#sh)">
+    <rect x="575" y="300" width="460" height="220" rx="12" fill="#fffaf0" stroke="#dd6b20" stroke-width="2"/>
+    <rect x="575" y="300" width="460" height="36" rx="12" fill="#dd6b20"/>
+    <path d="M575 328 h460 v8 h-460z" fill="#dd6b20"/>
+    <text x="805" y="325" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">⑤ Decode 阶段（自回归生成循环）</text>
   </g>
 
-  <!-- KV Cache growth bar (inside GPU area, bottom) -->
-  <rect x="180" y="470" width="540" height="8" rx="4" fill="#fefcbf" stroke="#d69e2e" stroke-width="1" stroke-dasharray="4,2"/>
-  <text x="450" y="494" text-anchor="middle" font-size="9.5" fill="#975a16" font-weight="600">KV Cache 在 HBM 中持续增长：Prefill 初始化 → Decode 每步追加新 K/V → 请求完成后释放</text>
+  <g font-size="12" fill="#2d3748">
+    <text x="598" y="360" font-weight="700" fill="#7b341e" font-size="13">核心操作</text>
+    <text x="598" y="382">• 每步 <tspan font-weight="700">只输入 1 个新 token</tspan>（上一步刚生成的）</text>
+    <text x="598" y="402">• Q 来自新 token，K/V 从 KV Cache 读取（无需重算）</text>
+    <text x="598" y="422">• 新 token 的 K/V 追加到 Cache → 进入下一步循环</text>
+
+    <text x="598" y="452" font-weight="700" fill="#7b341e" font-size="13">瓶颈属性</text>
+    <text x="598" y="474">• <tspan font-weight="700" fill="#7b341e">Memory-bound</tspan>（访存密集，每步读全部 KV Cache）</text>
+    <text x="598" y="494">• 关键指标：<tspan font-weight="700" fill="#7b341e">TPOT</tspan>（Time Per Output Token，单 token 延迟）</text>
+  </g>
+
+  <!-- Autoregressive loop visual (clean, larger) -->
+  <g transform="translate(830, 355)">
+    <!-- History KV blocks -->
+    <rect x="0"   y="0" width="28" height="28" rx="4" fill="#9ae6b4" stroke="#38a169" stroke-width="1"/>
+    <text x="14"  y="18" text-anchor="middle" font-size="9" fill="#276749" font-weight="700">KV₁</text>
+    <rect x="32"  y="0" width="28" height="28" rx="4" fill="#9ae6b4" stroke="#38a169" stroke-width="1"/>
+    <text x="46"  y="18" text-anchor="middle" font-size="9" fill="#276749" font-weight="700">KV₂</text>
+    <rect x="64"  y="0" width="28" height="28" rx="4" fill="#9ae6b4" stroke="#38a169" stroke-width="1"/>
+    <text x="78"  y="18" text-anchor="middle" font-size="9" fill="#276749" font-weight="700">KV₃</text>
+    <text x="104" y="18" font-size="16" fill="#7b341e" font-weight="700">…</text>
+    <!-- New token (orange, highlighted) -->
+    <rect x="120" y="0" width="38" height="28" rx="4" fill="#dd6b20" stroke="#c05621" stroke-width="1.5"/>
+    <text x="139" y="18" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">新tok</text>
+    <!-- Loop arrow around new token -->
+    <path d="M139,-8 Q178,-20 182,2 Q182,22 155,28" stroke="#c05621" stroke-width="2" fill="none"/>
+    <polygon points="155,28 149,22 158,21" fill="#c05621"/>
+    <text x="180" y="12" font-size="10" fill="#7b341e" font-weight="700">循环</text>
+    <text x="100" y="46" text-anchor="middle" font-size="9.5" fill="#7b341e">历史 KV Cache + 新 token → 生成下一个</text>
+  </g>
+
+  <!-- KV Cache growth indicator (bottom of GPU area, CLEAR) -->
+  <rect x="60" y="532" width="960" height="10" rx="5" fill="#fefcbf" stroke="#d69e2e" stroke-width="1"/>
+  <!-- Filled portion representing growth -->
+  <rect x="60" y="532" width="680" height="10" rx="5" fill="#d69e2e"/>
+  <text x="540" y="558" text-anchor="middle" font-size="11" fill="#975a16" font-weight="600">KV Cache 在 HBM 中持续增长：Prefill 初始化 → Decode 每步追加新 K/V 条目 → 请求完成后释放 block（PagedAttention 分页管理）</text>
 
   <!-- ====== ROW 3: Output stage ====== -->
+  <path d="M610,560 L610,588" stroke="#319795" stroke-width="2.5" fill="none" marker-end="url(#arrTeal)"/>
 
-  <!-- Arrow from GPU down to output -->
-  <path d="M600,515 L600,540 Q600,550 590,557 L560,565" stroke="#319795" stroke-width="2" fill="none" marker-end="url(#arrTeal)"/>
-
-  <!-- Stage 6: Output (teal) -->
-  <g filter="url(#shadow)">
-    <rect x="380" y="570" width="240" height="70" rx="10" fill="#e6fffa" stroke="#319795" stroke-width="1.5"/>
-    <rect x="380" y="570" width="240" height="28" rx="10" fill="#319795"/>
-    <path d="M380 590 h240 v8 h-240z" fill="#319795"/>
-    <text x="500" y="589" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">⑥ 采样 + Detokenize + 流式返回</text>
+  <!-- Stage 6: Output (teal, centered) -->
+  <g filter="url(#sh)">
+    <rect x="375" y="595" width="280" height="80" rx="12" fill="#e6fffa" stroke="#319795" stroke-width="1.8"/>
+    <rect x="375" y="595" width="280" height="32" rx="12" fill="#319795"/>
+    <path d="M375 619 h280 v8 h-280z" fill="#319795"/>
+    <text x="515" y="617" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">⑥ 采样 + Detokenize + 流式返回</text>
   </g>
-  <g font-size="10" fill="#2d3748">
-    <text x="394" y="614">• Logits → Sampling（greedy/top-k/top-p）</text>
-    <text x="394" y="629">• Detokenize：token ID → 文本</text>
+  <g font-size="11" fill="#2d3748">
+    <text x="393" y="647">• Logits → Sampling（greedy / top-k / top-p / temperature）</text>
+    <text x="393" y="665">• Detokenize：token ID → 文本片段</text>
   </g>
 
   <!-- Stream output annotation (right of output box) -->
-  <text x="635" y="595" font-size="10" fill="#319795" font-weight="600">→ SSE / WebSocket</text>
-  <text x="639" y="610" font-size="10" fill="#319795" font-weight="600">  逐 token 流式输出</text>
-  <text x="639" y="625" font-size="9" fill="#718096">→ 用户边生成边看到</text>
+  <g>
+    <text x="670" y="625" font-size="12" fill="#319795" font-weight="700">→ SSE / WebSocket</text>
+    <text x="680" y="645" font-size="11" fill="#319795" font-weight="600">逐 token 流式输出</text>
+    <text x="684" y="662" font-size="10" fill="#718096">用户边生成边看到文字</text>
+  </g>
+
+  <!-- Left side: metrics annotation -->
+  <g>
+    <text x="55" y="635" font-size="11" fill="#3182ce" font-weight="600">接入层 →</text>
+    <text x="55" y="652" font-size="10" fill="#718096">API Server</text>
+    <text x="55" y="665" font-size="10" fill="#718096">HTTP / gRPC</text>
+  </g>
 
   <!-- ====== BOTTOM: SLO metrics bar ====== -->
-  <rect x="30" y="660" width="940" height="30" rx="8" fill="#edf2f7" stroke="#cbd5e0" stroke-width="1"/>
-  <g font-size="10.5" fill="#4a5568">
-    <text x="52" y="680" font-weight="700" fill="#1a202c">核心 SLO 指标：</text>
-    <text x="160" y="680"><tspan fill="#276749" font-weight="700">TTFT</tspan> <tspan fill="#4a5568">首 token 延迟（Prefill 决定）</tspan></text>
-    <text x="400" y="680"><tspan fill="#7b341e" font-weight="700">TPOT</tspan> <tspan fill="#4a5568">单 token 延迟（Decode 决定）</tspan></text>
-    <text x="630" y="680"><tspan fill="#2b6cb0" font-weight="700">Throughput</tspan> <tspan fill="#4a5568">tokens/s（Batching 决定）</tspan></text>
-    <text x="855" y="680"><tspan fill="#805ad5" font-weight="700">Latency</tspan> <tspan fill="#4a5568">P50/P95/P99</tspan></text>
+  <rect x="30" y="692" width="1020" height="36" rx="10" fill="#edf2f7" stroke="#cbd5e0" stroke-width="1"/>
+  <g font-size="11" fill="#4a5568">
+    <text x="58" y="716" font-weight="700" fill="#1a202c" font-size="12">核心 SLO 指标：</text>
+    <text x="180" y="716"><tspan fill="#276749" font-weight="700">TTFT</tspan> <tspan fill="#4a5568">首 token 延迟（Prefill + 排队决定）</tspan></text>
+    <text x="470" y="716"><tspan fill="#7b341e" font-weight="700">TPOT</tspan> <tspan fill="#4a5568">单 token 延迟（Decode 决定）</tspan></text>
+    <text x="720" y="716"><tspan fill="#2b6cb0" font-weight="700">Throughput</tspan> <tspan fill="#4a5568">tokens/s（Batching + KV 管理决定）</tspan></text>
+    <text x="965" y="716" text-anchor="end"><tspan fill="#805ad5" font-weight="700">P99</tspan> <tspan fill="#4a5568">尾延迟</tspan></text>
   </g>
 </svg>

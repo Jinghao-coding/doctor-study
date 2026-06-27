@@ -15,27 +15,22 @@
           "items": [
             {
               "title": "端到端链路",
-              "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程",
-              "file": "00-e2e-pipeline.md",
+              "description": "Prompt 进模型后内部发生了什么：6 阶段完整流程、Tokenization、Continuous Batching、请求生命周期",
               "level": "基础",
               "priority": 1,
-              "time": 12
-            },
-            {
-              "title": "推理总览",
-              "description": "定义、核心概念、Prefill/Decode 区别",
-              "file": "01-prefill-decode.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 10
-            },
-            {
-              "title": "请求生命周期",
-              "description": "请求接入、调度、计算、生成、返回",
-              "file": "02-request-lifecycle.md",
-              "level": "基础",
-              "priority": 2,
-              "time": 12
+              "time": 18,
+              "subtabs": [
+                {
+                  "title": "全景：6 阶段端到端推理",
+                  "description": "请求封装 → Tokenization(BPE) → 调度(Continuous Batching) → Prefill → Decode → 流式返回",
+                  "file": "00-e2e-pipeline.md"
+                },
+                {
+                  "title": "请求生命周期与调度",
+                  "description": "从 API 接入到 KV Cache 回收：scheduler 职责、PagedAttention、常见问题定位",
+                  "file": "02-request-lifecycle.md"
+                }
+              ]
             }
           ]
         },
