@@ -1060,12 +1060,38 @@ def render_topic(topic_path: Path) -> Path:
     return output
 
 
+def _count_qa_blocks() -> int:
+    """统计所有 Markdown 内容文件中的 QA 问答块数量。"""
+    count = 0
+    qa_re = re.compile(r'<div\s+class="qa"', re.IGNORECASE)
+    for md_file in CONTENT.rglob("*.md"):
+        if md_file.name == "STYLE_GUIDE.md":
+            continue
+        try:
+            text = md_file.read_text(encoding="utf-8")
+            count += len(qa_re.findall(text))
+        except Exception:
+            continue
+    return count
+
+
+def _count_total_modules() -> int:
+    """统计所有 topic 中 tabs 的模块总数。"""
+    total = 0
+    for topic in SITE.get("topics", []):
+        _, n = _topic_progress_meta(topic)
+        total += n
+    return total
+
+
 def render_index() -> Path:
     output = ROOT / "index.html"
     card_template = (TEMPLATES / "topic-card.html").read_text(encoding="utf-8")
 
     topics = SITE.get("topics", [])
     cards = [topic_card_from_template(topic, card_template) for topic in topics]
+    qa_count = _count_qa_blocks()
+    module_count = _count_total_modules()
     template = (TEMPLATES / "index.html").read_text(encoding="utf-8")
     page = template.replace("{{title}}", html.escape(SITE["title"]))
     page = page.replace("{{subtitle}}", html.escape(SITE.get("subtitle", "")))
@@ -1073,6 +1099,8 @@ def render_index() -> Path:
     page = page.replace("{{home_nav}}", _render_home_nav())
     page = page.replace("{{track_count}}", str(len(TRACKS)))
     page = page.replace("{{topic_count}}", str(len(topics)))
+    page = page.replace("{{qa_count}}", str(qa_count))
+    page = page.replace("{{module_count}}", str(module_count))
     page = page.replace("{{home_lanes}}", _render_home_lanes())
     page = page.replace("{{home_tracks}}", _render_home_tracks(card_template))
     page = page.replace("{{css_path}}", asset_link(output, "assets/style.css"))

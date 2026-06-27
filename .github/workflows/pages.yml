@@ -28,10 +28,59 @@ jobs:
           python-version: "3.13"
 
       - name: Build site
-        run: python tools/build_site.py
+        run: |
+          set -euo pipefail
+          python tools/build_site.py
+
+      - name: Check Python syntax
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/build_site.py
+
+      - name: Verify internal links
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+
+          root = Path('.')
+          missing = []
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.hrefs = []
+              def handle_starttag(self, tag, attrs):
+                  href = dict(attrs).get('href') if tag == 'a' else None
+                  if href and not href.startswith(('#', 'http:', 'https:', 'mailto:', 'javascript:', 'data:')):
+                      self.hrefs.append(href.split('#', 1)[0])
+
+          for path in [root / 'index.html', *sorted((root / 'pages').rglob('*.html'))]:
+              parser = Parser()
+              parser.feed(path.read_text(encoding='utf-8'))
+              for href in parser.hrefs:
+                  target = (path.parent / href).resolve()
+                  if not target.exists():
+                      missing.append(f'{path} -> {href}')
+
+          if missing:
+              print('\n'.join(missing))
+              raise SystemExit(1)
+          print(f'all html links ok ({sum(1 for _ in (root / "pages").rglob("*.html")) + 1} pages checked)')
+          PY
+
+      - name: Verify generated files exist
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -d assets
+          test -d pages
+          echo "index.html and directories verified"
 
       - name: Prepare Pages artifact
         run: |
+          set -euo pipefail
           mkdir -p _site
           cp index.html _site/index.html
           cp -R assets _site/assets

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f172a'/><text x='50' y='66' font-size='52' font-weight='800' fill='%23f7f9fb' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif'>DS</text></svg>">
 <title>{{title}} · 学习索引</title>
 <link rel="stylesheet" href="{{css_path}}">
 </head>
@@ -12,8 +13,9 @@
 <header class="idx-topbar">
   <div class="idx-topbar-inner">
     <a class="idx-logo" href="index.html" aria-label="doctor-study 首页">
-      <span>DS</span>
+      <span class="idx-logo-mark">DS</span>
       <strong>doctor-study</strong>
+      <small>AI Infra interview desk</small>
     </a>
     <nav class="idx-home-nav" aria-label="首页快捷入口">
       {{home_nav}}
@@ -24,19 +26,49 @@
 <main class="home-shell">
 
 <section class="idx-hero">
-  <div class="idx-kicker">AI Infra Interview Notes</div>
-  <h1>把面试知识组织成一张系统地图</h1>
-  <p class="idx-hero-desc">{{subtitle}}</p>
-  <p class="idx-hero-sub">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到资源路径和回答结构里理解，而不是孤立背概念。</p>
-  <div class="idx-actions">
-    <a class="idx-primary" href="pages/ai-infra/gpu/index.html">从 GPU 主线开始</a>
-    <a class="idx-secondary" href="pages/cs-basics/index.html">补 Linux / CS 基础</a>
-    <a class="idx-secondary" href="pages/ai-infra/scheduling/index.html">看调度设计题</a>
+  <div class="idx-hero-bg" aria-hidden="true">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
   </div>
-  <div class="idx-hero-stats" aria-label="站点内容概览">
-    <div><strong>{{topic_count}}</strong><span>学习主题</span></div>
-    <div><strong>{{track_count}}</strong><span>复习主线</span></div>
-    <div><strong>QA</strong><span>面试问答</span></div>
+  <div class="idx-hero-content">
+    <div class="idx-kicker">
+      <span class="kicker-dot"></span>
+      AI Infra Interview Notes
+    </div>
+    <h1>把面试知识<br>组织成一张<span class="hero-accent">系统地图</span></h1>
+    <p class="idx-hero-desc">{{subtitle}}</p>
+    <p class="idx-hero-sub">从硬件互联、Linux 内核、Kubernetes 调度、分布式训练到 LLM 推理，把每个模块放到资源路径和回答结构里理解，而不是孤立背概念。</p>
+    <div class="idx-actions">
+      <a class="idx-primary" href="pages/ai-infra/gpu/index.html">
+        <span>从 GPU 主线开始</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a class="idx-secondary" href="pages/cs-basics/index.html">补 Linux / CS 基础</a>
+      <a class="idx-secondary" href="pages/ai-infra/scheduling/index.html">看调度设计题</a>
+    </div>
+    <div class="idx-hero-stats" aria-label="站点内容概览">
+      <div class="stat-item">
+        <strong>{{topic_count}}</strong>
+        <span>学习主题</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <strong>{{module_count}}</strong>
+        <span>知识模块</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <strong>{{qa_count}}</strong>
+        <span>面试问答</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <strong>{{track_count}}</strong>
+        <span>复习主线</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -52,9 +84,10 @@
     <p>内容源统一维护在 <code>content/</code>，页面由 <code>tools/build_site.py</code> 生成；新增资料放入 <code>resources/</code>。</p>
   </div>
   <div class="idx-shortcuts">
-    <span>Alt + E 展开问答</span>
+    <span><kbd>Alt</kbd> + <kbd>E</kbd> 展开问答</span>
     <span>右下角目录</span>
     <span>模块搜索</span>
+    <span>学习进度自动保存</span>
   </div>
 </footer>
 
