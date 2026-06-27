@@ -1,6 +1,6 @@
 {
   "title": "LLM 推理系统",
-  "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 量化 · 投机解码 · 多 LoRA · 性能优化 · 引擎选型",
+  "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 量化 · 投机解码 · 多 LoRA · 性能优化 · 引擎选型 · 部署运维",
   "kicker": "Serving System",
   "tags": ["llm", "inference", "kv-cache", "serving", "quantization", "speculative"],
   "output": "pages/ai-infra/llm-inference/index.html",
@@ -179,6 +179,14 @@
               "level": "精通",
               "priority": 1,
               "time": 22
+            },
+            {
+              "title": "部署运维与SLO",
+              "description": "TTFT/TPOT分位数、弹性扩缩容、CUDA Graph、生产Checklist、5 道深度面试题",
+              "file": "18-serving-deployment.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
             }
           ]
         }
