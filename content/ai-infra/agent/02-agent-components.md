@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行器和状态管理。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | AI Agent |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。 |
-| 面试抓手 | 不要只说 Function Calling。 |
-
 <div class="card card-m">
 <h3>记忆系统：Agent 的上下文管理</h3>
 <p>记忆是 Agent 区别于单次 LLM 调用的关键。一个合格的 Agent 需要管理<strong>短期记忆、长期记忆和工作记忆</strong>，面试中要能说清楚三者的区别和实现方式。</p>

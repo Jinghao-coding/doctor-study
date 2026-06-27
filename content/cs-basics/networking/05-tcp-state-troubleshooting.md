@@ -1,16 +1,6 @@
 ## 一句话结论
 
 TCP 共 11 个状态，客户端主动关闭走 FIN_WAIT_1→FIN_WAIT_2→TIME_WAIT 路径，服务端被动关闭走 CLOSE_WAIT→LAST_ACK 路径。TIME_WAIT 过多主要用连接池解决（而非 tcp_tw_reuse），大量 CLOSE_WAIT 永远是应用 bug（没调 close），不是内核问题。排查 TCP 问题用 ss（比 netstat 快）+ tcpdump + ss -ti 看 RTT/cwnd，理解每个状态的根因才能快速定位连接问题。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 网络基础 |
-| 章节类型 | 排障诊断类 |
-| 解决问题 | 掌握 TCP 状态机全貌、TIME_WAIT/CLOSE_WAIT 深度排障、AI Infra 常见网络问题诊断路径。 |
-| 面试抓手 | 先画状态机讲状态流转，再展开 TIME_WAIT/CLOSE_WAIT 根因和解决方案，最后给排障命令清单。 |
-
 <div class="card card-m">
 <h3>TCP 状态机总览</h3>
 <p>TCP 连接从建立到关闭共 11 个状态，理解状态机是排查网络问题的基础。</p>
@@ -223,10 +213,3 @@ sysctl -w net.core.somaxconn=65535</code></pre>
 <div class="qa-summary">SYN flood 核心防御是 tcp_syncookies（不存半开连接状态，信息编码到 ISN），辅以增大 syn_backlog/somaxconn、减少 synack_retries 和网络层 DDoS 清洗。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-tcp-udp.md`：TCP/UDP 基础、三次握手四次挥手
-- `04-tcp-deep-mechanisms.md`：滑动窗口、拥塞控制算法、Nagle 等机制
-- `06-dns-tls-quic.md`：TLS 握手、QUIC/HTTP3 在传输层的替代方案
-- `os/05-io-multiplexing.md`：IO 多路复用与 socket 编程

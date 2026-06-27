@@ -1,16 +1,6 @@
 ## 一句话结论
 
 FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩阵不落 HBM。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 讲清标准 attention 慢在 IO，不是数学结果变了。 |
-
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>FlashAttention <strong>不减少 attention 的计算量（FLOPs 一点没少，甚至略增）</strong>，它减少的是 GPU 显存（HBM）的读写次数。因为标准 attention 是 <strong>memory-bound</strong>——瓶颈在搬数据而不是算数据，所以“少搬数据”比“少算”更能加速。它是<strong>精确</strong>的，结果和标准 attention 完全一致，不是近似。</p>

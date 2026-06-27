@@ -1,16 +1,6 @@
 ## 一句话结论
 
 cgroups 是 Linux 内核限制、统计、隔离一组进程资源的机制，配合 namespace（看见什么）、capabilities/seccomp（能做什么）构成容器基础；v1 是多 controller 多层级、v2 是统一层级语义更一致。CPU 用 quota、weight、cpuset 控制，内存用 memory.max/high/swap.max 控制，I/O 用 io controller 做带宽和 IOPS。关键误区是 cgroups 原生并不理解 GPU 算力或显存配额，它只能通过 devices controller 控制容器能否访问 /dev/nvidia* 设备文件，真正的 GPU 注入和细粒度隔离要靠 NVIDIA Container Toolkit、Device Plugin、MIG/MPS 和上层调度器协同。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux Kernel for AI Infra |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## cgroups 是什么？
 
 **cgroups** 是 Linux 内核提供的资源控制机制，全称是 **control groups**。它可以限制、统计、隔离一组进程的资源使用。

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" font-family="Menlo, Consolas, monospace" font-size="13">
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowFin" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+    </marker>
+    <marker id="arrowAck2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+    </marker>
+    <style>
+      .host { fill: #1e293b; }
+      .host-label { fill: #1e293b; font-weight: bold; font-size: 16px; }
+      .line { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 4; }
+      .arrow-fin { stroke: #dc2626; stroke-width: 2; fill: none; marker-end: url(#arrowFin); }
+      .arrow-ack { stroke: #16a34a; stroke-width: 2; fill: none; marker-end: url(#arrowAck2); }
+      .packet-fin { fill: #fff; stroke: #dc2626; stroke-width: 1.5; rx: 4; }
+      .packet-ack { fill: #fff; stroke: #16a34a; stroke-width: 1.5; rx: 4; }
+      .step-label { fill: #475569; font-size: 12px; }
+      .state { fill: #fff; stroke: #eab308; stroke-width: 1.5; rx: 12; }
+      .state-text { fill: #a16207; font-size: 11px; font-weight: bold; }
+      .state-close { fill: #fff; stroke: #dc2626; stroke-width: 1.5; rx: 12; }
+      .state-close-text { fill: #dc2626; font-size: 11px; font-weight: bold; }
+      .title { fill: #0f172a; font-size: 18px; font-weight: bold; }
+      .note { fill: #64748b; font-size: 12px; }
+      .timewait { fill: #fef3c7; stroke: #f59e0b; stroke-width: 1.5; rx: 4; }
+    </style>
+  </defs>
+
+  <text x="400" y="28" text-anchor="middle" class="title">TCP 四次挥手（Four-Way Wavehand / Connection Termination）</text>
+
+  <!-- Client and Server vertical lines -->
+  <line x1="150" y1="70" x2="150" y2="420" class="line"/>
+  <line x1="650" y1="70" x2="650" y2="420" class="line"/>
+
+  <!-- Host labels -->
+  <rect x="100" y="45" width="100" height="28" rx="4" class="host"/>
+  <text x="150" y="64" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14px">Client（主动关）</text>
+  <rect x="600" y="45" width="100" height="28" rx="4" class="host"/>
+  <text x="650" y="64" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14px">Server（被动关）</text>
+
+  <!-- Initial state: ESTABLISHED -->
+  <rect x="45" y="85" width="125" height="24" class="state"/>
+  <text x="107" y="101" text-anchor="middle" class="state-text">ESTABLISHED</text>
+  <rect x="630" y="85" width="125" height="24" class="state"/>
+  <text x="692" y="101" text-anchor="middle" class="state-text">ESTABLISHED</text>
+
+  <!-- Step 1: Client sends FIN -->
+  <line x1="150" y1="140" x2="650" y2="140" class="arrow-fin"/>
+  <rect x="270" y="124" width="260" height="26" class="packet-fin"/>
+  <text x="400" y="142" text-anchor="middle" fill="#dc2626" font-weight="bold">FIN, seq = u</text>
+  <text x="80" y="144" class="step-label">① 主动关</text>
+
+  <rect x="45" y="160" width="125" height="24" class="state"/>
+  <text x="107" y="176" text-anchor="middle" class="state-text">FIN_WAIT_1</text>
+
+  <!-- Step 2: Server sends ACK -->
+  <line x1="650" y1="200" x2="150" y2="200" class="arrow-ack"/>
+  <rect x="270" y="184" width="260" height="26" class="packet-ack"/>
+  <text x="400" y="202" text-anchor="middle" fill="#16a34a" font-weight="bold">ACK, ack = u+1</text>
+  <text x="80" y="204" class="step-label">②</text>
+
+  <rect x="45" y="220" width="125" height="24" class="state"/>
+  <text x="107" y="236" text-anchor="middle" class="state-text">FIN_WAIT_2</text>
+  <rect x="630" y="160" width="125" height="24" class="state"/>
+  <text x="692" y="176" text-anchor="middle" class="state-text">CLOSE_WAIT</text>
+
+  <!-- Server still sending data here (half-closed) -->
+  <text x="400" y="260" text-anchor="middle" fill="#94a3b8" font-size="11" font-style="italic">（半关闭状态：Client 不再发数据，但 Server 仍可发数据，Client 要接收）</text>
+
+  <!-- Step 3: Server sends FIN -->
+  <line x1="650" y1="290" x2="150" y2="290" class="arrow-fin"/>
+  <rect x="270" y="274" width="260" height="26" class="packet-fin"/>
+  <text x="400" y="292" text-anchor="middle" fill="#dc2626" font-weight="bold">FIN, ACK, seq = w, ack = u+1</text>
+  <text x="80" y="294" class="step-label">③ 被动关</text>
+
+  <rect x="630" y="310" width="125" height="24" class="state-close"/>
+  <text x="692" y="326" text-anchor="middle" class="state-close-text">LAST_ACK</text>
+  <rect x="45" y="310" width="125" height="24" class="state"/>
+  <text x="107" y="326" text-anchor="middle" class="state-text">TIME_WAIT</text>
+
+  <!-- TIME_WAIT annotation -->
+  <rect x="175" y="305" width="180" height="34" class="timewait"/>
+  <text x="265" y="320" text-anchor="middle" fill="#a16207" font-size="11" font-weight="bold">⏱ 等待 2MSL（约60s）</text>
+  <text x="265" y="334" text-anchor="middle" fill="#a16207" font-size="10">保证最后一个 ACK 被收到</text>
+
+  <!-- Step 4: Client sends ACK -->
+  <line x1="150" y1="370" x2="650" y2="370" class="arrow-ack"/>
+  <rect x="270" y="354" width="260" height="26" class="packet-ack"/>
+  <text x="400" y="372" text-anchor="middle" fill="#16a34a" font-weight="bold">ACK, ack = w+1</text>
+  <text x="80" y="374" class="step-label">④</text>
+
+  <!-- Final states -->
+  <rect x="630" y="390" width="125" height="24" class="state-close"/>
+  <text x="692" y="406" text-anchor="middle" class="state-close-text">CLOSED</text>
+  <rect x="45" y="390" width="125" height="24" class="state-close"/>
+  <text x="107" y="406" text-anchor="middle" class="state-close-text">CLOSED</text>
+
+  <text x="400" y="445" text-anchor="middle" class="note">MSL = Maximum Segment Lifetime（报文最长寿命，RFC 建议 2 分钟，Linux 默认 60s）</text>
+</svg>

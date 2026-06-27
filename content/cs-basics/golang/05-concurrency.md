@@ -242,9 +242,3 @@ func main() {
 <div class="qa-summary">面试口径：取消是级联传播的树结构；context.Value 只传跨切面的请求元数据（traceID 这类），业务参数显式放函数参数里，不要图省事塞 context。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GMP 调度模型`：channel 阻塞是用户态调度，和 GMP 结合理解
-- `并发模式与坑点`：worker pool、goroutine 泄漏、for-range 闭包坑
-- `Go 工程实践`：pprof 分析锁竞争、goroutine 泄漏检测

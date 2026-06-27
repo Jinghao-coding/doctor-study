@@ -1,16 +1,6 @@
 ## 一句话结论
 
 DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配额借用、预测性调度和干扰感知合用三个子系统串成闭环，在保障租户 QoS 的前提下把 GPU 利用率从 39.64% 提到 70.58%，QoS 合规率 93%。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 论文工作 |
-| 章节类型 | 论文项目类 |
-| 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
-| 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
 <div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/IEEE_cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
 </div>

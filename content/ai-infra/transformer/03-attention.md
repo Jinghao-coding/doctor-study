@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
-| 面试抓手 | 必须讲清 QK^T、softmax、加权求和和多头拼接。 |
-
 <div class="card card-m">
 <h3>Self-Attention：核心三步</h3>
 <p>注意力的本质是<strong>「加权求和」</strong>：每个 token 输出 = 其它所有 token 的 value 的加权平均，权重由「我和你有多相关」决定。</p>
@@ -51,7 +41,6 @@ $$</div>
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, hidden_size, num_heads):

@@ -1,16 +1,6 @@
 ## 一句话结论
 
 推理引擎选型要看调度、KV cache、batching、并行、量化、部署生态和可观测性，不是只比较吞吐。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 把 vLLM、TensorRT-LLM、SGLang、TGI 的定位讲清楚。 |
-
 <div class="card card-m">
 <h3>AI Infra 视角：推理引擎 = 调度器 + 内存系统 + 计算后端 + 分布式策略 + Serving 工程</h3>
 <p>面向应用的人只需要会用 vLLM 启服务；做 AI Infra 必须能讲清楚引擎内部的请求调度、KV 内存管理、CUDA Kernel 选择、并行切分和容错。下面把推理引擎拆成 5 个子系统，每个子系统直接给出原理、关键数据结构、源码定位和实战要点。</p>

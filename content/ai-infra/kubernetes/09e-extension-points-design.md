@@ -1,16 +1,6 @@
 ## 一句话结论
 
 `PreFilter / Filter / PreScore / Score` 看似只是流程拆分，背后是「**全局串行预处理 vs 节点级并行处理**」的架构选择，决定了一个插件应该把代码写到哪个 Hook 里。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 / Scheduler 内部机制 |
-| 章节类型 | 设计类 |
-| 解决问题 | 自定义插件时不会再写错扩展点；面试能答清"为什么要拆成两段" |
-| 面试抓手 | 一句话：**Pre 阶段做集群级预处理（串行、能终止周期、写 CycleState），Filter/Score 阶段做节点级判断（并行、只能影响当前节点）**。 |
-
 ## 调度框架全景图
 
 下面这张是 `kubernetes/enhancements/keps/sig-scheduling/624-scheduling-framework` 设计文档里给出的官方流程图。**先记图，再背扩展点**。

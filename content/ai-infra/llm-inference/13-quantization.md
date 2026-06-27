@@ -1,16 +1,6 @@
 ## 一句话结论
 
 量化通过把浮点权重/激活/KV cache 映射到低比特整数（INT8/INT4/FP8）来降低显存占用和带宽压力：W4A16（weight-only）主要缓解 decode 阶段的 memory-bound，W8A8 利用 INT8 tensor core 获得实际算力加速，FP8 凭借 H100 原生支持成为当前最易用的部署方案，GPTQ/AWQ/SmoothQuant 分别用二阶信息/激活感知/scale 迁移解决精度损失问题。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 权重量化、KV cache 量化的原理；GPTQ/AWQ/SmoothQuant/FP8 的区别；不同量化精度的 tradeoff；per-tensor/per-channel/per-group 粒度选择 |
-| 面试抓手 | 必须讲清 weight-only 和 weight-activation 量化的本质区别（只省带宽 vs 真加速），以及各算法怎么处理精度损失 |
-
 <div class="card card-m">
 <h3>为什么要量化：显存和带宽的双重压力</h3>
 <p>LLM 推理的显存消耗主要分三块：模型权重、KV cache、激活值。其中模型权重占据固定大头：</p>

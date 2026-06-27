@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Transformer 的核心是用 self-attention 在序列内建立全局依赖，再用 FFN 做逐 token 非线性变换。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
-| 面试抓手 | 先讲整体数据流，再讲每层组件和残差归一化。 |
-
 ## 架构图
 
 <figure class="transformer-figure">

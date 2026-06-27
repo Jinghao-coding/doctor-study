@@ -190,9 +190,3 @@ func main() {
 <div class="qa-summary">面试口径：Go interface 最大特点是隐式实现和值语义，这让接口和实现完全解耦——你可以为别人写的类型实现你的接口，不需要修改原有代码。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `错误处理与 Panic`：error 本身就是一个 interface
-- `Go 工程实践`：interface 在单元测试 mock 中的应用
-- `内存管理与 GC`：eface/iface 内部结构和 GC 的关系

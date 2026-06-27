@@ -22,14 +22,6 @@
 
 <section class="tabs-shell" data-tabs data-tabs-id="kubernetes-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 17</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">Kubernetes 面试学习</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="Kubernetes 面试学习"><details class="tab-group" open data-group-id="kubernetes-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">架构与调度</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="kubernetes-tabs-tab-1" data-initial="01" data-mid="kubernetes-tabs::01-architecture-pod-flow-md" data-level="基础" title="架构与 Pod 主链路" aria-controls="kubernetes-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">架构与 Pod 主链路</span><span class="tab-desc">控制面、数据面、API Server、etcd、scheduler、kubelet、Pod 启动全链路</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-2" data-initial="02" data-mid="kubernetes-tabs::02-scheduling-resource-model-md" data-level="进阶" title="调度与资源模型" aria-controls="kubernetes-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">调度与资源模型</span><span class="tab-desc">requests/limits、QoS、资源需求、放置约束速览、Pending 排查入口</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-3" data-initial="03" data-mid="kubernetes-tabs::idx-3" data-level="精通" title="Scheduler 主链路" aria-controls="kubernetes-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Scheduler 主链路</span><span class="tab-desc">调度队列、scheduler cache、assumed pod、binding cycle、preemption</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></button></div></details><details class="tab-group" open data-group-id="kubernetes-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">Scheduler 插件与扩展</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-4" data-initial="04" data-mid="kubernetes-tabs::idx-4" data-level="精通" title="插件开发与扩展点" aria-controls="kubernetes-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">插件开发与扩展点</span><span class="tab-desc">Framework Plugin、Extender、多 Scheduler、Hook 选择与代码骨架</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 26 min</span></span></button></div></details><details class="tab-group" open data-group-id="kubernetes-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">工作负载与基础设施</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-5" data-initial="05" data-mid="kubernetes-tabs::03-workload-controller-md" data-level="进阶" title="Workload 与 Controller" aria-controls="kubernetes-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Workload 与 Controller</span><span class="tab-desc">Pod 生命周期、Deployment、StatefulSet、Job、Informer、Reconcile、Operator</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-6" data-initial="06" data-mid="kubernetes-tabs::04-networking-storage-md" data-level="进阶" title="网络与存储" aria-controls="kubernetes-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">网络与存储</span><span class="tab-desc">CNI、Service、DNS、Headless、PV/PVC、StorageClass、CSI</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="kubernetes-tabs-grp-4"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">安全与运维</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-7" data-initial="07" data-mid="kubernetes-tabs::05-security-admission-multitenancy-md" data-level="进阶" title="安全、准入与多租户" aria-controls="kubernetes-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">安全、准入与多租户</span><span class="tab-desc">RBAC、ServiceAccount、Admission、Webhook、Quota、Pod Security</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-8" data-initial="08" data-mid="kubernetes-tabs::06-troubleshooting-stability-md" data-level="进阶" title="故障排查与稳定性" aria-controls="kubernetes-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">故障排查与稳定性</span><span class="tab-desc">Pending、CrashLoop、ImagePull、Service 不通、Node NotReady、大规模稳定性</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="kubernetes-tabs-grp-5"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">AI Infra 与扩展</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-9" data-initial="09" data-mid="kubernetes-tabs::07-ai-infra-gpu-dra-md" data-level="精通" title="AI Infra：GPU / 批调度 / DRA" aria-controls="kubernetes-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">AI Infra：GPU / 批调度 / DRA</span><span class="tab-desc">Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-10" data-initial="10" data-mid="kubernetes-tabs::08a-operator-crd-md" data-level="精通" title="Operator 与 CRD" aria-controls="kubernetes-tabs-panel-10" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Operator 与 CRD</span><span class="tab-desc">CRD、Operator、controller-runtime、Reconcile、Finalizer、OwnerReference、Status Conditions</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-11" data-initial="11" data-mid="kubernetes-tabs::08-extension-engineering-md" data-level="精通" title="扩展与工程化" aria-controls="kubernetes-tabs-panel-11" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">扩展与工程化</span><span class="tab-desc">Helm、Kustomize、GitOps、ArgoCD/Flux、渐进式发布、扩展点选型</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="kubernetes-tabs-grp-6"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">深度原理与基础设施</span><span class="tab-group-meta"><span class="tab-group-count">6</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-12" data-initial="12" data-mid="kubernetes-tabs::10-etcd-internals-md" data-level="精通" title="etcd 内部原理" aria-controls="kubernetes-tabs-panel-12" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">etcd 内部原理</span><span class="tab-desc">Raft 共识、MVCC/Revision/Compaction、watch 机制、boltDB、性能调优</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 28 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-13" data-initial="13" data-mid="kubernetes-tabs::11-informer-workqueue-md" data-level="精通" title="Informer 与 WorkQueue" aria-controls="kubernetes-tabs-panel-13" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Informer 与 WorkQueue</span><span class="tab-desc">Reflector→DeltaFIFO→Indexer→Controller 全链路、RateLimitingQueue、Reconcile 循环</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 30 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-14" data-initial="14" data-mid="kubernetes-tabs::12-cni-kube-proxy-deep-md" data-level="精通" title="CNI 与 kube-proxy 深度" aria-controls="kubernetes-tabs-panel-14" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CNI 与 kube-proxy 深度</span><span class="tab-desc">CNI 规范、跨节点 Pod 通信、Calico/Cilium/Flannel、iptables/IPVS/eBPF、EndpointSlice</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 28 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-15" data-initial="15" data-mid="kubernetes-tabs::13-api-server-deep-md" data-level="精通" title="API Server 请求链路" aria-controls="kubernetes-tabs-panel-15" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">API Server 请求链路</span><span class="tab-desc">AuthN/AuthZ/Admission/Validation/Storage 五阶段、RBAC、Webhook、APF、乐观并发</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 28 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-16" data-initial="16" data-mid="kubernetes-tabs::14-karpenter-autoscaling-md" data-level="精通" title="Karpenter 与自动扩缩容" aria-controls="kubernetes-tabs-panel-16" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Karpenter 与自动扩缩容</span><span class="tab-desc">CA vs Karpenter、NodePool/EC2NodeClass、Consolidation、HPA/VPA/PDB/KEDA、GPU 场景</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 28 min</span></span></button><button class="tab-button" type="button" role="tab" id="kubernetes-tabs-tab-17" data-initial="17" data-mid="kubernetes-tabs::15-node-lifecycle-md" data-level="精通" title="Node 生命周期与运维" aria-controls="kubernetes-tabs-panel-17" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Node 生命周期与运维</span><span class="tab-desc">TLS Bootstrap、Node Condition/Lease、Drain、NPD、taint、驱逐阈值、Probe、优雅终止</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 30 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="kubernetes-tabs-panel-1" aria-labelledby="kubernetes-tabs-tab-1" data-mid="kubernetes-tabs::01-architecture-pod-flow-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>架构与 Pod 主链路</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller/Scheduler/kubelet 协同把 Pod 跑起来。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>按 API Server、etcd、scheduler、kubelet、container runtime 链路讲。</td></tr>
-</table></div>
 <div class="card card-s">
 <h3>Kubernetes 架构图</h3>
 <div class="figure">
@@ -203,14 +195,6 @@ journalctl -u containerd</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::01-architecture-pod-flow-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::01-architecture-pod-flow-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">调度与资源模型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-2" aria-labelledby="kubernetes-tabs-tab-2" data-mid="kubernetes-tabs::02-scheduling-resource-model-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>调度与资源模型</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资源模型。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>AI Infra 场景要补 GPU extended resource 和 device plugin。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>调度与资源模型：回答“为什么 Pending”的核心模块</h3>
 <p>调度和资源模型要一起学。<strong>资源模型定义 Pod 要什么、Node 有什么；调度器决定这个 Pod 放到哪里。</strong>面试中最常见的追问是：Pod 为什么 Pending、requests/limits 如何影响调度、QoS 如何影响驱逐、GPU 这类扩展资源如何被调度。</p>
@@ -381,14 +365,6 @@ journalctl -u containerd</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::02-scheduling-resource-model-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::02-scheduling-resource-model-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">架构与 Pod 主链路</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Scheduler 主链路</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-3" aria-labelledby="kubernetes-tabs-tab-3" data-mid="kubernetes-tabs::idx-3" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Scheduler 主链路</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="kubernetes-tabs-panel-3-sub-1" aria-controls="kubernetes-tabs-panel-3-subpanel-1" aria-selected="true" title="调度路径与三个队列"><span class="subtab-title">调度路径与三个队列</span><span class="subtab-desc">调度内部路径、ActiveQ/BackoffQ/UnschedulableQ、Move request</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-3-sub-2" aria-controls="kubernetes-tabs-panel-3-subpanel-2" aria-selected="false" title="Cache、扩展点与抢占"><span class="subtab-title">Cache、扩展点与抢占</span><span class="subtab-desc">概念区分、scheduler cache/assume、plugin 映射、preemption、问题定位</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-3-sub-3" aria-controls="kubernetes-tabs-panel-3-subpanel-3" aria-selected="false" title="性能、打分与 HA"><span class="subtab-title">性能、打分与 HA</span><span class="subtab-desc">percentageOfNodesToScore、打分插件、多 Profile、Leader Election</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-3-sub-4" aria-controls="kubernetes-tabs-panel-3-subpanel-4" aria-selected="false" title="源码阅读路径"><span class="subtab-title">源码阅读路径</span><span class="subtab-desc">Lark 文档提炼：Run、scheduleOne、schedulePod、findNodesThatFitPod、bindingCycle</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="kubernetes-tabs-panel-3-subpanel-1" aria-labelledby="kubernetes-tabs-panel-3-sub-1" ><h2>一句话结论</h2>
 <p>一次 Pod 调度要按端到端链路讲：API Server 保存未绑定 Pod，scheduler 通过队列和插件链选择 Node 并写回绑定结果，目标 Node 的 kubelet 再真正启动容器。队列机制解释 Pod 为什么会在 ActiveQ、BackoffQ、UnschedulableQ 之间流转。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>先讲 Watch Pod → Queue → Filter → Score → Bind → Kubelet Run，再补三队列和事件唤醒。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
@@ -742,14 +718,6 @@ PostBind</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-3-subpanel-2" aria-labelledby="kubernetes-tabs-panel-3-sub-2" hidden><h2>一句话结论</h2>
 <p>scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>不要只讲算法，必须讲缓存状态和绑定路径。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>调度问题定位：区分 Pod 属性、调度阶段和调度机制</h3>
 <p>在分析 Kubernetes Scheduler 时，需要区分三类概念，<strong>这三类概念不能混在一起</strong>：</p>
@@ -877,14 +845,6 @@ PostBind</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-3-subpanel-3" aria-labelledby="kubernetes-tabs-panel-3-sub-3" hidden><h2>一句话结论</h2>
 <p>Scheduler 性能调优关注候选节点比例、打分插件、profile、并发和 HA。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>解释 percentageOfNodesToScore 的收益与风险。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>Scheduler 性能与扩展性</h3>
 <p>大规模集群（数千节点、数万 Pod）中，scheduler 的性能直接决定 Pod 启动延迟。面试中要能说清楚关键性能参数和优化手段。</p>
@@ -950,14 +910,6 @@ PostBind</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-3-subpanel-4" aria-labelledby="kubernetes-tabs-panel-3-sub-4" hidden><h2>一句话结论</h2>
 <p>读 kube-scheduler 源码不要从插件细节开始，而要先抓住启动链路、Informer/Cache、调度循环、过滤打分、绑定循环这五条主线。Lark 文档提供的是源码阅读视角，适合作为 Scheduler 主链路和插件扩展内容的补充。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心 / Scheduler 内部机制</td></tr>
-<tr><td>章节类型</td><td>源码阅读路径</td></tr>
-<tr><td>解决问题</td><td>把 kube-scheduler 从二进制启动、cache 同步、scheduleOne 到 bindingCycle 的源码链路串起来</td></tr>
-<tr><td>面试抓手</td><td>一句话：先讲 <code>Run → SchedulingQueue → scheduleOne → schedulePod → findNodesThatFitPod / prioritizeNodes / selectHost → bindingCycle</code>。</td></tr>
-</table></div>
 <h2>来源与使用方式</h2>
 <p>本页整理自 Lark 文档《万字长文详解 Kubernetes 调度器：kube-scheduler 实现》，重点吸收其源码阅读顺序和函数链路。原文更偏长篇源码剖析；本站保留面试复习需要的主线，不复制长代码。</p>
 <h2>源码阅读主线</h2>
@@ -1009,14 +961,6 @@ PostBind</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>调度与资源模型</code>：理解 Pod 需求和 Node 资源/约束。</li><li><code>Scheduler 主链路</code>：理解队列、cache、assume、抢占和 HA。</li><li><code>Scheduler 插件与扩展</code>：理解 Framework 扩展点和插件开发。</li><li><code>任务调度理论</code>：理解 Gang、Backfill、抢占代价这些策略为什么需要挂到 scheduler 上。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::idx-3" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::idx-3" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">调度与资源模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">插件开发与扩展点</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-4" aria-labelledby="kubernetes-tabs-tab-4" data-mid="kubernetes-tabs::idx-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>插件开发与扩展点</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 26 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="kubernetes-tabs-panel-4-sub-1" aria-controls="kubernetes-tabs-panel-4-subpanel-1" aria-selected="true" title="自定义 Plugin 实战"><span class="subtab-title">自定义 Plugin 实战</span><span class="subtab-desc">三种实现方式、Framework 扩展点、GPU 拓扑感知插件代码骨架</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-4-sub-2" aria-controls="kubernetes-tabs-panel-4-subpanel-2" aria-selected="false" title="扩展点设计差异"><span class="subtab-title">扩展点设计差异</span><span class="subtab-desc">PreFilter vs Filter / PreScore vs Score、Plugin 多 Hook 结构、源码目录地图、编译期接口校验</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-4-sub-3" aria-controls="kubernetes-tabs-panel-4-subpanel-3" aria-selected="false" title="QueueingHint 与 Move Request"><span class="subtab-title">QueueingHint 与 Move Request</span><span class="subtab-desc">1.28 Beta / 1.32 GA、EnqueueExtensions、惊群问题、Move Request 触发链路</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-4-sub-4" aria-controls="kubernetes-tabs-panel-4-subpanel-4" aria-selected="false" title="Scheduler 可观测性"><span class="subtab-title">Scheduler 可观测性</span><span class="subtab-desc">kube-scheduler-simulator、Diagnosis/FitError、Prometheus metrics 与 SLO 阈值</span></button><button class="subtab-button" type="button" role="tab" id="kubernetes-tabs-panel-4-sub-5" aria-controls="kubernetes-tabs-panel-4-subpanel-5" aria-selected="false" title="设计理念与经典插件"><span class="subtab-title">设计理念与经典插件</span><span class="subtab-desc">六维设计矩阵、Affinity、TaintToleration、NodeResourcesFit、Extender HTTP 通信</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="kubernetes-tabs-panel-4-subpanel-1" aria-labelledby="kubernetes-tabs-panel-4-sub-1" ><h2>一句话结论</h2>
 <p>自定义调度逻辑优先用 Scheduling Framework Plugin，复杂系统再考虑 extender 或独立 scheduler。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>用 GPU 拓扑感知 Filter/Score 举例。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>自定义 Scheduler Plugin 实战</h3>
 <p>面试中经常被问到&quot;你有没有写过自定义调度插件&quot;。回答时应该先讲清楚<strong>有哪些实现方式</strong>，再深入 Framework Plugin 的开发流程，最后给出具体代码示例。</p>
@@ -1510,14 +1454,6 @@ func (pl *PredictivePlugin) Unreserve(
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-4-subpanel-2" aria-labelledby="kubernetes-tabs-panel-4-sub-2" hidden><h2>一句话结论</h2>
 <p><code>PreFilter / Filter / PreScore / Score</code> 看似只是流程拆分，背后是「<strong>全局串行预处理 vs 节点级并行处理</strong>」的架构选择，决定了一个插件应该把代码写到哪个 Hook 里。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心 / Scheduler 内部机制</td></tr>
-<tr><td>章节类型</td><td>设计类</td></tr>
-<tr><td>解决问题</td><td>自定义插件时不会再写错扩展点；面试能答清&quot;为什么要拆成两段&quot;</td></tr>
-<tr><td>面试抓手</td><td>一句话：<strong>Pre 阶段做集群级预处理（串行、能终止周期、写 CycleState），Filter/Score 阶段做节点级判断（并行、只能影响当前节点）</strong>。</td></tr>
-</table></div>
 <h2>调度框架全景图</h2>
 <p>下面这张是 <code>kubernetes/enhancements/keps/sig-scheduling/624-scheduling-framework</code> 设计文档里给出的官方流程图。<strong>先记图，再背扩展点</strong>。</p>
 <div class="figure">
@@ -1666,14 +1602,6 @@ type Scheduler struct {
 <h2>关联模块</h2>
 <ul><li>上一节：<code>Scheduler 内部机制 · 调度路径与队列</code>，理解 ActiveQ → Cycle → Bind 的整体流转。</li><li>下一节：<code>QueueingHint 与 Move Request</code>，理解 Pod 失败后怎么回到 ActiveQ。</li><li><code>自定义 Plugin 实战</code>：把这里讲的 Hook 设计落到代码里。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-4-subpanel-3" aria-labelledby="kubernetes-tabs-panel-4-sub-3" hidden><h2>一句话结论</h2>
 <p><strong>QueueingHint</strong> 是 K8s 1.28 引入、1.32 GA 的能力，让 Plugin 可以基于具体的集群事件（增删 Pod / Node 标签变更等）告诉 scheduler「这次事件能不能让我之前调度失败的 Pod 重新有机会」，避免<strong>惊群式重新入队</strong>导致 scheduler 反复扫描节点却仍然失败。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心 / Scheduler 内部机制</td></tr>
-<tr><td>章节类型</td><td>系统类 + 设计类</td></tr>
-<tr><td>解决问题</td><td>大规模集群下 UnschedulableQ → ActiveQ 的精确唤醒；理解 Move Request 的触发链路；面试能讲清&quot;集群事件 → 唤醒哪些 Pod&quot;</td></tr>
-<tr><td>面试抓手</td><td><strong>集群事件不是无差别广播给所有 Pending Pod，而是通过 QueueingHint 精确投递</strong>。</td></tr>
-</table></div>
 <h2>三个队列再回顾</h2>
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/03-three-queues.png" alt="Scheduler 三队列流转图" loading="lazy">
@@ -1800,14 +1728,6 @@ func (pl *NodeAffinity) isSchedulableAfterNodeChange(
 <h2>关联模块</h2>
 <ul><li><code>调度路径与三个队列</code>（09a）：三队列基础和入队出队主流程。</li><li><code>Cache、扩展点与抢占</code>（09b）：CycleState 与 scheduler cache 的关系。</li><li><code>Scheduler 可观测性</code>（09g）：QueueingHint 命中率的 metrics 监控。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-4-subpanel-4" aria-labelledby="kubernetes-tabs-panel-4-sub-4" hidden><h2>一句话结论</h2>
 <p>排查 scheduler 问题的标准三件套：<strong>kube-scheduler-simulator</strong> 重放 + <strong>Diagnosis / FitError</strong> 数据结构看每个节点被哪个 Plugin 拦下来 + <strong>Prometheus metrics</strong> 看长期趋势和 SLO。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心 / Scheduler 内部机制</td></tr>
-<tr><td>章节类型</td><td>系统类 + 排障类</td></tr>
-<tr><td>解决问题</td><td>知道&quot;Pod Pending&quot;问题怎么逐层下钻；面试能给出具体的 metric 名和 SLO 阈值</td></tr>
-<tr><td>面试抓手</td><td><strong>看一个 Pod 为什么 Pending → describe pod 看 events → FitError 里的 NodeToStatus → 长期趋势看 metrics</strong>。</td></tr>
-</table></div>
 <h2>工具一：kube-scheduler-simulator</h2>
 <div class="card card-m">
 <h3>是什么、为什么需要</h3>
@@ -1951,14 +1871,6 @@ topk(5, sum(scheduler_unschedulable_pods) by (plugin))</code></pre>
 <h2>关联模块</h2>
 <ul><li><code>调度路径与三个队列</code>（09a）：三队列流转。</li><li><code>Cache、扩展点与抢占</code>（09b）：FailedScheduling 事件中 PreFilter / PostFilter 消息的来源。</li><li><code>QueueingHint 与 Move Request</code>（09f）：unschedulable_pods 与 hint 命中率的关系。</li><li><code>性能、打分与 HA</code>（09c）：percentageOfNodesToScore 和调度延迟的关系。</li></ul></div><div class="subtab-panel" role="tabpanel" id="kubernetes-tabs-panel-4-subpanel-5" aria-labelledby="kubernetes-tabs-panel-4-sub-5" hidden><h2>一句话结论</h2>
 <p>kube-scheduler 的设计理念是<strong>可扩展性 + 效率优先 + 声明式 API + 公平性 + HA + 用户可配置性</strong>六维平衡；NodeAffinity / TaintToleration / NodeResourcesFit 这些经典插件都是这套设计哲学的具体落地；Extender 是上一代的扩展方式，主要用 HTTP 通信。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心 / Scheduler 内部机制</td></tr>
-<tr><td>章节类型</td><td>设计类 + 系统类</td></tr>
-<tr><td>解决问题</td><td>面试被问&quot;K8s scheduler 设计的核心理念是什么&quot;能答出六维矩阵；理解经典插件如何把设计哲学落地；知道 Extender 和 Plugin 的边界</td></tr>
-<tr><td>面试抓手</td><td><strong>任何一个 Plugin 都可以放到「六维矩阵」里去解释它存在的理由</strong>。</td></tr>
-</table></div>
 <h2>K8s 整体架构定位</h2>
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/kubernetes-components-official.svg" alt="Kubernetes 官方组件架构图" loading="lazy">
@@ -2226,14 +2138,6 @@ extenders:
 <h2>关联模块</h2>
 <ul><li><code>Scheduler 内部机制 · 调度路径与队列</code>（09a）：六维矩阵中&quot;效率优先&quot;的具体落地。</li><li><code>Cache、扩展点与抢占</code>（09b）：抢占的扩展点位置（PostFilter）。</li><li><code>自定义 Plugin 实战</code>（09d）：Plugin 接口与 Extender 的对比。</li><li><code>扩展点设计差异</code>（09e）：PreFilter/Filter/PreScore/Score 的设计哲学。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::idx-4" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::idx-4" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Scheduler 主链路</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Workload 与 Controller</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-5" aria-labelledby="kubernetes-tabs-tab-5" data-mid="kubernetes-tabs::03-workload-controller-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Workload 与 Controller</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Workload Controller 的本质是 reconcile：持续把实际状态拉回期望状态。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>区分 Deployment/StatefulSet/Job/Operator 的边界。</td></tr>
-</table></div>
 <div class="card card-m">
 <p><strong>Workload 与 Controller：声明式系统的核心。</strong></p>
 <p>Workload 解决“如何管理一组 Pod”，Controller 解决“如何让实际状态持续逼近期望状态”。面试中不要只背 Deployment、StatefulSet、DaemonSet、Job 的用途，还要讲清楚 <strong>Informer → WorkQueue → Reconcile → 更新 status</strong> 这条控制循环。</p>
@@ -2582,14 +2486,6 @@ func Reconcile(ctx, req) {
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::03-workload-controller-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::03-workload-controller-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">插件开发与扩展点</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">网络与存储</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-6" aria-labelledby="kubernetes-tabs-tab-6" data-mid="kubernetes-tabs::04-networking-storage-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>网络与存储</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>按 CNI、Service、DNS、Ingress、PV/PVC/CSI 讲。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>网络与存储：Pod 能不能被访问，数据能不能挂上</h3>
 <p>网络和存储经常一起出现在排障题里。Pod 启动不仅要调度成功，还要 CNI 分配网络、CSI 挂载卷；服务访问不仅要 Pod Running，还要 readiness、EndpointSlice、Service 转发和 DNS 都正常。</p>
@@ -2862,14 +2758,6 @@ func Reconcile(ctx, req) {
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::04-networking-storage-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::04-networking-storage-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Workload 与 Controller</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">安全、准入与多租户</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-7" aria-labelledby="kubernetes-tabs-tab-7" data-mid="kubernetes-tabs::05-security-admission-multitenancy-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>安全、准入与多租户</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>安全和多租户要从身份、授权、准入、隔离、配额和审计六层看。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>不要把 RBAC、Admission、Pod Security 混为一谈。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>安全、准入与多租户：请求能不能进入，资源能不能隔离</h3>
 <p>Kubernetes 安全链路可以概括为：<strong>Authentication 识别你是谁，Authorization 判断你能做什么，Admission 决定这个请求是否符合集群策略，Persistence 才会写入 etcd。</strong>多租户治理则在此基础上叠加 namespace、RBAC、Quota、LimitRange、Pod Security、PriorityClass 和队列配额。</p>
@@ -3162,14 +3050,6 @@ spec:
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::05-security-admission-multitenancy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::05-security-admission-multitenancy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">网络与存储</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">故障排查与稳定性</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-8" aria-labelledby="kubernetes-tabs-tab-8" data-mid="kubernetes-tabs::06-troubleshooting-stability-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>故障排查与稳定性</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8S 排障要从状态、事件、日志、资源、网络、节点和控制面逐层收敛。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>排障诊断类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>故障排查总方法：从症状反推链路</h3>
 <p>Kubernetes 排障不要一上来背命令，而要按链路拆：<strong>API 对象是否存在 → 调度是否成功 → kubelet 是否执行 → 网络/存储是否就绪 → 应用是否健康 → 控制器是否持续修正。</strong></p>
@@ -3432,14 +3312,6 @@ spec:
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::06-troubleshooting-stability-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::06-troubleshooting-stability-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">安全、准入与多租户</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">AI Infra：GPU / 批调度 / DRA</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-9" aria-labelledby="kubernetes-tabs-tab-9" data-mid="kubernetes-tabs::07-ai-infra-gpu-dra-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>AI Infra：GPU / 批调度 / DRA</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度、Kueue/Volcano 和 DRA。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。</td></tr>
-<tr><td>面试抓手</td><td>把 K8S 抽象和 GPU 物理资源语义连接起来。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>AI Infra：GPU / 批调度 / DRA 总览</h3>
 <p>AI Infra 场景下，Kubernetes 的核心问题从“跑一个无状态服务”扩展为：<strong>如何接入 GPU/NPU 等异构硬件，如何让分布式训练一组 Pod 同时拿到资源，如何表达显存、拓扑、MIG、NVLink、NUMA 等复杂约束。</strong></p>
@@ -3860,14 +3732,6 @@ kubectl get pods -A | grep -i dra
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::07-ai-infra-gpu-dra-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::07-ai-infra-gpu-dra-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">故障排查与稳定性</span></button><button type="button" class="tab-step tab-step-next" data-step-target="10"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Operator 与 CRD</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-10" aria-labelledby="kubernetes-tabs-tab-10" data-mid="kubernetes-tabs::08a-operator-crd-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Operator 与 CRD</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Operator = CRD + Controller：CRD 负责把领域对象注册成 Kubernetes API，Operator 通过幂等 Reconcile 把对象的期望状态持续推进到实际状态。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>单独掌握 CRD、Operator、controller-runtime、Reconcile、Finalizer、OwnerReference、Status Conditions 等平台工程核心能力。</td></tr>
-<tr><td>面试抓手</td><td>回答时强调 schema、spec/status 分离、幂等 reconcile、finalizer 清理和 owner reference 生命周期。</td></tr>
-</table></div>
 <h2>阅读路径</h2>
 <ol><li>先区分 CRD 和 Operator：CRD 是对象，Operator 是行为。</li><li>再看 controller-runtime 如何组织 Reconcile、cache、client、watch 和 webhook。</li><li>最后用 TrainingJob / AIJob 这类场景说明如何设计领域对象和生命周期。</li></ol>
 <div class="card card-m">
@@ -4056,14 +3920,6 @@ spec:
 <h2>关联模块</h2>
 <ul><li><code>Workload 与 Controller</code>：理解 controller / reconcile 的基础。</li><li><code>Scheduler 插件与扩展</code>：理解调度逻辑不应该塞进 Operator。</li><li><code>AI Infra：GPU / 批调度 / DRA</code>：理解 AIJob、PodGroup、GPU 资源语义。</li><li><code>扩展与工程化</code>：理解 Operator 如何被 Helm、Kustomize、GitOps 部署和发布。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::08a-operator-crd-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::08a-operator-crd-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="9"><span class="tab-step-label">上一篇</span><span class="tab-step-title">AI Infra：GPU / 批调度 / DRA</span></button><button type="button" class="tab-step tab-step-next" data-step-target="11"><span class="tab-step-label">下一篇</span><span class="tab-step-title">扩展与工程化</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-11" aria-labelledby="kubernetes-tabs-tab-11" data-mid="kubernetes-tabs::08-extension-engineering-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>扩展与工程化</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator 负责建模和控制循环，Helm / Kustomize / GitOps / 渐进式发布负责把这些对象安全、可审计地交付到集群。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 核心</td></tr>
-<tr><td>章节类型</td><td>系统类</td></tr>
-<tr><td>解决问题</td><td>梳理 Helm、Kustomize、GitOps、ArgoCD/Flux、渐进式发布，以及不同 Kubernetes 扩展点如何选型。</td></tr>
-<tr><td>面试抓手</td><td>Operator 与 CRD 已拆到单独章节；本节重点讲工程化交付、发布回滚和扩展点选型。</td></tr>
-</table></div>
 <h2>阅读路径</h2>
 <ol><li>先看 Helm / Kustomize：解决 YAML 参数化和多环境差异。</li><li>再看 GitOps：解决集群状态审计、同步和漂移修复。</li><li>最后看扩展点选型：不同需求应该接 CRD、Webhook、Scheduler Plugin、DRA、CSI、CNI 还是 GitOps。</li></ol>
 <div class="card card-m">
@@ -4171,10 +4027,6 @@ spec:
 <div class="card card-m">
 <h3>扩展与工程化高频问答</h3>
 
-
-
-
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Helm 和 Kustomize 怎么选？能一起用吗？</div>
 <div class="qa-a">
@@ -4198,8 +4050,6 @@ spec:
 <div class="qa-summary">面试口径：GitOps = Git 是真相 + 集群 agent 持续 pull + drift 自动纠回；pull 模型让 CI 系统不持有集群凭据，更安全。</div>
 </div>
 </div>
-
-
 
 </div>
 <h2>关联模块</h2>
@@ -4517,14 +4367,6 @@ etcdctl endpoint status --write-out=json | jq -r '.[] | "\(.Endpoint): \(.Status
 <h2>关联模块</h2>
 <ul><li><code>01-architecture-pod-flow</code>：etcd 是 K8s 架构图中唯一的持久化状态层，理解 etcd 才能理解 API Server 为什么是唯一入口。</li><li><code>11-informer-workqueue</code>：Informer 的 ListAndWatch 底层依赖 etcd watch + revision，理解 MVCC 才能理解 watch 断点续传和 relist 机制。</li><li><code>13-api-server-deep</code>：API Server 的乐观并发控制、watch 实现、分页 continue token 都直接依赖 etcd 的 revision 和 MVCC 能力。</li><li><code>06-troubleshooting-stability</code>：etcd 故障（Leader 选举、DB 满、磁盘慢）是 K8s 控制面故障的首要排查方向。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::10-etcd-internals-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::10-etcd-internals-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="11"><span class="tab-step-label">上一篇</span><span class="tab-step-title">扩展与工程化</span></button><button type="button" class="tab-step tab-step-next" data-step-target="13"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Informer 与 WorkQueue</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-13" aria-labelledby="kubernetes-tabs-tab-13" data-mid="kubernetes-tabs::11-informer-workqueue-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Informer 与 WorkQueue</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 30 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>client-go 的 Informer 机制是 K8s Controller/Operator 的核心基础设施：Reflector 通过 ListAndWatch 从 API Server 获取资源变更，经 DeltaFIFO 队列去重后写入 Indexer 本地缓存并触发事件，Controller 从 RateLimitingQueue 取 key 执行 Reconcile，最终实现&quot;watch 变化 → 本地缓存同步 → 异步 reconcile → 失败退避重试&quot;的声明式控制循环。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 扩展 / Operator 开发</td></tr>
-<tr><td>章节类型</td><td>机制类</td></tr>
-<tr><td>解决问题</td><td>理解 Controller 如何高效监听集群状态变化、如何保证事件不丢、如何处理并发和重试</td></tr>
-<tr><td>面试抓手</td><td>Reflector → DeltaFIFO → Indexer → WorkQueue → syncHandler 这条链路逐层讲透</td></tr>
-</table></div>
 <div class="card card-s">
 <h3>Informer 完整链路图</h3>
 <div class="figure">
@@ -4914,14 +4756,6 @@ func (c *Controller) handleErr(err error, key interface{}) {
 <h2>关联模块</h2>
 <ul><li><code>10-etcd-internals</code>：Informer 的 Watch 机制底层是 etcd watch + resourceVersion（revision），理解 etcd MVCC 才能理解&quot;too old resource version&quot;和 relist。</li><li><code>08a-operator-crd</code>：Operator 开发的核心就是写自定义 Controller，Informer/WorkQueue 是 client-go 提供的标准框架。</li><li><code>03-workload-controller</code>：Deployment/ReplicaSet/Job 等内置 Controller 都使用相同的 Informer 机制。</li><li><code>13-api-server-deep</code>：API Server 的 chunked watch、bookmark 事件是 Informer 高效率的服务端配合。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::11-informer-workqueue-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::11-informer-workqueue-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="12"><span class="tab-step-label">上一篇</span><span class="tab-step-title">etcd 内部原理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="14"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CNI 与 kube-proxy 深度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-14" aria-labelledby="kubernetes-tabs-tab-14" data-mid="kubernetes-tabs::12-cni-kube-proxy-deep-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CNI 与 kube-proxy 深度</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 28 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8s 网络数据面由 CNI 插件负责 Pod 网络配置（IP 分配、veth/bridge/路由）、kube-proxy 或 eBPF 负责 Service 负载均衡；Pod 跨节点通信依赖-underlay/overlay 网络打通，Service 转发经历 DNAT/路由/后端选择，理解 CNI 接口规范、kube-proxy 三种模式差异和主流 CNI 实现（Calico/Cilium/Flannel）是网络面试的核心。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 网络</td></tr>
-<tr><td>章节类型</td><td>机制类</td></tr>
-<tr><td>解决问题</td><td>Pod IP 怎么来的？跨节点 Pod 怎么通信？Service 转发如何实现？Calico/Cilium/Flannel 区别？iptables/IPVS/eBPF 优劣？</td></tr>
-<tr><td>面试抓手</td><td>先讲 CNI 调用链路，再讲 Pod 数据包路径，再对比 kube-proxy 模式和主流 CNI 实现</td></tr>
-</table></div>
 <div class="card card-s">
 <h3>Pod 网络数据路径图</h3>
 <div class="figure">
@@ -5623,14 +5457,6 @@ retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 <h2>关联模块</h2>
 <ul><li><code>10-etcd-internals</code>：API Server 的 storage 层直接操作 etcd，resourceVersion/optimistic concurrency/watch 底层依赖 etcd revision 和 MVCC。</li><li><code>11-informer-workqueue</code>：Informer 的 ListAndWatch 就是 API Server LIST + WATCH 接口的客户端实现。</li><li><code>05-security-admission-multitenancy</code>：认证鉴权、准入控制和多租户安全的概览。</li><li><code>08-extension-engineering</code>：CRD admission webhook、Operator 开发中的 webhook 使用。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="kubernetes-tabs::13-api-server-deep-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="kubernetes-tabs::13-api-server-deep-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="14"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CNI 与 kube-proxy 深度</span></button><button type="button" class="tab-step tab-step-next" data-step-target="16"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Karpenter 与自动扩缩容</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="kubernetes-tabs-panel-16" aria-labelledby="kubernetes-tabs-tab-16" data-mid="kubernetes-tabs::14-karpenter-autoscaling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Karpenter 与自动扩缩容</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 28 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>K8s 弹性伸缩分为节点层（Cluster Autoscaler 扩节点组、Karpenter 直接按需配实例）和 Pod 层（HPA 水平扩副本、VPA 垂直调资源、KEDA 事件驱动）；AI/GPU 场景下 Karpenter 凭借 Pod 级装箱、快速供给和 consolidation 相比 CA 更适合异构 GPU 和突发推理负载，PDB 保护自愿中断下的分布式训练/推理服务可用性。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Kubernetes 自动伸缩 / AI Infra</td></tr>
-<tr><td>章节类型</td><td>系统设计 + 实践类</td></tr>
-<tr><td>解决问题</td><td>节点怎么自动扩缩容？Karpenter 比 CA 强在哪？GPU 伸缩要注意什么？HPA/VPA/PDB/KEDA 怎么配合？</td></tr>
-<tr><td>面试抓手</td><td>CA vs Karpenter 对比 → HPA/VPA/KEDA 机制 → PDB 保护 → GPU 场景特殊考虑</td></tr>
-</table></div>
 <h2>Cluster Autoscaler（CA）</h2>
 <div class="card card-m">
 <h3>CA 工作原理</h3>

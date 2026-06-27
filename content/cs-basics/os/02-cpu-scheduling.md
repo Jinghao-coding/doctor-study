@@ -1,16 +1,6 @@
 ## 一句话结论
 
 CPU 调度回答的是"下一个时间片给谁"。FIFO/SJF/RR/优先级/CFS 这套单机算法，会原样迁移到 K8s、HPC 和 AI 集群里：SJF 对应短任务优先，RR 对应租户轮转，优先级对应抢占，CFS 对应公平份额。记住 CFS 靠 vruntime 选"最没跑够"的任务，目标是公平和响应而非吞吐。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 操作系统基础 |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 <div class="card card-m">
 <h3>CPU 调度算法：从单机 OS 到集群调度的共同语言</h3>
 <p>CPU 调度回答“下一个时间片给谁”。这些算法也会迁移到 K8s、HPC 和 AI 集群里：FIFO 对应队列顺序，SJF 对应短任务优先，RR 对应租户轮转，优先级对应抢占，CFS 对应公平份额。</p>
@@ -74,10 +64,3 @@ CPU 调度回答的是"下一个时间片给谁"。FIFO/SJF/RR/优先级/CFS 这
 <div class="qa-q">Q: Linux CFS 和 CUDA thread block 调度有什么区别？</div>
 <div class="qa-a"><p>CFS 是 CPU 上的操作系统调度器，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享；CUDA thread block 调度是 GPU kernel 内部的硬件执行机制，调度对象是 grid 中的 block/CTA，目标是把 block 分配到 SM、让 warp scheduler 用 ready warp 隐藏访存延迟。CFS 通过 <code>vruntime</code>、权重、抢占和上下文切换决定哪个 task 运行；CUDA block 一旦驻留 SM 通常运行到完成，SM 内部以 warp 为单位发射指令，更强调吞吐而不是公平时间片。</p><div class="qa-summary">一句话：CFS 管 OS task 的公平 CPU 时间，CUDA block/warp 调度管 kernel 内部的高吞吐并行执行。</div></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

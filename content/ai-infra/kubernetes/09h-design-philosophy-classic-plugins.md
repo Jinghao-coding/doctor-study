@@ -1,16 +1,6 @@
 ## 一句话结论
 
 kube-scheduler 的设计理念是**可扩展性 + 效率优先 + 声明式 API + 公平性 + HA + 用户可配置性**六维平衡；NodeAffinity / TaintToleration / NodeResourcesFit 这些经典插件都是这套设计哲学的具体落地；Extender 是上一代的扩展方式，主要用 HTTP 通信。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 / Scheduler 内部机制 |
-| 章节类型 | 设计类 + 系统类 |
-| 解决问题 | 面试被问"K8s scheduler 设计的核心理念是什么"能答出六维矩阵；理解经典插件如何把设计哲学落地；知道 Extender 和 Plugin 的边界 |
-| 面试抓手 | **任何一个 Plugin 都可以放到「六维矩阵」里去解释它存在的理由**。 |
-
 ## K8s 整体架构定位
 
 <div class="figure">

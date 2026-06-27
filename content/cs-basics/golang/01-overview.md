@@ -107,9 +107,3 @@ void f(User u) { u = new User(); }    // 重新赋值，外部不变
 <div class="qa-summary">面试口径：云原生选 Go 是「部署简单 + 并发够用 + 工程效率高 + 社区生态」的综合选择，不是单纯看性能。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `类型系统与 Interface`：理解 Go 的值语义、interface 鸭式类型
-- `GMP 调度模型`：理解 goroutine 为什么能做到高并发
-- `并发编程`：CSP 模型、channel 是 Go 的核心竞争力

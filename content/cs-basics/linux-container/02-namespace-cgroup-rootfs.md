@@ -1,23 +1,130 @@
 ## 一句话结论
 
-容器不是轻量虚拟机，而是 Linux 内核三种能力的组合：namespace 决定进程「能看见什么」、cgroup 决定「能用多少资源」、rootfs/镜像决定「文件系统长什么样」。理解这三件套，才能解释容器为什么共享宿主机内核、为什么资源限制最终落到 cgroup。
+容器本质是"受限制的进程"：Linux Namespace 做<strong>视图隔离</strong>（让进程看到独立的系统资源），Cgroups 做<strong>资源限制</strong>（限制进程能用多少 CPU/内存/IO），rootfs（UnionFS/OverlayFS）做<strong>文件系统隔离</strong>（让进程有自己独立的根目录）。三者组合就是一个"看起来像独立机器"的容器运行环境。
 
-## 复习定位
+<div class="card card-m">
+<h3>容器隔离三件套全景</h3>
+<table><tr><th>技术</th><th>内核版本</th><th>作用</th><th>一句话</th></tr>
+<tr><td><strong>Namespace</strong></td><td>2.6+（逐步加全）</td><td>视图隔离</td><td>"你看不到外面的世界"——PID、网络、挂载点等资源各 namespace 独立</td></tr>
+<tr><td><strong>Cgroups</strong></td><td>2.6.24（v1）/ 4.5（v2）</td><td>资源限制</td><td>"你只能用这么多"——限制 CPU/内存/IO/进程数等配额</td></tr>
+<tr><td><strong>rootfs / UnionFS</strong></td><td>—</td><td>文件系统隔离</td><td>"你有自己的根目录"——独立文件系统视图，镜像分层+CoW</td></tr>
+</table>
+<p>容器不是虚拟机：没有独立内核，所有容器共享宿主机内核，隔离靠内核机制而非 hypervisor。KVM 虚拟机有独立内核，隔离更强但开销更大。</p>
+</div>
 
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux 与容器基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕运行环境、namespace、cgroup、rootfs、Docker/K8S 资源模型建立容器基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
+<div class="card card-s">
+<h3>Namespace 七类</h3>
+<table><tr><th>Namespace</th><th>隔离内容</th><th>系统调用参数</th><th>内核版本</th><th>容器中的表现</th></tr>
+<tr><td><strong>Mount (mnt)</strong></td><td>文件系统挂载点</td><td>CLONE_NEWNS</td><td>2.4.19</td><td>容器内 mount/umount 不影响宿主机和其他容器；每个容器有自己独立的根目录视图</td></tr>
+<tr><td><strong>PID</strong></td><td>进程 ID 空间</td><td>CLONE_NEWPID</td><td>2.6.24</td><td>容器内 PID=1 是 init 进程，容器内看不到宿主机和其他容器的进程；容器退出后其内进程全部销毁</td></tr>
+<tr><td><strong>Network (net)</strong></td><td>网络设备、IP、路由表、iptables、端口</td><td>CLONE_NEWNET</td><td>2.6.29</td><td>容器有独立的网络栈（veth pair + 网桥），自己的 IP/路由/防火墙规则，端口互不冲突</td></tr>
+<tr><td><strong>UTS</strong></td><td>主机名、NIS 域名</td><td>CLONE_NEWUTS</td><td>2.6.19</td><td>容器有自己的 hostname，<code>hostname</code> 命令看到的是容器名</td></tr>
+<tr><td><strong>IPC</strong></td><td>System V IPC、POSIX 消息队列</td><td>CLONE_NEWIPC</td><td>2.6.19</td><td>容器内进程间通信（共享内存、信号量、消息队列）互相隔离，跨容器不能用 IPC 通信</td></tr>
+<tr><td><strong>User</strong></td><td>用户/用户组 ID 映射</td><td>CLONE_NEWUSER</td><td>3.8</td><td>容器内 root（UID 0）可以映射到宿主机上的普通用户（如 UID 100000），容器提权不影响宿主机</td></tr>
+<tr><td><strong>Cgroup</strong></td><td>cgroup 根目录视图</td><td>CLONE_NEWCGROUP</td><td>4.6</td><td>容器内 <code>/proc/self/cgroup</code> 看到自己的 cgroup 路径，看不到宿主机其他 cgroup</td></tr>
+</table>
+<p><strong>常用操作命令：</strong></p>
+<ul>
+<li>查看进程所属 namespace：<code>ls -la /proc/&lt;pid&gt;/ns/</code></li>
+<li>进入容器 namespace 调试：<code>nsenter -t &lt;pid&gt; -n -p -- bash</code>（进入该进程的 net+pid namespace）</li>
+<li>创建新 namespace 运行命令：<code>unshare --pid --mount --fork --mount-proc bash</code></li>
+</ul>
+</div>
 
-<div class="card card-m"><h3>容器隔离三件套</h3><p>容器不是轻量 VM，而是 Linux 内核能力的组合：namespace 负责“看见什么”，cgroup 负责“能用多少”，rootfs/镜像负责“文件系统长什么样”。</p></div>
-<div class="card card-s"><h3>namespace</h3><table><tr><th>类型</th><th>隔离内容</th></tr><tr><td>pid</td><td>进程号视图</td></tr><tr><td>net</td><td>网卡、路由、端口</td></tr><tr><td>mnt</td><td>挂载点</td></tr><tr><td>uts</td><td>hostname</td></tr><tr><td>ipc</td><td>共享内存、信号量</td></tr><tr><td>user</td><td>用户和权限映射</td></tr></table></div>
-<div class="card card-d"><h3>cgroup</h3><p>cgroup 限制和统计 CPU、内存、IO、pids 等资源。K8s 的 requests/limits 最终会落到 cgroup 资源控制上。</p></div>
+<div class="card card-d">
+<h3>Cgroups：资源限制与统计</h3>
+<p>Cgroups（Control Groups）限制一组进程能使用的资源，提供资源统计（metrics）和优先级控制。</p>
 
-## 关联模块
+<p><strong>Cgroups v1 vs v2：</strong></p>
+<table><tr><th>维度</th><th>cgroups v1</th><th>cgroups v2</th></tr>
+<tr><td>架构</td><td>每个 subsystem 独立挂载（cpu、memory、cpuset 等各自一棵树）</td><td>统一层级（unified hierarchy），所有资源在同一棵树</td></tr>
+<tr><td>进程绑定</td><td>进程可以在不同 subsystem 中属于不同 cgroup</td><td>进程只能绑定到一个 cgroup，所有资源控制器统一管理</td></tr>
+<tr><td>资源使用</td><td>各 subsystem 独立计账，可能不一致</td><td>统一计账，eBPF 集成更好</td></tr>
+<tr><td>内核版本</td><td>2.6.24+</td><td>4.5+ 实验性，5.2+ 稳定生产可用</td></tr>
+<tr><td>现代发行版</td><td>旧版默认</td><td>Ubuntu 22.04+ / Debian 11+ / RHEL 9+ / K8s 1.25+ 推荐/默认</td></tr>
+</table>
 
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。
+<p><strong>核心 subsystems（子系统）：</strong></p>
+<table><tr><th>子系统</th><th>作用</th><th>Docker 对应参数</th></tr>
+<tr><td><strong>cpu</strong></td><td>限制 CPU 使用份额（shares 相对权重）和 CFS 带宽（cfs_quota/cfs_period）</td><td><code>--cpus=2</code>（限 2 核）、<code>--cpu-shares=512</code>（相对权重）</td></tr>
+<tr><td><strong>cpuset</strong></td><td>绑定进程到指定 CPU 核和 NUMA 节点</td><td><code>--cpuset-cpus=0-3</code>、<code>--cpuset-mems=0</code></td></tr>
+<tr><td><strong>memory</strong></td><td>限制内存使用量（硬限制+软限制），统计 RSS/cache/swap，OOM 触发</td><td><code>-m 1g</code>（限 1GB）、<code>--memory-swap=-1</code>（禁 swap）</td></tr>
+<tr><td><strong>blkio / io</strong></td><td>限制块设备 IO 带宽和 IOPS（相对权重或绝对限制）</td><td><code>--device-read-bps</code>、<code>--blkio-weight</code></td></tr>
+<tr><td><strong>pids</strong></td><td>限制进程/线程数量（防 fork bomb）</td><td><code>--pids-limit=100</code></td></tr>
+<tr><td><strong>devices</strong></td><td>控制能访问哪些设备（黑白名单）</td><td><code>--device</code>、<code>--cap-drop=ALL</code></td></tr>
+<tr><td><strong>freezer</strong></td><td>暂停/恢复 cgroup 中的所有进程（不终止）</td><td><code>docker pause/unpause</code></td></tr>
+<tr><td><strong>hugetlb</strong></td><td>限制 HugePage 使用量</td><td><code>--hugetlb-limit</code></td></tr>
+</table>
+
+<p><strong>常用查看路径：</strong></p>
+<ul>
+<li>cgroup 挂载点：<code>/sys/fs/cgroup/</code>（v2 unified）或各 subsystem 子目录（v1）</li>
+<li>查看进程 cgroup：<code>cat /proc/&lt;pid&gt;/cgroup</code></li>
+<li>查看容器 cgroup：<code>/sys/fs/cgroup/system.slice/docker-&lt;container-id&gt;.scope/</code>（systemd 驱动）</li>
+<li>内存统计：<code>memory.current</code>（v2）/ <code>memory.usage_in_bytes</code>（v1）</li>
+<li>CPU 统计：<code>cpu.stat</code>（v2）/ <code>cpuacct.usage</code>（v1）</li>
+<li>OOM 控制：<code>memory.oom_control</code>（v2 中 <code>memory.oom.group</code>）</li>
+</ul>
+</div>
+
+<div class="card card-w">
+<h3>rootfs 与 UnionFS（OverlayFS）</h3>
+<p>rootfs 是容器启动时看到的文件系统（根目录）。Docker 镜像通过 UnionFS（联合文件系统）将多个层（layer）挂载成一个统一的视图。</p>
+
+<p><strong>镜像分层：</strong></p>
+<ul>
+<li>Dockerfile 中每条指令（RUN/COPY/ADD）产生一个只读层（layer），层可以复用和缓存</li>
+<li>多个镜像可以共享基础层（base image，如 ubuntu:22.04），节省磁盘和拉取时间</li>
+<li>容器启动时在所有只读层之上加一个<strong>可写层</strong>（容器层），所有运行时修改写入这层</li>
+</ul>
+
+<p><strong>OverlayFS（Linux 主流联合文件系统）：</strong></p>
+<table><tr><th>目录</th><th>作用</th></tr>
+<tr><td><strong>lowerdir</strong></td><td>只读层，可以有多个（镜像层叠），按顺序叠加</td></tr>
+<tr><td><strong>upperdir</strong></td><td>可写层（容器层），容器运行时所有修改写在这里</td></tr>
+<tr><td><strong>merged</strong></td><td>合并后的挂载点，容器进程看到的统一视图</td></tr>
+<tr><td><strong>workdir</strong></td><td>OverlayFS 内部原子操作所需的工作目录（empty）</td></tr>
+</table>
+
+<p><strong>Copy-on-Write（写时复制）机制：</strong></p>
+<ul>
+<li><strong>读文件：</strong>文件在 lowerdir 中时直接从 lowerdir 读；如果在 upperdir 中有新版本则从 upperdir 读</li>
+<li><strong>修改文件：</strong>首次修改时从 lowerdir 拷贝文件到 upperdir，再在 upperdir 上修改（copy-up）。后续修改直接在 upperdir 上操作</li>
+<li><strong>删除文件：</strong>在 upperdir 中创建 <strong>whiteout 文件</strong>（字符设备 0/0），遮蔽 lowerdir 中对应文件；实际不删除下层文件</li>
+<li><strong>新增文件：</strong>直接写入 upperdir</li>
+</ul>
+
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>首次写大文件时 copy-up 开销大（延迟尖刺）</li>
+<li>容器层（upperdir）随容器删除而删除，持久化数据必须用 Volume 挂载</li>
+<li>容器文件系统性能略低于原生文件系统（多了一层 overlay 寻址），高频 IO 场景建议用 volume 或 bind mount</li>
+</ul>
+</div>
+
+<div class="card card-d">
+<h3>三者如何协作：以 docker run 为例</h3>
+<ol>
+<li><strong>创建 namespace：</strong>Docker 调用 <code>clone()</code> 带着 CLONE_NEWPID/CLONE_NEWNET/CLONE_NEWNS 等 flag 创建容器进程，让它拥有独立 PID/网络/挂载/UTS/IPC 视图</li>
+<li><strong>准备 rootfs：</strong>通过 OverlayFS 将镜像层（lowerdir）+ 容器可写层（upperdir）挂载到 <code>/var/lib/docker/overlay2/&lt;id&gt;/merged</code>，作为容器根目录</li>
+<li><strong>配置网络：</strong>创建 veth pair，一端连容器 netns（eth0），一端连 docker0 网桥；分配 IP、设置路由、配置 iptables NAT</li>
+<li><strong>设置 cgroups：</strong>在 <code>/sys/fs/cgroup/</code> 下为容器创建子目录，写入 cpu/memory/pids 等限制参数，将容器 PID 写入 tasks/cgroup.procs</li>
+<li><strong>切换根目录：</strong>调用 <code>pivot_root</code> 或 <code>chroot</code> 将进程根目录切换到 merged 目录</li>
+<li><strong>启动 init：</strong>在隔离环境中执行用户指定的 ENTRYPOINT/CMD（PID=1）</li>
+</ol>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 容器和虚拟机的本质区别是什么？容器真的安全吗？</div>
+<div class="qa-a"><p><strong>本质区别：</strong>虚拟机通过 hypervisor 模拟硬件，每个 VM 有独立内核，Guest OS 和 Host OS 完全隔离；容器共享宿主机内核，隔离全部靠 Linux 内核机制（namespace+cgroups）。VM 是"硬件级隔离"，容器是"进程级隔离"。<strong>安全风险：</strong>容器隔离比 VM 弱——容器内进程直接与宿主机内核交互，内核漏洞可以逃逸；User namespace 将容器 root 映射为宿主机非特权用户可以降低风险，但默认 Docker 没开启 user namespace。生产环境多租户场景建议用 Kata Containers（轻量 VM+容器接口）或 gVisor（用户态内核）增强隔离。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Docker 的 --cpus=2 具体怎么实现的？和 cpu-shares 有什么区别？</div>
+<div class="qa-a"><p><code>--cpus=2</code> 是<strong>硬限制</strong>，通过 CFS（Completely Fair Scheduler）带宽控制实现：设置 <code>cpu.cfs_quota_us</code> 和 <code>cpu.cfs_period_us</code>（默认 100000us=100ms），--cpus=2 对应 quota=200000us，即每 100ms 周期内最多用 200ms CPU 时间（可在多核上并行）。<code>--cpu-shares=512</code> 是<strong>相对权重</strong>（默认 1024），只在 CPU 竞争时生效——CPU 充裕时不限制，多个容器争抢时按 shares 比例分配。面试重点：--cpus 限制上限（类似 K8s limits），cpu-shares 控制权重（类似 K8s requests 的相对优先级）。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 容器内存 OOM 怎么排查？怎么防止被 OOM Kill？</div>
+<div class="qa-a"><p><strong>排查：</strong>(1) <code>dmesg | grep -i oom</code> 看内核 OOM 日志；(2) <code>kubectl describe pod</code> 看 Last State 中 OOMKilled；(3) <code>cat /sys/fs/cgroup/memory/docker-&lt;id&gt;/memory.oom_control</code> 看 oom_kill 计数。<strong>防止：</strong>(1) 设置合理的 memory limit（-m），不要太小；(2) 优化应用内存使用，避免内存泄漏；(3) K8s 中设置 <code>memory.limit_in_bytes</code> 足够大并配置 readiness/liveness 探针；(4) 调 <code>oom_score_adj</code>（越低越不容易被 kill，-1000 禁止 kill，但慎用）；(5) 注意 Page Cache 会计入 cgroup memory，大文件读写会占用容器内存额度，必要时调低 <code>vm.dirty_ratio</code> 或定期 drop_caches。</p></div>
+</div>

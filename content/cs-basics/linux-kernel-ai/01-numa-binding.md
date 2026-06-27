@@ -1,16 +1,6 @@
 ## 一句话结论
 
 NUMA 是多 Socket 服务器的非统一内存访问架构，每个 Socket 有自己直连的本地内存，访问本地内存延迟低带宽高，跨 Socket 访问要走 UPI/QPI/Infinity Fabric，延迟升高、带宽下降还会抢占互联链路。大模型训练不是 GPU 自己算，而是 CPU、内存、GPU、PCIe/NVLink、NIC 的协同，所以 NUMA 绑定的核心原则就是让一个 rank 的 CPU 线程、内存页、GPU 和 NIC 尽量落在同一个 NUMA domain，否则 DataLoader、H2D 拷贝和 RDMA 都可能跨 Socket 导致 GPU 等数据。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux Kernel for AI Infra |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## 为什么大模型系统要关心 NUMA？
 
 大模型训练和推理不是“GPU 自己算”这么简单，而是 **CPU、内存、GPU、PCIe/NVLink、网卡、磁盘 I/O** 的协同调度问题。GPU 算力很强，但如果 Linux 内核侧的 NUMA、CPU 绑核、内存分配和设备亲和性不合理，就会出现 GPU 等数据、CPU 争抢、远端内存访问、H2D 拷贝变慢、RDMA 抖动等问题。

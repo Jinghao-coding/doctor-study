@@ -1,16 +1,6 @@
 ## 一句话结论
 
 namespace 管"看见什么"（PID、网络栈、挂载点、IPC），cgroup 管"能用多少"（CPU、内存、I/O、设备），容器隔离就是 namespace + cgroup + rootfs + capability/seccomp 组合出来的。AI Infra 几乎都跑在容器和 K8s 上，所以要能把 OS 知识映射到容器 OOM（exit 137）、CFS throttling、cgroup memory limit 和 /dev/shm 不足这些实际故障。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 操作系统基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## AI Infra 面试模块：容器、cgroup 与 Linux 隔离机制
 
 AI Infra 基本运行在容器和 Kubernetes 之上，因此操作系统知识必须能映射到 namespace、cgroup、device plugin、资源限制和容器内外观测差异。
@@ -53,10 +43,3 @@ AI Infra 基本运行在容器和 Kubernetes 之上，因此操作系统知识�
 <div class="qa-q">Q: /dev/shm 不足会导致什么问题？</div>
 <div class="qa-a"><p>/dev/shm 是 tmpfs 共享内存。PyTorch DataLoader 多进程、共享内存队列、Ray、某些分布式通信都可能依赖它。空间不足会出现 bus error、worker 异常退出、进程 hang 或吞吐下降。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

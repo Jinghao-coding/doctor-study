@@ -1,16 +1,6 @@
 ## 一句话结论
 
 单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 机制类（含公式） |
-| 解决问题 | 围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。 |
-| 面试抓手 | 记住矩阵乘 $2MNK$，再数 QKV、输出投影、FFN 和两次 attention matmul。 |
-
 先不用一上来背公式，而是把单层 Transformer 的计算量理解成两类：一类是各种线性层带来的 $nd^2$ 项，另一类是 Attention 两次大矩阵乘带来的 $n^2d$ 项。最终结论是：
 
 $$ \text{总FLOPs} = 24nd^2 + 4n^2d $$

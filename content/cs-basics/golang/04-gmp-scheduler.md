@@ -187,9 +187,3 @@ func main() {
 <div class="qa-summary">面试口径：分三类阻塞回答——channel/网络不阻塞 M（用户态调度），文件 I/O/CGO 阻塞 M 但 P 解绑不卡程序，只有死锁/早期死循环才会真正卡住。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `Channel 与并发同步`：channel 阻塞是用户态调度，配合 GMP 理解
-- `并发模式与坑点`：goroutine 泄漏检测、for-range 闭包坑
-- `内存管理与 GC`：P 的 mcache 和内存分配 TCMalloc 模型紧密相关

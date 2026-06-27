@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层：Gang Scheduling 是 all-or-nothing 准入语义（防 partial allocation 导致 GPU 空转），Backfill 是队列利用率优化（保护队头大任务 reservation 的前提下让短任务插空），Bin Packing 是节点放置策略，Checkpoint-aware Preemption 是代价感知的运行时回收，配合 Elastic Training 还能用缩容代替杀任务。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 任务调度理论 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
-| 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
-
 <div class="card card-m">
 <h3>批调度：训练任务和普通在线服务的分水岭</h3>
 <p>分布式训练、HPC 和大规模批任务通常不是单 Pod 独立运行，而是一组进程共同完成一个 job。批调度关注的不只是单个 Pod 能否放下，还包括一组 Pod 是否能同时启动、是否会造成资源碎片、是否会让大作业长期排队。</p>

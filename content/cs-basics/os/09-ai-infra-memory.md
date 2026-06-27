@@ -1,16 +1,6 @@
 ## 一句话结论
 
 看内存别只看占用大小，要分清 VIRT 只是承诺、RES 才是真实物理占用、SHR 是共享页、page cache 看似占满但可回收。AI Infra 排查 OOM 和加载慢，关键是区分进程 RSS、page cache、cgroup limit，以及 major fault 这种要走磁盘 I/O 的缺页信号。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 操作系统基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## AI Infra 面试模块：内存管理
 
 AI Infra 的内存问题往往同时涉及虚拟内存、物理内存、page cache、cgroup limit、shared memory、NUMA locality 和 GPU pinned memory。面试回答要能把 Linux 内存机制和训练/推理场景联系起来。
@@ -71,10 +61,3 @@ AI Infra 的内存问题往往同时涉及虚拟内存、物理内存、page cac
 <div class="qa-q">Q: page cache 为什么会让内存看起来“被占满”？</div>
 <div class="qa-a"><p>Linux 会尽量用空闲内存缓存文件页，提升后续读取性能，所以 free 看到的空闲内存可能很少。但 page cache 通常是可回收的，内存压力来时可以释放。排查时要看 available、cache、cgroup limit 和真正不可回收的 RSS。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

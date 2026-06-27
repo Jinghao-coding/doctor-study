@@ -1,16 +1,6 @@
 ## 一句话结论
 
 DNS 解析是网络请求第一步，K8s 中 ndots:5 触发 search domain 扩展是常见性能坑；TLS 1.3 将握手从 2-RTT 降到 1-RTT 并支持 0-RTT 恢复（但 0-RTT 有重放风险）；QUIC 基于 UDP 实现，解决了 TCP 队头阻塞问题，原生支持连接迁移和内置 TLS 1.3，是 HTTP/3 的底层协议。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 网络基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 掌握 DNS 解析流程与 K8s 常见问题、TLS 握手演进（1.2→1.3）、QUIC/HTTP3 核心设计和与 TCP 的对比。 |
-| 面试抓手 | 先讲 DNS 解析和 K8s 坑，再对比 TLS 1.2/1.3 握手 RTT，最后讲 QUIC 为什么选 UDP 和核心特性。 |
-
 <div class="card card-m">
 <h3>DNS：域名系统</h3>
 <p>DNS（Domain Name System）是互联网的电话簿：将域名翻译为 IP 地址。DNS 是一个分层的分布式数据库系统。</p>
@@ -235,10 +225,3 @@ options ndots:5</code></pre>
 <div class="qa-summary">0-RTT 的安全风险是重放攻击：攻击者可以重放捕获的 0-RTT 数据导致非幂等操作重复执行（因为没有双方新鲜随机数交换）。缓解：0-RTT 只发幂等请求（GET）+ 服务端 anti-replay 机制（记录 nonce 拒绝重复）。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-tcp-udp.md`：TCP/UDP 基础，三次握手/四次挥手
-- `02-http-grpc-rpc.md`：HTTP/gRPC 应用层协议细节
-- `04-tcp-deep-mechanisms.md`：TCP 拥塞控制、滑动窗口机制
-- `05-tcp-state-troubleshooting.md`：TCP 状态机和连接排障

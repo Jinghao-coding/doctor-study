@@ -1,16 +1,6 @@
 ## 一句话结论
 
 scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 不要只讲算法，必须讲缓存状态和绑定路径。 |
-
 <div class="card card-m">
 <h3>调度问题定位：区分 Pod 属性、调度阶段和调度机制</h3>
 <p>在分析 Kubernetes Scheduler 时，需要区分三类概念，<strong>这三类概念不能混在一起</strong>：</p>

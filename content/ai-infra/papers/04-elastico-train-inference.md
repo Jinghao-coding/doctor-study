@@ -1,16 +1,6 @@
 ## 一句话结论
 
 ElastiCo 面向训练与离线 LLM 推理在同一 GPU 上的安全共置，提出资源形态变换、弹性影子定价与干扰感知共置三项机制，以 Kubernetes 原生中间件实现、无需改用户代码，在 64 卡实测中 JCT 降低 2.94×、GPU 利用率从 25% 提升至 46%。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 论文工作 |
-| 章节类型 | 论文项目类 |
-| 解决问题 | 训练任务和离线推理任务如何安全共置在同一 GPU 上，同时保证训练不被推理 SLO 违约拖慢、推理不因训练抢占而崩溃。 |
-| 面试抓手 | 和 DeepShare 形成互补——DeepShare 解决多租户配额管理，ElastiCo 解决同一租户内训推混部的资源形态与定价问题。 |
-
 <div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/PE_Journal2026_ElastiCo.pdf" target="_blank">Performance Evaluation 2026 — ElastiCo PDF</a></p>
 </div>

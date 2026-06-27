@@ -219,9 +219,3 @@ if errors.As(err, &apiErr) {
 <div class="qa-summary">面试口径：判断是不是某个哨兵错误用 Is；提取自定义错误类型的字段用 As；它们都会沿着 %w 包装的错误链查找，不会因为包装就丢了根因。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `类型系统与 Interface`：error 本质就是 interface，nil 坑同样适用
-- `Channel 与并发同步`：context 取消/超时经常和错误处理配合使用
-- `Go 工程实践`：错误码规范、单元测试中的错误断言

@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资源模型。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | AI Infra 场景要补 GPU extended resource 和 device plugin。 |
-
 <div class="card card-m">
 <h3>调度与资源模型：回答“为什么 Pending”的核心模块</h3>
 <p>调度和资源模型要一起学。<strong>资源模型定义 Pod 要什么、Node 有什么；调度器决定这个 Pod 放到哪里。</strong>面试中最常见的追问是：Pod 为什么 Pending、requests/limits 如何影响调度、QoS 如何影响驱逐、GPU 这类扩展资源如何被调度。</p>

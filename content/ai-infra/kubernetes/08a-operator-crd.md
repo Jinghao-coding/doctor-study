@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Operator = CRD + Controller：CRD 负责把领域对象注册成 Kubernetes API，Operator 通过幂等 Reconcile 把对象的期望状态持续推进到实际状态。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 单独掌握 CRD、Operator、controller-runtime、Reconcile、Finalizer、OwnerReference、Status Conditions 等平台工程核心能力。 |
-| 面试抓手 | 回答时强调 schema、spec/status 分离、幂等 reconcile、finalizer 清理和 owner reference 生命周期。 |
-
 ## 阅读路径
 
 1. 先区分 CRD 和 Operator：CRD 是对象，Operator 是行为。

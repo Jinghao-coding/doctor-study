@@ -1,16 +1,6 @@
 ## 一句话结论
 
 推理优化是多层组合：batching 提升吞吐，量化降显存和带宽，投机解码降 decode 步数，prefix cache 复用公共前缀。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 回答时说明每种优化改善哪个指标、牺牲什么。 |
-
 <div class="card card-m">
 <h3>优化技术：用显存、带宽和调度换延迟/吞吐</h3>
 <p>LLM 推理优化不是单一技巧，而是围绕三类资源做权衡：算力、显存和调度队列。高频优化包括 batching、KV cache 管理、量化、投机解码、prefix cache、并行切分和 prefill/decode 分离。</p>

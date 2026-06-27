@@ -1,16 +1,6 @@
 ## 一句话结论
 
 C++ 值类别分为 glvalue（广义左值：lvalue + xvalue）和 rvalue（纯右值 prvalue + 将亡值 xvalue），移动语义通过 rvalue reference（T&&）"偷"资源而非深拷贝，std::move 只是 static_cast 不做真正移动，完美转发靠 std::forward + 引用折叠保持参数的值类别，移动构造/赋值必须加 noexcept 否则 vector 扩容等场景会退化到拷贝，Rule of Five（或 Zero）是写资源管理类的基本纪律。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 编程与系统工程基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 值类别、移动语义、完美转发、RVO 等 C++11 以来核心语言机制，面试必考 |
-| 面试抓手 | 先画值类别图，再讲 std::move/forward 的本质是 cast，最后落到 Rule of Five 和容器扩容场景 |
-
 <div class="card card-m">
 <h3>C++ 值类别（Value Categories）</h3>
 <p>C++11 起表达式按两个独立维度分类：有没有身份（identity）、能不能被移动（movable from）：</p>
@@ -160,9 +150,3 @@ v.emplace_back(s);  // 同样拷贝</code></pre>
 <div class="qa-q">Q: RVO 和 std::move 在 return 语句上的关系？</div>
 <div class="qa-a"><p>在 return 局部变量时，<strong>不要写 <code>return std::move(local_var);</code></strong>！这是一个常见错误。原因：编译器对 return 局部变量本来就会做 NRVO，或者在 NRVO 不生效时自动把它当作右值处理（隐式 move）。如果你显式写 std::move，反而会<strong>抑制 NRVO</strong>（因为编译器看到的是一个引用，不再是可被优化的具名对象），结果多了一次不必要的移动。唯一例外是返回一个<strong>非局部变量</strong>（如参数、成员变量）时需要显式 move。</p></div>
 </div>
-
-## 关联模块
-
-- `07-cpp-stl-containers.md`：vector 扩容时是否用移动构造，直接取决于 noexcept
-- `05-cpp-compile-smartptr.md`：智能指针是 Rule of Zero 的基础，unique_ptr 只移动不拷贝
-- `08-cpp-concurrency.md`：移动语义在线程间传递对象（如 <code>std::thread t(func, std::move(obj))</code>）大量使用

@@ -1,16 +1,6 @@
 ## 一句话结论
 
 安全和多租户要从身份、授权、准入、隔离、配额和审计六层看。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 不要把 RBAC、Admission、Pod Security 混为一谈。 |
-
 <div class="card card-m">
 <h3>安全、准入与多租户：请求能不能进入，资源能不能隔离</h3>
 <p>Kubernetes 安全链路可以概括为：<strong>Authentication 识别你是谁，Authorization 判断你能做什么，Admission 决定这个请求是否符合集群策略，Persistence 才会写入 etcd。</strong>多租户治理则在此基础上叠加 namespace、RBAC、Quota、LimitRange、Pod Security、PriorityClass 和队列配额。</p>

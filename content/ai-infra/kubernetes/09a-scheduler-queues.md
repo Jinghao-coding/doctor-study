@@ -1,16 +1,6 @@
 ## 一句话结论
 
 一次 Pod 调度要按端到端链路讲：API Server 保存未绑定 Pod，scheduler 通过队列和插件链选择 Node 并写回绑定结果，目标 Node 的 kubelet 再真正启动容器。队列机制解释 Pod 为什么会在 ActiveQ、BackoffQ、UnschedulableQ 之间流转。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 先讲 Watch Pod → Queue → Filter → Score → Bind → Kubelet Run，再补三队列和事件唤醒。 |
-
 <div class="card card-m">
 <h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>

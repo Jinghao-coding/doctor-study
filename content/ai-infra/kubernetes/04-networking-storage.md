@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 按 CNI、Service、DNS、Ingress、PV/PVC/CSI 讲。 |
-
 <div class="card card-m">
 <h3>网络与存储：Pod 能不能被访问，数据能不能挂上</h3>
 <p>网络和存储经常一起出现在排障题里。Pod 启动不仅要调度成功，还要 CNI 分配网络、CSI 挂载卷；服务访问不仅要 Pod Running，还要 readiness、EndpointSlice、Service 转发和 DNS 都正常。</p>

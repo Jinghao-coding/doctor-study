@@ -311,9 +311,3 @@ func main() {
 <div class="qa-summary">面试口径：Fan-out 是多个 worker 并行处理同一个输入 channel（并行计算），Fan-in 是合并多个输入 channel 的结果（结果汇聚），二者经常和 Pipeline 模式组合用，处理并行任务。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `Channel 与并发同步`：channel 基础语义、select、context 是并发模式的基础
-- `GMP 调度模型`：goroutine 泄漏和调度关系
-- `Go 工程实践`：pprof 性能分析、race detector、单元测试

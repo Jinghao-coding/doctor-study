@@ -1,16 +1,6 @@
 ## 一句话结论
 
 基础 RAG（切块→嵌入→向量检索→塞进 prompt）只是起点。高质量 RAG 需要在分块策略、检索方法（混合检索 + Rerank）、查询变换（HyDE/多查询/Step-back）、Graph RAG 多个维度同时优化；评估要用 RAGAS 等工具度量检索质量和生成忠实度。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | AI Agent |
-| 章节类型 | 机制类 |
-| 解决问题 | 系统梳理高级 RAG 技术栈，从分块、检索、查询变换到 Graph RAG 和评估指标。 |
-| 面试抓手 | 先讲基础 pipeline，再按索引管线和查询管线展开优化点，最后讲评估。 |
-
 <div class="card card-m">
 <h3>基础 RAG Pipeline 回顾</h3>
 <p>RAG（Retrieval-Augmented Generation）通过「检索相关知识 + 生成回答」让 LLM 回答有事实依据，减少幻觉。基础 pipeline 分为两个阶段：</p>

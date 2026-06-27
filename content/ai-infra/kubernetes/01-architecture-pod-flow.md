@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller/Scheduler/kubelet 协同把 Pod 跑起来。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 按 API Server、etcd、scheduler、kubelet、container runtime 链路讲。 |
-
 <div class="card card-s">
 <h3>Kubernetes 架构图</h3>
 <div class="figure">

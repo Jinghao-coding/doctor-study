@@ -1,16 +1,6 @@
 ## 一句话结论
 
 client-go 的 Informer 机制是 K8s Controller/Operator 的核心基础设施：Reflector 通过 ListAndWatch 从 API Server 获取资源变更，经 DeltaFIFO 队列去重后写入 Indexer 本地缓存并触发事件，Controller 从 RateLimitingQueue 取 key 执行 Reconcile，最终实现"watch 变化 → 本地缓存同步 → 异步 reconcile → 失败退避重试"的声明式控制循环。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 扩展 / Operator 开发 |
-| 章节类型 | 机制类 |
-| 解决问题 | 理解 Controller 如何高效监听集群状态变化、如何保证事件不丢、如何处理并发和重试 |
-| 面试抓手 | Reflector → DeltaFIFO → Indexer → WorkQueue → syncHandler 这条链路逐层讲透 |
-
 <div class="card card-s">
 <h3>Informer 完整链路图</h3>
 <div class="figure">

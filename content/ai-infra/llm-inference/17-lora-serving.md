@@ -1,16 +1,6 @@
 ## 一句话结论
 
 LoRA 通过低秩矩阵分解 BA（r ≪ d）以 ~0.1%~1% 的参数量高效微调模型；多 LoRA Serving 的核心是让所有请求共享一份 base model 权重，在 GPU 显存中同时驻留多个适配器，用 Batched GEMV/GEMM 高效计算 LoRA 增量 Y = X·B·A，S-LoRA/Punica 通过异构批处理、Tucker 分解、分层存储和专用 BGMV kernel 实现数百个 LoRA 的高效并发服务。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制+系统设计类 |
-| 解决问题 | LoRA 原理、多租户场景下的 LoRA 服务化架构、Punica/S-LoRA 核心设计、LoRA 显存管理、vLLM 多 LoRA 实践 |
-| 面试抓手 | 讲清"为什么 LoRA 能 work（低秩本质）"和"多 LoRA serving 怎么高效批处理（BGMV、共享 base、分层存储）" |
-
 <div class="card card-m">
 <h3>LoRA 基础：低秩适配的原理</h3>
 <p>全参数微调需要更新模型的所有参数，代价高昂。LoRA（Low-Rank Adaptation）基于一个关键假设：<strong>模型微调前后的权重变化是低秩的</strong>——即 ΔW = W_finetuned - W_pretrained 可以用低秩矩阵乘积很好地近似。</p>

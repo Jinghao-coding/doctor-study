@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Decode 阶段的核心是逐 token 生成和 KV cache 访存，batch 小时常见 memory-bound。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 把 TPOT 拆成调度、KV 读取、单步 forward、采样和流式返回。 |
-
 ## Decode 阶段
 
 Decode 阶段负责自回归生成。模型每一步只生成一个新 token，但每一步都需要读取历史 KV Cache，所以它通常是推理服务中最容易受到显存带宽限制的阶段。

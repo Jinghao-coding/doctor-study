@@ -1,16 +1,6 @@
 ## 一句话结论
 
 AI Infra 里的 K8S 难点在 GPU device plugin、MIG/MPS、拓扑、Gang 调度、Kueue/Volcano 和 DRA。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 把 K8S 抽象和 GPU 物理资源语义连接起来。 |
-
 <div class="card card-m">
 <h3>AI Infra：GPU / 批调度 / DRA 总览</h3>
 <p>AI Infra 场景下，Kubernetes 的核心问题从“跑一个无状态服务”扩展为：<strong>如何接入 GPU/NPU 等异构硬件，如何让分布式训练一组 Pod 同时拿到资源，如何表达显存、拓扑、MIG、NVLink、NUMA 等复杂约束。</strong></p>

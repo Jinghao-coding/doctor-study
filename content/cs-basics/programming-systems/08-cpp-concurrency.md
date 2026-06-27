@@ -1,16 +1,6 @@
 ## 一句话结论
 
 C++ 并发核心是 std::thread + mutex + condition_variable + future/promise + atomic 五件套；mutex 系列配 RAII 锁（lock_guard/unique_lock/scoped_lock）防死锁，condition_variable 必须和 mutex 一起用且 wait 要带 predicate 防虚假唤醒，atomic 靠 memory order（relaxed/acquire/release/seq_cst）建立跨线程 happens-before 关系，C++ 内存模型定义 data race 为 UB，无锁编程用 CAS 循环但要注意 ABA 问题。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 编程与系统工程基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | C++11 线程库、同步原语、内存模型、无锁编程基础，面试和工程排障高频考点 |
-| 面试抓手 | 先讲同步原语选择，再讲 memory order，最后给生产者-消费者和 CAS 代码模板 |
-
 <div class="card card-m">
 <h3>std::thread 基础</h3>
 <pre><code class="language-cpp">#include &lt;thread&gt;
@@ -198,9 +188,3 @@ void consumer() {
 <div class="qa-q">Q: detach 后的线程怎么安全退出？</div>
 <div class="qa-a"><p>强烈建议<strong>避免 detach</strong>，优先用 join + 协作式退出标志（如 atomic&lt;bool&gt; stop_flag 或 C++20 jthread 的 stop_token）。如果必须 detach（如某些框架要求），安全退出要点：①线程函数不能持有栈上/已析构对象的引用或指针（detach 后线程还在跑，主线程对象可能已销毁）——这是 detach 最大的坑，常导致 use-after-free。②用静态对象、shared_ptr 或全局/堆上数据来传递状态。③用 <code>std::atomic&lt;bool&gt;</code> 做退出标志，线程循环检查它。④程序退出时无法 join detached 线程，main 返回后 detached 线程会被强制终止（可能导致数据损坏），尽量设计成 daemon 线程或用 <code>std::atexit</code> 协调。工程上更推荐：让线程对象作为类成员，析构时设置 stop flag + join 等待退出，即 RAII 管理线程生命周期。</p></div>
 </div>
-
-## 关联模块
-
-- `04-cpp-memory.md`：多线程内存模型和 cache coherence 是理解 memory order 的硬件基础
-- `05-cpp-compile-smartptr.md`：多线程下 shared_ptr 的引用计数本身是原子的，但对象访问需要额外同步
-- `07-cpp-stl-containers.md`：STL 容器本身不是线程安全的，需要外部同步（容器适配器的并发版本如 TBB concurrent_queue）

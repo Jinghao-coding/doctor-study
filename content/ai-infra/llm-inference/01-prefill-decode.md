@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Prefill/Decode 是 LLM 推理最核心的阶段划分：prefill 负责一次性读完 prompt 并建立 KV cache，decode 负责逐 token 生成并持续读写 KV cache。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 先分阶段，再解释 TTFT/TPOT，最后落到 compute-bound 与 memory-bound。 |
-
 ## LLM 推理是什么
 
 LLM 推理是模型接收用户输入，并逐步生成回复的过程。一次完整请求通常包含请求调度、Prompt 预处理、Prefill 计算、Decode 逐 token 生成和结果返回几个阶段。

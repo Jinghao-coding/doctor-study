@@ -1,16 +1,6 @@
 ## 一句话结论
 
 多资源公平的核心是怎么在多维资源空间里定义"公平"：从单资源的 Max-Min Fairness 和 Proportional Share 起步，DRF 用 dominant share（每个用户占比最高的那维资源）做公平定义并保证 Sharing Incentive/Envy-freeness/Pareto Efficiency 三性质，工程上再用 Elastic Quota（min/max）和 QAD（保障度连续值）落地，最后叠加异构 GPU、拓扑、弹性和抢占代价四个 GPU 集群特有难点。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 任务调度理论 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕经典算法、多资源公平、Gang/Backfill、拓扑感知和抢占代价建立 GPU 集群调度理论答案。 |
-| 面试抓手 | 回答时先定范围，再讲核心链路，最后落到工程风险和面试追问。 |
-
 <div class="card card-m">
 <h3>多资源公平：调度方向的核心基本功</h3>
 <p>GPU 集群不是单资源系统。一个训练任务同时消耗 GPU、CPU、内存、网络、存储带宽和拓扑位置。多资源公平要解决的问题是：当不同租户的资源需求形态不同，系统如何定义"公平"。</p>

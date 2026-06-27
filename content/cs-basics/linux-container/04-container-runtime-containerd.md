@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Infra 面试里的容器运行时问题，重点不是“Docker 命令怎么用”，而是要讲清 **Kubelet 如何通过 CRI 调 containerd，containerd 如何管理镜像、snapshot、sandbox 和 task，runc 如何按 OCI spec 创建 Linux 容器，containerd-shim 为什么要把容器进程和 containerd daemon 解耦**。排障时要能沿着 `Pod Event -> kubelet -> CRI -> containerd -> shim/runc -> CNI/CSI/kernel` 这条链路定位。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux 与容器基础 |
-| 章节类型 | 机制 + 排障类 |
-| 解决问题 | 补齐 containerd、CRI、OCI、runc、shim、pause 容器、镜像层和节点侧排障的 Infra 面试知识。 |
-| 面试抓手 | 先讲组件边界，再讲 Pod 启动链路，最后讲 ImagePullBackOff / ContainerCreating / Runtime NotReady 的排障路径。 |
-
 ## 先把概念说清楚
 
 <div class="card card-m">
@@ -225,10 +215,3 @@ journalctl -u containerd -n 200</code></pre>
 - containerd docs: [Runtime v2](https://containerd.io/docs/main/runtime-v2/)
 - Kubernetes docs: [Container Runtimes](https://kubernetes.io/docs/setup/production-environment/container-runtimes/)
 - Kubernetes blog: [Dockershim Removal FAQ](https://kubernetes.io/blog/2022/02/17/dockershim-faq/)
-
-## 关联模块
-
-- `namespace / cgroup / rootfs`：解释容器隔离和资源限制的 Linux 基础。
-- `Docker 与 Kubernetes 资源模型`：解释 requests/limits、QoS、OOMKilled。
-- `Kubernetes 架构与 Pod 主链路`：解释 Pod 从 API Server 到 kubelet 执行的完整路径。
-- `Kubernetes 故障排查与稳定性`：解释 Pending、ContainerCreating、CrashLoop、ImagePullBackOff 等排障入口。

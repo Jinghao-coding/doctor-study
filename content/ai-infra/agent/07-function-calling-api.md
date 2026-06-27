@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Function Calling 是 LLM 原生支持的结构化工具调用能力：模型根据用户查询自主决定是否/何时调用哪些工具，输出符合 JSON Schema 的参数，开发者执行后将结果作为 tool message 返回，模型基于结果继续推理。关键参数是 tool_choice 和 parallel_tool_calls，最佳实践是写好工具描述、优雅处理错误、防止无限循环。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | AI Agent |
-| 章节类型 | 机制类 |
-| 解决问题 | 深入理解 Function Calling API 的消息格式、关键参数、最佳实践和常见坑。 |
-| 面试抓手 | 先讲消息流转，再讲参数控制，最后讲工程问题和安全。 |
-
 <div class="card card-m">
 <h3>Function Calling 是什么</h3>
 <p>Function Calling（Tool Calling）是 LLM 的一种能力：模型在对话过程中<strong>自主判断是否需要调用外部工具/函数</strong>，并输出结构化的 JSON 参数。开发者负责执行函数，将结果返回给模型，模型再基于工具结果继续推理或生成最终回答。</p>

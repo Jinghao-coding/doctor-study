@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。 |
-| 面试抓手 | 按算子分类，避免“一句话说全模型 compute-bound”。 |
-
 判断一个算子是 compute-bound 还是 memory-bound，核心看算术强度：
 
 $$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$

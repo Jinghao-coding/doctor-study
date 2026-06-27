@@ -1,16 +1,6 @@
 ## 一句话结论
 
 KV Cache 显存预算决定推理并发上限，单 token、单请求、并发请求要逐级放大计算。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类（含公式） |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 公式要写清 layers、kv_heads、head_dim、K/V 两份和 bytes。 |
-
 <div class="card card-d">
 <h3>单 token KV Cache 到底多大：Llama-2-70B 实算</h3>
 <p>KV Cache 大小公式：</p>

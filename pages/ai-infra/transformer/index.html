@@ -22,14 +22,6 @@
 
 <section class="tabs-shell" data-tabs data-tabs-id="transformer-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 10</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">Transformer 内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="Transformer 内容模块"><details class="tab-group" open data-group-id="transformer-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">架构与输入</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="transformer-tabs-tab-1" data-initial="01" data-mid="transformer-tabs::01-architecture-md" data-level="基础" title="整体架构" aria-controls="transformer-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">整体架构</span><span class="tab-desc">Encoder / Decoder、每层组件、整体数据流</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-2" data-initial="02" data-mid="transformer-tabs::02-input-md" data-level="基础" title="输入处理" aria-controls="transformer-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">输入处理</span><span class="tab-desc">Tokenizer、Embedding、位置编码三件套</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details><details class="tab-group" open data-group-id="transformer-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">核心机制</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-3" data-initial="03" data-mid="transformer-tabs::03-attention-md" data-level="进阶" title="Attention 机制" aria-controls="transformer-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Attention 机制</span><span class="tab-desc">Self-Attention、Multi-Head、手撕代码、Attention vs FFN</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-4" data-initial="04" data-mid="transformer-tabs::04-training-md" data-level="进阶" title="训练稳定性" aria-controls="transformer-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">训练稳定性</span><span class="tab-desc">梯度消失/爆炸、残差、归一化、初始化、warmup</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details><details class="tab-group" open data-group-id="transformer-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">计算分析</span><span class="tab-group-meta"><span class="tab-group-count">4</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-5" data-initial="05" data-mid="transformer-tabs::06-flops-derivation-md" data-level="进阶" title="FLOPs 逐步推导" aria-controls="transformer-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">FLOPs 逐步推导</span><span class="tab-desc">从矩阵乘 2MNK 推出单层 Transformer 计算量</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-6" data-initial="06" data-mid="transformer-tabs::07-roofline-analysis-md" data-level="进阶" title="Roofline 分析" aria-controls="transformer-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Roofline 分析</span><span class="tab-desc">算术强度、机器平衡点、compute-bound / memory-bound 判定</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 16 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-7" data-initial="07" data-mid="transformer-tabs::08-decode-memory-bound-md" data-level="精通" title="Decode 为何 Memory-bound" aria-controls="transformer-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Decode 为何 Memory-bound</span><span class="tab-desc">70B FP16 batch=1 decode 的 FLOPs、访存量和算术强度实算</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-8" data-initial="08" data-mid="transformer-tabs::09-operator-bound-classification-md" data-level="精通" title="逐算子 Bound 分类" aria-controls="transformer-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">逐算子 Bound 分类</span><span class="tab-desc">QKV、FFN、Softmax、Norm、KV cache 在 prefill/decode 的瓶颈分类</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="transformer-tabs-grp-4"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-9" data-initial="09" data-mid="transformer-tabs::05-interview-md" data-level="精通" title="面试高频题" aria-controls="transformer-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">面试高频题</span><span class="tab-desc">把前面知识点压缩成可背诵的问答</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></button><button class="tab-button" type="button" role="tab" id="transformer-tabs-tab-10" data-initial="10" data-mid="transformer-tabs::10-visual-explainer-md" data-level="基础" title="可视化资源" aria-controls="transformer-tabs-panel-10" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">可视化资源</span><span class="tab-desc">Transformer Explainer 交互式可视化与本站复习路径</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="transformer-tabs-panel-1" aria-labelledby="transformer-tabs-tab-1" data-mid="transformer-tabs::01-architecture-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>整体架构</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 的核心是用 self-attention 在序列内建立全局依赖，再用 FFN 做逐 token 非线性变换。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>概念类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
-<tr><td>面试抓手</td><td>先讲整体数据流，再讲每层组件和残差归一化。</td></tr>
-</table></div>
 <h2>架构图</h2>
 <figure class="transformer-figure">
 <img src="../../../resources/images/transformer/attention-is-all-you-need-figure-1-transformer.png" alt="Transformer model architecture from Attention Is All You Need, Figure 1">
@@ -79,14 +71,6 @@ $$&lt;/div&gt;
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>专题综合题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::01-architecture-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::01-architecture-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">输入处理</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-2" aria-labelledby="transformer-tabs-tab-2" data-mid="transformer-tabs::02-input-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>输入处理</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>概念类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
-<tr><td>面试抓手</td><td>区分 tokenizer、embedding、position encoding 的职责。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>输入处理三件套：从文字到向量</h3>
 <p>模型不能直接吃文字，必须先把文字变成数字向量。整条链路是：</p>
@@ -133,14 +117,6 @@ $$&lt;/div&gt;
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>专题综合题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::02-input-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::02-input-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">整体架构</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Attention 机制</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-3" aria-labelledby="transformer-tabs-tab-3" data-mid="transformer-tabs::03-attention-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Attention 机制</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>机制类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
-<tr><td>面试抓手</td><td>必须讲清 QK^T、softmax、加权求和和多头拼接。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>Self-Attention：核心三步</h3>
 <p>注意力的本质是<strong>「加权求和」</strong>：每个 token 输出 = 其它所有 token 的 value 的加权平均，权重由「我和你有多相关」决定。</p>
@@ -177,7 +153,6 @@ $$&lt;/div&gt;
 <pre><code class="language-python">import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, hidden_size, num_heads):
@@ -250,14 +225,6 @@ class MultiHeadAttention(nn.Module):
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>专题综合题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::03-attention-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::03-attention-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">输入处理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">训练稳定性</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-4" aria-labelledby="transformer-tabs-tab-4" data-mid="transformer-tabs::04-training-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>训练稳定性</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 训练稳定性依赖残差、归一化、初始化、warmup、梯度裁剪和混合精度。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>概念类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
-<tr><td>面试抓手</td><td>回答时把梯度稳定、数值稳定和吞吐优化分开。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>先搞懂：什么是梯度消失/爆炸</h3>
 <p>深层网络靠反向传播更新参数，梯度要从最后一层「逐层相乘」传回最前面。</p>
@@ -296,16 +263,7 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供硬件、显存、互联和利用率诊断基础。</li><li><code>LLM 推理系统 / 分布式训练</code>：提供大模型系统中的实际落点。</li><li><code>Kubernetes / 调度与集群</code>：提供平台、资源和多租户治理语境。</li><li><code>专题综合题 / 论文工作</code>：把基础知识组织成可复述的方案和项目叙事。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::04-training-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::04-training-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Attention 机制</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-5" aria-labelledby="transformer-tabs-tab-5" data-mid="transformer-tabs::06-flops-derivation-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>FLOPs 逐步推导</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>机制类（含公式）</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
-<tr><td>面试抓手</td><td>记住矩阵乘 $2MNK$，再数 QKV、输出投影、FFN 和两次 attention matmul。</td></tr>
-</table></div>
-<p>先不用一上来背公式，而是把单层 Transformer 的计算量理解成两类：一类是各种线性层带来的 $nd^2$ 项，另一类是 Attention 两次大矩阵乘带来的 $n^2d$ 项。最终结论是：</p>
+<p>单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。 先不用一上来背公式，而是把单层 Transformer 的计算量理解成两类：一类是各种线性层带来的 $nd^2$ 项，另一类是 Attention 两次大矩阵乘带来的 $n^2d$ 项。最终结论是：</p>
 <p>$$ \text{总FLOPs} = 24nd^2 + 4n^2d $$</p>
 <p>下面一步步推出它。</p>
 <h3>1. 单层主要算两件事</h3>
@@ -371,14 +329,6 @@ class MultiHeadAttention(nn.Module):
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::06-flops-derivation-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::06-flops-derivation-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">训练稳定性</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Roofline 分析</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-6" aria-labelledby="transformer-tabs-tab-6" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Roofline 分析</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 16 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>机制类（含公式）</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
-<tr><td>面试抓手</td><td>公式必须讲 FLOPs、bytes 和 ridge point。</td></tr>
-</table></div>
 <div class="card card-m">
 <h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
 <p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>
@@ -421,16 +371,7 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>关联模块</h2>
 <ul><li><code>性能预测与建模 / Roofline Model</code>：完整 Roofline 公式、图、硬件 ridge point 和 VGG/MobileNet 例子。</li><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::07-roofline-analysis-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::07-roofline-analysis-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">FLOPs 逐步推导</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-7" aria-labelledby="transformer-tabs-tab-7" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Decode 为何 Memory-bound</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>机制类（含公式）</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
-<tr><td>面试抓手</td><td>按计算量、访存量、算术强度三步算。</td></tr>
-</table></div>
-<p>这一节用 Roofline 模型完整算清一个高频面试题：<strong>70B FP16 模型在 A100 上 decode、batch=1、每次只生成 1 个 token，为什么是显存带宽瓶颈（memory-bound）而不是算力瓶颈？</strong> 核心是三步——算计算量、算访存量、算算术强度，再和机器平衡点比较。</p>
+<p>70B FP16 batch=1 decode 的算术强度约为 $1\,\mathrm{FLOP/byte}$，远低于 A100 平衡点，因此是 memory-bound。 这一节用 Roofline 模型完整算清一个高频面试题：<strong>70B FP16 模型在 A100 上 decode、batch=1、每次只生成 1 个 token，为什么是显存带宽瓶颈（memory-bound）而不是算力瓶颈？</strong> 核心是三步——算计算量、算访存量、算算术强度，再和机器平衡点比较。</p>
 <h3>1. 为什么前向 FLOPs ≈ 2 × 参数量 × token 数</h3>
 <p>生成一个 token 时，模型里的权重基本都要参与一次矩阵乘。矩阵乘里一个权重参数通常对应一次乘法 + 一次加法：</p>
 <p>$$ 1\text{ 个参数} \approx 2\text{ FLOPs} $$</p>
@@ -489,16 +430,7 @@ class MultiHeadAttention(nn.Module):
 </div>
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::08-decode-memory-bound-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::08-decode-memory-bound-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Roofline 分析</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">逐算子 Bound 分类</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-8" aria-labelledby="transformer-tabs-tab-8" data-mid="transformer-tabs::09-operator-bound-classification-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>逐算子 Bound 分类</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>机制类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。</td></tr>
-<tr><td>面试抓手</td><td>按算子分类，避免“一句话说全模型 compute-bound”。</td></tr>
-</table></div>
-<p>判断一个算子是 compute-bound 还是 memory-bound，核心看算术强度：</p>
+<p>Transformer 不是整体只有一种瓶颈，prefill/decode、GEMM/softmax/layernorm/embedding 的 bound 类型不同。 判断一个算子是 compute-bound 还是 memory-bound，核心看算术强度：</p>
 <p>$$ \text{算术强度} = \frac{\text{FLOPs}}{\text{访存 bytes}} $$</p>
 <p>算术强度高于机器平衡点（A100 ≈ $\frac{312\text{ TFLOPS}}{2\text{ TB/s}} \approx 156$ FLOP/byte）就 compute-bound，远低于就 memory-bound。下面把 Transformer 各算子按这个标准过一遍。</p>
 <div class="card card-w">
@@ -562,14 +494,6 @@ class MultiHeadAttention(nn.Module):
 <h2>关联模块</h2>
 <ul><li><code>GPU 硬件与资源共享</code>：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。</li><li><code>LLM 推理系统</code>：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。</li><li><code>Kubernetes 核心</code>：提供调度、资源模型、控制器和扩展机制。</li><li><code>分布式训练 / 调度与集群</code>：提供多卡通信、队列、公平性、拓扑和容错背景。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="transformer-tabs::09-operator-bound-classification-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="transformer-tabs::09-operator-bound-classification-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Decode 为何 Memory-bound</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">面试高频题</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="transformer-tabs-panel-9" aria-labelledby="transformer-tabs-tab-9" data-mid="transformer-tabs::05-interview-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试高频题</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Transformer 面试要把架构、Attention、复杂度、训练稳定和推理系统连接起来。</p>
-<h2>复习定位</h2>
-<div class="table-scroll"><table>
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>所属模块</td><td>Transformer 与大模型基础</td></tr>
-<tr><td>章节类型</td><td>面试收束类</td></tr>
-<tr><td>解决问题</td><td>围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。</td></tr>
-<tr><td>面试抓手</td><td>用可展开问答和追问表收束。</td></tr>
-</table></div>
 <div class="card card-r">
 <h3>Transformer 面试高频题</h3>
 <p>把前面知识点压缩成可背诵的问答，点击展开。先盖住答案自己说一遍，再对照。</p>

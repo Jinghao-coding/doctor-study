@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8s 弹性伸缩分为节点层（Cluster Autoscaler 扩节点组、Karpenter 直接按需配实例）和 Pod 层（HPA 水平扩副本、VPA 垂直调资源、KEDA 事件驱动）；AI/GPU 场景下 Karpenter 凭借 Pod 级装箱、快速供给和 consolidation 相比 CA 更适合异构 GPU 和突发推理负载，PDB 保护自愿中断下的分布式训练/推理服务可用性。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 自动伸缩 / AI Infra |
-| 章节类型 | 系统设计 + 实践类 |
-| 解决问题 | 节点怎么自动扩缩容？Karpenter 比 CA 强在哪？GPU 伸缩要注意什么？HPA/VPA/PDB/KEDA 怎么配合？ |
-| 面试抓手 | CA vs Karpenter 对比 → HPA/VPA/KEDA 机制 → PDB 保护 → GPU 场景特殊考虑 |
-
 ## Cluster Autoscaler（CA）
 
 <div class="card card-m">

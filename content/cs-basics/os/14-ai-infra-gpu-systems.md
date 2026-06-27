@@ -1,16 +1,6 @@
 ## 一句话结论
 
 GPU 利用率低不能只看一个数：要分层判断到底卡在哪。先看 SM utilization 判断计算单元是否真在工作（显存高只代表被占不代表在算），再看 PCIe/NVLink 吞吐排查 H2D/D2H 或通信瓶颈，再看 CPU worker 和 DataLoader queue 是否供给不足，最后看 NCCL 日志和网络指标。这正是区分 AI Infra 候选人和普通后端的关键。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 操作系统基础 |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## AI Infra 面试模块：GPU 训练/推理相关系统层知识
 
 这部分是区分普通后端候选人和 AI Infra 候选人的关键。面试官通常关心你是否理解 CPU、内存、PCIe、GPU、驱动和 CUDA runtime 之间的数据路径，以及系统瓶颈如何影响 GPU 利用率。
@@ -59,10 +49,3 @@ GPU 利用率低不能只看一个数：要分层判断到底卡在哪。先看 
 <div class="qa-q">Q: 多卡训练通信慢，可能和拓扑有什么关系？</div>
 <div class="qa-a"><p>GPU 之间可能通过 NVLink、NVSwitch、同一 PCIe switch、跨 PCIe root complex 或跨 NUMA socket 通信，路径不同带宽和延迟差异很大。rank 放置不匹配拓扑时，all-reduce 可能跨慢链路；NIC 和 GPU 不在同一 locality 时，RDMA/GPUDirect 效果也会变差。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

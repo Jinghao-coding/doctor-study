@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Prefill 阶段的核心是大矩阵计算和首 token 延迟，优化重点是 batching、prefix cache、算子选择和 GPU 算力利用。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 把 TTFT 拆成排队、tokenization、prefill compute 和返回链路。 |
-
 ## Prefill 阶段
 
 Prefill 阶段一次性处理完整 Prompt，计算所有输入 token 的 attention，并生成后续 Decode 所需的 KV Cache。它主要影响 `TTFT`，也就是用户看到第一个 token 前的等待时间。

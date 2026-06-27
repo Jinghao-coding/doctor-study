@@ -1,16 +1,6 @@
 ## 一句话结论
 
 大模型权重加载是典型系统瓶颈：权重几十到几百 GB 要穿过磁盘、page cache、用户态 buffer、反序列化、CPU 内存、pinned memory 再到 GPU HBM，路径不合理 GPU 就一直空等。优化围绕减少拷贝展开——mmap 省掉 page cache 到用户态的拷贝、Direct I/O 绕过 page cache 避免污染、sendfile 做文件到网络的零拷贝，落地还要叠加并行 shard、pinned memory 和 NUMA-aware 加载。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux Kernel for AI Infra |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## 大模型权重加载为什么是系统瓶颈？
 
 大模型权重可能是几十 GB、几百 GB，甚至 TB 级分片。加载路径涉及：
@@ -376,10 +366,3 @@ I/O 方面，传统 `read` 路径通常是磁盘 DMA 到 page cache，再 CPU co
 <div class="qa-q">Q: mmap、Direct I/O、sendfile 在大模型系统中分别适合哪里？</div>
 <div class="qa-a"><p><code>mmap</code> 适合只读大权重文件、按需加载和多进程共享 page cache；Direct I/O 适合大文件顺序读取、应用自己做缓存且不希望污染 page cache 的场景；<code>sendfile</code> 适合模型权重分发、checkpoint 文件传输或静态文件服务，因为它优化的是文件到 socket 的路径。真正把权重加载进 GPU HBM 时，通常还需要 CPU 侧解析和 H2D 拷贝，sendfile 不是最终一步的主要优化。</p><div class="qa-summary">面试口径：mmap 优化文件到地址空间，Direct I/O 优化缓存控制，sendfile 优化文件到网络。</div></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

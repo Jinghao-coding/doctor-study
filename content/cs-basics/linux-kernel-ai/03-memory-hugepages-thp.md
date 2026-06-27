@@ -1,16 +1,6 @@
 ## 一句话结论
 
 虚拟内存给每个进程独立地址空间，MMU 把虚拟地址翻译成物理地址，TLB 缓存翻译结果；普通页 4KB，大页 2MB/1GB 能减少页表项、扩大 TLB 覆盖、降低 TLB miss 和 page table walk 开销。THP 是内核自动把普通页合并成大页的透明大页机制，用着方便但透明不等于免费——page fault 分配大页、khugepaged 合并、compaction 碎片整理和大页拆分都可能引入延迟抖动。所以大页是吞吐和延迟稳定性的权衡：稳定吞吐型任务可能受益，在线推理等 P99 敏感服务通常设为 never 或 madvise，到底开不开要 benchmark。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Linux Kernel for AI Infra |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕 NUMA、cgroup、hugepage、THP、IO、zero-copy 等内核机制建立 AI Infra 系统答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## 虚拟内存、物理内存和 MMU
 
 **虚拟内存** 是操作系统给每个进程提供的独立地址空间。进程看到的是虚拟地址，不是直接的物理 DRAM 地址。

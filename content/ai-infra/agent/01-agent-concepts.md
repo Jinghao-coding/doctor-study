@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Agent 的本质是 LLM 驱动的循环决策系统：观察、思考、调用工具、接收反馈、继续行动。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | AI Agent |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。 |
-| 面试抓手 | 先讲模式，再讲工程边界。 |
-
 <div class="card card-m">
 <h3>什么是 AI Agent</h3>
 <p>AI Agent 是一个能<strong>感知环境、自主决策、执行动作</strong>的智能体。和传统 LLM Chat 不同，Agent 不只是回答问题，而是能<strong>使用工具、维护状态、多步推理、在真实环境中完成目标</strong>。</p>

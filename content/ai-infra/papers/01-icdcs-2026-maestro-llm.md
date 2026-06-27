@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Maestro 针对 LLM 多智能体工作流推理，利用 agent 上下文做前瞻性输出长度预测，再驱动弹性内存管理（CUDA VMM 超配）和工作流感知 SRTF 调度，在 64×A100 上把 SLO 达成率提升 23.6pp、KV 预留内存降 67.2%。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 论文工作 |
-| 章节类型 | 论文项目类 |
-| 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
-| 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
 <div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/ICDCS2026_Maestro.pdf" target="_blank">ICDCS 2026 — Maestro PDF</a></p>
 </div>

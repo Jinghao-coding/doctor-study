@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator 负责建模和控制循环，Helm / Kustomize / GitOps / 渐进式发布负责把这些对象安全、可审计地交付到集群。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 梳理 Helm、Kustomize、GitOps、ArgoCD/Flux、渐进式发布，以及不同 Kubernetes 扩展点如何选型。 |
-| 面试抓手 | Operator 与 CRD 已拆到单独章节；本节重点讲工程化交付、发布回滚和扩展点选型。 |
-
 ## 阅读路径
 
 1. 先看 Helm / Kustomize：解决 YAML 参数化和多环境差异。
@@ -128,10 +118,6 @@ K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator �
 <div class="card card-m">
 <h3>扩展与工程化高频问答</h3>
 
-
-
-
-
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Helm 和 Kustomize 怎么选？能一起用吗？</div>
 <div class="qa-a">
@@ -155,8 +141,6 @@ K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator �
 <div class="qa-summary">面试口径：GitOps = Git 是真相 + 集群 agent 持续 pull + drift 自动纠回；pull 模型让 CI 系统不持有集群凭据，更安全。</div>
 </div>
 </div>
-
-
 
 </div>
 

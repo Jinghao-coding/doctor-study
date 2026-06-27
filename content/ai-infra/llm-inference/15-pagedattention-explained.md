@@ -1,16 +1,6 @@
 ## 一句话结论
 
 PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核心价值是减少碎片和支持 continuous batching。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 用 OS 分页类比，但要说明 GPU attention 仍需高效访存。 |
-
 <div class="card card-m">
 <h3>一句话先抓住本质</h3>
 <p>PagedAttention <strong>不是一种 attention 算法</strong>，而是 vLLM 给 KV Cache 设计的一套<strong>“虚拟内存”管理系统</strong>。它把 KV Cache 切成固定大小的小块（block），让一个请求逻辑上看到连续的 token 序列，物理显存里却可以散落在任意位置——和操作系统用分页管理内存是同一个思路。</p>

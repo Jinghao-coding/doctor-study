@@ -1,16 +1,6 @@
 ## 一句话结论
 
 输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 概念类 |
-| 解决问题 | 围绕 Transformer 架构、输入表示、Attention、训练稳定性和面试高频题建立大模型基础答案。 |
-| 面试抓手 | 区分 tokenizer、embedding、position encoding 的职责。 |
-
 <div class="card card-m">
 <h3>输入处理三件套：从文字到向量</h3>
 <p>模型不能直接吃文字，必须先把文字变成数字向量。整条链路是：</p>

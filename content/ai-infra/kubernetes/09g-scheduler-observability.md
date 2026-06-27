@@ -1,16 +1,6 @@
 ## 一句话结论
 
 排查 scheduler 问题的标准三件套：**kube-scheduler-simulator** 重放 + **Diagnosis / FitError** 数据结构看每个节点被哪个 Plugin 拦下来 + **Prometheus metrics** 看长期趋势和 SLO。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 / Scheduler 内部机制 |
-| 章节类型 | 系统类 + 排障类 |
-| 解决问题 | 知道"Pod Pending"问题怎么逐层下钻；面试能给出具体的 metric 名和 SLO 阈值 |
-| 面试抓手 | **看一个 Pod 为什么 Pending → describe pod 看 events → FitError 里的 NodeToStatus → 长期趋势看 metrics**。 |
-
 ## 工具一：kube-scheduler-simulator
 
 <div class="card card-m">

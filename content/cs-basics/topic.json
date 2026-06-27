@@ -108,15 +108,50 @@
             },
             {
               "title": "计算机组成原理",
-              "description": "CPU/内存层次、Cache/TLB、DMA、PCIe、NUMA 拓扑",
+              "description": "CPU/内存层次、Cache/TLB/False Sharing、指令集/流水线/SIMD、Cache一致性(MESI)/内存模型/Atomic、DMA/PCIe/NUMA/中断/预取",
               "files": [
                 "computer-architecture/01-cpu-memory-hierarchy.md",
                 "computer-architecture/02-cache-tlb.md",
-                "computer-architecture/03-dma-pcie-numa.md"
+                "computer-architecture/03-dma-pcie-numa.md",
+                "computer-architecture/04-isa-pipeline-simd.md",
+                "computer-architecture/05-cache-coherence-memory-model.md",
+                "computer-architecture/06-interrupt-io-prefetch.md"
+              ],
+              "subtabs": [
+                {
+                  "title": "CPU 内存层次",
+                  "description": "寄存器/L1/L2/L3/DRAM、NUMA、延迟带宽层级",
+                  "file": "computer-architecture/01-cpu-memory-hierarchy.md"
+                },
+                {
+                  "title": "Cache / TLB",
+                  "description": "Cache Line、局部性、False Sharing、HugePage",
+                  "file": "computer-architecture/02-cache-tlb.md"
+                },
+                {
+                  "title": "DMA / PCIe / NUMA",
+                  "description": "DMA 零拷贝、PCIe 拓扑、NUMA 亲和性",
+                  "file": "computer-architecture/03-dma-pcie-numa.md"
+                },
+                {
+                  "title": "ISA / 流水线 / SIMD",
+                  "description": "RISC vs CISC、5级流水线、分支预测、AVX/NEON/AMX",
+                  "file": "computer-architecture/04-isa-pipeline-simd.md"
+                },
+                {
+                  "title": "Cache 一致性 / 内存模型",
+                  "description": "MESI、TSO vs 弱内存模型、memory_order、Atomic",
+                  "file": "computer-architecture/05-cache-coherence-memory-model.md"
+                },
+                {
+                  "title": "中断 / I/O / 预取",
+                  "description": "硬中断/软中断、DMA流程、硬件预取、IRQ亲和性",
+                  "file": "computer-architecture/06-interrupt-io-prefetch.md"
+                }
               ],
               "level": "基础",
               "priority": 1,
-              "time": 18
+              "time": 75
             }
           ]
         },

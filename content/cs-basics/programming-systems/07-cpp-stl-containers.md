@@ -1,16 +1,6 @@
 ## 一句话结论
 
 STL 容器各有底层实现：vector 是连续动态数组按 1.5x/2x 倍增扩容、string 有 SSO 小字符串栈上优化、deque 是分段连续数组、list 是双向链表、set/map 基于红黑树有序 O(log n)、unordered_map 是哈希表平均 O(1)；vector 迭代器在 reallocation 后全部失效，list 只失效被删元素，unordered_map rehash 后全部失效；容器选择按"是否需要有序/是否需要随机访问/是否频繁中间插入"三维度决策。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 编程与系统工程基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | STL 常用容器的底层数据结构、复杂度、迭代器失效规则、工程陷阱 |
-| 面试抓手 | 先讲每个容器底层结构，再讲复杂度和迭代器失效，最后给选型决策表 |
-
 <div class="card card-m">
 <h3>vector：连续动态数组</h3>
 <p>vector 在堆上分配一块连续内存，用三个指针管理：<code>start</code>（起始）、<code>finish</code>（已用末尾）、<code>end_of_storage</code>（容量末尾）。</p>
@@ -150,9 +140,3 @@ for (int i = 0; i &lt; 10000; ++i) {
 <div class="qa-q">Q: emplace_back 和 push_back 到底有什么区别？</div>
 <div class="qa-a"><p><code>push_back(obj)</code> 接收一个已经构造好的对象（或隐式转换构造临时对象），然后把它<strong>拷贝/移动</strong>进容器。<code>emplace_back(args...)</code> 接收构造函数参数，直接在 vector 的内存位置上<strong>原地构造</strong>（in-place construction，通过 placement new 和完美转发），省去一次临时对象的构造 + 移动/拷贝。关键区别：①对已有左值对象，两者一样，都会拷贝。②对"需要多个构造参数"的对象，emplace_back 明显更高效（如 <code>v.emplace_back(42, "hello")</code> 直接构造 pair）。③对单参数隐式转换场景，push_back(T&&) 本身也会触发移动，差异不大。④小心 emplace_back 隐式转换带来的可读性问题：<code>v.emplace_back(10)</code> 在 vector&lt;int&gt; 可以，但如果是 vector&lt;bool&gt; 会有有趣的陷阱。总结：<strong>用参数包直接构造时用 emplace_back，传已有对象时两者等价</strong>。</p></div>
 </div>
-
-## 关联模块
-
-- `06-cpp-value-move.md`：emplace_back 依赖完美转发、移动构造 noexcept 影响 vector 扩容
-- `04-cpp-memory.md`：vector 连续内存布局和 cache locality，理解遍历性能差异的基础
-- `08-cpp-concurrency.md`：多线程下使用 STL 容器的线程安全问题（标准容器本身不是线程安全的）

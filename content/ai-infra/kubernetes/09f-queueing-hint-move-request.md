@@ -1,16 +1,6 @@
 ## 一句话结论
 
 **QueueingHint** 是 K8s 1.28 引入、1.32 GA 的能力，让 Plugin 可以基于具体的集群事件（增删 Pod / Node 标签变更等）告诉 scheduler「这次事件能不能让我之前调度失败的 Pod 重新有机会」，避免**惊群式重新入队**导致 scheduler 反复扫描节点却仍然失败。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 / Scheduler 内部机制 |
-| 章节类型 | 系统类 + 设计类 |
-| 解决问题 | 大规模集群下 UnschedulableQ → ActiveQ 的精确唤醒；理解 Move Request 的触发链路；面试能讲清"集群事件 → 唤醒哪些 Pod" |
-| 面试抓手 | **集群事件不是无差别广播给所有 Pending Pod，而是通过 QueueingHint 精确投递**。 |
-
 ## 三个队列再回顾
 
 <div class="figure">

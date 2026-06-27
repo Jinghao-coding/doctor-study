@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Agent 面试要能解释 ReAct/Plan-Execute/RAG/Memory/Tool Use 的边界和风险。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | AI Agent |
-| 章节类型 | 面试收束类 |
-| 解决问题 | 围绕 ReAct、Plan-Execute、记忆、工具调用、RAG、多 Agent 协作和工程风险建立 Agent 面试答案。 |
-| 面试抓手 | 用场景化追问回答。 |
-
 <div class="card card-r">
 <h3>Agent 面试高频题</h3>
 <p>以下问题覆盖 Agent 面试中最常被问到的知识点，从基础概念到深入原理。</p>

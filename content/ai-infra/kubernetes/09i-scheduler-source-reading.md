@@ -1,16 +1,6 @@
 ## 一句话结论
 
 读 kube-scheduler 源码不要从插件细节开始，而要先抓住启动链路、Informer/Cache、调度循环、过滤打分、绑定循环这五条主线。Lark 文档提供的是源码阅读视角，适合作为 Scheduler 主链路和插件扩展内容的补充。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 / Scheduler 内部机制 |
-| 章节类型 | 源码阅读路径 |
-| 解决问题 | 把 kube-scheduler 从二进制启动、cache 同步、scheduleOne 到 bindingCycle 的源码链路串起来 |
-| 面试抓手 | 一句话：先讲 `Run → SchedulingQueue → scheduleOne → schedulePod → findNodesThatFitPod / prioritizeNodes / selectHost → bindingCycle`。 |
-
 ## 来源与使用方式
 
 本页整理自 Lark 文档《万字长文详解 Kubernetes 调度器：kube-scheduler 实现》，重点吸收其源码阅读顺序和函数链路。原文更偏长篇源码剖析；本站保留面试复习需要的主线，不复制长代码。

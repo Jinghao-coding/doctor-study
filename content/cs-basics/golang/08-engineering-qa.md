@@ -355,9 +355,3 @@ ctx = context.WithValue(ctx, "user_id", 123)
 <div class="qa-summary">面试口径：从汇编 rt0 入口 → runtime 初始化内存/GC/调度器/P → 创建 main goroutine → 跑所有 init() → main.main()；init 按依赖顺序执行。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GMP 调度模型`：程序启动时 P/M/G 初始化是 GMP 模型的起点
-- `内存管理与 GC`：pprof heap/allocs 分析内存分配
-- `错误处理与 Panic`：main goroutine panic 会导致程序退出

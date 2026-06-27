@@ -1,16 +1,6 @@
 ## 一句话结论
 
 FlashAttention 优化单次 attention 的 IO，vLLM/PagedAttention 优化多请求 KV cache 管理和调度。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 不要把 FlashAttention 和 PagedAttention 混为一谈。 |
-
 <div class="card card-m">
 <h3>FlashAttention V1 的三个特性</h3>
 <table>

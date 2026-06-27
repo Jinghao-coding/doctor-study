@@ -1,16 +1,6 @@
 ## 一句话结论
 
 KV Cache、PagedAttention、FlashAttention 分别解决不同问题：缓存历史、管理显存、减少 HBM IO。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 先讲边界，再讲为什么三者可以组合。 |
-
 ## KV Cache 的作用
 
 自回归生成时，模型每生成一个新 token 都需要关注历史上下文。如果每一步都重新计算全部历史 token 的 Key 和 Value，计算代价会非常高；KV Cache 的作用就是把历史 K/V 缓存下来，每步只计算新增 token 的 K/V。

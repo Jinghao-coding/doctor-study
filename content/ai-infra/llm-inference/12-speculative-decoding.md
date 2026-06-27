@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Speculative Decoding 利用 autoregressive decode 阶段的 memory-bound 特性，用小模型（或同等模型的轻量头）快速"猜"多个 future token，再用大模型一次 forward pass 并行验证，用略多于生成 1 个 token 的代价拿到 k 个被接受的 token，在不改变输出分布的前提下获得 2-3x 加速。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 为什么 autoregressive generation 慢、投机解码如何利用带宽瓶颈做并行验证、各变体（Medusa/EAGLE/Lookahead）的区别 |
-| 面试抓手 | 必须从 HBM 带宽角度解释"为什么验证 k 个 token 不比生成 1 个贵多少"，以及 rejection sampling 如何保证分布不变 |
-
 <div class="card card-m">
 <h3>核心洞察：Autoregressive Decode 为什么慢</h3>
 <p>LLM 推理分两阶段：prefill（处理输入 prompt，一次 forward 算完所有 token）和 decode（自回归逐个生成输出 token）。<strong>Decode 阶段是典型的 memory-bound 场景</strong>：</p>

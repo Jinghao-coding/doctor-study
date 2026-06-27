@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Workload Controller 的本质是 reconcile：持续把实际状态拉回期望状态。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 区分 Deployment/StatefulSet/Job/Operator 的边界。 |
-
 <div class="card card-m">
 <p><strong>Workload 与 Controller：声明式系统的核心。</strong></p>
 <p>Workload 解决“如何管理一组 Pod”，Controller 解决“如何让实际状态持续逼近期望状态”。面试中不要只背 Deployment、StatefulSet、DaemonSet、Job 的用途，还要讲清楚 <strong>Informer → WorkQueue → Reconcile → 更新 status</strong> 这条控制循环。</p>

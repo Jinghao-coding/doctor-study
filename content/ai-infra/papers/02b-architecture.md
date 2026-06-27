@@ -1,16 +1,6 @@
 ## 一句话结论
 
 DeepShare 在 Kubernetes 上拆成 Controller 加 Scheduler Plugin 两层：Controller 管租户级的 quota、QAD、队列与准入，通过 TenantQuota CRD 和 Pod annotation 把租户语义传给调度路径；Scheduler Plugin 复用 Scheduler Framework 五个扩展点做 Pod 级排序、过滤、打分、预留和抢占。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 论文工作 |
-| 章节类型 | 论文项目类 |
-| 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
-| 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
 <div class="card card-d">
 <h3>总体架构</h3>
 

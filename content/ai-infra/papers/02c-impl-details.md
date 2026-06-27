@@ -1,16 +1,6 @@
 ## 一句话结论
 
 DeepShare 的两级队列中，第一级租户级 Guaranteed/Best-effort 队列在 Controller 里显式维护并做准入，第二级全局队列是逻辑队列——由 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QAD-aware QueueSort 共同体现，调度执行落在 Framework 各扩展点。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 论文工作 |
-| 章节类型 | 论文项目类 |
-| 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
-| 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
-
 <div class="card card-s">
 <h3>两级队列具体在哪里实现</h3>
 <p>论文里的队列结构：</p>

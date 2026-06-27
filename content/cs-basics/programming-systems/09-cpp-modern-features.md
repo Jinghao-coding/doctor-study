@@ -1,16 +1,6 @@
 ## 一句话结论
 
 现代 C++（C++11/14/17/20）核心能力包括：lambda（C++11 起支持 init capture）、智能指针（shared_ptr 控制块 + make_shared 单次分配优化 + weak_ptr 打破循环引用）、C++17 的 optional/variant/string_view/structured bindings/if constexpr、C++20 的 Concepts/Ranges/Coroutines/format、以及 variadic templates/SFINAE/constexpr 等模板元编程基础；C++ 演进方向是"让写正确的代码更容易"，面试重点是 shared_ptr 线程安全、string_view 生命周期坑、enable_shared_from_this 场景。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 编程与系统工程基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | C++11 至 C++20 现代语言特性和标准库，覆盖 lambda、智能指针、C++17/20 新特性、模板进阶 |
-| 面试抓手 | 先讲智能指针控制块和陷阱，再讲 C++17/20 实用类型，最后 Concepts 和 SFINAE 的关系 |
-
 <div class="card card-m">
 <h3>Lambda 表达式详解</h3>
 <p>lambda 是编译器生成的匿名闭包类（closure type）的实例，可以捕获局部变量：</p>
@@ -244,9 +234,3 @@ unique_ptr&lt;int[]&gt; arr(new int[100]);  // 自动用 delete[]</code></pre>
 <div class="qa-q">Q: Concepts 和 SFINAE 有什么关系？</div>
 <div class="qa-a"><p>Concepts（C++20）是 SFINAE（C++98）的"进化版"，都用于<strong>约束模板参数、在重载/特化时做编译期分支</strong>，但 Concepts 解决了 SFINAE 的主要痛点：<strong>①可读性</strong>——SFINAE 靠 <code>enable_if</code>、<code>decltype</code>、<code>void_t</code> 等黑魔法，代码非常难读；Concepts 用 <code>concept</code> 关键字命名约束，<code>template&lt;Integral T&gt;</code> 像自然语言。<strong>②错误信息</strong>——SFINAE 替换失败时编译器输出几百行模板栈信息；Concepts 约束不满足时直接告诉你"T 不满足 Integral 概念"，错误清晰。<strong>③表达力</strong>——Concept 内可以写复合要求（compound requirement）、嵌套要求，比 enable_if 更容易表达"需要有某个成员函数/支持某个操作"。但 Concepts 不做的事：它不改变 SFINAE 的底层机制，Concept 约束失败仍然是通过 substitution failure 从重载集中移除模板（或报错）。SFINAE 在理解 C++ 模板机制上仍有价值，Concepts 是工程上更好用的接口。</p></div>
 </div>
-
-## 关联模块
-
-- `05-cpp-compile-smartptr.md`：智能指针基础，unique/shared/weak 语义（09 聚焦控制块内部和陷阱）
-- `06-cpp-value-move.md`：lambda init capture 使用 std::move，移动语义是现代 C++ 的基础
-- `08-cpp-concurrency.md`：shared_ptr 引用计数原子性、lambda 在线程中的捕获陷阱

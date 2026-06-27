@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8S 排障要从状态、事件、日志、资源、网络、节点和控制面逐层收敛。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 排障诊断类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 先 kubectl describe/events/logs，再看 kubelet/CNI/CSI/control plane。 |
-
 <div class="card card-m">
 <h3>故障排查总方法：从症状反推链路</h3>
 <p>Kubernetes 排障不要一上来背命令，而要按链路拆：<strong>API 对象是否存在 → 调度是否成功 → kubelet 是否执行 → 网络/存储是否就绪 → 应用是否健康 → 控制器是否持续修正。</strong></p>

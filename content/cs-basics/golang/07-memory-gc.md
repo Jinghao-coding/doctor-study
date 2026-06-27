@@ -211,9 +211,3 @@ GOMEMLIMIT=800MiB ./myapp
 <div class="qa-summary">面试口径：逃逸分析是编译期决定栈/堆，栈分配不用 GC；凡是变量生命周期可能超出函数（返回指针、channel、闭包、interface）就会逃逸；用 -gcflags=-m 看。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GMP 调度模型`：P 的 mcache 是内存分配和调度结合的点
-- `Go 工程实践`：pprof heap/allocs profile 排查内存问题
-- `并发模式与坑点`：sync.Pool 对象复用减少 GC 压力

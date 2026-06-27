@@ -1,16 +1,6 @@
 ## 一句话结论
 
 TCP 性能核心由滑动窗口（流控 rwnd + 拥塞控制 cwnd，实际发送窗口 swnd = min(rwnd, cwnd)）和拥塞控制算法决定。经典算法从 Tahoe（丢包回退到 1）到 Reno（快重传快恢复），现代 Linux 默认 CUBIC（基于时间的三次函数增长，RTT 公平），长肥管道/数据中心常用 BBR（基于带宽和 RTT 建模而非丢包）。Nagle 合并小包但与延迟 ACK 组合会产生死锁，实时系统通常开 TCP_NODELAY。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 网络基础 |
-| 章节类型 | 机制类 |
-| 解决问题 | 深入理解滑动窗口、拥塞控制算法演进（Tahoe/Reno/CUBIC/BBR）、Nagle/delayed ACK、TFO/Keepalive/SYN Cookie 等高级机制。 |
-| 面试抓手 | 先讲滑动窗口数学，再按历史顺序讲拥塞控制算法演进和差异，最后讲小包和连接优化。 |
-
 <div class="card card-m">
 <h3>滑动窗口详解</h3>
 <p>滑动窗口是 TCP 可靠性和流控的核心机制，同时也是发送速率的根本限制。发送窗口由<strong>接收方的流控窗口（rwnd）</strong>和<strong>发送方的拥塞窗口（cwnd）</strong>共同决定。</p>
@@ -209,10 +199,3 @@ TCP 性能核心由滑动窗口（流控 rwnd + 拥塞控制 cwnd，实际发送
 <div class="qa-summary">Reno 的窗口增长由 ACK 驱动，短 RTT 流 ACK 来得快、窗口增长快，造成 RTT 不公平；CUBIC 用基于时间的三次函数增长窗口，与 ACK 频率/RTT 解耦，不同 RTT 流增长速率相同，因此更公平。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-tcp-udp.md`：TCP/UDP 基础、三次握手/四次挥手、队头阻塞
-- `02-http-grpc-rpc.md`：HTTP/gRPC 协议（应用层对 TCP 的使用）
-- `05-tcp-state-troubleshooting.md`：TCP 状态机、TIME_WAIT/CLOSE_WAIT 排障
-- `06-dns-tls-quic.md`：TLS/QUIC/HTTP3 替代 TCP 的方案

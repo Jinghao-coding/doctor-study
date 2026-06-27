@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Transformer 与大模型基础 |
-| 章节类型 | 机制类（含公式） |
-| 解决问题 | 围绕 Transformer 架构、计算量、Roofline、算子瓶颈和大模型推理/训练性能建立深度答案。 |
-| 面试抓手 | 公式必须讲 FLOPs、bytes 和 ridge point。 |
-
 <div class="card card-m">
 <h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
 <p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>

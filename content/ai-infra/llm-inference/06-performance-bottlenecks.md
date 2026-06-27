@@ -1,16 +1,6 @@
 ## 一句话结论
 
 LLM 推理性能不能只看 QPS，要同时看 TTFT、TPOT、tokens/s、显存、P99 和 GPU 利用效率。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | LLM 推理系统 |
-| 章节类型 | 机制类 |
-| 解决问题 | 围绕请求生命周期、Prefill/Decode、KV Cache、Attention 优化、Serving Engine 和性能瓶颈建立系统化面试答案。 |
-| 面试抓手 | 先定义指标，再把 prefill/decode 的瓶颈分开。 |
-
 <div class="card card-m">
 <h3>性能指标与瓶颈：先分清 TTFT、TPOT 和吞吐</h3>
 <p>LLM 推理性能不能只看 QPS。在线服务通常同时关注首 token 延迟、每 token 延迟、端到端延迟、吞吐、显存占用和稳定性。不同指标对应不同瓶颈：prefill 更偏计算密集，decode 更偏访存和 KV cache 读取。</p>

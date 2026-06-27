@@ -1,16 +1,6 @@
 ## 一句话结论
 
 K8s 网络数据面由 CNI 插件负责 Pod 网络配置（IP 分配、veth/bridge/路由）、kube-proxy 或 eBPF 负责 Service 负载均衡；Pod 跨节点通信依赖-underlay/overlay 网络打通，Service 转发经历 DNAT/路由/后端选择，理解 CNI 接口规范、kube-proxy 三种模式差异和主流 CNI 实现（Calico/Cilium/Flannel）是网络面试的核心。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 网络 |
-| 章节类型 | 机制类 |
-| 解决问题 | Pod IP 怎么来的？跨节点 Pod 怎么通信？Service 转发如何实现？Calico/Cilium/Flannel 区别？iptables/IPVS/eBPF 优劣？ |
-| 面试抓手 | 先讲 CNI 调用链路，再讲 Pod 数据包路径，再对比 kube-proxy 模式和主流 CNI 实现 |
-
 <div class="card card-s">
 <h3>Pod 网络数据路径图</h3>
 <div class="figure">

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Menlo, Consolas, monospace" font-size="14">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <style>
+      .host { fill: #1e293b; }
+      .host-label { fill: #1e293b; font-weight: bold; font-size: 16px; }
+      .line { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 4; }
+      .arrow-line { stroke: #2563eb; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .arrow-ack { stroke: #16a34a; stroke-width: 2; fill: none; marker-end: url(#arrowAck); }
+      .packet { fill: #fff; stroke: #2563eb; stroke-width: 1.5; rx: 4; }
+      .packet-ack { fill: #fff; stroke: #16a34a; stroke-width: 1.5; rx: 4; }
+      .step-label { fill: #475569; font-size: 12px; }
+      .state { fill: #fff; stroke: #eab308; stroke-width: 1.5; rx: 12; }
+      .state-text { fill: #a16207; font-size: 12px; font-weight: bold; }
+      .title { fill: #0f172a; font-size: 18px; font-weight: bold; }
+      .note { fill: #64748b; font-size: 12px; }
+    </style>
+    <marker id="arrowAck" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="28" text-anchor="middle" class="title">TCP 三次握手（Three-Way Handshake）</text>
+
+  <!-- Client and Server vertical lines -->
+  <line x1="130" y1="70" x2="130" y2="330" class="line"/>
+  <line x1="590" y1="70" x2="590" y2="330" class="line"/>
+
+  <!-- Host labels -->
+  <rect x="85" y="45" width="90" height="28" rx="4" class="host"/>
+  <text x="130" y="64" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14px">Client</text>
+  <rect x="545" y="45" width="90" height="28" rx="4" class="host"/>
+  <text x="590" y="64" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14px">Server</text>
+
+  <!-- States -->
+  <rect x="30" y="85" width="95" height="24" class="state"/>
+  <text x="77" y="101" text-anchor="middle" class="state-text">CLOSED</text>
+  <rect x="595" y="85" width="95" height="24" class="state"/>
+  <text x="642" y="101" text-anchor="middle" class="state-text">LISTEN</text>
+
+  <!-- Step 1: SYN -->
+  <line x1="130" y1="135" x2="590" y2="135" class="arrow-line"/>
+  <rect x="250" y="119" width="220" height="26" class="packet"/>
+  <text x="360" y="137" text-anchor="middle" fill="#2563eb" font-weight="bold">SYN, seq = x (ISN)</text>
+  <text x="60" y="139" class="step-label">①</text>
+
+  <rect x="30" y="155" width="105" height="24" class="state"/>
+  <text x="82" y="171" text-anchor="middle" class="state-text">SYN_SENT</text>
+
+  <!-- Step 2: SYN+ACK -->
+  <line x1="590" y1="205" x2="130" y2="205" class="arrow-ack"/>
+  <rect x="220" y="189" width="280" height="26" class="packet-ack"/>
+  <text x="360" y="207" text-anchor="middle" fill="#16a34a" font-weight="bold">SYN, ACK, seq = y, ack = x+1</text>
+  <text x="60" y="209" class="step-label">②</text>
+
+  <rect x="595" y="155" width="110" height="24" class="state"/>
+  <text x="650" y="171" text-anchor="middle" class="state-text">SYN_RCVD</text>
+
+  <!-- Step 3: ACK -->
+  <line x1="130" y1="275" x2="590" y2="275" class="arrow-ack"/>
+  <rect x="250" y="259" width="220" height="26" class="packet-ack"/>
+  <text x="360" y="277" text-anchor="middle" fill="#16a34a" font-weight="bold">ACK, ack = y+1</text>
+  <text x="60" y="279" class="step-label">③</text>
+
+  <!-- Final states -->
+  <rect x="30" y="300" width="115" height="24" class="state"/>
+  <text x="87" y="316" text-anchor="middle" class="state-text">ESTABLISHED</text>
+  <rect x="595" y="300" width="115" height="24" class="state"/>
+  <text x="652" y="316" text-anchor="middle" class="state-text">ESTABLISHED</text>
+
+  <!-- Bottom note -->
+  <text x="360" y="350" text-anchor="middle" class="note">ISN = Initial Sequence Number（初始序列号，随机生成，防攻击）</text>
+</svg>

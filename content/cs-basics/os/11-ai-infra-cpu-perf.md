@@ -1,16 +1,6 @@
 ## 一句话结论
 
 load average 高不等于 CPU 忙，因为 load 同时统计 runnable 和 D 状态不可中断睡眠任务，大量任务卡在磁盘或网络 I/O 也会推高 load。判断 CPU 瓶颈要同时看 load、utilization、run queue、iowait 和 context switch。AI Infra 里数据预处理、tokenizer、序列化和容器 CFS throttling 都可能让 CPU 成瓶颈、拖垮 GPU 喂数据。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | 操作系统基础 |
-| 章节类型 | 排障诊断类 |
-| 解决问题 | 围绕进程线程、调度、虚拟内存、IO、多路复用、死锁、观测和 AI Infra OS 问题建立系统基础答案。 |
-| 面试抓手 | 先讲定义，再讲链路，最后讲 AI Infra 中如何使用或排障。 |
-
 ## AI Infra 面试模块：CPU 调度与性能分析
 
 AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detokenizer、请求调度、网络协议栈、NCCL 辅助线程、checkpoint 序列化都可能让 CPU 成为瓶颈。
@@ -53,10 +43,3 @@ AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detoke
 <div class="qa-q">Q: 如何用 perf 分析 CPU hotspot？</div>
 <div class="qa-a"><p>先用 <code>perf top -p &lt;pid&gt;</code> 在线看热点，再用 <code>perf record -g -p &lt;pid&gt; -- sleep 30</code> 采样调用栈，最后用 <code>perf report</code> 或火焰图分析热点是在业务函数、系统调用、锁、内核网络栈、内存拷贝还是调度函数。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

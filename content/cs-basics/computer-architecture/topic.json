@@ -1,14 +1,15 @@
 {
   "title": "计算机组成原理",
-  "subtitle": "CPU Core · Cache/TLB · DMA/PCIe · NUMA/拓扑",
-  "kicker": "CS Basics",
-  "tags": [
-    "computer-architecture",
-    "cpu",
-    "cache",
-    "pcie"
-  ],
+  "subtitle": "CPU Core · Cache/TLB · 流水线/SIMD · Cache一致性/内存模型 · DMA/PCIe/NUMA",
   "output": "pages/cs-basics/computer-architecture/index.html",
+  "tags": ["computer-architecture", "cpu", "cache", "numa", "pipeline", "simd"],
+  "goals": [
+    "理解 CPU 存储层次和 NUMA 拓扑",
+    "掌握 Cache/TLB/False Sharing 与性能优化思路",
+    "了解指令集、流水线、分支预测与 SIMD 对算力的影响",
+    "理解 Cache 一致性（MESI）和内存一致性模型",
+    "理解 DMA/PCIe、中断与硬件预取的工作机制"
+  ],
   "layout": [
     {
       "type": "tabs",
@@ -17,21 +18,47 @@
       "items": [
         {
           "title": "CPU 与内存层次",
-          "description": "Core、寄存器、cache、内存带宽",
-          "file": "01-cpu-memory-hierarchy.md"
+          "file": "01-cpu-memory-hierarchy.md",
+          "level": "基础",
+          "priority": 3,
+          "time": 8
         },
         {
           "title": "Cache / TLB / False Sharing",
-          "description": "局部性、cache line、TLB miss、伪共享",
-          "file": "02-cache-tlb.md"
+          "file": "02-cache-tlb.md",
+          "level": "基础",
+          "priority": 3,
+          "time": 12
         },
         {
           "title": "DMA、PCIe 与 NUMA 拓扑",
-          "description": "Host-device copy、DMA、PCIe、GPU/NIC locality",
-          "file": "03-dma-pcie-numa.md"
+          "file": "03-dma-pcie-numa.md",
+          "level": "进阶",
+          "priority": 3,
+          "time": 10
+        },
+        {
+          "title": "指令集 · 流水线 · 分支预测 · SIMD",
+          "file": "04-isa-pipeline-simd.md",
+          "level": "进阶",
+          "priority": 2,
+          "time": 15
+        },
+        {
+          "title": "Cache 一致性（MESI）· 内存模型 · Atomic",
+          "file": "05-cache-coherence-memory-model.md",
+          "level": "精通",
+          "priority": 3,
+          "time": 18
+        },
+        {
+          "title": "中断 · DMA · 硬件预取 · I/O 亲和性",
+          "file": "06-interrupt-io-prefetch.md",
+          "level": "进阶",
+          "priority": 2,
+          "time": 12
         }
       ]
     }
-  ],
-  "sections": []
+  ]
 }

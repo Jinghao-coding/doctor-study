@@ -1,16 +1,6 @@
 ## 一句话结论
 
 Scheduler 性能调优关注候选节点比例、打分插件、profile、并发和 HA。
-
-## 复习定位
-
-| 维度 | 内容 |
-|---|---|
-| 所属模块 | Kubernetes 核心 |
-| 章节类型 | 系统类 |
-| 解决问题 | 围绕控制面、调度资源模型、Workload Controller、网络存储、安全多租户、排障和 AI Infra GPU/DRA 建立平台面试答案。 |
-| 面试抓手 | 解释 percentageOfNodesToScore 的收益与风险。 |
-
 <div class="card card-m">
 <h3>Scheduler 性能与扩展性</h3>
 <p>大规模集群（数千节点、数万 Pod）中，scheduler 的性能直接决定 Pod 启动延迟。面试中要能说清楚关键性能参数和优化手段。</p>
