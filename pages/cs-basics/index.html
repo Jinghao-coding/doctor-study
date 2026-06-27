@@ -1692,8 +1692,22 @@ options ndots:5</code></pre>
 </ul>
 </div>
 <div class="card card-d">
-<h3>Cgroups：资源限制与统计</h3>
-<p>Cgroups（Control Groups）限制一组进程能使用的资源，提供资源统计（metrics）和优先级控制。</p>
+<h3>什么是 Cgroups：从&quot;nice 值&quot;到&quot;进程分组+资源配额&quot;</h3>
+<p>Linux 传统上用 <code>nice</code>、<code>ulimit</code>、<code>setrlimit</code> 控制单进程资源，但这些机制<strong>只能限制单个进程</strong>，无法对&quot;一组进程&quot;（比如一个容器里的所有进程、一个 systemd 服务的所有子进程）做统一限额和统计。Cgroups（Control Groups）就是为解决这个问题而生的内核机制——<strong>把进程组织成树形分组，在每个节点上挂载资源控制器，限制这一组进程合计能用多少 CPU/内存/IO/PID</strong>。</p>
+
+<p><strong>核心思想（参考 Red Hat、Kernel Docs、cgroupv2 官方文档）：</strong></p>
+<ul>
+<li><strong>树形层级</strong>：cgroup 以树状目录组织（<code>/sys/fs/cgroup/</code>），每个目录是一个 cgroup 节点；子 cgroup 从父 cgroup 继承，<strong>父节点的限制不能被子节点突破</strong>（父限 4 核，所有子加起来最多 4 核）</li>
+<li><strong>进程归属</strong>：每个进程属于且仅属于<strong>一个</strong> cgroup（v2），通过向 <code>cgroup.procs</code> 文件写入 PID 把进程移入；子进程 fork 时自动继承父进程的 cgroup</li>
+<li><strong>资源控制器（Controller）</strong>：每个控制器管一种资源，通过目录下的接口文件配置——cpu（CPU 带宽/权重）、memory（内存上限+OOM）、io（块设备 IOPS/BPS）、pids（进程数上限）、cpuset（绑核/NUMA）、devices（设备访问黑白名单）等</li>
+<li><strong>不仅限制，还统计</strong>：每个 cgroup 目录下有大量 <code>*.stat</code>、<code>*.current</code> 文件，提供细粒度的资源使用数据，是 Prometheus/cAdvisor/K8s metrics 的数据源</li>
+<li><strong>和 Namespace 互补但独立</strong>：Namespace 解决&quot;看到什么&quot;（视图），Cgroups 解决&quot;用多少&quot;（配额）；<strong>两者可以独立使用</strong>——systemd 服务用 cgroup 限制资源但不隔离视图，<code>unshare</code> 隔离视图但不做资源限制</li>
+</ul>
+
+<figure style="margin:12px 0;text-align:center;">
+<img src="../../resources/images/container-runtime/cgroups-overview.svg" alt="Linux Cgroups 树形层级与资源控制器示意图" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;">
+<figcaption style="font-size:11px;color:#718096;margin-top:6px;">▲ 左侧：cgroup v2 统一层级树（root → system.slice/user.slice/init.scope → docker 容器 cgroup → 进程）；右侧：六大资源控制器（cpu/memory/io/pids/cpuset/devices）及关键接口文件</figcaption>
+</figure>
 
 <p><strong>Cgroups v1 vs v2：</strong></p>
 <table><tr><th>维度</th><th>cgroups v1</th><th>cgroups v2</th></tr>
