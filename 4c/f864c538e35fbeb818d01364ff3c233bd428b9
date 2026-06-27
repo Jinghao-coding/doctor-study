@@ -1,0 +1,884 @@
+content/ai-infra/gpu/00-cpu-vs-gpu.md
+  s_f2a186b4153b81::t_3984908c188371 7-10 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f698ea51240f132c994c9","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Range":[7,10]}]}]}
+resources/images/networking/tcp-4way-handshake.svg
+  s_f2a186b4153b81::t_b47f890d25d249 1-101 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f688fa51240f132c99472","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,101]}]}]}
+content/cs-basics/computer-architecture/05-cache-coherence-memory-model.md
+  s_f2a186b4153b81::t_3bb2e82c52cf95 1-68 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f6817a51240f132c99463","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,68]}]}]}
+content/cs-basics/linux-container/02-namespace-cgroup-rootfs.md
+  s_f2a186b4153b81::t_5547d0586db267 3,5-13,15-32,34-36,38-45,47-130 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f692fa51240f132c994ba","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[5,13]},{"Range":[15,32]},{"Range":[34,36]},{"Range":[38,45]},{"Range":[47,130]}]}]}
+content/cs-basics/computer-architecture/02-cache-tlb.md
+  s_f2a186b4153b81::t_4b75efc40f2777 3,5-15,17-25,27-38,40-49,51-59 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f67cea51240f132c9945d","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[5,15]},{"Range":[17,25]},{"Range":[27,38]},{"Range":[40,49]},{"Range":[51,59]}]}]}
+content/cs-basics/computer-architecture/topic.json
+  s_f2a186b4153b81::t_f41be789508811 3,5-12,21-24,28-31,35-59,63 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f6864a51240f132c99469","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[5,12]},{"Range":[21,24]},{"Range":[28,31]},{"Range":[35,59]},{"Single":63}]}]}
+resources/images/networking/tcp-3way-handshake.svg
+  s_f2a186b4153b81::t_9c0e51ff55d67c 1-75 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f6876a51240f132c9946f","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,75]}]}]}
+content/cs-basics/networking/01-tcp-udp.md
+  s_f2a186b4153b81::t_34a295ab862fe8 3,6-16,19-29,31-41,44-52,57-63,66-68,72-73,77-78 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f68b5a51240f132c99479","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[6,16]},{"Range":[19,29]},{"Range":[31,41]},{"Range":[44,52]},{"Range":[57,63]},{"Range":[66,68]},{"Range":[72,73]},{"Range":[77,78]}]}]}
+content/cs-basics/topic.json
+  s_f2a186b4153b81::t_ecf3f2fef08eae 111,115-150,154 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f69bda51240f132c994de","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Single":111},{"Range":[115,150]},{"Single":154}]}]}
+content/cs-basics/computer-architecture/06-interrupt-io-prefetch.md
+  s_f2a186b4153b81::t_15e54f8cd3a57b 1-62 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f683ea51240f132c99466","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,62]}]}]}
+content/cs-basics/computer-architecture/04-isa-pipeline-simd.md
+  s_f2a186b4153b81::t_07fafb8c934956 1-73 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f67efa51240f132c99460","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,73]}]}]}
+content/cs-basics/computer-architecture/01-cpu-memory-hierarchy.md
+  s_f2a186b4153b81::t_f2a14b13741872 3,5-14,16-24,26-37,39-49 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f67b4a51240f132c9945a","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[5,14]},{"Range":[16,24]},{"Range":[26,37]},{"Range":[39,49]}]}]}
+content/cs-basics/networking/02-http-grpc-rpc.md
+  s_f2a186b4153b81::t_6c2119429fd842 3,5-15,17-27,29-45,47-56,58-84 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f68efa51240f132c9948d","tool_type":"agent","tool_id":"Write","line_ranges":[{"Single":3},{"Range":[5,15]},{"Range":[17,27]},{"Range":[29,45]},{"Range":[47,56]},{"Range":[58,84]}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "4cf864c538e35fbeb818d01364ff3c233bd428b9",
+  "prompts": {},
+  "sessions": {
+    "s_f2a186b4153b81": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a2f931243bdb608fa0d243a",
+        "model": "Doubao-Seed-2.1-Pro__dev",
+        "display_model_name": "Doubao-Seed-2.1-Pro"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>"
+    }
+  },
+  "attestation_metadata": {
+    "content/ai-infra/gpu/00-cpu-vs-gpu.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_3984908c188371",
+        "line_ranges": [
+          {
+            "Range": [
+              7,
+              10
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f698ea51240f132c994c9",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Range": [
+                  7,
+                  10
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/01-cpu-memory-hierarchy.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_f2a14b13741872",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              5,
+              14
+            ]
+          },
+          {
+            "Range": [
+              16,
+              24
+            ]
+          },
+          {
+            "Range": [
+              26,
+              37
+            ]
+          },
+          {
+            "Range": [
+              39,
+              49
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f67b4a51240f132c9945a",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  5,
+                  14
+                ]
+              },
+              {
+                "Range": [
+                  16,
+                  24
+                ]
+              },
+              {
+                "Range": [
+                  26,
+                  37
+                ]
+              },
+              {
+                "Range": [
+                  39,
+                  49
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/02-cache-tlb.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_4b75efc40f2777",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              5,
+              15
+            ]
+          },
+          {
+            "Range": [
+              17,
+              25
+            ]
+          },
+          {
+            "Range": [
+              27,
+              38
+            ]
+          },
+          {
+            "Range": [
+              40,
+              49
+            ]
+          },
+          {
+            "Range": [
+              51,
+              59
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f67cea51240f132c9945d",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  5,
+                  15
+                ]
+              },
+              {
+                "Range": [
+                  17,
+                  25
+                ]
+              },
+              {
+                "Range": [
+                  27,
+                  38
+                ]
+              },
+              {
+                "Range": [
+                  40,
+                  49
+                ]
+              },
+              {
+                "Range": [
+                  51,
+                  59
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/04-isa-pipeline-simd.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_07fafb8c934956",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              73
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f67efa51240f132c99460",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  73
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/05-cache-coherence-memory-model.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_3bb2e82c52cf95",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              68
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f6817a51240f132c99463",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  68
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/06-interrupt-io-prefetch.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_15e54f8cd3a57b",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              62
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f683ea51240f132c99466",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  62
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/computer-architecture/topic.json": [
+      {
+        "hash": "s_f2a186b4153b81::t_f41be789508811",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              5,
+              12
+            ]
+          },
+          {
+            "Range": [
+              21,
+              24
+            ]
+          },
+          {
+            "Range": [
+              28,
+              31
+            ]
+          },
+          {
+            "Range": [
+              35,
+              59
+            ]
+          },
+          {
+            "Single": 63
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f6864a51240f132c99469",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  5,
+                  12
+                ]
+              },
+              {
+                "Range": [
+                  21,
+                  24
+                ]
+              },
+              {
+                "Range": [
+                  28,
+                  31
+                ]
+              },
+              {
+                "Range": [
+                  35,
+                  59
+                ]
+              },
+              {
+                "Single": 63
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/linux-container/02-namespace-cgroup-rootfs.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_5547d0586db267",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              5,
+              13
+            ]
+          },
+          {
+            "Range": [
+              15,
+              32
+            ]
+          },
+          {
+            "Range": [
+              34,
+              36
+            ]
+          },
+          {
+            "Range": [
+              38,
+              45
+            ]
+          },
+          {
+            "Range": [
+              47,
+              130
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f692fa51240f132c994ba",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  5,
+                  13
+                ]
+              },
+              {
+                "Range": [
+                  15,
+                  32
+                ]
+              },
+              {
+                "Range": [
+                  34,
+                  36
+                ]
+              },
+              {
+                "Range": [
+                  38,
+                  45
+                ]
+              },
+              {
+                "Range": [
+                  47,
+                  130
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/networking/01-tcp-udp.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_34a295ab862fe8",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              6,
+              16
+            ]
+          },
+          {
+            "Range": [
+              19,
+              29
+            ]
+          },
+          {
+            "Range": [
+              31,
+              41
+            ]
+          },
+          {
+            "Range": [
+              44,
+              52
+            ]
+          },
+          {
+            "Range": [
+              57,
+              63
+            ]
+          },
+          {
+            "Range": [
+              66,
+              68
+            ]
+          },
+          {
+            "Range": [
+              72,
+              73
+            ]
+          },
+          {
+            "Range": [
+              77,
+              78
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f68b5a51240f132c99479",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  6,
+                  16
+                ]
+              },
+              {
+                "Range": [
+                  19,
+                  29
+                ]
+              },
+              {
+                "Range": [
+                  31,
+                  41
+                ]
+              },
+              {
+                "Range": [
+                  44,
+                  52
+                ]
+              },
+              {
+                "Range": [
+                  57,
+                  63
+                ]
+              },
+              {
+                "Range": [
+                  66,
+                  68
+                ]
+              },
+              {
+                "Range": [
+                  72,
+                  73
+                ]
+              },
+              {
+                "Range": [
+                  77,
+                  78
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/networking/02-http-grpc-rpc.md": [
+      {
+        "hash": "s_f2a186b4153b81::t_6c2119429fd842",
+        "line_ranges": [
+          {
+            "Single": 3
+          },
+          {
+            "Range": [
+              5,
+              15
+            ]
+          },
+          {
+            "Range": [
+              17,
+              27
+            ]
+          },
+          {
+            "Range": [
+              29,
+              45
+            ]
+          },
+          {
+            "Range": [
+              47,
+              56
+            ]
+          },
+          {
+            "Range": [
+              58,
+              84
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f68efa51240f132c9948d",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Single": 3
+              },
+              {
+                "Range": [
+                  5,
+                  15
+                ]
+              },
+              {
+                "Range": [
+                  17,
+                  27
+                ]
+              },
+              {
+                "Range": [
+                  29,
+                  45
+                ]
+              },
+              {
+                "Range": [
+                  47,
+                  56
+                ]
+              },
+              {
+                "Range": [
+                  58,
+                  84
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/cs-basics/topic.json": [
+      {
+        "hash": "s_f2a186b4153b81::t_ecf3f2fef08eae",
+        "line_ranges": [
+          {
+            "Single": 111
+          },
+          {
+            "Range": [
+              115,
+              150
+            ]
+          },
+          {
+            "Single": 154
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f69bda51240f132c994de",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Single": 111
+              },
+              {
+                "Range": [
+                  115,
+                  150
+                ]
+              },
+              {
+                "Single": 154
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "resources/images/networking/tcp-3way-handshake.svg": [
+      {
+        "hash": "s_f2a186b4153b81::t_9c0e51ff55d67c",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              75
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f6876a51240f132c9946f",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  75
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "resources/images/networking/tcp-4way-handshake.svg": [
+      {
+        "hash": "s_f2a186b4153b81::t_b47f890d25d249",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              101
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f688fa51240f132c99472",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  101
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "s_f2a186b4153b81": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_07fafb8c934956": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_15e54f8cd3a57b": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_34a295ab862fe8": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_3984908c188371": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_3bb2e82c52cf95": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_4b75efc40f2777": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_5547d0586db267": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_6c2119429fd842": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_9c0e51ff55d67c": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_b47f890d25d249": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_ecf3f2fef08eae": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_f2a14b13741872": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_f41be789508811": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_f2a186b4153b81::t_f9369c1ed4d8d1": {
+      "tool": "trae",
+      "conversation_id": "6a2f931243bdb608fa0d243a",
+      "session_id": "6a2f931243bdb608fa0d243a",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
