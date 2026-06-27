@@ -1,26 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
   <defs>
     <linearGradient id="rootGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#4a5568"/>
       <stop offset="100%" stop-color="#2d3748"/>
     </linearGradient>
     <linearGradient id="c1Grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4299e1" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#4299e1" stop-opacity="0.08"/>
+      <stop offset="0%" stop-color="#4299e1" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#4299e1" stop-opacity="0.06"/>
     </linearGradient>
     <linearGradient id="c2Grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#48bb78" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#48bb78" stop-opacity="0.08"/>
+      <stop offset="0%" stop-color="#48bb78" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#48bb78" stop-opacity="0.06"/>
     </linearGradient>
     <linearGradient id="c3Grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ed8936" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#ed8936" stop-opacity="0.08"/>
+      <stop offset="0%" stop-color="#ed8936" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ed8936" stop-opacity="0.06"/>
     </linearGradient>
-    <linearGradient id="c4Grad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#9f7aea" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#9f7aea" stop-opacity="0.08"/>
-    </linearGradient>
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+    <filter id="shadow" x="-8%" y="-8%" width="120%" height="125%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.1"/>
     </filter>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -29,173 +25,176 @@
   </defs>
 
   <!-- Title -->
-  <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">Linux Cgroups：进程分组 + 树形层级 + 资源控制器</text>
-  <text x="410" y="45" text-anchor="middle" font-size="11" fill="#718096">把进程组织成树，在每个节点上挂资源限制（CPU/内存/IO/PID…），子节点继承父节点配置</text>
+  <text x="450" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1a202c">Linux Cgroups：进程分组 + 树形层级 + 资源控制器</text>
+  <text x="450" y="45" text-anchor="middle" font-size="11" fill="#718096">把进程组织成树，在每个节点上挂资源限制（CPU/内存/IO/PID…），子节点继承父节点配置</text>
 
-  <!-- ===== LEFT SIDE: Process tree (cgroup hierarchy) ===== -->
-  <text x="220" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#2d3748">① Cgroup 层级树（v2 unified hierarchy）</text>
+  <!-- ===== LEFT COLUMN: cgroup hierarchy ===== -->
+  <!-- Column boundary: 0 ~ 310 -->
+  <text x="155" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#2d3748">① Cgroup 层级树（v2 unified hierarchy）</text>
 
   <!-- Root cgroup (/) -->
-  <rect x="140" y="85" width="160" height="38" rx="8" fill="url(#rootGrad)" filter="url(#shadow)"/>
-  <text x="220" y="102" text-anchor="middle" font-size="11" font-weight="700" fill="white">/  (root cgroup)</text>
-  <text x="220" y="116" text-anchor="middle" font-size="9" fill="#cbd5e0">system.slice · user.slice · init.scope</text>
+  <rect x="78" y="85" width="155" height="40" rx="8" fill="url(#rootGrad)" filter="url(#shadow)"/>
+  <text x="155" y="103" text-anchor="middle" font-size="11" font-weight="700" fill="white">/  (root cgroup)</text>
+  <text x="155" y="118" text-anchor="middle" font-size="9" fill="#cbd5e0">system.slice · user.slice · init.scope</text>
 
-  <!-- Lines from root to children -->
-  <line x1="220" y1="123" x2="220" y2="145" stroke="#a0aec0" stroke-width="1.5"/>
-  <line x1="90" y1="145" x2="350" y2="145" stroke="#a0aec0" stroke-width="1.5"/>
-  <line x1="90" y1="145" x2="90" y2="168" stroke="#a0aec0" stroke-width="1.5"/>
-  <line x1="220" y1="145" x2="220" y2="168" stroke="#a0aec0" stroke-width="1.5"/>
-  <line x1="350" y1="145" x2="350" y2="168" stroke="#a0aec0" stroke-width="1.5"/>
+  <!-- Branch lines from root to three children -->
+  <line x1="155" y1="125" x2="155" y2="145" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="48" y1="145" x2="262" y2="145" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="48"  y1="145" x2="48"  y2="166" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="155" y1="145" x2="155" y2="166" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="262" y1="145" x2="262" y2="166" stroke="#a0aec0" stroke-width="1.5"/>
 
   <!-- system.slice -->
-  <rect x="30" y="168" width="120" height="34" rx="7" fill="url(#c1Grad)" stroke="#4299e1" stroke-width="1.5"/>
-  <text x="90" y="184" text-anchor="middle" font-size="10" font-weight="600" fill="#2b6cb0">system.slice</text>
-  <text x="90" y="197" text-anchor="middle" font-size="8" fill="#4a5568">系统服务（sshd, docker…）</text>
+  <rect x="5" y="166" width="86" height="36" rx="7" fill="url(#c1Grad)" stroke="#4299e1" stroke-width="1.5"/>
+  <text x="48" y="183" text-anchor="middle" font-size="10" font-weight="600" fill="#2b6cb0">system.slice</text>
+  <text x="48" y="196" text-anchor="middle" font-size="8" fill="#4a5568">系统服务（sshd…）</text>
 
-  <!-- user.slice (simplified) -->
-  <rect x="160" y="168" width="120" height="34" rx="7" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.2" stroke-dasharray="3,2"/>
-  <text x="220" y="184" text-anchor="middle" font-size="10" font-weight="600" fill="#718096">user.slice</text>
-  <text x="220" y="197" text-anchor="middle" font-size="8" fill="#a0aec0">用户会话进程（略）</text>
+  <!-- user.slice -->
+  <rect x="112" y="166" width="86" height="36" rx="7" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <text x="155" y="183" text-anchor="middle" font-size="10" font-weight="600" fill="#718096">user.slice</text>
+  <text x="155" y="196" text-anchor="middle" font-size="8" fill="#a0aec0">用户会话（略）</text>
 
-  <!-- docker containers under system.slice -->
-  <line x1="90" y1="202" x2="90" y2="225" stroke="#a0aec0" stroke-width="1.2" stroke-dasharray="3,2"/>
-  <line x1="40" y1="225" x2="210" y2="225" stroke="#a0aec0" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <!-- init.scope -->
+  <rect x="219" y="166" width="86" height="36" rx="7" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <text x="262" y="183" text-anchor="middle" font-size="10" font-weight="600" fill="#718096">init.scope</text>
+  <text x="262" y="196" text-anchor="middle" font-size="8" fill="#a0aec0">PID 1（systemd）</text>
 
-  <!-- docker container children -->
-  <line x1="40" y1="225" x2="40" y2="245" stroke="#48bb78" stroke-width="1.5"/>
-  <line x1="130" y1="225" x2="130" y2="245" stroke="#ed8936" stroke-width="1.5"/>
-  <line x1="210" y1="225" x2="210" y2="245" stroke="#9f7aea" stroke-width="1.5"/>
+  <!-- docker containers branch (from system.slice) -->
+  <line x1="48" y1="202" x2="48" y2="222" stroke="#a0aec0" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <line x1="22" y1="222" x2="168" y2="222" stroke="#a0aec0" stroke-width="1.2" stroke-dasharray="3,2"/>
 
-  <!-- Container A -->
-  <rect x="0" y="245" width="80" height="55" rx="6" fill="url(#c2Grad)" stroke="#48bb78" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="40" y="261" text-anchor="middle" font-size="9" font-weight="700" fill="#276749">容器 A</text>
-  <text x="40" y="273" text-anchor="middle" font-size="8" fill="#4a5568">cpu.max=200000</text>
-  <text x="40" y="284" text-anchor="middle" font-size="8" fill="#4a5568">memory.max=1G</text>
-  <text x="40" y="295" text-anchor="middle" font-size="8" fill="#4a5568">pids.max=100</text>
+  <!-- Container vertical connectors -->
+  <line x1="22"  y1="222" x2="22"  y2="243" stroke="#48bb78" stroke-width="1.5"/>
+  <line x1="96"  y1="222" x2="96"  y2="243" stroke="#ed8936" stroke-width="1.5"/>
+  <line x1="168" y1="222" x2="168" y2="243" stroke="#9f7aea" stroke-width="1.2" stroke-dasharray="3,2"/>
 
-  <!-- Container B -->
-  <rect x="90" y="245" width="80" height="55" rx="6" fill="url(#c3Grad)" stroke="#ed8936" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="130" y="261" text-anchor="middle" font-size="9" font-weight="700" fill="#975a16">容器 B</text>
-  <text x="130" y="273" text-anchor="middle" font-size="8" fill="#4a5568">cpu.max=400000</text>
-  <text x="130" y="284" text-anchor="middle" font-size="8" fill="#4a5568">memory.max=2G</text>
-  <text x="130" y="295" text-anchor="middle" font-size="8" fill="#4a5568">pids.max=200</text>
+  <!-- Container A (green) -->
+  <rect x="0" y="243" width="75" height="58" rx="6" fill="url(#c2Grad)" stroke="#48bb78" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="37" y="259" text-anchor="middle" font-size="9" font-weight="700" fill="#276749">容器 A</text>
+  <text x="37" y="271" text-anchor="middle" font-size="7.5" fill="#4a5568">cpu.max=200000</text>
+  <text x="37" y="282" text-anchor="middle" font-size="7.5" fill="#4a5568">memory.max=1G</text>
+  <text x="37" y="293" text-anchor="middle" font-size="7.5" fill="#4a5568">pids.max=100</text>
+
+  <!-- Container B (orange) -->
+  <rect x="80" y="243" width="75" height="58" rx="6" fill="url(#c3Grad)" stroke="#ed8936" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="117" y="259" text-anchor="middle" font-size="9" font-weight="700" fill="#975a16">容器 B</text>
+  <text x="117" y="271" text-anchor="middle" font-size="7.5" fill="#4a5568">cpu.max=400000</text>
+  <text x="117" y="282" text-anchor="middle" font-size="7.5" fill="#4a5568">memory.max=2G</text>
+  <text x="117" y="293" text-anchor="middle" font-size="7.5" fill="#4a5568">pids.max=200</text>
 
   <!-- Other containers (dashed) -->
-  <rect x="175" y="245" width="70" height="55" rx="6" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,2"/>
-  <text x="210" y="275" text-anchor="middle" font-size="9" fill="#a0aec0">其他容器…</text>
+  <rect x="160" y="243" width="68" height="58" rx="6" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="194" y="275" text-anchor="middle" font-size="9" fill="#a0aec0">其他容器…</text>
 
-  <!-- init.scope at right -->
-  <rect x="290" y="168" width="120" height="34" rx="7" fill="#f7fafc" stroke="#cbd5e0" stroke-width="1.2" stroke-dasharray="3,2"/>
-  <text x="350" y="184" text-anchor="middle" font-size="10" font-weight="600" fill="#718096">init.scope</text>
-  <text x="350" y="197" text-anchor="middle" font-size="8" fill="#a0aec0">PID 1（systemd）</text>
-
-  <!-- Processes inside container A -->
-  <text x="40" y="318" text-anchor="middle" font-size="8" fill="#718096">↓ cgroup.procs</text>
-  <line x1="40" y1="320" x2="40" y2="335" stroke="#48bb78" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- Processes under Container A -->
+  <text x="37" y="318" text-anchor="middle" font-size="8" fill="#718096">↓ cgroup.procs</text>
+  <line x1="37" y1="321" x2="37" y2="336" stroke="#48bb78" stroke-width="1" marker-end="url(#arrow)"/>
   <g font-size="8" fill="#2d3748">
-    <rect x="2" y="338" width="34" height="18" rx="4" fill="white" stroke="#48bb78" stroke-width="1"/>
-    <text x="19" y="350" text-anchor="middle">PID 1</text>
-    <rect x="40" y="338" width="34" height="18" rx="4" fill="white" stroke="#48bb78" stroke-width="1"/>
-    <text x="57" y="350" text-anchor="middle">PID 7</text>
+    <rect x="2" y="340" width="32" height="18" rx="4" fill="white" stroke="#48bb78" stroke-width="1"/>
+    <text x="18" y="352" text-anchor="middle">PID 1</text>
+    <rect x="38" y="340" width="32" height="18" rx="4" fill="white" stroke="#48bb78" stroke-width="1"/>
+    <text x="54" y="352" text-anchor="middle">PID 7</text>
   </g>
-  <text x="130" y="318" text-anchor="middle" font-size="8" fill="#718096">↓ cgroup.procs</text>
-  <line x1="130" y1="320" x2="130" y2="335" stroke="#ed8936" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Processes under Container B -->
+  <text x="117" y="318" text-anchor="middle" font-size="8" fill="#718096">↓ cgroup.procs</text>
+  <line x1="117" y1="321" x2="117" y2="336" stroke="#ed8936" stroke-width="1" marker-end="url(#arrow)"/>
   <g font-size="8" fill="#2d3748">
-    <rect x="92" y="338" width="34" height="18" rx="4" fill="white" stroke="#ed8936" stroke-width="1"/>
-    <text x="109" y="350" text-anchor="middle">PID 1</text>
-    <rect x="130" y="338" width="34" height="18" rx="4" fill="white" stroke="#ed8936" stroke-width="1"/>
-    <text x="147" y="350" text-anchor="middle">PID 12</text>
+    <rect x="82" y="340" width="32" height="18" rx="4" fill="white" stroke="#ed8936" stroke-width="1"/>
+    <text x="98" y="352" text-anchor="middle">PID 1</text>
+    <rect x="118" y="340" width="32" height="18" rx="4" fill="white" stroke="#ed8936" stroke-width="1"/>
+    <text x="134" y="352" text-anchor="middle">PID 12</text>
   </g>
 
   <!-- Key insight box -->
-  <rect x="10" y="375" width="260" height="72" rx="8" fill="#fffbeb" stroke="#f6ad55" stroke-width="1"/>
-  <text x="20" y="393" font-size="9" font-weight="700" fill="#975a16">树形层级要点：</text>
-  <text x="20" y="407" font-size="8.5" fill="#4a5568">• 一个进程只能属于<strong>一个</strong> cgroup（v2）</text>
-  <text x="20" y="420" font-size="8.5" fill="#4a5568">• 子 cgroup 继承父 cgroup 的控制器开关</text>
-  <text x="20" y="433" font-size="8.5" fill="#4a5568">• 资源限制<strong>自上而下</strong>分摊，父不能超子之和</text>
-  <text x="20" y="444" font-size="8.5" fill="#4a5568">• 通过写 <code>cgroup.procs</code> 把进程移入 cgroup</text>
+  <rect x="5" y="375" width="295" height="80" rx="8" fill="#fffbeb" stroke="#f6ad55" stroke-width="1"/>
+  <text x="15" y="393" font-size="9" font-weight="700" fill="#975a16">树形层级要点：</text>
+  <text x="15" y="407" font-size="8.5" fill="#4a5568">• 一个进程只能属于一个 cgroup（v2）</text>
+  <text x="15" y="420" font-size="8.5" fill="#4a5568">• 子 cgroup 继承父 cgroup 的控制器开关</text>
+  <text x="15" y="433" font-size="8.5" fill="#4a5568">• 资源限制自上而下分摊，父不能超子之和</text>
+  <text x="15" y="446" font-size="8.5" fill="#4a5568">• 写 cgroup.procs 把进程移入 cgroup</text>
 
   <!-- ===== DIVIDER ===== -->
-  <line x1="290" y1="70" x2="290" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="320" y1="68" x2="320" y2="468" stroke="#e2e8f0" stroke-width="1.2" stroke-dasharray="5,3"/>
 
-  <!-- ===== RIGHT SIDE: Resource Controllers ===== -->
-  <text x="555" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#2d3748">② 资源控制器（Controllers）</text>
-  <text x="555" y="88" text-anchor="middle" font-size="9.5" fill="#718096">每个控制器负责一种资源，通过 v2 的 cpu.max/memory.max 等文件配置</text>
+  <!-- ===== RIGHT COLUMN: Resource Controllers ===== -->
+  <!-- Column boundary: 335 ~ 900 -->
+  <text x="610" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#2d3748">② 资源控制器（Controllers）</text>
+  <text x="610" y="88" text-anchor="middle" font-size="9.5" fill="#718096">每个控制器负责一种资源，通过 v2 的 cpu.max / memory.max 等文件配置</text>
 
-  <!-- Controller boxes -->
-  <g font-size="9" fill="#2d3748">
-    <!-- CPU -->
-    <rect x="315" y="102" width="235" height="68" rx="7" fill="#ebf8ff" stroke="#4299e1" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="315" y="102" width="55" height="68" rx="7" fill="#4299e1"/>
-    <rect x="362" y="102" width="188" height="68" fill="#ebf8ff"/>
-    <text x="342" y="130" text-anchor="middle" font-size="11" font-weight="700" fill="white">CPU</text>
-    <text x="342" y="145" text-anchor="middle" font-size="8" fill="#bee3f8">cpu</text>
-    <text x="375" y="118" font-weight="700" fill="#2b6cb0">CPU 带宽 &amp; 权重</text>
-    <text x="375" y="132" font-size="8.5" fill="#4a5568">cpu.max = quota/period（硬限制，--cpus=2）</text>
-    <text x="375" y="145" font-size="8.5" fill="#4a5568">cpu.weight = 相对权重（竞争时分配比例）</text>
-    <text x="375" y="158" font-size="8.5" fill="#4a5568">cpu.stat = usage_usec, nr_throttled（观测）</text>
+  <g font-size="8.5" fill="#2d3748">
+    <!-- CPU (full width) -->
+    <rect x="338" y="102" width="252" height="60" rx="7" fill="#ebf8ff" stroke="#4299e1" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="338" y="102" width="52" height="60" rx="7" fill="#4299e1"/>
+    <rect x="384" y="102" width="206" height="60" fill="#ebf8ff"/>
+    <text x="364" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="white">CPU</text>
+    <text x="364" y="144" text-anchor="middle" font-size="8" fill="#bee3f8">cpu</text>
+    <text x="396" y="118" font-weight="700" fill="#2b6cb0">CPU 带宽 &amp; 权重</text>
+    <text x="396" y="132" font-size="8.5" fill="#4a5568">cpu.max = quota/period（硬限制，--cpus=2）</text>
+    <text x="396" y="145" font-size="8.5" fill="#4a5568">cpu.weight = 相对权重（竞争时分配比例）</text>
+    <text x="396" y="156" font-size="8.5" fill="#4a5568">cpu.stat = usage_usec, nr_throttled（观测）</text>
 
-    <!-- Memory -->
-    <rect x="315" y="180" width="235" height="68" rx="7" fill="#f0fff4" stroke="#48bb78" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="315" y="180" width="55" height="68" rx="7" fill="#48bb78"/>
-    <rect x="362" y="180" width="188" height="68" fill="#f0fff4"/>
-    <text x="342" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="white">MEM</text>
-    <text x="342" y="223" text-anchor="middle" font-size="8" fill="#c6f6d5">memory</text>
-    <text x="375" y="196" font-weight="700" fill="#276749">内存上限 &amp; 统计</text>
-    <text x="375" y="210" font-size="8.5" fill="#4a5568">memory.max = 硬限制（-m 1g，超限 OOM Kill）</text>
-    <text x="375" y="223" font-size="8.5" fill="#4a5568">memory.current = 当前使用量（RSS+cache）</text>
-    <text x="375" y="236" font-size="8.5" fill="#4a5568">memory.oom.group = 1（整组 kill，防漏）</text>
+    <!-- Memory (full width) -->
+    <rect x="338" y="170" width="252" height="60" rx="7" fill="#f0fff4" stroke="#48bb78" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="338" y="170" width="52" height="60" rx="7" fill="#48bb78"/>
+    <rect x="384" y="170" width="206" height="60" fill="#f0fff4"/>
+    <text x="364" y="196" text-anchor="middle" font-size="11" font-weight="700" fill="white">MEM</text>
+    <text x="364" y="212" text-anchor="middle" font-size="8" fill="#c6f6d5">memory</text>
+    <text x="396" y="186" font-weight="700" fill="#276749">内存上限 &amp; 统计</text>
+    <text x="396" y="200" font-size="8.5" fill="#4a5568">memory.max = 硬限制（-m 1g，超限 OOM Kill）</text>
+    <text x="396" y="213" font-size="8.5" fill="#4a5568">memory.current = 当前使用量（RSS+cache）</text>
+    <text x="396" y="225" font-size="8.5" fill="#4a5568">memory.oom.group = 1（整组 kill，防漏）</text>
 
-    <!-- IO -->
-    <rect x="315" y="258" width="235" height="55" rx="7" fill="#fffaf0" stroke="#dd6b20" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="315" y="258" width="55" height="55" rx="7" fill="#dd6b20"/>
-    <rect x="362" y="258" width="188" height="55" fill="#fffaf0"/>
-    <text x="342" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="white">IO</text>
-    <text x="342" y="298" text-anchor="middle" font-size="8" fill="#feebc8">io</text>
-    <text x="375" y="274" font-weight="700" fill="#975a16">块设备 IO 限制</text>
-    <text x="375" y="288" font-size="8.5" fill="#4a5568">io.max = rbps/wbps/riops/wiops（BPS/IOPS 上限）</text>
-    <text x="375" y="301" font-size="8.5" fill="#4a5568">io.weight = 相对权重（争用磁盘时按比例分配）</text>
+    <!-- IO (left) -->
+    <rect x="338" y="238" width="252" height="55" rx="7" fill="#fffaf0" stroke="#dd6b20" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="338" y="238" width="52" height="55" rx="7" fill="#dd6b20"/>
+    <rect x="384" y="238" width="206" height="55" fill="#fffaf0"/>
+    <text x="364" y="263" text-anchor="middle" font-size="11" font-weight="700" fill="white">IO</text>
+    <text x="364" y="279" text-anchor="middle" font-size="8" fill="#feebc8">io</text>
+    <text x="396" y="254" font-weight="700" fill="#975a16">块设备 IO 限制</text>
+    <text x="396" y="268" font-size="8.5" fill="#4a5568">io.max = rbps/wbps/riops/wiops（BPS/IOPS 上限）</text>
+    <text x="396" y="281" font-size="8.5" fill="#4a5568">io.weight = 相对权重（争用磁盘时按比例分配）</text>
 
-    <!-- PIDs -->
-    <rect x="560" y="258" width="235" height="55" rx="7" fill="#faf5ff" stroke="#9f7aea" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="560" y="258" width="55" height="55" rx="7" fill="#9f7aea"/>
-    <rect x="607" y="258" width="188" height="55" fill="#faf5ff"/>
-    <text x="587" y="283" text-anchor="middle" font-size="10" font-weight="700" fill="white">PID</text>
-    <text x="587" y="298" text-anchor="middle" font-size="8" fill="#e9d8fd">pids</text>
-    <text x="620" y="274" font-weight="700" fill="#6b46c1">进程/线程数限制</text>
-    <text x="620" y="288" font-size="8.5" fill="#4a5568">pids.max = 最大 task 数（防 fork bomb）</text>
-    <text x="620" y="301" font-size="8.5" fill="#4a5568">pids.current = 当前 task 数</text>
+    <!-- PIDs (right of IO) -->
+    <rect x="603" y="238" width="272" height="55" rx="7" fill="#faf5ff" stroke="#9f7aea" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="603" y="238" width="52" height="55" rx="7" fill="#9f7aea"/>
+    <rect x="649" y="238" width="226" height="55" fill="#faf5ff"/>
+    <text x="629" y="263" text-anchor="middle" font-size="11" font-weight="700" fill="white">PID</text>
+    <text x="629" y="279" text-anchor="middle" font-size="8" fill="#e9d8fd">pids</text>
+    <text x="661" y="254" font-weight="700" fill="#6b46c1">进程/线程数限制</text>
+    <text x="661" y="268" font-size="8.5" fill="#4a5568">pids.max = 最大 task 数（防 fork bomb）</text>
+    <text x="661" y="281" font-size="8.5" fill="#4a5568">pids.current = 当前 task 数</text>
 
-    <!-- cpuset -->
-    <rect x="315" y="323" width="235" height="55" rx="7" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="315" y="323" width="55" height="55" rx="7" fill="#e53e3e"/>
-    <rect x="362" y="323" width="188" height="55" fill="#fff5f5"/>
-    <text x="342" y="348" text-anchor="middle" font-size="10" font-weight="700" fill="white">SET</text>
-    <text x="342" y="363" text-anchor="middle" font-size="8" fill="#fed7d7">cpuset</text>
-    <text x="375" y="339" font-weight="700" fill="#c53030">CPU 核 &amp; NUMA 绑核</text>
-    <text x="375" y="353" font-size="8.5" fill="#4a5568">cpuset.cpus = 允许使用的 CPU 列表（0-3,8-11）</text>
-    <text x="375" y="366" font-size="8.5" fill="#4a5568">cpuset.mems = 允许使用的 NUMA 节点</text>
+    <!-- cpuset (left) -->
+    <rect x="338" y="301" width="252" height="55" rx="7" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="338" y="301" width="52" height="55" rx="7" fill="#e53e3e"/>
+    <rect x="384" y="301" width="206" height="55" fill="#fff5f5"/>
+    <text x="364" y="326" text-anchor="middle" font-size="11" font-weight="700" fill="white">SET</text>
+    <text x="364" y="342" text-anchor="middle" font-size="8" fill="#fed7d7">cpuset</text>
+    <text x="396" y="317" font-weight="700" fill="#c53030">CPU 核 &amp; NUMA 绑核</text>
+    <text x="396" y="331" font-size="8.5" fill="#4a5568">cpuset.cpus = 允许使用的 CPU 列表（0-3,8-11）</text>
+    <text x="396" y="344" font-size="8.5" fill="#4a5568">cpuset.mems = 允许使用的 NUMA 节点</text>
 
-    <!-- devices -->
-    <rect x="560" y="323" width="235" height="55" rx="7" fill="#f7fafc" stroke="#718096" stroke-width="1.2" filter="url(#shadow)"/>
-    <rect x="560" y="323" width="55" height="55" rx="7" fill="#718096"/>
-    <rect x="607" y="323" width="188" height="55" fill="#f7fafc"/>
-    <text x="587" y="348" text-anchor="middle" font-size="10" font-weight="700" fill="white">DEV</text>
-    <text x="587" y="363" text-anchor="middle" font-size="8" fill="#e2e8f0">devices</text>
-    <text x="620" y="339" font-weight="700" fill="#4a5568">设备访问黑白名单</text>
-    <text x="620" y="353" font-size="8.5" fill="#4a5568">控制容器能 read/write/mknod 哪些设备</text>
-    <text x="620" y="366" font-size="8.5" fill="#4a5568">默认 docker 会 deny 所有危险设备</text>
+    <!-- devices (right of cpuset) -->
+    <rect x="603" y="301" width="272" height="55" rx="7" fill="#f7fafc" stroke="#718096" stroke-width="1.2" filter="url(#shadow)"/>
+    <rect x="603" y="301" width="52" height="55" rx="7" fill="#718096"/>
+    <rect x="649" y="301" width="226" height="55" fill="#f7fafc"/>
+    <text x="629" y="326" text-anchor="middle" font-size="11" font-weight="700" fill="white">DEV</text>
+    <text x="629" y="342" text-anchor="middle" font-size="8" fill="#e2e8f0">devices</text>
+    <text x="661" y="317" font-weight="700" fill="#4a5568">设备访问黑白名单</text>
+    <text x="661" y="331" font-size="8.5" fill="#4a5568">控制容器能 read/write/mknod 哪些设备</text>
+    <text x="661" y="344" font-size="8.5" fill="#4a5568">默认 docker deny 所有危险设备</text>
   </g>
 
-  <!-- v1 vs v2 note -->
-  <rect x="315" y="393" width="480" height="60" rx="8" fill="#fffff0" stroke="#ecc94b" stroke-width="1"/>
-  <text x="328" y="410" font-size="9.5" font-weight="700" fill="#975a16">v1 vs v2（面试重点）：</text>
-  <text x="328" y="424" font-size="8.5" fill="#4a5568"><strong>v1：</strong>每个 controller 独立挂载一棵树（cpu、memory、cpuset 各自独立），进程可在不同树里属于不同节点，计账不一致。</text>
-  <text x="328" y="437" font-size="8.5" fill="#4a5568"><strong>v2：</strong>统一层级树（unified hierarchy），所有 controller 挂在同一棵树上，进程只能属于一个节点，eBPF 集成更好，现代发行版默认。</text>
-  <text x="328" y="449" font-size="8.5" fill="#4a5568"><strong>判断方法：</strong><code>stat -fc %T /sys/fs/cgroup</code> 输出 <code>cgroup2fs</code> 即 v2；<code>tmpfs</code> 即 v1。</text>
+  <!-- v1 vs v2 note (full right width) -->
+  <rect x="338" y="375" width="537" height="68" rx="8" fill="#fffff0" stroke="#ecc94b" stroke-width="1"/>
+  <text x="350" y="392" font-size="9.5" font-weight="700" fill="#975a16">v1 vs v2（面试重点）：</text>
+  <text x="350" y="407" font-size="8.5" fill="#4a5568"><tspan font-weight="700">v1：</tspan>每个 controller 独立挂载一棵树（cpu/memory/cpuset 各自独立），进程可在不同树里属于不同节点，计账不一致。</text>
+  <text x="350" y="421" font-size="8.5" fill="#4a5568"><tspan font-weight="700">v2：</tspan>统一层级树（unified hierarchy），所有 controller 挂同一棵树，进程只能属于一个节点，eBPF 集成更好，现代发行版默认。</text>
+  <text x="350" y="435" font-size="8.5" fill="#4a5568"><tspan font-weight="700">判断：</tspan>stat -fc %T /sys/fs/cgroup 输出 cgroup2fs 即 v2，tmpfs 即 v1。</text>
 
   <!-- Bottom: Namespace vs Cgroup contrast -->
-  <rect x="20" y="472" width="780" height="48" rx="8" fill="#edf2f7" stroke="#a0aec0" stroke-width="1"/>
-  <text x="410" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#2d3748">Namespace = "你能看到什么"（视图隔离，欺骗 ps/ls/ifconfig）　|　Cgroups = "你能用多少"（资源限制，CPU/内存/IO 配额）</text>
-  <text x="410" y="507" text-anchor="middle" font-size="9" fill="#718096">两者独立工作：进程可以在新 namespace 但不受 cgroup 限制（裸 unshare），也可以被 cgroup 限制但不隔离视图（systemd 服务）</text>
+  <rect x="20" y="478" width="860" height="50" rx="8" fill="#edf2f7" stroke="#a0aec0" stroke-width="1"/>
+  <text x="450" y="496" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2d3748">Namespace = "你能看到什么"（视图隔离，欺骗 ps/ls/ifconfig）　|　Cgroups = "你能用多少"（资源限制，CPU/内存/IO 配额）</text>
+  <text x="450" y="514" text-anchor="middle" font-size="9" fill="#718096">两者独立工作：进程可以在新 namespace 但不受 cgroup 限制（裸 unshare），也可以被 cgroup 限制但不隔离视图（systemd 服务）</text>
 </svg>
