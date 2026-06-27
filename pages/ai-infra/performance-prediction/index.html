@@ -90,7 +90,7 @@
 <p class="caption">Roofline 标准示意：横轴是算术强度，纵轴是实际性能；斜线是 memory roof，水平线是 compute roof，交点是 ridge point。</p>
 </div>
 <div class="figure">
-<img src="../../../resources/images/roofline/02-roofline-shape.jpg" alt="Roofline 形态图：屋顶高度由算力决定，房檐斜率由带宽决定" loading="lazy">
+<img src="../../../resources/images/roofline/02-roofline-shape.png" alt="Roofline 形态图：屋顶高度由算力决定，房檐斜率由带宽决定" loading="lazy">
 <p class="caption">Roofline 形态：算力决定&quot;屋顶&quot;高度（绿色水平线），带宽决定&quot;房檐&quot;斜率（红色斜线），交点 = I<sub>max</sub>。</p>
 </div>
 <p>Roofline 解决的核心问题：<strong>计算量为 A、访存量为 B 的模型，在算力为 C、带宽为 D 的平台上，理论性能上界是多少？</strong>用一个分段函数表达：</p>
@@ -129,7 +129,7 @@
 
 <h4>VGG16</h4>
 <div class="figure">
-<img src="../../../resources/images/roofline/03-vgg16-stats.jpg" alt="VGG16 各层计算量与访存量统计表" loading="lazy">
+<img src="../../../resources/images/roofline/03-vgg16-stats.png" alt="VGG16 各层计算量与访存量统计表" loading="lazy">
 <p class="caption">VGG16 各层 Kernel Mem、Output Mem 与 FLOPs。</p>
 </div>
 <ul>
@@ -141,7 +141,7 @@
 
 <h4>MobileNet</h4>
 <div class="figure">
-<img src="../../../resources/images/roofline/04-mobilenet-stats.jpg" alt="MobileNet 各层计算量与访存量统计表" loading="lazy">
+<img src="../../../resources/images/roofline/04-mobilenet-stats.png" alt="MobileNet 各层计算量与访存量统计表" loading="lazy">
 <p class="caption">MobileNet 用 DW + PW 大幅压低 FLOPs，但同时也付出了&quot;细长、计算效率低&quot;的代价。</p>
 </div>
 <ul>
@@ -162,7 +162,7 @@
 </table>
 
 <div class="figure">
-<img src="../../../resources/images/roofline/05-vgg-vs-mobilenet-1080ti.jpg" alt="VGG16 与 MobileNet 在 1080Ti Roofline 图上的位置" loading="lazy">
+<img src="../../../resources/images/roofline/05-vgg-vs-mobilenet-1080ti.png" alt="VGG16 与 MobileNet 在 1080Ti Roofline 图上的位置" loading="lazy">
 <p class="caption">VGG16 落在屋顶上（吃满算力），MobileNet 落在房檐上（被带宽卡住）。</p>
 </div>
 
