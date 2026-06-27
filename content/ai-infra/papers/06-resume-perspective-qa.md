@@ -194,6 +194,130 @@
 </div>
 </div>
 
+<div class="card card-w">
+<h3>面试官"挑刺"与陷阱题</h3>
+<p class="text-muted">面试官可能用挑战性问题试探你对自己工作的理解深度——不是真的否定你，而是看你是否思考过弱点。这些问题如果没准备过很容易卡壳。</p>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Maestro 说 KV 预留显存降低 67.2%，但这不是靠 CUDA VMM 超配"骗"出来的吗？实际物理显存并没有减少啊？</div>
+<div class="qa-a"><p>这个问题很尖锐。需要分清两个层面：(1) <strong>预留（reservation）≠ 实际使用</strong>。传统方案为每个请求预分配最大 KV 空间（物理显存），即使实际输出很短也占着不放——这是真正的浪费。CUDA VMM 让虚拟地址远大于物理显存，但物理页按需映射，真正减少的是物理显存占用。(2) 67.2% 降低的是<strong>预留的 HBM 物理显存</strong>，不是虚拟地址。我们通过输出长度预测来决定实际映射多少物理页，短请求只映射少量物理页，其余虚拟地址不占物理内存。统计复用的前提是多 Agent 的 KV 峰值不重叠。如果所有请求同时输出长文本还是会 OOM，但实际 trace 中这种概率极低，且有准入控制兜底。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 预测器出错了怎么办？如果预测输出 100 token 实际输出了 1000 token 呢？</div>
+<div class="qa-a"><p>这是所有预测驱动系统都要面对的问题。我们做了三层防护：(1) <strong>偏向高估</strong>——训练 loss 对低估加惩罚（类似 SagePilot 的非对称 loss），预测值偏高而不是偏低，宁可浪费不能 OOM；(2) <strong>动态扩容</strong>——KV 内存在 decode 过程中按页增长（paged attention 类似 vLLM 的思路），不是一次分配完，如果实际输出超过预测，运行时可以追加映射物理页；(3) <strong>优雅降级</strong>——如果物理内存真的耗尽，选择抢占/暂停优先级最低的 stage 释放空间，而不是让整个服务崩溃。预测准确率 R²=0.78 看起来不高，但配合安全裕度和动态扩容，实际 OOM 率 < 0.1%。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: DeepShare 的干扰预测 R²=0.902 就敢用来做共置决策？万一预测错了把高优任务拖慢了怎么办？</div>
+<div class="qa-a"><p>R²=0.902 是在<strong>离线测试集</strong>上的指标，真正运行时我们不依赖单点预测做决策，而是：(1) <strong>保守准入</strong>——预测 slowdown < 5% 才允许共置，留出足够安全边界；(2) <strong>运行时闭环</strong>——共置后持续监控实际 slowdown（通过 DCGM 实时采集 SM 利用率），一旦实测 slowdown 超过阈值（如 10%）立即驱逐 Best-effort 任务，反应时间在秒级；(3) <strong>只对 Best-effort 任务冒险</strong>——Guaranteed 任务的资源绝不用于共置，只有空闲配额借出的 Best-effort 任务才参与共置，预测错误最坏情况是杀掉 Best-effort 任务，不影响 Guaranteed QoS。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你们所有论文都用 trace 仿真+小集群实测，怎么证明在大规模生产环境有效？</div>
+<div class="qa-a"><p>这是学术研究的通用方法论局限。我们做了几件事增强可信度：(1) Trace 来自真实生产集群（Venus 23,859 条作业、Maestro 46,769 条 stage），不是合成数据；(2) 仿真器参数从 16 节点原型实测校准，保证仿真结果和真实环境趋势一致；(3) 64 卡 K8s 实测验证了关键结论（端到端 JCT、SLO 达成率），仿真主要用于验证大规模扩展性；(4) ElastiCo 做了 512 卡仿真看 scaling 趋势；(5) 字节实习中验证了核心算法思想在生产环境的可行性——弹性配额借用和代价感知抢占在工业界确实能落地。当然，真正部署到几千卡集群还需要更多工程鲁棒性工作，这也是未来方向。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么不直接用 vLLM/TGI 这些现成的推理框架？它们已经有 PagedAttention、continuous batching 了。</div>
+<div class="qa-a"><p>这是不同层面的优化：vLLM/TGI 优化的是<strong>单节点内</strong>推理引擎的 batching 和 KV 管理（PagedAttention 解决内部碎片、continuous batching 提高 GPU 利用率），Maestro 解决的是<strong>多节点、多模型、多 Agent 工作流</strong>的调度问题——一个用户请求涉及十几个 Agent stage、用多个不同模型、分布在多块 GPU 上。Maestro 可以和 vLLM 配合使用：节点内用 vLLM 做推理引擎优化，节点间用 Maestro 做工作流感知调度和显存管理。事实上我们的原型就是基于 vLLM 做的，分级权重缓存和 CUDA VMM 超配是在 vLLM 之上的额外优化。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: EDF 作为 baseline 是不是太弱了？为什么不和更先进的方法比？</div>
+<div class="qa-a"><p>EDF 是实时调度的经典 baseline，但我们的对比不只是 EDF。Maestro 对比了 EDF、SRTF（无预测）、FCFS、Karma（LLM 服务最近的调度工作）；DeepShare 对比了 Lucid（GPU 共享最强无侵入基线）、Gandiva（协同调度）、Tiresias（GPU 调度经典工作）、K8s 默认调度器。关键是 Maestro 的核心贡献不是调度算法本身（SRTF 是经典算法），而是<strong>把预测信号引入 LLM-MAS 场景</strong>并设计弹性显存机制来利用这些预测。和纯算法 baseline 比是为了证明预测信号的价值，而不是发明新的排序算法。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MPS 有已知的问题啊——一个 CUDA context 段错误会影响 MPS server 下所有进程，你们怎么处理的？</div>
+<div class="qa-a"><p>确实，MPS 的一个已知风险是故障隔离差。我们的应对：(1) 只在<strong>受控环境</strong>下使用 MPS 共置——Best-effort 任务和 Guaranteed 任务共置时，Best-effort 任务是经过准入检查的（短作业、已知模型类型），减少未知风险；(2) 每个 GPU 节点上跑 MPS health monitor，检测到 MPS server 异常立即重启并隔离该节点上的新任务调度；(3) ElastiCo 场景下训练任务直接跑在 GPU 上（不经 MPS），推理任务通过 MPS 共享 SM，训练故障不依赖 MPS；(4) 对于生产环境，长期方案是用 MIG 或时间片（MPS 属于进程级共享，MIG 是硬件级隔离），但 MIG 不支持动态 SM 划分，ElastiCo 的动态资源形态变换目前只能通过 MPS 实现。</p></div>
+</div>
+</div>
+
+<div class="card card-s">
+<h3>Crater 开源平台追问</h3>
+<p class="text-muted">简历原文："主导基于 Kubernetes 的 GPU 集群管理平台 Crater...已在实验室稳定运行 1.5 年，纳管 250+ 张 GPU、日均调度 200+ 任务，Apache-2.0 开源。"这是工程能力的重要证明。</p>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Crater 和 Volcano/Kubeflow 有什么区别？为什么不直接用现成的？</div>
+<div class="qa-a"><p>Volcano 提供了队列、优先级、gang scheduling 等基础能力，但它是<strong>通用的</strong>批调度器，缺少科研场景需要的功能：(1) 配额管理是硬划分，没有 DeepShare/ElastiCo 那种弹性借用；(2) 没有用户管理、审批流程、账户计费——科研集群需要导师审批学生的 GPU 使用；(3) 没有一键 LLM 训练/推理的作业模板，用户要写完整 YAML；(4) 没有集成 Jupyter/WebIDE/终端开发环境，科研用户需要交互式开发。Kubeflow 更偏 ML pipeline，不是集群管理平台。Crater 在 Volcano 基础上做了面向科研场景的封装和增强，整合了 DeepShare 和 ElastiCo 的调度能力，提供 Web 控制台降低使用门槛。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 250 张 GPU 的集群，你作为项目负责人最头疼的技术问题是什么？</div>
+<div class="qa-a"><p>最头疼的是<strong>多用户场景下的 GPU 资源争用和占卡不释放问题</strong>。实验室场景下学生经常启动 Jupyter 后忘记关，GPU 被占着但利用率为 0。我们做了：(1) 占卡检测——Agent 监控 GPU 利用率，连续 N 分钟低于阈值就通知用户，超时自动回收；(2) 交互式任务有最长运行时间限制（默认 12 小时，可以续期）；(3) 训练任务必须在容器内跑，容器退出自动释放资源；(4) 空闲 GPU 标记和自动推荐。另外一个挑战是多型号 GPU（A100/A800/3090/4090/V100 混合），不同作业对 GPU 型号有不同要求，调度器需要感知拓扑和型号约束。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Crater 的技术栈是 Go/React/Helm，你在其中写了多少代码？哪部分最复杂？</div>
+<div class="qa-a"><p>我是项目负责人，核心后端（Go）大约 70% 是我写的，包括自定义 Controller、Scheduler Plugin、API Server、配额管理逻辑；前端（React/TypeScript）主要是两个师弟做的，我做了架构设计和 Code Review；Helm Chart 和部署脚本是我写的。最复杂的部分是<strong>调度器和 K8s controller 的设计</strong>——队列状态机、配额超分/回收逻辑、和 Volcano 的协同、多维度抢占顺序的正确性保证。调试调度器问题非常痛苦，因为状态分布在 etcd、scheduler cache、node agent 多处，需要全链路 tracing。</p></div>
+</div>
+</div>
+
+<div class="card card-m">
+<h3>论文间深层关系与体系化思考</h3>
+<p class="text-muted">面试官喜欢问"你的几篇论文之间是什么关系"——这考察你是否有体系化的研究视角，而不是零散地做了几个项目。</p>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你的几篇工作（DeepShare/Maestro/ElastiCo/SagePilot）是一开始就规划好的 research line，还是逐步演进的？</div>
+<div class="qa-a"><p>是<strong>从实践中逐步演进</strong>出来的，不是一开始就规划好的。最早做 Crater 平台（2023）时发现真实 GPU 集群利用率只有 25-40%，于是做了 DeepShare 解决多租户配额借用问题（集群级）；在 DeepShare 实测中发现训推混部是更大的利用率提升空间，而且有独特的主客不对称挑战，于是做了 ElastiCo（节点级训推）；同时在 LLM Agent 场景下发现输出长度不确定是全新的调度挑战，做了 Maestro（请求级 LLM 推理）；在所有这些工作中反复遇到一个痛点——资源画像预测不准，需要 profiling，于是做 SagePilot（预测底座）。回头看形成了从<strong>集群→节点→请求→预测</strong>的逐层深入，但当时是跟着实际问题走的。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如果让你把这四个系统合并成一个超级系统，架构会是什么样？</div>
+<div class="qa-a"><p>这是个好问题。分层架构：(1) <strong>预测层（SagePilot）</strong>——所有上层决策的基础，提供作业/模型/请求级别的资源画像预测，不需要运行就能给出时延、显存、利用率估计；(2) <strong>集群调度层（DeepShare）</strong>——基于 QAD 做多租户配额管理、弹性借用、全局排序和抢占决策，决定作业放到哪个节点；(3) <strong>节点运行时层（ElastiCo + Maestro）</strong>——在节点内做精细资源管理：训推共置用 ElastiCo 的资源形态变换和影子定价，LLM 推理用 Maestro 的分级权重缓存和 CUDA VMM 弹性显存，stage 边界抢占。Crater 是产品形态，把这些能力封装成用户友好的平台。共同的设计原则：预测驱动、弹性资源、代价感知、安全兜底。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你的工作和业界主流方案（K8s + Volcano/YARN/Kubernetes Scheduler）比，最大的 gap 在哪里？为什么工业界没有这样做？</div>
+<div class="qa-a"><p>几个原因：(1) <strong>工业界优先稳定性</strong>——预测驱动调度如果预测出错会产生线上事故，工业界倾向用简单确定性策略（优先级队列+固定配额），学术界更愿意用预测换效率；(2) <strong>工作负载差异</strong>——我们的场景是科研集群+LLM Agent，负载波动大、任务类型多样，弹性收益明显；而大厂在线服务集群负载规律，弹性空间小；(3) <strong>工程复杂度</strong>——MPS 共置、CUDA VMM 超配、干扰预测都需要精细的工程实现和监控，大厂有更成熟的隔离方案（如 MIG、物理分区）；(4) 但趋势是工业界也在往这个方向走——字节内部的跨团队 Spot 调度、云厂商的 GPU 共享（如阿里云 cGPU、腾讯 qGPU）本质上都是弹性配额和精细隔离。我们的工作提供了算法和机制上的验证。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: ESCAPE（IEEE JCC Best Paper）和你后面的工作有什么关系？</div>
+<div class="qa-a"><p>ESCAPE 是我硕士阶段做的微服务资源估算工作，用 GNN + Profiling Engine 预测微服务的资源需求。这是我第一次接触<strong>"用 ML 做资源预测"</strong>这个方向，GNN 的使用经验直接启发了 SagePilot 的计算图表征思路——微服务调用图和 DNN 计算图在结构上都是 DAG，都可以用 GNN 建模；Profile Engine 的经验让我意识到 profiling 成本问题，才有了 SagePilot "零试跑预测"的动机。可以说 ESCAPE 是 research line 的起点，后面的 DeepShare/Maestro/ElastiCo 都需要预测信号，SagePilot 是回到预测这个基础问题上做深度工作。</p></div>
+</div>
+</div>
+
+<div class="card card-r">
+<h3>压力面与行为题（结合论文经历）</h3>
+<p class="text-muted">面试官可能在技术讨论中穿插行为面试问题，用你的论文经历来考察软素质。这些问题需要用 STAR 法则回答。</p>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 做论文过程中遇到最大的困难是什么？怎么解决的？</div>
+<div class="qa-a"><p>（STAR 示例）S: DeepShare 做 64 卡实测时，干扰预测模型在实验环境精度很高（R²=0.9），但部署到真实集群后预测完全不准，共置任务频繁 slowdown 超阈值。T: 需要在不重写系统的前提下找出原因并修复。A: 我花了两周时间排查：(1) 先加详细日志记录每次共置的特征和实际 slowdown；(2) 发现实验环境用的是同一类型 GPU（A100），但真实集群有多种型号 GPU 混用，DCGM 指标在不同型号上的分布差异很大；(3) 训练数据只覆盖了 A100，没有做跨 GPU 泛化。解决方案是为每个 GPU 型号训练独立的 RF 模型，并加入 GPU 型号作为特征，同时引入 online fine-tuning——新的共置数据持续更新模型。R: 修复后跨型号预测 R² 恢复到 0.85 以上，共置 QoS 达标率从 60% 回升到 93%。这个教训让我在后续 ElastiCo 和 SagePilot 中都提前考虑了跨硬件泛化问题。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如果导师给你的方向你觉得不对，你会怎么办？（结合 ElastiCo/DeepShare 的选题经历）</div>
+<div class="qa-a"><p>我会<strong>先做小实验验证</strong>而不是直接反驳。例如最初导师建议在 DeepShare 中用强化学习做调度决策，我做了 literature review 后发现 RL 在调度场景的 sample efficiency 很低，真实集群无法承受在线探索的代价。但我没有直接否定，而是用一周时间做了个小 prototype：用 DQN 在仿真环境训练，对比 RF + 启发式规则的方案，结果 RL 收敛慢、调参困难、泛化差。带着数据和导师讨论，最终改用 RF 干扰预测 + 启发式排序的方案。我觉得导师给方向是大方向指引，具体技术选型需要自己用实验验证，用数据说话比争论更有效。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你同时推进 DeepShare、Maestro、ElastiCo、SagePilot 四个项目，怎么管理时间和优先级？</div>
+<div class="qa-a"><p>这确实是博士期间的挑战。我的方法：(1) <strong>串行深入、并行维持</strong>——一个时间段主攻一个项目（做核心实验和写作），其他项目只做基础推进（每周开一次会、review 合作者进度）；(2) <strong>复用基础设施</strong>——四个项目共享 Crater 平台、trace 采集 pipeline、K8s 部署脚本，避免重复造轮子；(3) <strong>借助合作者</strong>——ElastiCo 有师弟帮忙做部分实验对比，SagePilot 的 ONNX 解析和图特征工程有一个本科生协助，我专注核心算法设计和论文写作；(4) <strong>按截止日期排列优先级</strong>——会议截稿日期前 2 个月集中全部精力在那篇论文上。关键是识别项目之间的依赖关系（比如 SagePilot 的预测能力反过来可以增强 Maestro），让它们互相促进而不是互相竞争。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你的一作论文有四篇，最满意哪一篇？为什么？</div>
+<div class="qa-a"><p>最满意 DeepShare。原因：(1) <strong>从问题到落地完整闭环</strong>——它是从 Crater 平台真实问题出发，经过 QAD 指标设计、系统实现、64 卡实测、开源验证完整走通的，不只是算法创新，而是真正在 250 卡集群上跑了一年多的系统；(2) <strong>工程和研究的平衡最好</strong>——QAD 指标虽然简单，但统一协调四个子系统的设计很优雅，工程实现也足够扎实（Scheduler Plugin + Controller + DaemonSet 架构）；(3) <strong>反馈最好</strong>——在实验室落地后确实解决了 GPU 争抢问题，同学们的作业等待时间明显缩短，这种"真的有人在用"的感觉比论文中稿更有成就感。Maestro 的 LLM 场景更新颖，但 DeepShare 是我从系统思维到工程能力成长最多的一篇。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你在寒武纪实习做 TF 算子适配，这段经历对你后面做 GPU 调度有什么帮助？</div>
+<div class="qa-a"><p>帮助很大，让我从<strong>底层理解了 AI 芯片的执行模型</strong>：(1) 做算子适配时需要理解 chip 的内存层次（SRAM/DRAM/片上缓存）、并行方式（多核/向量/张量核）、算子切分和 fusion 策略，这让我后来在做 GPU 调度时能从硬件特性出发思考问题——比如为什么 SM 和显存是两种不同资源、为什么 kernel fusion 会影响 SM 利用率、为什么 MPS 的 SM 比例调整不能太频繁；(2) C++ 底层调试经验让我在做 CUDA VMM、MPS 配置、LD_PRELOAD hook 时不怕碰底层；(3) 国产芯片的适配经历让我对硬件异构性有直观感受，后来 SagePilot 做跨 GPU 泛化时我就知道不同硬件的 performance counter 含义和分布差异很大。</p></div>
+</div>
+</div>
+
+<div class="card card-d">
+<h3>场景题：如果面试官问"你来我们团队会怎么做"</h3>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如果加入我们团队做 AI Infra，你觉得你的研究经验能怎么转化为业务价值？</div>
+<div class="qa-a"><p>几个直接相关点：(1) <strong>GPU 利用率优化</strong>——我在 DeepShare/ElastiCo 中做的弹性配额、干扰感知共置、训推混部可以直接应用于提高集群利用率，字节实习中已经验证了类似思路在生产环境可行（400 张空闲卡问题）；(2) <strong>LLM 推理系统</strong>——Maestro 的输出长度预测、分级权重缓存、CUDA VMM 弹性显存思路可以优化 LLM 推理服务的显存利用率和 TTFT；(3) <strong>K8s 调度器开发经验</strong>——我有从零写 Scheduler Plugin、Controller、DaemonSet 的实战经验，不需要 Ramp-up 就能上手 K8s 相关开发；(4) <strong>性能预测能力</strong>——SagePilot 的 GNN 预测思路可以用于作业调度前的资源预估、容量规划、自动扩缩容决策；(5) <strong>工程能力</strong>——Crater 250 卡开源平台的经验证明我能把研究原型推进到生产级可用系统。</p></div>
+</div>
+</div>
+
 ## 关联模块
 
 - `论文工作 / Maestro`：Maestro 详细设计和问答。
