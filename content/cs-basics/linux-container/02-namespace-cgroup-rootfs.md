@@ -12,6 +12,33 @@
 <p>容器不是虚拟机：没有独立内核，所有容器共享宿主机内核，隔离靠内核机制而非 hypervisor。KVM 虚拟机有独立内核，隔离更强但开销更大。</p>
 </div>
 
+<div class="card card-m">
+<h3>什么是 Namespace：从"全局资源"到"私有视图"</h3>
+<p>Linux 是一个<strong>全局资源共享</strong>的操作系统——默认情况下，所有进程共用一张 PID 表、一套挂载点、一个网络栈、一个 hostname。这在单台机器上没问题，但如果想让一组进程"以为自己独占了整台机器"，就需要一种机制把这些全局资源<strong>包装起来</strong>，给不同进程组呈现不同的视图。这就是 Namespace。</p>
+
+<p><strong>核心思想（参考 Red Hat、Julia Evans、"Containers are not special" 等经典博客）：</strong></p>
+<ul>
+<li><strong>本质是内核里的一张"包装表"</strong>：每种全局资源（PID、挂载点、网络……）在内核中有一个全局结构体；Namespace 把这些结构体替换成<strong>每个 namespace 一份的私有拷贝</strong>，进程通过 <code>task_struct-&gt;nsproxy</code> 指针访问自己的那份</li>
+<li><strong>不是虚拟化，是"视图欺骗"</strong>：同一时刻所有容器仍<strong>共享同一个内核</strong>，没有 hypervisor，没有 Guest OS；Namespace 只改变进程"能看到什么"，不改变内核本身</li>
+<li><strong>类比：chroot 的进化版</strong>：chroot 只隔离文件系统根目录（相当于 mnt namespace 的雏形）；Namespace 把这种"换一个视角"的思路扩展到了 PID、网络、主机名、IPC、用户、cgroup 等 7 类资源</li>
+<li><strong>只解决"你能看到什么"，不解决"你能用多少"</strong>：能看到的 CPU/内存/IO 有多少是 Cgroups 管的事，Namespace 不做资源限制</li>
+</ul>
+
+<figure style="margin:12px 0;text-align:center;">
+<img src="../../../resources/images/container-runtime/namespace-overview.svg" alt="Linux Namespace 视图隔离示意图" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;">
+<figcaption style="font-size:11px;color:#718096;margin-top:6px;">▲ 同一 Linux 内核上，宿主机和两个容器各自持有一份独立的资源视图；三种系统调用（clone/unshare/setns）是操作 Namespace 的唯一入口</figcaption>
+</figure>
+
+<p><strong>三个关键系统调用（面试必问）：</strong></p>
+<table><tr><th>系统调用</th><th>作用</th><th>典型场景</th></tr>
+<tr><td><code>clone(flags)</code></td><td>创建新进程时通过 flag 指定<strong>同时创建并加入新的 namespace</strong></td><td><code>docker run</code> 创建容器进程的核心调用，一次性带上 CLONE_NEWPID/CLONE_NEWNET/CLONE_NEWNS 等 flag</td></tr>
+<tr><td><code>unshare(flags)</code></td><td>将当前进程/线程<strong>从原 namespace 中分离</strong>，加入新创建的 namespace（不创建新进程）</td><td><code>unshare --pid --mount --fork bash</code> 命令行创建隔离环境；容器运行时在已有进程中做 namespace 切换</td></tr>
+<tr><td><code>setns(fd, flags)</code></td><td>将当前进程<strong>加入一个已存在的 namespace</strong>（通过 <code>/proc/&lt;pid&gt;/ns/</code> 下的文件描述符）</td><td><code>nsenter -t &lt;pid&gt; -n -p -- bash</code> 进入容器调试；调试工具"附着"到运行中容器</td></tr>
+</table>
+
+<p><strong>理解路径：</strong>当你在容器里执行 <code>ps aux</code> 只看到自己的几个进程时，不是因为其他进程不存在了，而是容器进程的 PID namespace 让它只看到了"私有 PID 表"中从 1 开始的那部分；当你 <code>ls /</code> 看到独立的文件系统，是 mnt namespace + pivot_root 切换了根目录视图；当你 <code>ifconfig</code> 看到自己的 eth0 和 IP，是 net namespace 给了它独立的网络设备和路由表。这一切都是<strong>同一份内核、不同份视图</strong>。</p>
+</div>
+
 <div class="card card-s">
 <h3>Namespace 七类</h3>
 <table><tr><th>Namespace</th><th>隔离内容</th><th>系统调用参数</th><th>内核版本</th><th>容器中的表现</th></tr>
