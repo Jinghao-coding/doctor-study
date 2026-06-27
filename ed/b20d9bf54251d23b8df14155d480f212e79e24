@@ -1,0 +1,369 @@
+content/ai-infra/llm-inference/topic.json
+  s_803de43e368bdc::t_2e71809e9aa61c 182-189 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f76b8a51240f132c999e9","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Range":[182,189]}]}]}
+  s_803de43e368bdc::t_726492e24e91d3 3 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f76b2a51240f132c999e3","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Single":3}]}]}
+content/ai-infra/llm-inference/00-e2e-pipeline.md
+  s_803de43e368bdc::t_c822b617eb9318 3-4,11-16,19-30 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f7461a51240f132c99949","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Range":[3,4]},{"Range":[11,16]},{"Range":[19,30]}]}]}
+  s_803de43e368bdc::t_f7497faaaaee99 8 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f7707a51240f132c99a1e","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Single":8}]}]}
+  s_803de43e368bdc::t_b9fdef8c65433f 45-65 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f74a3a51240f132c99968","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Range":[45,65]}]}]}
+content/ai-infra/cluster-management/06-qa.md
+  s_803de43e368bdc::t_81e32874d14ced 1-41,43,45-184,186-188,190-215,225-348,352,365-405 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f755ba51240f132c9997d","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,41]},{"Single":43},{"Range":[45,184]},{"Range":[186,188]},{"Range":[190,215]},{"Range":[225,348]},{"Single":352},{"Range":[365,405]}]}]}
+content/ai-infra/llm-inference/18-serving-deployment.md
+  s_803de43e368bdc::t_4e25d8add1d855 1-234 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a3f75fca51240f132c99998","tool_type":"agent","tool_id":"Write","line_ranges":[{"Range":[1,234]}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "edb20d9bf54251d23b8df14155d480f212e79e24",
+  "prompts": {},
+  "sessions": {
+    "s_803de43e368bdc": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a3f7366a51240f132c998f5",
+        "model": "Doubao-Seed-2.1-Pro__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>"
+    }
+  },
+  "attestation_metadata": {
+    "content/ai-infra/cluster-management/06-qa.md": [
+      {
+        "hash": "s_803de43e368bdc::t_81e32874d14ced",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              41
+            ]
+          },
+          {
+            "Single": 43
+          },
+          {
+            "Range": [
+              45,
+              184
+            ]
+          },
+          {
+            "Range": [
+              186,
+              188
+            ]
+          },
+          {
+            "Range": [
+              190,
+              215
+            ]
+          },
+          {
+            "Range": [
+              225,
+              348
+            ]
+          },
+          {
+            "Single": 352
+          },
+          {
+            "Range": [
+              365,
+              405
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f755ba51240f132c9997d",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  41
+                ]
+              },
+              {
+                "Single": 43
+              },
+              {
+                "Range": [
+                  45,
+                  184
+                ]
+              },
+              {
+                "Range": [
+                  186,
+                  188
+                ]
+              },
+              {
+                "Range": [
+                  190,
+                  215
+                ]
+              },
+              {
+                "Range": [
+                  225,
+                  348
+                ]
+              },
+              {
+                "Single": 352
+              },
+              {
+                "Range": [
+                  365,
+                  405
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/llm-inference/00-e2e-pipeline.md": [
+      {
+        "hash": "s_803de43e368bdc::t_c822b617eb9318",
+        "line_ranges": [
+          {
+            "Range": [
+              3,
+              4
+            ]
+          },
+          {
+            "Range": [
+              11,
+              16
+            ]
+          },
+          {
+            "Range": [
+              19,
+              30
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f7461a51240f132c99949",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Range": [
+                  3,
+                  4
+                ]
+              },
+              {
+                "Range": [
+                  11,
+                  16
+                ]
+              },
+              {
+                "Range": [
+                  19,
+                  30
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "s_803de43e368bdc::t_f7497faaaaee99",
+        "line_ranges": [
+          {
+            "Single": 8
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f7707a51240f132c99a1e",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Single": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "s_803de43e368bdc::t_b9fdef8c65433f",
+        "line_ranges": [
+          {
+            "Range": [
+              45,
+              65
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f74a3a51240f132c99968",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Range": [
+                  45,
+                  65
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/llm-inference/18-serving-deployment.md": [
+      {
+        "hash": "s_803de43e368bdc::t_4e25d8add1d855",
+        "line_ranges": [
+          {
+            "Range": [
+              1,
+              234
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f75fca51240f132c99998",
+            "tool_type": "agent",
+            "tool_id": "Write",
+            "line_ranges": [
+              {
+                "Range": [
+                  1,
+                  234
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "content/ai-infra/llm-inference/topic.json": [
+      {
+        "hash": "s_803de43e368bdc::t_2e71809e9aa61c",
+        "line_ranges": [
+          {
+            "Range": [
+              182,
+              189
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f76b8a51240f132c999e9",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Range": [
+                  182,
+                  189
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "hash": "s_803de43e368bdc::t_726492e24e91d3",
+        "line_ranges": [
+          {
+            "Single": 3
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a3f76b2a51240f132c999e3",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Single": 3
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "s_803de43e368bdc": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_2e71809e9aa61c": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_4e25d8add1d855": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_726492e24e91d3": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_81e32874d14ced": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_b9fdef8c65433f": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_c822b617eb9318": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_f7497faaaaee99": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
