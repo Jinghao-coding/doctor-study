@@ -11,6 +11,10 @@ Maestro 针对 LLM 多智能体工作流推理，利用 agent 上下文做前瞻
 | 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
 | 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
 
+<div class="card card-s" style="margin-top:0.8rem">
+<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/ICDCS2026_Maestro.pdf" target="_blank">ICDCS 2026 — Maestro PDF</a></p>
+</div>
+
 <div class="card card-m">
 <h3>问题背景</h3>
 <p>传统 LLM 推理面对的是独立的一问一答请求。但现在越来越多的应用把多个 agent 组成协作工作流：比如旅行助手里有"需求分析 agent"、"机票搜索 agent"、"酒店推荐 agent"、"行程整合 agent"，它们之间有 DAG 依赖，一个用户请求触发十几次甚至几十次 LLM 推理调用（称为 stage）。</p>

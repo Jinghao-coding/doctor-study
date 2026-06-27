@@ -11,6 +11,10 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 | 解决问题 | 围绕 Maestro 与 DeepShare 的问题背景、系统设计、实现细节、实验结果和高频追问建立项目叙事。 |
 | 面试抓手 | 按背景、方案、实现、结果、局限回答。 |
 
+<div class="card card-s" style="margin-top:0.8rem">
+<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/IEEE_cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
+</div>
+
 <div class="card card-d">
 <h3>问题背景</h3>
 <p>多团队共享 GPU 集群的核心矛盾：</p>
