@@ -6,9 +6,15 @@
     "linux",
     "container",
     "docker",
-    "cgroup"
+    "cgroup",
+    "kubernetes"
   ],
   "output": "pages/cs-basics/linux-container/index.html",
+  "goals": [
+    "理解容器隔离三要素：namespace/cgroup/rootfs",
+    "掌握 Docker/K8s 资源模型（requests/limits/QoS）",
+    "了解 containerd/CRI/OCI 容器运行时架构"
+  ],
   "layout": [
     {
       "type": "tabs",
@@ -18,22 +24,34 @@
         {
           "title": "环境变量与运行环境",
           "description": "env、PATH、LD_LIBRARY_PATH、配置注入",
-          "file": "01-env-runtime.md"
+          "file": "01-env-runtime.md",
+          "level": "基础",
+          "priority": 1,
+          "time": 5
         },
         {
           "title": "namespace / cgroup / rootfs",
           "description": "容器隔离三件套",
-          "file": "02-namespace-cgroup-rootfs.md"
+          "file": "02-namespace-cgroup-rootfs.md",
+          "level": "基础",
+          "priority": 3,
+          "time": 20
         },
         {
           "title": "Docker 与 Kubernetes 资源模型",
           "description": "requests/limits、QoS、RSS/Usage、OOMKilled",
-          "file": "03-docker-k8s-resource.md"
+          "file": "03-docker-k8s-resource.md",
+          "level": "进阶",
+          "priority": 3,
+          "time": 5
         },
         {
           "title": "containerd / CRI / OCI",
           "description": "containerd、CRI、OCI、runc、shim、pause 容器和节点侧排障",
-          "file": "04-container-runtime-containerd.md"
+          "file": "04-container-runtime-containerd.md",
+          "level": "进阶",
+          "priority": 2,
+          "time": 25
         }
       ]
     }

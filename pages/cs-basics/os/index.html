@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f172a'/><text x='50' y='66' font-size='52' font-weight='800' fill='%23f7f9fb' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif'>DS</text></svg>">
+<title>操作系统基础 · doctor-study</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
+<link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
+<link rel="stylesheet" href="../../../assets/style.css?v=1782539489">
+</head>
+<body>
+<nav class="topnav">
+<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机基础">基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机基础知识</span><small>cs-basics / overview / knowledge-map</small></a><a href="../../../pages/cs-basics/os/index.html"><span>操作系统基础</span><small>os / linux / scheduling</small></a><a href="../../../pages/cs-basics/computer-architecture/index.html"><span>计算机组成原理</span><small>computer-architecture / cpu / cache</small></a><a href="../../../pages/cs-basics/networking/index.html"><span>计算机网络基础</span><small>networking / tcp / udp</small></a><a href="../../../pages/cs-basics/programming-systems/index.html"><span>编程语言与工程基础 (C/C++)</span><small>cpp / binary / compiler</small></a><a href="../../../pages/cs-basics/golang/index.html"><span>Go 语言基础与工程</span><small>golang / gmp / concurrency</small></a><a href="../../../pages/cs-basics/linux-container/index.html"><span>Linux 与容器基础</span><small>linux / container / docker</small></a><a href="../../../pages/cs-basics/linux-kernel-ai/index.html"><span>Linux 内核与大模型系统</span><small>linux / kernel / numa</small></a><a href="../../../pages/cs-basics/distributed-ai/index.html"><span>分布式与 AI Infra 基础</span><small>distributed / gpu / nccl</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler / etcd</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory / queueing</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与 Agent">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
+</nav>
+<div class="app-shell">
+<aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机基础">基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机基础知识"><span>计算机基础知识</span><small>cs-basics · overview</small></a><a class="side-link active" href="../../../pages/cs-basics/os/index.html" data-initial="操作" title="操作系统基础"><span>操作系统基础</span><small>os · linux</small></a><a class="side-link" href="../../../pages/cs-basics/computer-architecture/index.html" data-initial="计算" title="计算机组成原理"><span>计算机组成原理</span><small>computer-architecture · cpu</small></a><a class="side-link" href="../../../pages/cs-basics/networking/index.html" data-initial="计算" title="计算机网络基础"><span>计算机网络基础</span><small>networking · tcp</small></a><a class="side-link" href="../../../pages/cs-basics/programming-systems/index.html" data-initial="编程" title="编程语言与工程基础 (C/C++)"><span>编程语言与工程基础 (C/C++)</span><small>cpp · binary</small></a><a class="side-link" href="../../../pages/cs-basics/golang/index.html" data-initial="Go" title="Go 语言基础与工程"><span>Go 语言基础与工程</span><small>golang · gmp</small></a><a class="side-link" href="../../../pages/cs-basics/linux-container/index.html" data-initial="Li" title="Linux 与容器基础"><span>Linux 与容器基础</span><small>linux · container</small></a><a class="side-link" href="../../../pages/cs-basics/linux-kernel-ai/index.html" data-initial="Li" title="Linux 内核与大模型系统"><span>Linux 内核与大模型系统</span><small>linux · kernel</small></a><a class="side-link" href="../../../pages/cs-basics/distributed-ai/index.html" data-initial="分布" title="分布式与 AI Infra 基础"><span>分布式与 AI Infra 基础</span><small>distributed · gpu</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与 Agent">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
+  <main class="wrap">
+  <section class="topic-hero"><div class="hero-copy"><div class="hero-kicker">CS Basics</div><h1>操作系统基础</h1><p class="sub">进程线程 · CPU调度 · 内存管理 · I/O多路复用 · 死锁 · AI Infra系统视角</p><div class="hero-tags"><span>os</span><span>linux</span><span>scheduling</span><span>memory</span><span>io</span><span>concurrency</span></div></div><div class="hero-goals"><div>掌握进程/线程/协程区别与上下文切换开销</div><div>理解虚拟内存、分页、TLB与物理内存映射</div><div>掌握 I/O 多路复用（epoll/select/poll）原理与适用场景</div><div>理解死锁条件与预防/避免/检测/解除策略</div><div>建立 OS 视角分析 AI Infra 系统问题的思维框架</div></div></section>
+
+<section class="tabs-shell" data-tabs data-tabs-id="cs-os-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 16</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">操作系统基础</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="操作系统基础"><details class="tab-group" open data-group-id="cs-os-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">OS 核心机制</span><span class="tab-group-meta"><span class="tab-group-count">7</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="cs-os-tabs-tab-1" data-initial="01" data-mid="cs-os-tabs::01-process-thread-coroutine-md" data-level="基础" title="进程、线程、协程" aria-controls="cs-os-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">进程、线程、协程</span><span class="tab-desc">资源边界、调度主体、上下文切换、用户态/内核态</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-2" data-initial="02" data-mid="cs-os-tabs::02-cpu-scheduling-md" data-level="基础" title="CPU 调度算法" aria-controls="cs-os-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CPU 调度算法</span><span class="tab-desc">FIFO/SJF/RR/优先级/CFS、抢占与非抢占、CUDA调度对比</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-3" data-initial="03" data-mid="cs-os-tabs::06-virtual-memory-paging-md" data-level="基础" title="虚拟内存与分页" aria-controls="cs-os-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">虚拟内存与分页</span><span class="tab-desc">页表、TLB、多级页表、页面置换、mmap</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-4" data-initial="04" data-mid="cs-os-tabs::05-io-multiplexing-md" data-level="进阶" title="I/O 多路复用" aria-controls="cs-os-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">I/O 多路复用</span><span class="tab-desc">select/poll/epoll、水平触发/边缘触发、Reactor模式</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-5" data-initial="05" data-mid="cs-os-tabs::07-deadlock-md" data-level="进阶" title="死锁" aria-controls="cs-os-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">死锁</span><span class="tab-desc">死锁四条件、银行家算法、预防/避免/检测/解除</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-6" data-initial="06" data-mid="cs-os-tabs::03-memory-oom-numa-md" data-level="进阶" title="内存、OOM 与 NUMA" aria-controls="cs-os-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">内存、OOM 与 NUMA</span><span class="tab-desc">page cache、swap、OOM Killer、NUMA拓扑</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 8 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-7" data-initial="07" data-mid="cs-os-tabs::04-signal-stdio-md" data-level="基础" title="Signal 与标准流" aria-controls="cs-os-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Signal 与标准流</span><span class="tab-desc">SIGTERM/SIGKILL、graceful shutdown、stdin/stdout/stderr</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 5 min</span></span></button></div></details><details class="tab-group" open data-group-id="cs-os-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">AI Infra 系统视角</span><span class="tab-group-meta"><span class="tab-group-count">8</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-8" data-initial="08" data-mid="cs-os-tabs::08-ai-infra-concurrency-md" data-level="进阶" title="AI Infra 并发模型" aria-controls="cs-os-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">AI Infra 并发模型</span><span class="tab-desc">推理服务多线程/异步/协程、线程池、事件循环</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-9" data-initial="09" data-mid="cs-os-tabs::09-ai-infra-memory-md" data-level="进阶" title="AI Infra 内存管理" aria-controls="cs-os-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">AI Infra 内存管理</span><span class="tab-desc">权重加载、KV Cache内存、显存/内存协同、内存池</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-10" data-initial="10" data-mid="cs-os-tabs::10-ai-infra-file-io-md" data-level="进阶" title="文件系统与 I/O" aria-controls="cs-os-tabs-panel-10" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">文件系统与 I/O</span><span class="tab-desc">Direct I/O、page cache、权重加载路径、零拷贝</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-11" data-initial="11" data-mid="cs-os-tabs::11-ai-infra-cpu-perf-md" data-level="进阶" title="CPU 性能分析" aria-controls="cs-os-tabs-panel-11" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CPU 性能分析</span><span class="tab-desc">perf、火焰图、上下文切换开销、CPU bound定位</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-12" data-initial="12" data-mid="cs-os-tabs::12-ai-infra-network-syscall-md" data-level="进阶" title="网络与系统调用" aria-controls="cs-os-tabs-panel-12" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">网络与系统调用</span><span class="tab-desc">send/recv、epoll、零拷贝、RDMA syscall对比</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-13" data-initial="13" data-mid="cs-os-tabs::13-ai-infra-container-cgroup-md" data-level="精通" title="容器与 cgroup" aria-controls="cs-os-tabs-panel-13" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">容器与 cgroup</span><span class="tab-desc">cgroup v1/v2、CPU/内存限制、容器隔离对GPU的影响</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-14" data-initial="14" data-mid="cs-os-tabs::14-ai-infra-gpu-systems-md" data-level="精通" title="GPU 系统层" aria-controls="cs-os-tabs-panel-14" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 系统层</span><span class="tab-desc">CUDA驱动、UVM、MPS/MIG、GPU拓扑与CPU亲和性</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-15" data-initial="15" data-mid="cs-os-tabs::15-ai-infra-observability-md" data-level="精通" title="可观测性与排障" aria-controls="cs-os-tabs-panel-15" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">可观测性与排障</span><span class="tab-desc">strace/ltrace、ftrace、BPF、系统调用追踪</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="cs-os-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试收束</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="cs-os-tabs-tab-16" data-initial="16" data-mid="cs-os-tabs::16-ai-infra-os-priority-checklist-md" data-level="精通" title="复习优先级清单" aria-controls="cs-os-tabs-panel-16" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">复习优先级清单</span><span class="tab-desc">OS 高频考点梳理、AI Infra 关联面试题</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="cs-os-tabs-panel-1" aria-labelledby="cs-os-tabs-tab-1" data-mid="cs-os-tabs::01-process-thread-coroutine-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>进程、线程、协程</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>进程是资源隔离单位、线程是内核调度单位、协程是用户态调度的轻量执行单元——三者按「谁拥有资源、谁被内核调度、谁在用户态切换」分层，切换成本依次降低，隔离性依次减弱。</p>
+<div class="card card-m">
+<h3>进程、线程、协程：资源边界和调度主体</h3>
+<p>操作系统面试里，进程、线程、协程不是三个孤立定义，而是三种不同层次的执行模型。核心问题是：谁拥有资源，谁被内核调度，谁在用户态切换。</p>
+<table>
+<tr><th>概念</th><th>资源边界</th><th>调度者</th><th>切换成本</th><th>适合场景</th><th>典型风险</th></tr>
+<tr><td>进程</td><td>独立虚拟地址空间、文件描述符、信号处理、资源限制</td><td>内核</td><td>最高</td><td>强隔离、多服务、多 worker、容器主进程</td><td>IPC 成本高，共享状态复杂</td></tr>
+<tr><td>线程</td><td>共享进程地址空间，独立栈和寄存器上下文</td><td>内核</td><td>中等</td><td>CPU 并行、I/O 并发、推理 worker pool</td><td>锁竞争、数据竞争、死锁、false sharing</td></tr>
+<tr><td>协程</td><td>运行在线程内，共享进程/线程资源</td><td>用户态 runtime</td><td>最低</td><td>高并发 I/O、异步 RPC、事件循环</td><td>阻塞调用会卡住调度线程，不能自动利用多核</td></tr>
+</table>
+<div class="qa-summary">一句话：进程是资源隔离单位，线程是内核调度单位，协程是用户态调度的轻量执行单元。</div>
+</div>
+<div class="card card-s">
+<h3>上下文切换到底切什么</h3>
+<table>
+<tr><th>切换类型</th><th>需要保存/恢复</th><th>代价来源</th><th>排查信号</th></tr>
+<tr><td>进程切换</td><td>寄存器、内核栈、页表/地址空间、调度状态</td><td>TLB 失效、cache 污染、内核调度</td><td><code>pidstat -w</code>、<code>vmstat cs</code></td></tr>
+<tr><td>线程切换</td><td>寄存器、线程栈、调度状态</td><td>内核调度、cache 污染、锁等待</td><td><code>top -H</code>、<code>perf sched</code></td></tr>
+<tr><td>协程切换</td><td>用户态栈/状态机、少量寄存器</td><td>runtime 调度，通常无需内核态</td><td>runtime profiler、事件循环延迟</td></tr>
+</table>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 进程、线程、协程有什么区别？面试怎么回答？</div>
+<div class="qa-a"><p><strong>回答思路：</strong>先按资源隔离、调度主体和切换成本三条线回答，再补适用场景。</p><div class="qa-section"><div class="qa-section-title">进程</div><p>进程拥有独立地址空间和资源边界，隔离性最好，适合服务拆分和容器主进程，但跨进程通信成本较高。</p></div><div class="qa-section"><div class="qa-section-title">线程</div><p>线程共享进程地址空间，是内核实际调度的执行实体，适合多核并行，但需要处理锁、数据竞争和死锁。</p></div><div class="qa-section"><div class="qa-section-title">协程</div><p>协程是用户态调度的轻量执行单元，适合 I/O 密集和高并发，但单个线程内的协程不能自动利用多核，阻塞调用会影响整个调度线程。</p></div><div class="qa-summary">面试口径：进程看隔离，线程看并行，协程看轻量异步；不要只背定义，要说出调度和资源边界。</div></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::01-process-thread-coroutine-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::01-process-thread-coroutine-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CPU 调度算法</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-2" aria-labelledby="cs-os-tabs-tab-2" data-mid="cs-os-tabs::02-cpu-scheduling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CPU 调度算法</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>CPU 调度回答的是&quot;下一个时间片给谁&quot;。FIFO/SJF/RR/优先级/CFS 这套单机算法，会原样迁移到 K8s、HPC 和 AI 集群里：SJF 对应短任务优先，RR 对应租户轮转，优先级对应抢占，CFS 对应公平份额。记住 CFS 靠 vruntime 选&quot;最没跑够&quot;的任务，目标是公平和响应而非吞吐。</p>
+<div class="card card-m">
+<h3>CPU 调度算法：从单机 OS 到集群调度的共同语言</h3>
+<p>CPU 调度回答“下一个时间片给谁”。这些算法也会迁移到 K8s、HPC 和 AI 集群里：FIFO 对应队列顺序，SJF 对应短任务优先，RR 对应租户轮转，优先级对应抢占，CFS 对应公平份额。</p>
+</div>
+<div class="card card-d">
+<h3>常见调度算法对比</h3>
+<table>
+<tr><th>算法</th><th>规则</th><th>是否抢占</th><th>优点</th><th>缺点</th><th>AI Infra 类比</th></tr>
+<tr><td>FIFO / FCFS</td><td>先到先服务</td><td>通常非抢占</td><td>简单、按到达顺序公平</td><td>队头阻塞</td><td>训练队列按提交时间排队</td></tr>
+<tr><td>SJF</td><td>运行时间短的先跑</td><td>通常非抢占</td><td>降低平均等待时间</td><td>需要预测，长任务可能饥饿</td><td>短实验优先、预测驱动调度</td></tr>
+<tr><td>SRTF</td><td>剩余时间最短优先</td><td>抢占式</td><td>动态到达下等待时间更低</td><td>抢占成本高</td><td>checkpoint-aware preemption</td></tr>
+<tr><td>Round Robin</td><td>按时间片轮转</td><td>抢占式</td><td>响应性好，避免独占</td><td>时间片难选，切换开销</td><td>队列/租户轮转</td></tr>
+<tr><td>优先级调度</td><td>高优先级先运行</td><td>可抢占或非抢占</td><td>表达业务重要性</td><td>低优任务可能饥饿</td><td>PriorityClass、队列优先级</td></tr>
+<tr><td>CFS</td><td>按虚拟运行时间公平分配 CPU</td><td>抢占式</td><td>兼顾公平和交互响应</td><td>不是硬实时</td><td>公平份额、quota、dominant share</td></tr>
+</table>
+</div>
+<div class="card card-w">
+<h3>抢占式调度 vs 非抢占式调度</h3>
+<table>
+<tr><th>维度</th><th>抢占式</th><th>非抢占式</th></tr>
+<tr><td>定义</td><td>调度器可以打断正在运行的任务</td><td>任务主动阻塞、退出或让出 CPU 才切换</td></tr>
+<tr><td>响应性</td><td>高，适合交互和高优任务</td><td>低，可能被长任务卡住</td></tr>
+<tr><td>开销</td><td>上下文切换更频繁</td><td>切换少，实现简单</td></tr>
+<tr><td>集群类比</td><td>抢占低优训练任务，可能回滚 checkpoint</td><td>不抢占更稳定，但高优任务等待更久</td></tr>
+</table>
+</div>
+<div class="card card-m">
+<h3>CFS 深挖：vruntime、权重和 runqueue</h3>
+<p>CFS（Completely Fair Scheduler）的核心思想是：不要只按固定时间片轮转，而是持续维护每个 runnable task 已经获得的“公平份额”。它用 <code>vruntime</code> 表示加权后的虚拟运行时间，倾向于选择 <code>vruntime</code> 最小的任务运行。</p>
+<table>
+<tr><th>概念</th><th>含义</th><th>面试解释</th></tr>
+<tr><td><code>vruntime</code></td><td>加权虚拟运行时间</td><td>越小表示相对越“没跑够”，越应该获得 CPU</td></tr>
+<tr><td>nice / weight</td><td>优先级权重</td><td>权重越高，同样真实运行时间带来的 <code>vruntime</code> 增长越慢</td></tr>
+<tr><td>runqueue</td><td>可运行任务队列</td><td>每个 CPU 有自己的可运行任务集合，CFS 按 <code>vruntime</code> 组织任务</td></tr>
+<tr><td>抢占</td><td>打断当前任务</td><td>新唤醒任务或更小 <code>vruntime</code> 任务可能触发重新调度</td></tr>
+<tr><td>上下文切换</td><td>保存/恢复执行状态</td><td>线程过多、频繁阻塞唤醒会让 CPU 时间浪费在切换上</td></tr>
+</table>
+<p>CFS 的目标是公平和响应性，而不是让某一个任务吞吐最大。这个点和 GPU 的 warp/block 调度形成鲜明对比：GPU kernel 内部通常不追求每个 CUDA thread 的公平时间片，而是追求 SM 吞吐、occupancy 和隐藏内存延迟。</p>
+</div>
+<div class="card card-s">
+<h3>和 CUDA 调度的层次区别</h3>
+<p>Linux CFS 调度的是 OS task；CUDA Stream/Event 管的是 GPU 任务队列和依赖；CUDA block/warp 调度管的是 kernel 内部如何映射到 SM。这三层经常被混淆。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">CFS</div><div class="flow-desc">进程/线程共享 CPU 时间，强调公平和响应性</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Stream/Event</div><div class="flow-desc">组织 H2D、kernel、D2H 的异步顺序和依赖</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Block → SM</div><div class="flow-desc">GPU 把 grid 里的 block 分配到 SM 执行</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Warp Scheduler</div><div class="flow-desc">SM 选择 ready warp 发射指令，隐藏访存延迟</div></div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 SJF 可以降低平均等待时间？有什么问题？</div>
+<div class="qa-a"><p><strong>直觉：</strong>短任务放前面，只会让长任务多等一个短任务时间；长任务放前面，会让所有短任务都等一个长任务时间。因此短任务优先能降低平均等待。</p><div class="qa-section"><div class="qa-section-title">问题</div><p>SJF 需要知道或预测运行时间，并且会让长任务饥饿。工程上通常用 aging、配额保障或最大等待时间兜底。</p></div><div class="qa-summary">面试口径：说最优性时必须补前提和饥饿问题。</div></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Linux CFS 和 CUDA thread block 调度有什么区别？</div>
+<div class="qa-a"><p>CFS 是 CPU 上的操作系统调度器，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享；CUDA thread block 调度是 GPU kernel 内部的硬件执行机制，调度对象是 grid 中的 block/CTA，目标是把 block 分配到 SM、让 warp scheduler 用 ready warp 隐藏访存延迟。CFS 通过 <code>vruntime</code>、权重、抢占和上下文切换决定哪个 task 运行；CUDA block 一旦驻留 SM 通常运行到完成，SM 内部以 warp 为单位发射指令，更强调吞吐而不是公平时间片。</p><div class="qa-summary">一句话：CFS 管 OS task 的公平 CPU 时间，CUDA block/warp 调度管 kernel 内部的高吞吐并行执行。</div></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::02-cpu-scheduling-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::02-cpu-scheduling-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">进程、线程、协程</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">虚拟内存与分页</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-3" aria-labelledby="cs-os-tabs-tab-3" data-mid="cs-os-tabs::06-virtual-memory-paging-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>虚拟内存与分页</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>虚拟内存让每个进程都以为独占连续地址空间，CPU 访问虚拟地址、MMU 通过页表翻译成物理地址，带来隔离、超额使用和按需分配。一句最该记的话：虚拟内存是&quot;承诺&quot;，物理内存是&quot;兑现&quot;，兑现发生在第一次写入触发缺页时——所以 malloc 1GB 不会立刻占物理内存。</p>
+<div class="card card-m">
+<h3>虚拟内存：每个进程一套“假地址”</h3>
+<p>虚拟内存让每个进程都以为自己独占一整块连续地址空间。CPU 访问的是<strong>虚拟地址</strong>，由 MMU 通过页表翻译成<strong>物理地址</strong>。这带来三个核心价值：进程间隔离、地址空间比物理内存大（靠换页）、按需分配与共享。</p>
+<table>
+<tr><th>能力</th><th>机制</th><th>意义</th></tr>
+<tr><td>隔离</td><td>每进程独立页表</td><td>一个进程访问不到另一个进程内存</td></tr>
+<tr><td>超额使用</td><td>page fault + swap</td><td>虚拟空间可大于物理内存</td></tr>
+<tr><td>按需/延迟</td><td>lazy allocation、COW</td><td>malloc 不立刻占物理页，fork 不立刻拷贝</td></tr>
+<tr><td>共享</td><td>多进程映射同一物理页</td><td>共享库、共享内存</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>分页与地址翻译</h3>
+<p>内存被切成固定大小的<strong>页</strong>（通常 4KB），物理内存切成同样大小的<strong>页框</strong>。页表记录“虚拟页 → 物理页框”的映射。现代 64 位系统用<strong>多级页表</strong>（如 x86-64 四级）避免单级页表过大。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">虚拟地址</div><div class="flow-desc">拆成 页号 + 页内偏移</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">查 TLB</div><div class="flow-desc">命中则直接得到物理页框（快）</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">查页表</div><div class="flow-desc">TLB miss 时逐级走页表（page walk）</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">物理地址</div><div class="flow-desc">页框号 + 偏移，访问物理内存</div></div>
+</div>
+<div class="qa-summary">TLB 是页表的缓存。TLB miss 要走多级页表，代价高；这也是大页（HugePage）能提速的原因——同样内存用更少的页表项，TLB 覆盖更大。</div>
+</div>
+<div class="card card-d">
+<h3>缺页中断（Page Fault）三种类型</h3>
+<table>
+<tr><th>类型</th><th>触发</th><th>处理</th><th>代价</th></tr>
+<tr><td>Minor（软）</td><td>页在内存但未建立映射（如 COW、共享页）</td><td>内核补页表项</td><td>低</td></tr>
+<tr><td>Major（硬）</td><td>页不在内存，需从磁盘/swap 读入</td><td>发起磁盘 I/O 换入</td><td>高（毫秒级）</td></tr>
+<tr><td>Invalid</td><td>访问非法地址</td><td>发 SIGSEGV，进程崩溃</td><td>段错误</td></tr>
+</table>
+<p>排查信号：<code>vmstat</code> 的 si/so 列、<code>/proc/&lt;pid&gt;/stat</code> 的 majflt、<code>perf stat</code> 的 page-faults。Major fault 暴涨通常意味着内存不足开始 swap，P99 会剧烈抖动。</p>
+</div>
+<div class="card card-w">
+<h3>页面置换算法</h3>
+<table>
+<tr><th>算法</th><th>思想</th><th>问题</th></tr>
+<tr><td>FIFO</td><td>先进先出</td><td>可能换出热点页，有 Belady 异常</td></tr>
+<tr><td>LRU</td><td>淘汰最久未使用</td><td>精确实现成本高</td></tr>
+<tr><td>Clock / 近似 LRU</td><td>用访问位环形扫描近似 LRU</td><td>Linux 实际采用的近似方案</td></tr>
+</table>
+<div class="qa-summary">Linux 用基于 active/inactive 链表的近似 LRU（带 second chance），而不是教科书纯 LRU，因为纯 LRU 维护开销太大。</div>
+</div>
+<div class="card card-m">
+<h3>和 AI Infra 的联系</h3>
+<p>虚拟内存机制直接影响大模型系统：<strong>① pinned memory</strong>（页锁定内存）禁止换页，才能让 GPU DMA 安全直传，是 H2D/D2H 拷贝提速的关键；<strong>② mmap 加载权重</strong>用按需缺页避免一次性读入巨大文件；<strong>③ HugePage/THP</strong> 减少 TLB miss，对大块连续访问的训练/推理负载有收益；<strong>④ 避免 swap</strong>，训练进程一旦触发 major fault 换页，吞吐会断崖式下降，所以训练节点通常关 swap。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: malloc 申请了 1GB 内存，物理内存马上就被占用了吗？</div>
+<div class="qa-a"><p>不会。malloc 通常只是扩大虚拟地址空间（建立映射区），并不立刻分配物理页。只有当你真正<strong>写入</strong>某一页时，才触发缺页中断由内核分配物理页框（lazy allocation / demand paging）。所以 <code>top</code> 里 VIRT（虚拟）远大于 RES（实际驻留物理）是正常的。</p><div class="qa-summary">面试口径：虚拟内存是“承诺”，物理内存是“兑现”，兑现发生在第一次写入触发缺页时。</div></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::06-virtual-memory-paging-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::06-virtual-memory-paging-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CPU 调度算法</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">I/O 多路复用</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-4" aria-labelledby="cs-os-tabs-tab-4" data-mid="cs-os-tabs::05-io-multiplexing-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>I/O 多路复用</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>I/O 多路复用让单线程用一次系统调用同时监听海量 fd、只处理就绪的连接，解决「连接多但大部分空闲」时一连接一线程会线程爆炸的问题；epoll 把 fd 注册一次常驻内核、epoll_wait 只返回就绪 fd，在 C10K/C100K 场景远胜每次都全量拷贝+遍历的 select/poll。</p>
+<div class="card card-m">
+<h3>为什么需要 I/O 多路复用</h3>
+<p>核心矛盾：一个服务要同时处理成千上万条连接，但大部分连接在大部分时间是空闲的。如果“一连接一线程”，线程数会爆炸、上下文切换成本高；如果阻塞式单线程，一次只能服务一个连接。<strong>I/O 多路复用</strong>让单个线程用一次系统调用同时监听大量 fd，只在“就绪”时才去处理，是高并发服务器（Nginx、Redis、各类网关）的基石。</p>
+</div>
+<div class="card card-d">
+<h3>五种 I/O 模型（对比）</h3>
+<table>
+<tr><th>模型</th><th>阻塞点</th><th>特点</th></tr>
+<tr><td>阻塞 I/O</td><td>read 一直等</td><td>最简单，一连接一线程</td></tr>
+<tr><td>非阻塞 I/O</td><td>轮询返回 EAGAIN</td><td>忙等浪费 CPU</td></tr>
+<tr><td>I/O 多路复用</td><td>阻塞在 select/poll/epoll</td><td>一个线程管多个 fd，主流方案</td></tr>
+<tr><td>信号驱动 I/O</td><td>不阻塞，靠 SIGIO 通知</td><td>实际很少用</td></tr>
+<tr><td>异步 I/O (AIO)</td><td>完全不阻塞，内核完成后通知</td><td>Linux io_uring 是现代代表</td></tr>
+</table>
+<div class="qa-summary">前四种都属于“同步 I/O”：数据从内核拷到用户态那一步仍由进程自己等。只有 AIO 是真正的异步。</div>
+</div>
+<div class="card card-s">
+<h3>select / poll / epoll 对比</h3>
+<table>
+<tr><th>维度</th><th>select</th><th>poll</th><th>epoll</th></tr>
+<tr><td>fd 上限</td><td>FD_SETSIZE（通常 1024）</td><td>无硬上限</td><td>无硬上限</td></tr>
+<tr><td>数据结构</td><td>位图 fd_set</td><td>pollfd 数组</td><td>内核红黑树 + 就绪链表</td></tr>
+<tr><td>每次调用开销</td><td>O(n) 拷贝+遍历全部 fd</td><td>O(n) 拷贝+遍历全部 fd</td><td>O(1) 注册，O(就绪数) 返回</td></tr>
+<tr><td>就绪通知</td><td>返回后需自己遍历找就绪</td><td>同 select</td><td>直接返回就绪 fd 列表</td></tr>
+<tr><td>触发模式</td><td>仅水平触发(LT)</td><td>仅水平触发(LT)</td><td>支持 LT 和边缘触发(ET)</td></tr>
+</table>
+<p>关键区别：select/poll 每次调用都要把全部 fd 从用户态拷到内核态并线性扫描；<strong>epoll 把 fd 注册一次常驻内核红黑树</strong>，事件就绪时由回调挂到就绪链表，<code>epoll_wait</code> 只返回就绪的 fd，因此在海量连接、少量活跃的场景下性能远超前两者。</p>
+</div>
+<div class="card card-w">
+<h3>epoll 三个核心系统调用</h3>
+<table>
+<tr><th>调用</th><th>作用</th></tr>
+<tr><td><code>epoll_create</code></td><td>创建 epoll 实例，返回 epfd（内核里建红黑树 + 就绪链表）</td></tr>
+<tr><td><code>epoll_ctl</code></td><td>对某个 fd 做 ADD / MOD / DEL，注册关心的事件</td></tr>
+<tr><td><code>epoll_wait</code></td><td>阻塞等待，返回已就绪的 fd 列表</td></tr>
+</table>
+</div>
+<div class="card card-r">
+<h3>水平触发 LT vs 边缘触发 ET</h3>
+<table>
+<tr><th>维度</th><th>LT（水平触发）</th><th>ET（边缘触发）</th></tr>
+<tr><td>通知时机</td><td>只要缓冲区还有数据就一直通知</td><td>仅在状态从无到有变化时通知一次</td></tr>
+<tr><td>编程难度</td><td>简单，可以只读一部分</td><td>必须循环读到 EAGAIN，否则丢事件</td></tr>
+<tr><td>性能</td><td>可能重复唤醒</td><td>唤醒次数少，配非阻塞 fd 用</td></tr>
+<tr><td>典型用法</td><td>默认、上手快</td><td>Nginx 等高性能服务器</td></tr>
+</table>
+<div class="qa-summary">ET 必须搭配非阻塞 socket，并在每次事件里把数据一次性读干（直到 EAGAIN），否则剩余数据不会再被通知，连接“假死”。</div>
+</div>
+<div class="card card-m">
+<h3>Reactor 模式与 AI Infra 关联</h3>
+<p><strong>Reactor</strong> 是基于 I/O 多路复用的事件驱动架构：一个事件循环（event loop）用 epoll 监听所有 fd，事件就绪后分发给对应 handler。这是 Netty、Redis、Nginx、各类 RPC 框架的通用骨架。</p>
+<p>在 AI Infra 里这套模型同样无处不在：推理服务网关、参数服务器、KV 存储、调度器的 watch 机制，本质都是“少量线程 + epoll 事件循环”处理海量并发连接。理解 epoll 是看懂这些高性能组件的前提。<code>io_uring</code> 则进一步把网络/磁盘 I/O 改成真正的异步提交-完成队列，减少系统调用次数，是新一代高吞吐 I/O 的方向。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: epoll 为什么比 select/poll 高效？</div>
+<div class="qa-a"><p><strong>三个关键：</strong></p><div class="qa-section"><div class="qa-section-title">避免重复拷贝</div><p>select/poll 每次调用都要把全部 fd 集合从用户态拷到内核态；epoll 用 <code>epoll_ctl</code> 注册一次，fd 常驻内核红黑树。</p></div><div class="qa-section"><div class="qa-section-title">避免全量遍历</div><p>select/poll 返回后要 O(n) 扫描所有 fd 找就绪的；epoll 用回调把就绪 fd 挂到就绪链表，<code>epoll_wait</code> 直接返回就绪列表，复杂度只和活跃连接数相关。</p></div><div class="qa-section"><div class="qa-section-title">支持 ET</div><p>边缘触发能减少无效唤醒。</p></div><div class="qa-summary">面试口径：在“连接多、活跃少”的 C10K/C100K 场景下，epoll 的优势最明显；连接很少且都活跃时三者差距不大。</div></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: epoll 一定比 select 快吗？</div>
+<div class="qa-a"><p>不一定。epoll 的优势来自“海量 fd 中只有少量活跃”。如果监听的 fd 很少（比如几十个），或者几乎所有 fd 每次都活跃，epoll 的红黑树维护和回调开销反而不一定占便宜，此时 select/poll 足够。选型要看连接规模和活跃比例。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::05-io-multiplexing-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::05-io-multiplexing-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">虚拟内存与分页</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">死锁</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-5" aria-labelledby="cs-os-tabs-tab-5" data-mid="cs-os-tabs::07-deadlock-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>死锁</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>死锁是一组线程互相持有对方需要的资源、谁都无法继续，需要互斥、持有并等待、不可剥夺、循环等待四个条件同时成立，破坏任意一个即可预防。工程上最实用的是破坏循环等待——所有线程按统一顺序加锁，再用锁超时兜底，比背银行家算法更落地。</p>
+<div class="card card-m">
+<h3>死锁：四个必要条件</h3>
+<p>死锁是指一组进程/线程互相持有对方需要的资源，谁都无法继续。下面四个条件<strong>同时满足</strong>才会发生，破坏任意一个即可预防。</p>
+<table>
+<tr><th>条件</th><th>含义</th><th>破坏方式</th></tr>
+<tr><td>互斥</td><td>资源同一时刻只能被一个持有</td><td>资源可共享化（多数难破坏）</td></tr>
+<tr><td>持有并等待</td><td>持有资源的同时等待新资源</td><td>一次性申请全部资源</td></tr>
+<tr><td>不可剥夺</td><td>资源不能被强行抢走</td><td>允许超时释放、可抢占</td></tr>
+<tr><td>循环等待</td><td>存在环形等待链</td><td>按全局固定顺序加锁</td></tr>
+</table>
+<div class="qa-summary">工程上最常用、最实用的手段是破坏“循环等待”——所有线程按统一顺序加锁。</div>
+</div>
+<div class="card card-d">
+<h3>处理策略：预防 / 避免 / 检测 / 恢复</h3>
+<table>
+<tr><th>策略</th><th>做法</th><th>代价</th></tr>
+<tr><td>预防</td><td>破坏四条件之一（如固定加锁顺序）</td><td>降低并发或资源利用率</td></tr>
+<tr><td>避免</td><td>运行时判断是否进入不安全状态（银行家算法）</td><td>需预知最大需求，实际少用</td></tr>
+<tr><td>检测</td><td>构建资源分配图找环</td><td>检测有开销</td></tr>
+<tr><td>恢复</td><td>杀进程、回滚、抢占资源</td><td>有副作用，需可重试</td></tr>
+</table>
+<p>大多数业务系统采用<strong>预防 + 超时</strong>：统一加锁顺序避免大部分死锁，再用锁超时（<code>try_lock</code> + 超时回退）兜底，而不是上线复杂的银行家算法。</p>
+</div>
+<div class="card card-r">
+<h3>经典死锁代码（加锁顺序不一致）</h3>
+
+<pre><code class="language-cpp">
+// 线程 A: lock(mutex1) -> lock(mutex2)
+// 线程 B: lock(mutex2) -> lock(mutex1)   <-- 顺序相反，可能死锁
+
+// 修复：所有线程统一按地址/ID 顺序加锁
+std::lock(mutex1, mutex2);            // C++ 一次性获取，避免顺序问题
+std::lock_guard<std::mutex> g1(mutex1, std::adopt_lock);
+std::lock_guard<std::mutex> g2(mutex2, std::adopt_lock);
+</code></pre>
+
+</div>
+<div class="card card-w">
+<h3>死锁排查与活锁/饥饿区分</h3>
+<table>
+<tr><th>现象</th><th>特征</th><th>排查/区分</th></tr>
+<tr><td>死锁</td><td>线程互相等待，CPU 不忙但卡死</td><td><code>gdb</code> / <code>pstack</code> 看线程栈都停在 lock；<code>jstack</code>（Java）能直接报 deadlock</td></tr>
+<tr><td>活锁</td><td>线程不停重试却都没进展，CPU 很忙</td><td>加随机退避打破对称</td></tr>
+<tr><td>饥饿</td><td>某线程长期抢不到资源</td><td>用公平锁、优先级 aging</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>和 AI Infra / 分布式的联系</h3>
+<p>死锁不只在单机锁里出现：<strong>① 分布式训练</strong>中，集合通信（如 NCCL all-reduce）要求所有 rank 都参与，如果某个 rank 因异常没进入通信原语，其他 rank 会一直等待，表现为整作业 hang（本质是分布式死锁/挂起）；<strong>② 资源调度</strong>中，多个大作业各占一部分 GPU 又都等不到完整资源，形成资源死锁，需靠 gang scheduling（要么全给要么不给）破解；<strong>③ 数据库/分布式锁</strong>跨服务加锁顺序不一致同样会死锁。排查训练 hang 常用 <code>py-spy dump</code> / 看各 rank 卡在哪一步。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何预防死锁？工程上最实用的办法是什么？</div>
+<div class="qa-a"><p>理论上破坏四个必要条件之一即可，但互斥和不可剥夺往往难破坏。工程上最实用的是<strong>破坏循环等待</strong>：给所有锁定义全局顺序，任何线程都按同一顺序加锁，环就不可能形成。再辅以<strong>锁超时 + 可重试</strong>兜底，以及减小锁粒度、缩短临界区、能用无锁结构就用无锁。</p><div class="qa-summary">面试口径：先说四条件，再落到“统一加锁顺序 + 超时回退”这种可落地的方案，比背银行家算法更有说服力。</div></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 分布式训练任务 hang 住了，可能和死锁有什么关系？</div>
+<div class="qa-a"><p>集合通信是同步屏障，要求所有 rank 一起到达。如果某个 rank 提前报错退出、走了不同的代码分支、或数据加载卡住没进入 all-reduce，其余 rank 会在通信原语上无限等待，整个作业 hang——这是一种分布式层面的“互相等待”。排查时用 <code>py-spy</code>/栈抓取看各 rank 卡在哪，常见根因是 rank 间逻辑分支不一致或某卡 OOM/异常。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::07-deadlock-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::07-deadlock-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">I/O 多路复用</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">内存、OOM 与 NUMA</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-6" aria-labelledby="cs-os-tabs-tab-6" data-mid="cs-os-tabs::03-memory-oom-numa-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>内存、OOM 与 NUMA</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 8 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>内存排查不能只看&quot;容量够不够&quot;，要同时看四个维度：容量（系统内存/cgroup limit/GPU 显存）、带宽（HBM/内存吞吐）、延迟（page fault/swap/远端 NUMA）和局部性（CPU/GPU/NIC 是否同 NUMA 域）。系统内存、cgroup 可用内存、本地 NUMA 内存、GPU 显存是四个不同的资源池，任何一个不够都可能 OOM 或变慢。</p>
+<div class="card card-m"><h3>内存问题不是只看容量</h3><p>内存排查要同时看系统内存、cgroup limit、GPU 显存、NUMA locality、page cache、swap、带宽和碎片。容量够不代表没有瓶颈。</p></div>
+<div class="card card-d"><h3>内存问题基础模型</h3><table><tr><th>维度</th><th>看什么</th><th>典型问题</th><th>排查入口</th></tr><tr><td>容量</td><td>系统内存、cgroup、GPU 显存</td><td>OOMKilled、CUDA OOM</td><td><code>free -h</code>、<code>memory.current</code>、<code>nvidia-smi</code></td></tr><tr><td>带宽</td><td>内存/HBM 吞吐</td><td>容量够但吞吐低</td><td><code>perf</code>、DCGM、Nsight</td></tr><tr><td>延迟</td><td>page fault、swap、远端 NUMA</td><td>P99 抖动</td><td><code>vmstat</code>、<code>numastat</code></td></tr><tr><td>局部性</td><td>CPU/GPU/NIC 是否同 NUMA 域</td><td>跨 socket 访问慢</td><td><code>numactl -H</code>、<code>nvidia-smi topo -m</code></td></tr></table></div>
+<div class="card card-s"><h3>OOM、CUDA OOM 和 cgroup OOM</h3><table><tr><th>类型</th><th>资源池</th><th>触发者</th><th>现象</th></tr><tr><td>系统 OOM</td><td>宿主机内存</td><td>Linux OOM killer</td><td>进程被 kill，dmesg 有记录</td></tr><tr><td>cgroup OOM</td><td>容器 memory limit</td><td>cgroup memory controller</td><td>Pod OOMKilled</td></tr><tr><td>CUDA OOM</td><td>GPU 显存</td><td>CUDA runtime / 框架 allocator</td><td>程序抛 CUDA out of memory</td></tr></table></div>
+<div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: NUMA 是什么？为什么机器内存没用完也可能 OOM 或变慢？</div><div class="qa-a"><p>NUMA 是 Non-Uniform Memory Access。多 socket 机器上，每个 CPU socket 有本地内存控制器，访问本地内存快，访问远端内存慢。进程可能被 cpuset、membind、cgroup 或 hugepage 池限制，只能使用部分内存；即使宿主机总内存没用完，也可能因为本地 NUMA node 不足或碎片导致分配失败。</p><div class="qa-summary">面试口径：机器总内存、当前 cgroup 可用内存、本地 NUMA 内存、GPU 显存是不同资源池。</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::03-memory-oom-numa-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::03-memory-oom-numa-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">死锁</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Signal 与标准流</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-7" aria-labelledby="cs-os-tabs-tab-7" data-mid="cs-os-tabs::04-signal-stdio-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Signal 与标准流</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 5 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>Signal 是内核投递给进程的异步事件，最该记住的是优雅退出这条线：SIGTERM 是可捕获的&quot;协商退出&quot;，给应用 flush 日志、保存状态、释放锁的机会；SIGKILL 不可捕获、是强制回收。K8s 删 Pod 就是先 SIGTERM、超过 grace period 再 SIGKILL。</p>
+<div class="card card-m"><h3>Signal：进程控制的异步通知机制</h3><p>Signal 是内核投递给进程的异步事件，可用于终止、暂停、恢复、用户中断、非法访问、定时器和子进程状态变化。</p></div>
+<div class="card card-d"><h3>常见 Signal</h3><table><tr><th>Signal</th><th>含义</th><th>是否可捕获</th><th>典型场景</th></tr><tr><td>SIGTERM</td><td>请求进程优雅退出</td><td>是</td><td>K8s 删除 Pod、systemctl stop</td></tr><tr><td>SIGKILL</td><td>强制杀死</td><td>否</td><td>grace period 超时</td></tr><tr><td>SIGINT</td><td>用户中断</td><td>是</td><td>Ctrl-C</td></tr><tr><td>SIGSEGV</td><td>非法内存访问</td><td>可捕获但通常不恢复</td><td>C/C++ 指针错误</td></tr><tr><td>SIGCHLD</td><td>子进程退出</td><td>是</td><td>父进程回收子进程</td></tr></table></div>
+<div class="card card-s"><h3>stdin/stdout/stderr</h3><table><tr><th>通道</th><th>fd</th><th>用途</th><th>容器/K8s 含义</th></tr><tr><td>stdin</td><td>0</td><td>输入</td><td>交互式 exec 或管道输入</td></tr><tr><td>stdout</td><td>1</td><td>正常输出</td><td>容器日志采集主通道</td></tr><tr><td>stderr</td><td>2</td><td>错误和 warning</td><td>容器日志采集主通道</td></tr></table></div>
+<div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: K8s 删除 Pod 时为什么先 SIGTERM 后 SIGKILL？</div><div class="qa-a"><p>先发 SIGTERM 是为了给应用优雅退出机会：停止接新请求、处理完存量请求、flush 日志、保存状态、释放锁。超过 terminationGracePeriodSeconds 仍未退出时，再发不可捕获的 SIGKILL 强制回收资源。</p><div class="qa-summary">面试口径：SIGTERM 是协商退出，SIGKILL 是强制回收。</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::04-signal-stdio-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::04-signal-stdio-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">内存、OOM 与 NUMA</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">AI Infra 并发模型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-8" aria-labelledby="cs-os-tabs-tab-8" data-mid="cs-os-tabs::08-ai-infra-concurrency-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>AI Infra 并发模型</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>进程是资源分配单位、线程是执行调度单位、协程是用户态轻量执行流。AI Infra 里这套并发模型直接决定数据加载吞吐和推理服务并发：Python 数据预处理用多进程绕过 GIL，推理前后处理和网络收发用线程池或协程。线程过多反而会让 CPU 时间耗在上下文切换和锁竞争上。</p>
+<h2>AI Infra 面试模块：进程、线程与并发模型</h2>
+<p>AI Infra 面试里，进程、线程和协程不是概念背诵题，而是资源隔离、调度成本、数据加载吞吐和推理服务并发模型的基础。</p>
+<div class="card card-s">
+<h3>核心概念定义</h3>
+<table>
+<thead><tr><th>概念</th><th>定义</th><th>面试重点</th></tr></thead>
+<tbody>
+<tr><td>进程</td><td>操作系统分配资源的基本单位，有独立虚拟地址空间、文件描述符表、信号处理和权限上下文。</td><td>隔离性强，崩溃影响小；创建和切换成本高于线程。</td></tr>
+<tr><td>线程</td><td>进程内的执行流，共享进程地址空间和打开文件，拥有独立栈、寄存器上下文和调度状态。</td><td>通信方便、切换较轻；需要处理锁竞争、数据竞争和内存安全。</td></tr>
+<tr><td>协程</td><td>用户态轻量执行流，由语言运行时或框架调度，通常用于大量 I/O 等待型并发。</td><td>切换不必进入内核；阻塞系统调用会阻塞承载线程，必须配合非阻塞 I/O。</td></tr>
+<tr><td>IPC</td><td>进程间通信机制，包括 pipe、socket、shared memory、message queue、signal。</td><td>共享内存最快但同步复杂；socket 通用但有拷贝和协议开销。</td></tr>
+<tr><td>同步原语</td><td>mutex、rwlock、semaphore、condition variable、barrier 等。</td><td>要能说明互斥、通知、资源计数、阶段同步分别适合什么场景。</td></tr>
+</tbody>
+</table>
+</div>
+<h3>需要掌握</h3>
+<ul><li>进程与线程的区别：地址空间、资源隔离、崩溃影响范围、上下文切换成本。</li><li>用户态线程与内核态线程的区别：用户态切换快，内核态线程可被 OS 真正调度到多核。</li><li>多进程、多线程在 CPU 密集型和 I/O 密集型任务中的适用场景。</li><li>线程池为什么存在：避免频繁创建销毁线程，限制并发度，保护下游资源。</li><li>协程为什么适合网络服务：大量连接多数时间在等待 I/O，用少量线程承载大量逻辑执行流。</li><li>死锁产生条件：互斥、占有且等待、不可剥夺、循环等待。</li></ul>
+<div class="card card-m">
+<h3>上下文切换成本来自哪里</h3>
+<p>上下文切换要保存和恢复寄存器、程序计数器、栈指针、调度状态。进程切换还可能切换地址空间和页表，破坏 TLB；线程切换虽然共享地址空间，但仍会破坏 cache locality。大量线程竞争锁或频繁阻塞唤醒，会导致 CPU 时间消耗在调度和内核态，而不是业务计算。</p>
+</div>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>DataLoader 多进程加载数据可以绕过 Python GIL，但会引入进程间队列、pickle/IPC、shared memory 和 copy-on-write 成本。</li><li>Python GIL 会限制纯 Python CPU 密集型多线程并行，训练框架常用多进程、C++ 后端释放 GIL、CUDA 异步执行来绕过。</li><li>推理服务常用线程池处理 tokenizer、detokenizer、网络收发、日志和业务逻辑；线程过多会造成 context switch 和锁竞争。</li><li>CPU 线程数、NUMA 绑核、DataLoader worker 数量会影响 GPU feeding，CPU 准备 batch 不连续会让 GPU 周期性空转。</li><li>多 worker 数据预处理要关注队列深度、worker 异常退出、共享内存大小和主进程是否及时消费。</li></ul>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 进程和线程有什么区别？什么时候用多进程，什么时候用多线程？</div>
+<div class="qa-a"><p>进程是资源分配单位，线程是执行调度单位。进程有独立地址空间，隔离性强，适合强隔离、绕过 GIL、崩溃不互相影响的场景；线程共享地址空间，通信方便，适合 I/O 密集、共享状态多、延迟敏感的服务。AI Infra 中，Python 数据预处理常用多进程，推理服务前后处理和网络收发常用线程池或协程。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: mutex 和 semaphore 的区别是什么？</div>
+<div class="qa-a"><p>mutex 是互斥锁，用来保护临界区，一般强调谁加锁谁解锁；semaphore 是计数信号量，用来表示可用资源数量，可以允许多个执行流同时进入。连接池容量、GPU slot、队列容量更像 semaphore；共享 map、调度器状态更新更适合 mutex/rwlock。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Python 多线程为什么不能很好利用多核 CPU？</div>
+<div class="qa-a"><p>CPython 有 GIL，同一时刻通常只有一个线程执行 Python bytecode，所以纯 Python CPU 密集型多线程不能真正并行利用多核。但 I/O 阻塞、C++ 扩展、CUDA kernel launch 等可能释放 GIL，因此训练框架常通过 C++/CUDA 后端、多进程 DataLoader 和异步 pipeline 提升吞吐。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::08-ai-infra-concurrency-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::08-ai-infra-concurrency-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Signal 与标准流</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">AI Infra 内存管理</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-9" aria-labelledby="cs-os-tabs-tab-9" data-mid="cs-os-tabs::09-ai-infra-memory-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>AI Infra 内存管理</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>看内存别只看占用大小，要分清 VIRT 只是承诺、RES 才是真实物理占用、SHR 是共享页、page cache 看似占满但可回收。AI Infra 排查 OOM 和加载慢，关键是区分进程 RSS、page cache、cgroup limit，以及 major fault 这种要走磁盘 I/O 的缺页信号。</p>
+<h2>AI Infra 面试模块：内存管理</h2>
+<p>AI Infra 的内存问题往往同时涉及虚拟内存、物理内存、page cache、cgroup limit、shared memory、NUMA locality 和 GPU pinned memory。面试回答要能把 Linux 内存机制和训练/推理场景联系起来。</p>
+<h3>需要掌握</h3>
+<ul><li>虚拟内存、物理内存、地址空间：进程访问虚拟地址，MMU 通过页表翻译成物理地址。</li><li>分页、页表、TLB、缺页中断：页表保存映射，TLB 缓存地址翻译，缺页中断负责按需分配或换入。</li><li><code>mmap</code>：把文件或匿名内存映射到进程虚拟地址空间，访问时按需触发 page fault。</li><li>copy-on-write：fork 后父子进程共享物理页，写入时才复制。</li><li>堆、栈、内存碎片、内存泄漏：堆用于动态分配，栈用于函数调用，泄漏会让 RSS 持续增长。</li><li><code>malloc/free</code> 基本思路：用户态 allocator 管理空闲块，必要时通过 <code>brk</code> 或 <code>mmap</code> 向内核申请。</li><li>page cache 与 buffer cache：Linux 用空闲内存缓存文件内容，提高重复读取性能。</li><li>swap：内存压力下把匿名页换出到磁盘，但训练/推理任务触发 swap 通常会导致吞吐断崖式下降。</li><li>NUMA：本地内存访问快，远端内存访问延迟高、带宽低。</li></ul>
+<div class="card card-s">
+<h3>关键指标</h3>
+<table>
+<thead><tr><th>指标</th><th>含义</th><th>排查意义</th></tr></thead>
+<tbody>
+<tr><td>VIRT / VMS</td><td>虚拟地址空间大小</td><td>大不代表真实占用物理内存。</td></tr>
+<tr><td>RES / RSS</td><td>实际驻留物理内存</td><td>判断进程真实内存压力的关键。</td></tr>
+<tr><td>SHR</td><td>共享页</td><td>共享库、mmap 权重、shared memory 都会体现在这里。</td></tr>
+<tr><td>Page Cache</td><td>文件缓存</td><td>看似占满内存，但通常可回收。</td></tr>
+<tr><td>Major Fault</td><td>需要磁盘 I/O 的缺页</td><td>权重加载慢、训练抖动的重要信号。</td></tr>
+<tr><td>Minor Fault</td><td>不需要磁盘 I/O 的缺页</td><td>匿名页分配、COW、已有页重新映射。</td></tr>
+</tbody>
+</table>
+</div>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>大模型训练中的 CPU 内存、GPU 显存、page cache 之间是联动的：CPU 数据准备慢会饿死 GPU，GPU 显存不足会 OOM，page cache 不足会让重复读数据变慢。</li><li><code>mmap</code> 加载大模型权重可以避免一次性读取全文件，支持多进程共享 page cache，但访问时可能触发 page fault，导致启动抖动。</li><li>fork DataLoader 时，父进程中已有的大对象初始会 COW 共享；worker 一旦写入对象，物理内存会复制，RSS 可能突然增大。</li><li>OOM 定位要区分进程 RSS、VMS、shared memory、page cache、cgroup memory limit、宿主机 OOM 和容器 OOM。</li><li>NUMA 绑定不合理会让 CPU worker 访问远端内存，或者跨 socket 给 GPU 准备数据，导致吞吐下降。</li></ul>
+<div class="card card-m">
+<h3>Linux OOM 与容器 OOM</h3>
+<p>宿主机 OOM 是整机内存压力下由内核 OOM killer 选择进程杀掉；容器 OOM 是 cgroup memory limit 被突破，内核在该 cgroup 内杀进程。容器中 page cache、shared memory、DataLoader worker、日志 buffer、主进程 RSS 都可能共同顶满 limit。</p>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 虚拟内存解决了什么问题？</div>
+<div class="qa-a"><p>虚拟内存提供进程隔离、连续地址空间、按需分配、换页、共享库和 mmap 能力。它让进程看到自己的虚拟地址空间，由 MMU 和页表映射到物理内存。代价是地址翻译需要 TLB/page table，缺页会进入内核，major fault 还会触发磁盘 I/O。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: malloc 后一定立刻占用物理内存吗？</div>
+<div class="qa-a"><p>不一定。malloc 可能只是分配虚拟地址或复用 allocator 的空闲块，物理页通常在第一次写入时通过缺页中断分配。可以概括为：虚拟内存是承诺，物理内存是触碰页面后兑现。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: page cache 为什么会让内存看起来“被占满”？</div>
+<div class="qa-a"><p>Linux 会尽量用空闲内存缓存文件页，提升后续读取性能，所以 free 看到的空闲内存可能很少。但 page cache 通常是可回收的，内存压力来时可以释放。排查时要看 available、cache、cgroup limit 和真正不可回收的 RSS。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::09-ai-infra-memory-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::09-ai-infra-memory-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">AI Infra 并发模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="10"><span class="tab-step-label">下一篇</span><span class="tab-step-title">文件系统与 I/O</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-10" aria-labelledby="cs-os-tabs-tab-10" data-mid="cs-os-tabs::10-ai-infra-file-io-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>文件系统与 I/O</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>一次 read 的路径是：进入内核查 fd 和 page cache，命中就拷给用户 buffer，未命中就发起磁盘或网络存储 I/O 读入 cache 再拷贝。AI Infra 里这条路径决定训练数据加载、checkpoint 和权重加载吞吐，排障要拆到系统调用、page cache miss、磁盘/网络存储延迟、小文件 metadata 和解码这几层。</p>
+<h2>AI Infra 面试模块：文件系统与 I/O</h2>
+<p>文件系统与 I/O 直接影响训练数据加载、checkpoint 保存、模型权重加载和推理服务吞吐。面试中要能从文件抽象讲到内核路径，再落到性能瓶颈定位。</p>
+<h3>需要掌握</h3>
+<ul><li>inode、目录项、文件描述符：inode 保存文件元数据和数据块位置，目录项把文件名映射到 inode，fd 是进程打开文件后的句柄。</li><li>buffered I/O：<code>read/write</code> 经过 page cache，适合复用和小块读取。</li><li>direct I/O：绕过 page cache，适合应用自管缓存的大文件顺序读写，但要求 buffer、offset、size 对齐。</li><li>sync/async I/O：同步 I/O 调用方等待完成，异步 I/O 提交请求后由完成事件通知。</li><li><code>read/write</code>、<code>pread/pwrite</code>、<code>mmap</code>：<code>pread/pwrite</code> 带 offset 且不改变文件偏移，适合多线程并发读写。</li><li>dirty page 与 <code>fsync</code>：写入先进入 page cache 形成脏页，<code>fsync</code> 强制落盘，可能很慢。</li><li>顺序读写与随机读写：顺序访问利用预读和连续带宽，随机访问受寻址、队列深度和 metadata 影响。</li><li>SSD/NVMe：延迟低、并发队列强，但小 I/O、同步刷盘、文件碎片仍可能成为瓶颈。</li><li>I/O 多路复用：select、poll、epoll 让少量线程管理大量 fd。</li><li>零拷贝：sendfile、splice、DMA、mmap 等减少用户态/内核态拷贝和上下文切换。</li></ul>
+<div class="card card-s">
+<h3>一次 read 的典型路径</h3>
+<p>应用调用 read 进入内核；内核检查 fd、文件偏移和 page cache；如果命中，把 page cache 内容拷贝到用户 buffer；如果未命中，提交磁盘或网络存储 I/O，把数据读入 page cache，再拷贝给用户。这个路径可能慢在系统调用、page cache miss、磁盘 I/O、metadata、CPU copy、网络存储或文件格式解码。</p>
+</div>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>训练数据读取瓶颈要拆成：磁盘/对象存储带宽、网络存储延迟、文件数量和 metadata、解码、数据增强、CPU worker、batch queue 深度。</li><li>小文件过多会导致 <code>open/stat/readdir</code> metadata 开销高，即使总数据量不大也会拖慢 DataLoader。</li><li>checkpoint 保存慢可能来自序列化、CPU 到磁盘写入、网络文件系统、<code>fsync</code>、单文件过大、并发写冲突。</li><li>模型权重加载时，<code>mmap</code>、顺序读、预读、page cache 预热、并行 shard 加载都会影响启动时间。</li><li>推理服务要把网络 I/O、请求解析、排队、batching、GPU 执行和响应写回解耦。</li><li>高吞吐服务常用 epoll/事件循环/异步 I/O/零拷贝降低线程数和拷贝成本。</li></ul>
+<div class="card card-d">
+<h3>训练时 GPU 利用率低，I/O 层怎么排查</h3>
+<ol>
+<li>看 GPU 利用率是否周期性掉到 0，如果是，常见原因是 batch feeding 不连续。</li>
+<li>看 DataLoader worker CPU 是否打满，队列是否为空，是否被图像解码或数据增强拖慢。</li>
+<li>用 iostat 看磁盘 util、await、吞吐；用网络监控看远端存储带宽和延迟。</li>
+<li>看文件数量和单文件大小，小文件多时优先考虑打包格式或顺序读。</li>
+<li>看 page cache 命中和 major fault，判断是否频繁从磁盘或网络存储重新取数据。</li>
+</ol>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 文件描述符和 inode 的关系是什么？</div>
+<div class="qa-a"><p>inode 是文件系统中的文件元数据对象，文件名通过目录项映射到 inode。进程 open 文件后得到 fd，fd 指向内核 open file description，其中包含文件偏移和打开模式。多个 fd 可以指向同一个 inode，也可以共享或不共享文件偏移。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: epoll 相比 select/poll 的优势是什么？</div>
+<div class="qa-a"><p>select/poll 每次都要传入 fd 集合并线性扫描，epoll 把关注的 fd 注册到内核对象里，就绪事件通过 ready list 返回，避免每次全量扫描，更适合大量连接但少量活跃的高并发服务。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: fsync 为什么可能很慢？</div>
+<div class="qa-a"><p>write 返回通常只表示数据进入 page cache，不代表落盘。fsync 要等待脏页写回、文件系统 journal、设备 flush、网络存储确认和其他 I/O 排队。checkpoint 或日志频繁 fsync 会显著影响吞吐和延迟。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::10-ai-infra-file-io-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::10-ai-infra-file-io-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="9"><span class="tab-step-label">上一篇</span><span class="tab-step-title">AI Infra 内存管理</span></button><button type="button" class="tab-step tab-step-next" data-step-target="11"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CPU 性能分析</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-11" aria-labelledby="cs-os-tabs-tab-11" data-mid="cs-os-tabs::11-ai-infra-cpu-perf-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CPU 性能分析</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>load average 高不等于 CPU 忙，因为 load 同时统计 runnable 和 D 状态不可中断睡眠任务，大量任务卡在磁盘或网络 I/O 也会推高 load。判断 CPU 瓶颈要同时看 load、utilization、run queue、iowait 和 context switch。AI Infra 里数据预处理、tokenizer、序列化和容器 CFS throttling 都可能让 CPU 成瓶颈、拖垮 GPU 喂数据。</p>
+<h2>AI Infra 面试模块：CPU 调度与性能分析</h2>
+<p>AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detokenizer、请求调度、网络协议栈、NCCL 辅助线程、checkpoint 序列化都可能让 CPU 成为瓶颈。</p>
+<h3>需要掌握</h3>
+<ul><li>进程调度基本原理：内核从 runnable 队列中选择下一个任务运行。</li><li>时间片、优先级、抢占、上下文切换：调度器在公平性、响应时间和吞吐之间取舍。</li><li>CPU load average 与 CPU utilization：load 包含 runnable 和不可中断睡眠任务；utilization 表示 CPU 实际忙碌比例。</li><li>user、system、iowait、steal：分别代表用户态执行、内核态执行、等待 I/O、虚拟化环境被宿主抢占。</li><li>cache locality、CPU cache、false sharing：线程迁移和共享 cache line 会影响吞吐。</li><li>软中断、硬中断：硬中断来自设备，软中断常用于网络包处理等延后工作。</li><li>perf、top、htop、pidstat、vmstat、sar 等工具的基本使用。</li></ul>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>GPU 训练时 CPU 数据准备不足会让 GPU 空转。</li><li>高 QPS 推理服务中，CPU 前处理、tokenizer、JSON 序列化、日志和网络协议栈可能成为瓶颈。</li><li>多线程服务中锁竞争、上下文切换过高、cache miss 过高会导致吞吐下降和 p99 抖动。</li><li>容器环境下 CPU quota、cpuset、CFS throttling 会让服务“看起来还有 CPU”，但实际被限流。</li></ul>
+<div class="card card-s">
+<h3>load high 不等于 CPU busy</h3>
+<p>Linux load average 会统计 runnable 任务和 D 状态不可中断睡眠任务。大量任务卡在磁盘或网络 I/O，也会推高 load，但 CPU utilization 可能不高。因此判断 CPU 瓶颈要同时看 load、utilization、run queue、iowait、context switch 和线程栈。</p>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: load average 高是否一定说明 CPU 忙？</div>
+<div class="qa-a"><p>不一定。load 包含 runnable 和不可中断睡眠任务。I/O 卡住、网络存储慢、D 状态进程多都可能让 load 很高。要结合 CPU utilization、iowait、run queue 和 D 状态进程判断。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: iowait 高说明什么？</div>
+<div class="qa-a"><p>iowait 表示 CPU 空闲但系统中有任务在等 I/O。它提示 I/O 可能拖慢任务，但还要结合 iostat 的 await、util、吞吐和应用访问模式判断。训练中 iowait 高常见于数据集读取、checkpoint 或网络存储。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何用 perf 分析 CPU hotspot？</div>
+<div class="qa-a"><p>先用 <code>perf top -p &lt;pid&gt;</code> 在线看热点，再用 <code>perf record -g -p &lt;pid&gt; -- sleep 30</code> 采样调用栈，最后用 <code>perf report</code> 或火焰图分析热点是在业务函数、系统调用、锁、内核网络栈、内存拷贝还是调度函数。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::11-ai-infra-cpu-perf-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::11-ai-infra-cpu-perf-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="10"><span class="tab-step-label">上一篇</span><span class="tab-step-title">文件系统与 I/O</span></button><button type="button" class="tab-step tab-step-next" data-step-target="12"><span class="tab-step-label">下一篇</span><span class="tab-step-title">网络与系统调用</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-12" aria-labelledby="cs-os-tabs-tab-12" data-mid="cs-os-tabs::12-ai-infra-network-syscall-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>网络与系统调用</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>网络基础要能从 socket API 讲到 TCP 状态机，再落到连接池、超时、反压和 RDMA/NCCL 为什么存在。三次握手确认双方收发能力和初始序列号，TIME_WAIT 保证可靠关闭。AI Infra 里分布式训练通信慢要分应用、GPU 拓扑、网络和系统四层排查；RDMA/InfiniBand/NCCL 的存在就是为了绕过传统 TCP/IP 的内核协议栈、CPU copy 和延迟瓶颈。</p>
+<h2>AI Infra 面试模块：网络基础与系统调用</h2>
+<p>网络基础连接分布式训练、推理服务、RPC、存储访问和控制面组件。面试回答要能从 socket API 讲到 TCP 状态，再扩展到连接池、超时、重试、反压和 RDMA/NCCL 为什么存在。</p>
+<h3>需要掌握</h3>
+<ul><li>TCP/IP 基础：三次握手、四次挥手、拥塞控制、流量控制。</li><li>socket 编程流程：socket、bind、listen、accept、connect、read/write、close。</li><li>listen backlog、SYN queue、accept queue：半连接和全连接队列过小会导致连接失败或延迟升高。</li><li>TIME_WAIT、CLOSE_WAIT：TIME_WAIT 用于可靠关闭和旧报文消散；CLOSE_WAIT 常说明应用未 close。</li><li>TCP keepalive、Nagle、reuseaddr/reuseport：分别影响连接保活、小包聚合和端口复用。</li><li>网络收发包路径：网卡、DMA、硬中断/软中断、协议栈、socket buffer、用户态。</li><li>epoll 在网络服务中的使用。</li></ul>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>分布式训练通信瓶颈可能来自带宽、延迟、拥塞、丢包、网卡队列、PCIe/NUMA 拓扑、NCCL 算法选择。</li><li>RDMA、InfiniBand、RoCE、NCCL 解决的是传统 TCP/IP 在内核协议栈、CPU copy、延迟和吞吐上的瓶颈。</li><li>推理服务要关注连接数、长连接、连接池、超时、重试、限流和熔断。</li><li>大模型服务中的流式输出需要处理慢客户端、发送缓冲区、反压和请求取消。</li></ul>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: TCP 三次握手和四次挥手过程是什么？</div>
+<div class="qa-a"><p>三次握手是客户端 SYN、服务端 SYN+ACK、客户端 ACK，用于确认双方收发能力和初始序列号。四次挥手是主动关闭方 FIN、被动方 ACK，被动方处理完剩余数据后 FIN，主动方 ACK 并进入 TIME_WAIT。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: TIME_WAIT 为什么存在？过多怎么办？</div>
+<div class="qa-a"><p>TIME_WAIT 用于确保最后一个 ACK 能被对端收到，并让旧连接残留报文自然消失。过多时先判断是否短连接过多，可通过连接池、长连接、HTTP keepalive、端口范围调整和合理复用缓解，不能简单粗暴关闭安全机制。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: epoll 的 LT 和 ET 模式有什么区别？</div>
+<div class="qa-a"><p>LT 是水平触发，只要 fd 仍然可读/可写就会反复通知；ET 是边缘触发，只在状态变化时通知，要求非阻塞 fd 并一次读到 EAGAIN，否则可能遗漏事件。ET 通知少但编程要求更高。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 分布式训练通信慢，可能从哪些层面排查？</div>
+<div class="qa-a"><p>从应用看 batch、梯度大小、通信算法、NCCL 日志；从 GPU 拓扑看 NVLink/PCIe、跨 NUMA、GPU affinity；从网络看带宽、丢包、拥塞、RoCE PFC/ECN、网卡错误；从系统看 CPU 辅助线程、软中断、IRQ 亲和和容器资源限制。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::12-ai-infra-network-syscall-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::12-ai-infra-network-syscall-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="11"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CPU 性能分析</span></button><button type="button" class="tab-step tab-step-next" data-step-target="13"><span class="tab-step-label">下一篇</span><span class="tab-step-title">容器与 cgroup</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-13" aria-labelledby="cs-os-tabs-tab-13" data-mid="cs-os-tabs::13-ai-infra-container-cgroup-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>容器与 cgroup</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>namespace 管&quot;看见什么&quot;（PID、网络栈、挂载点、IPC），cgroup 管&quot;能用多少&quot;（CPU、内存、I/O、设备），容器隔离就是 namespace + cgroup + rootfs + capability/seccomp 组合出来的。AI Infra 几乎都跑在容器和 K8s 上，所以要能把 OS 知识映射到容器 OOM（exit 137）、CFS throttling、cgroup memory limit 和 /dev/shm 不足这些实际故障。</p>
+<h2>AI Infra 面试模块：容器、cgroup 与 Linux 隔离机制</h2>
+<p>AI Infra 基本运行在容器和 Kubernetes 之上，因此操作系统知识必须能映射到 namespace、cgroup、device plugin、资源限制和容器内外观测差异。</p>
+<h3>需要掌握</h3>
+<ul><li>namespace：pid、net、mnt、uts、ipc、user，负责隔离“看到什么”。</li><li>cgroup：CPU、memory、blkio/io、device、pids，负责限制和统计“能用多少”。</li><li>容器与虚拟机：容器共享宿主机内核，虚拟机有独立 guest kernel。</li><li>Docker 镜像层与 overlayfs：镜像是只读层叠加，可写层记录容器修改。</li><li>容器内看到的资源与宿主机资源关系：工具显示可能来自宿主机视角，但实际受 cgroup 限制。</li><li>OOM、CPU throttling、文件描述符限制在容器中的表现。</li></ul>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>Kubernetes 训练任务的 CPU、内存、GPU 资源隔离由 request/limit、cgroup、device plugin 和调度器共同实现。</li><li>容器 OOM 与宿主机 OOM 不同：容器达到 memory limit 会在 cgroup 内 kill。</li><li>cgroup memory limit 会影响匿名内存、page cache、shared memory，可能出现 page cache 把容器 limit 顶满。</li><li>多卡训练容器通过 NVIDIA device plugin 暴露 GPU device、驱动库和 <code>CUDA_VISIBLE_DEVICES</code>。</li><li><code>/dev/shm</code> 太小会导致 PyTorch DataLoader、共享内存队列或分布式训练异常。</li></ul>
+<div class="card card-s">
+<h3>namespace 和 cgroup 的区别</h3>
+<p>namespace 解决“看见什么”：PID、网络栈、挂载点、主机名、IPC 对象。cgroup 解决“能用多少”：CPU、内存、I/O、进程数和设备。容器隔离通常是 namespace + cgroup + rootfs + capability/seccomp 组合出来的。</p>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Docker 容器是如何实现隔离的？</div>
+<div class="qa-a"><p>Docker 主要利用 Linux namespace 隔离进程视图、网络、挂载、IPC、用户等；利用 cgroup 限制和统计 CPU、内存、I/O、设备等资源；利用 overlayfs 提供镜像层和可写层；再配合 capability、seccomp、AppArmor/SELinux 限制权限和系统调用。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 容器内进程被 OOM kill，如何排查？</div>
+<div class="qa-a"><p>先看 Pod 状态、exit code 137、events；再看 cgroup memory.current/memory.max、容器日志和 dmesg；区分主进程 RSS、DataLoader worker、/dev/shm、page cache、shared memory、内存泄漏和 batch size 是否异常。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: /dev/shm 不足会导致什么问题？</div>
+<div class="qa-a"><p>/dev/shm 是 tmpfs 共享内存。PyTorch DataLoader 多进程、共享内存队列、Ray、某些分布式通信都可能依赖它。空间不足会出现 bus error、worker 异常退出、进程 hang 或吞吐下降。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::13-ai-infra-container-cgroup-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::13-ai-infra-container-cgroup-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="12"><span class="tab-step-label">上一篇</span><span class="tab-step-title">网络与系统调用</span></button><button type="button" class="tab-step tab-step-next" data-step-target="14"><span class="tab-step-label">下一篇</span><span class="tab-step-title">GPU 系统层</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-14" aria-labelledby="cs-os-tabs-tab-14" data-mid="cs-os-tabs::14-ai-infra-gpu-systems-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU 系统层</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>GPU 利用率低不能只看一个数：要分层判断到底卡在哪。先看 SM utilization 判断计算单元是否真在工作（显存高只代表被占不代表在算），再看 PCIe/NVLink 吞吐排查 H2D/D2H 或通信瓶颈，再看 CPU worker 和 DataLoader queue 是否供给不足，最后看 NCCL 日志和网络指标。这正是区分 AI Infra 候选人和普通后端的关键。</p>
+<h2>AI Infra 面试模块：GPU 训练/推理相关系统层知识</h2>
+<p>这部分是区分普通后端候选人和 AI Infra 候选人的关键。面试官通常关心你是否理解 CPU、内存、PCIe、GPU、驱动和 CUDA runtime 之间的数据路径，以及系统瓶颈如何影响 GPU 利用率。</p>
+<h3>需要掌握</h3>
+<ul><li>CPU、内存、PCIe、GPU 之间的数据路径：数据通常从磁盘/网络进入 CPU 内存，再通过 PCIe/NVLink 进入 GPU HBM。</li><li>DMA：设备绕过 CPU 指令拷贝，直接在设备和内存之间传输数据。</li><li>pinned memory/page-locked memory：锁定物理页，避免换页，使 DMA 可以稳定访问。</li><li>CPU 到 GPU 数据拷贝瓶颈：可能来自 CPU 解码、内存带宽、PCIe 带宽、pageable memory staging、NUMA 跨 socket。</li><li>NUMA、PCIe topology、GPU affinity：GPU 挂在哪个 CPU socket/PCIe switch 下会影响数据路径。</li><li>GPU 进程、驱动、CUDA runtime：应用通过 CUDA runtime/driver 提交 kernel、内存分配和拷贝。</li><li>多进程使用 GPU 的资源竞争：显存、SM、显存带宽、copy engine、上下文和 MPS/MIG 隔离。</li></ul>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>DataLoader 中 <code>pin_memory=True</code> 可以把 batch 放入 pinned memory，使 H2D 拷贝更高效，尤其配合 non_blocking copy 和 CUDA stream。</li><li>GPU 利用率低要判断是计算、通信、I/O、CPU 预处理、H2D 拷贝还是调度排队瓶颈。</li><li>多卡训练中 PCIe/NVLink 拓扑决定 GPU 间通信路径，跨 NUMA 或跨 PCIe switch 可能降低 all-reduce 性能。</li><li>推理服务中 batch、队列、CPU 前处理、GPU 执行、后处理、网络写回需要流水线化。</li></ul>
+<div class="card card-d">
+<h3>GPU 利用率低的分层判断</h3>
+<ol>
+<li>看 SM utilization / GPU-Util：低说明计算单元没持续工作。</li>
+<li>看显存占用：高只代表资源被占，不代表计算忙。</li>
+<li>看 PCIe/NVLink 吞吐：高可能是 H2D/D2H 或通信瓶颈。</li>
+<li>看 CPU worker 和 DataLoader queue：CPU 供给不足会导致 GPU 等 batch。</li>
+<li>看 NCCL 日志和网络指标：分布式训练可能卡在通信。</li>
+</ol>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: pinned memory 为什么能提升 H2D 拷贝性能？</div>
+<div class="qa-a"><p>普通 pageable memory 可能被 OS 换页，GPU DMA 不能直接安全访问，驱动通常需要先拷到 pinned staging buffer 再 DMA 到 GPU。pinned memory 锁定物理页，避免换页，使 DMA 可以直接传输，减少额外拷贝并支持异步 H2D。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU 利用率低但显存占用高，可能是什么原因？</div>
+<div class="qa-a"><p>显存高可能只是模型权重、optimizer state、KV cache 或缓存 allocator 常驻，并不代表 GPU 正在计算。利用率低可能是 DataLoader 慢、CPU 前处理慢、H2D 拷贝没重叠、网络通信等待、batch 太小、请求不足或 kernel launch 间隙大。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 多卡训练通信慢，可能和拓扑有什么关系？</div>
+<div class="qa-a"><p>GPU 之间可能通过 NVLink、NVSwitch、同一 PCIe switch、跨 PCIe root complex 或跨 NUMA socket 通信，路径不同带宽和延迟差异很大。rank 放置不匹配拓扑时，all-reduce 可能跨慢链路；NIC 和 GPU 不在同一 locality 时，RDMA/GPUDirect 效果也会变差。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::14-ai-infra-gpu-systems-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::14-ai-infra-gpu-systems-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="13"><span class="tab-step-label">上一篇</span><span class="tab-step-title">容器与 cgroup</span></button><button type="button" class="tab-step tab-step-next" data-step-target="15"><span class="tab-step-label">下一篇</span><span class="tab-step-title">可观测性与排障</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-15" aria-labelledby="cs-os-tabs-tab-15" data-mid="cs-os-tabs::15-ai-infra-observability-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>可观测性与排障</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>排障要体现分层思维：先界定现象（影响范围、开始时间、是否稳定复现、是 p99 还是吞吐还是 GPU 利用率变坏），再按链路分层拆（应用队列、CPU、内存、I/O、网络、GPU、容器限制、下游依赖），用指标和工具逐层验证假设，最后给优化方案。指标发现异常、日志解释语义、trace 串联请求链路，这套方法对 GPU 空转、p99 抖动、OOM 都通用。</p>
+<h2>AI Infra 面试模块：系统可观测性与故障排查</h2>
+<p>AI Infra 面试经常问“线上问题怎么定位”。回答这类问题要体现分层思维：先界定现象，再看资源指标，再抓进程、系统调用、日志和 trace，最后形成假设并验证。</p>
+<h3>需要掌握</h3>
+<ul><li>常用系统指标：CPU、内存、磁盘、网络、FD、线程数、上下文切换、系统调用耗时。</li><li>常用命令：top、htop、ps、free、vmstat、iostat、pidstat、sar、ss、lsof、strace、perf、dmesg。</li><li>日志、指标、trace 的定位思路：指标发现异常，日志解释语义，trace 串联请求链路。</li><li>系统调用耗时分析：strace 可以看到进程卡在 futex、read、write、poll、connect、fsync 等调用上。</li><li>core dump、gdb 基础：进程崩溃或卡死时查看调用栈、线程状态和锁等待。</li></ul>
+<h3>AI Infra 相关关注点</h3>
+<ul><li>训练任务卡住：看 GPU、CPU、DataLoader、NCCL 日志、网络、磁盘和进程栈。</li><li>吞吐下降：看 batch 时间拆分、CPU feeding、H2D、GPU compute、通信、checkpoint 和日志写入。</li><li>GPU 空转：看 DataLoader queue、CPU worker、I/O、网络存储、tokenizer、请求流量。</li><li>OOM：区分 CPU OOM、GPU OOM、容器 OOM、/dev/shm 不足和 allocator fragmentation。</li><li>checkpoint 慢：看序列化、磁盘吞吐、网络存储、fsync、并发写和 dirty page writeback。</li><li>推理 p99 抖动：拆成排队、batching、CPU 前后处理、GPU 执行、网络、锁竞争、GC、下游依赖。</li></ul>
+<div class="card card-d">
+<h3>训练任务 GPU 利用率突然下降如何排查</h3>
+<ol>
+<li>先确认影响范围：单卡、单机、多机，还是所有卡同时下降。</li>
+<li>看 GPU 指标：SM utilization、显存、PCIe/NVLink、power、temperature、ECC。</li>
+<li>看 CPU 和 DataLoader：worker 是否打满，队列是否为空，上下文切换是否高。</li>
+<li>看 I/O：iostat、网络存储、数据集小文件、page fault、解码耗时。</li>
+<li>看通信：NCCL 日志、网络丢包/拥塞、rank 是否 hang。</li>
+<li>看应用日志和 trace：是否 checkpoint、eval、日志上报、数据增强异常。</li>
+</ol>
+</div>
+<h3>高频问题</h3>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 推理服务 p99 latency 突然升高，你如何定位？</div>
+<div class="qa-a"><p>先按请求链路拆分：入口排队、网络、鉴权/路由、tokenize、batch scheduler、GPU prefill/decode、detokenize、响应写回。再看资源：CPU、GPU、显存、队列长度、batch size、KV cache、网络连接、锁等待和 GC。最后用 trace 对比 p50/p99 请求，定位是哪一段变长。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 进程卡住没有日志，如何分析？</div>
+<div class="qa-a"><p>先用 ps/top 看进程状态，是 R、S、D 还是 zombie；用 strace -p 看是否卡在 futex、read、poll、connect、fsync；用 pstack/gdb 看线程栈；用 lsof/ss 看 fd 和网络连接；用 dmesg 看 OOM、磁盘、驱动错误。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何判断是 CPU 瓶颈、I/O 瓶颈还是网络瓶颈？</div>
+<div class="qa-a"><p>CPU 瓶颈通常表现为 CPU util 高、run queue 长、perf 热点明显；I/O 瓶颈表现为 iowait、磁盘 await/util 高、read/write 慢、major fault 多；网络瓶颈表现为吞吐接近上限、丢包/重传、RTT 增大、socket buffer 堆积。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::15-ai-infra-observability-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::15-ai-infra-observability-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="14"><span class="tab-step-label">上一篇</span><span class="tab-step-title">GPU 系统层</span></button><button type="button" class="tab-step tab-step-next" data-step-target="16"><span class="tab-step-label">下一篇</span><span class="tab-step-title">复习优先级清单</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-os-tabs-panel-16" aria-labelledby="cs-os-tabs-tab-16" data-mid="cs-os-tabs::16-ai-infra-os-priority-checklist-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>复习优先级清单</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>这页是 OS 模块的收束：准备分三层——概念准确（每个机制能说清解决什么问题、原理、性能代价、在训练/推理里怎么体现）、能结合场景分析（GPU 利用率低、DataLoader 慢、OOM、p99 抖动、通信慢怎么排查）、熟悉 top/iostat/perf/nvidia-smi 等工具链。系统排查题用固定模板回答：先界定现象，再分层拆链路，用指标验证假设，最后给优化方案。</p>
+<h2>准备方式与最小复习清单</h2>
+<p>这一页用于最后收束：怎样从概念走到场景分析，面试前最小需要覆盖哪些问题，以及常用工具链。</p>
+<h3>推荐准备方式</h3>
+<div class="card card-s">
+<h3>第一层：概念准确</h3>
+<p>每个模块至少能解释：这个机制解决什么问题；核心原理是什么；有什么性能代价；它在 AI 训练或推理场景中如何体现。</p>
+</div>
+<div class="card card-d">
+<h3>第二层：能结合场景分析</h3>
+<ul>
+<li>GPU 利用率低如何排查。</li>
+<li>DataLoader 很慢如何优化。</li>
+<li>训练任务 OOM 如何定位。</li>
+<li>推理服务 p99 延迟升高如何分析。</li>
+<li>分布式训练通信慢如何定位。</li>
+<li>checkpoint 保存很慢如何优化。</li>
+<li>容器内任务被 OOM kill 如何排查。</li>
+</ul>
+</div>
+<div class="card card-m">
+<h3>第三层：熟悉工具链</h3>
+<pre><code>top / htop
+ps
+free
+vmstat
+iostat
+pidstat
+sar
+ss
+lsof
+strace
+perf
+dmesg
+nvidia-smi</code></pre>
+<p>如果面试偏 Infra 或性能优化，建议进一步了解：</p>
+<pre><code>numactl
+numastat
+ethtool
+tcpdump
+bcc / bpftrace
+nsenter
+cgget / systemd-cgtop</code></pre>
+</div>
+<h3>最小复习清单</h3>
+<ol><li>进程、线程、协程的区别。</li><li>线程同步、死锁、锁竞争。</li><li>虚拟内存、分页、缺页中断、TLB。</li><li>mmap、page cache、copy-on-write。</li><li>Linux OOM 与容器 OOM。</li><li>read/write、mmap、direct I/O 的区别。</li><li>epoll 原理与使用场景。</li><li>CPU load、utilization、iowait、context switch 的含义。</li><li>TCP 三次握手、四次挥手、TIME_WAIT。</li><li>namespace、cgroup、容器资源限制。</li><li>pinned memory、NUMA、PCIe topology 对训练性能的影响。</li><li>GPU 利用率低、服务延迟高、训练 OOM 的排查路径。</li></ol>
+<div class="card card-w">
+<h3>系统排查题回答模板</h3>
+<ol>
+<li><strong>先界定现象</strong>：影响范围、开始时间、是否稳定复现、p50/p99/吞吐/GPU 利用率哪个变坏。</li>
+<li><strong>再分层拆链路</strong>：应用队列、CPU、内存、I/O、网络、GPU、容器限制、下游依赖。</li>
+<li><strong>用指标验证假设</strong>：用 top、pidstat、iostat、ss、strace、perf、nvidia-smi、日志和 trace 逐层收敛。</li>
+<li><strong>最后给优化方案</strong>：调参数、改并发模型、减少拷贝、增加缓存、调整 NUMA/绑核、优化 I/O 格式、扩容或限流。</li>
+</ol>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-os-tabs::16-ai-infra-os-priority-checklist-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-os-tabs::16-ai-infra-os-priority-checklist-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="15"><span class="tab-step-label">上一篇</span><span class="tab-step-title">可观测性与排障</span></button></div></div></article></div></section>
+  </main>
+</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>doctor-study · AI Infra 面试准备</span>
+    <span class="footer-dot">·</span>
+    <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
+  </div>
+</footer>
+<script src="../../../assets/script.js?v=1781510254"></script>
+<script>
+(function(){
+  function syncPrismTheme(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var light = document.getElementById('prism-light');
+    var dark2 = document.getElementById('prism-dark');
+    if(light) light.disabled = dark;
+    if(dark2) dark2.disabled = !dark;
+  }
+  syncPrismTheme();
+  var mo = new MutationObserver(syncPrismTheme);
+  mo.observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncPrismTheme);
+})();
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
+</body>
+</html>

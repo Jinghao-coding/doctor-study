@@ -13,7 +13,14 @@
     {"title": "GPU 集群管理", "href": "pages/ai-infra/cluster-management/index.html"},
     {"title": "性能预测与建模", "href": "pages/ai-infra/performance-prediction/index.html"},
     {"title": "计算机基础", "href": "pages/cs-basics/index.html"},
+    {"title": "操作系统", "href": "pages/cs-basics/os/index.html"},
+    {"title": "计算机组成原理", "href": "pages/cs-basics/computer-architecture/index.html"},
+    {"title": "计算机网络", "href": "pages/cs-basics/networking/index.html"},
+    {"title": "C/C++ 编程", "href": "pages/cs-basics/programming-systems/index.html"},
     {"title": "Go 语言", "href": "pages/cs-basics/golang/index.html"},
+    {"title": "Linux 与容器", "href": "pages/cs-basics/linux-container/index.html"},
+    {"title": "Linux 内核与大模型", "href": "pages/cs-basics/linux-kernel-ai/index.html"},
+    {"title": "分布式 AI 基础", "href": "pages/cs-basics/distributed-ai/index.html"},
     {"title": "AI Agent", "href": "pages/ai-infra/agent/index.html"}
   ],
   "topics": [
@@ -103,9 +110,45 @@
       "slug": "cs-basics",
       "source": "content/cs-basics/topic.json",
       "output": "pages/cs-basics/index.html",
-      "description": "操作系统、计算机网络（TCP/UDP/拥塞控制/QUIC）、C++ 值类别/STL/并发/现代特性、Go 语言、数据结构与算法、AI 框架基础。",
-      "tags": ["cs-basics", "os", "networking", "cpp", "golang"],
+      "description": "计算机基础知识地图入口：操作系统、组成原理、网络、C/C++、Go、容器、Linux内核、分布式AI等8个子模块的导航入口。",
+      "tags": ["cs-basics", "overview", "knowledge-map"],
       "color": "c4"
+    },
+    {
+      "title": "操作系统基础",
+      "slug": "cs-basics/os",
+      "source": "content/cs-basics/os/topic.json",
+      "output": "pages/cs-basics/os/index.html",
+      "description": "进程线程协程、CPU调度、虚拟内存/分页、I/O多路复用（epoll）、死锁、AI Infra系统视角下的并发/内存/I/O/可观测性与面试清单。",
+      "tags": ["os", "linux", "scheduling", "memory", "io", "concurrency"],
+      "color": "c4"
+    },
+    {
+      "title": "计算机组成原理",
+      "slug": "cs-basics/computer-architecture",
+      "source": "content/cs-basics/computer-architecture/topic.json",
+      "output": "pages/cs-basics/computer-architecture/index.html",
+      "description": "CPU存储层次、Cache/TLB/False Sharing、DMA/PCIe/NUMA拓扑、指令集/流水线/分支预测/SIMD、Cache一致性（MESI）、内存模型与中断预取。",
+      "tags": ["computer-architecture", "cpu", "cache", "numa", "pipeline"],
+      "color": "c5"
+    },
+    {
+      "title": "计算机网络基础",
+      "slug": "cs-basics/networking",
+      "source": "content/cs-basics/networking/topic.json",
+      "output": "pages/cs-basics/networking/index.html",
+      "description": "TCP/UDP、HTTP/gRPC/RPC、RDMA/RoCE/IB、滑动窗口与拥塞控制（CUBIC/BBR）、TCP状态机排障、DNS/TLS/QUIC/HTTP3。",
+      "tags": ["networking", "tcp", "udp", "http", "rdma", "quic"],
+      "color": "c1"
+    },
+    {
+      "title": "编程语言与工程基础 (C/C++)",
+      "slug": "cs-basics/programming-systems",
+      "source": "content/cs-basics/programming-systems/topic.json",
+      "output": "pages/cs-basics/programming-systems/index.html",
+      "description": "二进制与编译链接、C++面向对象、内存管理、RAII/智能指针、值类别与移动语义、STL容器深度剖析、并发与内存模型、现代C++(11/14/17/20)特性。",
+      "tags": ["cpp", "binary", "compiler", "memory", "concurrency", "stl"],
+      "color": "c2"
     },
     {
       "title": "Go 语言基础与工程",
@@ -115,6 +158,33 @@
       "description": "GMP 调度模型、M:N 并发、CSP 与 Channel、三色标记 GC、Interface 鸭式类型、error/panic/recover、go modules、pprof 与面试高频题。",
       "tags": ["golang", "gmp", "concurrency", "gc", "interview"],
       "color": "c3"
+    },
+    {
+      "title": "Linux 与容器基础",
+      "slug": "cs-basics/linux-container",
+      "source": "content/cs-basics/linux-container/topic.json",
+      "output": "pages/cs-basics/linux-container/index.html",
+      "description": "环境变量、namespace/cgroup/rootfs容器隔离三件套、Docker/K8s资源模型（requests/limits/QoS）、containerd/CRI/OCI运行时架构。",
+      "tags": ["linux", "container", "docker", "cgroup", "kubernetes"],
+      "color": "c3"
+    },
+    {
+      "title": "Linux 内核与大模型系统",
+      "slug": "cs-basics/linux-kernel-ai",
+      "source": "content/cs-basics/linux-kernel-ai/topic.json",
+      "output": "pages/cs-basics/linux-kernel-ai/index.html",
+      "description": "NUMA绑定与亲和性、cgroups v1/v2与GPU隔离、内存大页(2MB/1GB)与THP透明大页、I/O零拷贝(mmap/Direct I/O/sendfile)与大模型权重加载优化。",
+      "tags": ["linux", "kernel", "numa", "cgroups", "hugepages", "zero-copy"],
+      "color": "c5"
+    },
+    {
+      "title": "分布式与 AI Infra 基础",
+      "slug": "cs-basics/distributed-ai",
+      "source": "content/cs-basics/distributed-ai/topic.json",
+      "output": "pages/cs-basics/distributed-ai/index.html",
+      "description": "分布式训练的Role/Replica/Rank身份模型、NCCL/RPC通信链路与存储数据面、GPU/NPU基础观测命令与指标（SM Active/MFU/MLU）。",
+      "tags": ["distributed", "gpu", "nccl", "observability"],
+      "color": "c1"
     },
     {
       "title": "AI Agent",

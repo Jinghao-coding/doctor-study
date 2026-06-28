@@ -1,39 +1,164 @@
 {
   "title": "操作系统基础",
-  "subtitle": "进程线程协程 · CPU 调度 · 内存/OOM/NUMA · Signal/标准流",
+  "subtitle": "进程线程 · CPU调度 · 内存管理 · I/O多路复用 · 死锁 · AI Infra系统视角",
   "kicker": "CS Basics",
-  "tags": [
-    "os",
-    "linux",
-    "scheduling",
-    "memory"
-  ],
+  "tags": ["os", "linux", "scheduling", "memory", "io", "concurrency"],
   "output": "pages/cs-basics/os/index.html",
+  "goals": [
+    "掌握进程/线程/协程区别与上下文切换开销",
+    "理解虚拟内存、分页、TLB与物理内存映射",
+    "掌握 I/O 多路复用（epoll/select/poll）原理与适用场景",
+    "理解死锁条件与预防/避免/检测/解除策略",
+    "建立 OS 视角分析 AI Infra 系统问题的思维框架"
+  ],
   "layout": [
     {
       "type": "tabs",
       "id": "cs-os-tabs",
       "title": "操作系统基础",
-      "items": [
+      "groups": [
         {
-          "title": "进程、线程、协程",
-          "description": "资源边界、调度主体、上下文切换、并发模型",
-          "file": "01-process-thread-coroutine.md"
+          "title": "OS 核心机制",
+          "items": [
+            {
+              "title": "进程、线程、协程",
+              "description": "资源边界、调度主体、上下文切换、用户态/内核态",
+              "file": "01-process-thread-coroutine.md",
+              "level": "基础",
+              "priority": 3,
+              "time": 10
+            },
+            {
+              "title": "CPU 调度算法",
+              "description": "FIFO/SJF/RR/优先级/CFS、抢占与非抢占、CUDA调度对比",
+              "file": "02-cpu-scheduling.md",
+              "level": "基础",
+              "priority": 3,
+              "time": 12
+            },
+            {
+              "title": "虚拟内存与分页",
+              "description": "页表、TLB、多级页表、页面置换、mmap",
+              "file": "06-virtual-memory-paging.md",
+              "level": "基础",
+              "priority": 3,
+              "time": 12
+            },
+            {
+              "title": "I/O 多路复用",
+              "description": "select/poll/epoll、水平触发/边缘触发、Reactor模式",
+              "file": "05-io-multiplexing.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 15
+            },
+            {
+              "title": "死锁",
+              "description": "死锁四条件、银行家算法、预防/避免/检测/解除",
+              "file": "07-deadlock.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            },
+            {
+              "title": "内存、OOM 与 NUMA",
+              "description": "page cache、swap、OOM Killer、NUMA拓扑",
+              "file": "03-memory-oom-numa.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 8
+            },
+            {
+              "title": "Signal 与标准流",
+              "description": "SIGTERM/SIGKILL、graceful shutdown、stdin/stdout/stderr",
+              "file": "04-signal-stdio.md",
+              "level": "基础",
+              "priority": 1,
+              "time": 5
+            }
+          ]
         },
         {
-          "title": "CPU 调度",
-          "description": "FIFO、SJF、RR、优先级、CFS、抢占与非抢占",
-          "file": "02-cpu-scheduling.md"
+          "title": "AI Infra 系统视角",
+          "items": [
+            {
+              "title": "AI Infra 并发模型",
+              "description": "推理服务多线程/异步/协程、线程池、事件循环",
+              "file": "08-ai-infra-concurrency.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 12
+            },
+            {
+              "title": "AI Infra 内存管理",
+              "description": "权重加载、KV Cache内存、显存/内存协同、内存池",
+              "file": "09-ai-infra-memory.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 12
+            },
+            {
+              "title": "文件系统与 I/O",
+              "description": "Direct I/O、page cache、权重加载路径、零拷贝",
+              "file": "10-ai-infra-file-io.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
+            },
+            {
+              "title": "CPU 性能分析",
+              "description": "perf、火焰图、上下文切换开销、CPU bound定位",
+              "file": "11-ai-infra-cpu-perf.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 10
+            },
+            {
+              "title": "网络与系统调用",
+              "description": "send/recv、epoll、零拷贝、RDMA syscall对比",
+              "file": "12-ai-infra-network-syscall.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 10
+            },
+            {
+              "title": "容器与 cgroup",
+              "description": "cgroup v1/v2、CPU/内存限制、容器隔离对GPU的影响",
+              "file": "13-ai-infra-container-cgroup.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 10
+            },
+            {
+              "title": "GPU 系统层",
+              "description": "CUDA驱动、UVM、MPS/MIG、GPU拓扑与CPU亲和性",
+              "file": "14-ai-infra-gpu-systems.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 12
+            },
+            {
+              "title": "可观测性与排障",
+              "description": "strace/ltrace、ftrace、BPF、系统调用追踪",
+              "file": "15-ai-infra-observability.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 12
+            }
+          ]
         },
         {
-          "title": "内存、OOM 与 NUMA",
-          "description": "虚拟内存、page cache、swap、cgroup、NUMA locality",
-          "file": "03-memory-oom-numa.md"
-        },
-        {
-          "title": "Signal 与标准流",
-          "description": "SIGTERM/SIGKILL、graceful shutdown、stdin/stdout/stderr",
-          "file": "04-signal-stdio.md"
+          "title": "面试收束",
+          "items": [
+            {
+              "title": "复习优先级清单",
+              "description": "OS 高频考点梳理、AI Infra 关联面试题",
+              "file": "16-ai-infra-os-priority-checklist.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 15
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f172a'/><text x='50' y='66' font-size='52' font-weight='800' fill='%23f7f9fb' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif'>DS</text></svg>">
+<title>计算机组成原理 · doctor-study</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
+<link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
+<link rel="stylesheet" href="../../../assets/style.css?v=1782539489">
+</head>
+<body>
+<nav class="topnav">
+<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机基础">基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机基础知识</span><small>cs-basics / overview / knowledge-map</small></a><a href="../../../pages/cs-basics/os/index.html"><span>操作系统基础</span><small>os / linux / scheduling</small></a><a href="../../../pages/cs-basics/computer-architecture/index.html"><span>计算机组成原理</span><small>computer-architecture / cpu / cache</small></a><a href="../../../pages/cs-basics/networking/index.html"><span>计算机网络基础</span><small>networking / tcp / udp</small></a><a href="../../../pages/cs-basics/programming-systems/index.html"><span>编程语言与工程基础 (C/C++)</span><small>cpp / binary / compiler</small></a><a href="../../../pages/cs-basics/golang/index.html"><span>Go 语言基础与工程</span><small>golang / gmp / concurrency</small></a><a href="../../../pages/cs-basics/linux-container/index.html"><span>Linux 与容器基础</span><small>linux / container / docker</small></a><a href="../../../pages/cs-basics/linux-kernel-ai/index.html"><span>Linux 内核与大模型系统</span><small>linux / kernel / numa</small></a><a href="../../../pages/cs-basics/distributed-ai/index.html"><span>分布式与 AI Infra 基础</span><small>distributed / gpu / nccl</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler / etcd</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory / queueing</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与 Agent">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
+</nav>
+<div class="app-shell">
+<aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机基础">基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机基础知识"><span>计算机基础知识</span><small>cs-basics · overview</small></a><a class="side-link" href="../../../pages/cs-basics/os/index.html" data-initial="操作" title="操作系统基础"><span>操作系统基础</span><small>os · linux</small></a><a class="side-link active" href="../../../pages/cs-basics/computer-architecture/index.html" data-initial="计算" title="计算机组成原理"><span>计算机组成原理</span><small>computer-architecture · cpu</small></a><a class="side-link" href="../../../pages/cs-basics/networking/index.html" data-initial="计算" title="计算机网络基础"><span>计算机网络基础</span><small>networking · tcp</small></a><a class="side-link" href="../../../pages/cs-basics/programming-systems/index.html" data-initial="编程" title="编程语言与工程基础 (C/C++)"><span>编程语言与工程基础 (C/C++)</span><small>cpp · binary</small></a><a class="side-link" href="../../../pages/cs-basics/golang/index.html" data-initial="Go" title="Go 语言基础与工程"><span>Go 语言基础与工程</span><small>golang · gmp</small></a><a class="side-link" href="../../../pages/cs-basics/linux-container/index.html" data-initial="Li" title="Linux 与容器基础"><span>Linux 与容器基础</span><small>linux · container</small></a><a class="side-link" href="../../../pages/cs-basics/linux-kernel-ai/index.html" data-initial="Li" title="Linux 内核与大模型系统"><span>Linux 内核与大模型系统</span><small>linux · kernel</small></a><a class="side-link" href="../../../pages/cs-basics/distributed-ai/index.html" data-initial="分布" title="分布式与 AI Infra 基础"><span>分布式与 AI Infra 基础</span><small>distributed · gpu</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与 Agent">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
+  <main class="wrap">
+  <section class="topic-hero"><div class="hero-copy"><div class="hero-kicker">Study Module</div><h1>计算机组成原理</h1><p class="sub">CPU Core · Cache/TLB · 流水线/SIMD · Cache一致性/内存模型 · DMA/PCIe/NUMA</p><div class="hero-tags"><span>computer-architecture</span><span>cpu</span><span>cache</span><span>numa</span><span>pipeline</span><span>simd</span></div></div><div class="hero-goals"><div>理解 CPU 存储层次和 NUMA 拓扑</div><div>掌握 Cache/TLB/False Sharing 与性能优化思路</div><div>了解指令集、流水线、分支预测与 SIMD 对算力的影响</div><div>理解 Cache 一致性（MESI）和内存一致性模型</div><div>理解 DMA/PCIe、中断与硬件预取的工作机制</div></div></section>
+
+<section class="tabs-shell" data-tabs data-tabs-id="cs-arch-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 6</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">计算机组成原理</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="计算机组成原理"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="cs-arch-tabs-tab-1" data-initial="01" data-mid="cs-arch-tabs::01-cpu-memory-hierarchy-md" data-level="基础" title="CPU 与内存层次" aria-controls="cs-arch-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CPU 与内存层次</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 8 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-arch-tabs-tab-2" data-initial="02" data-mid="cs-arch-tabs::02-cache-tlb-md" data-level="基础" title="Cache / TLB / False Sharing" aria-controls="cs-arch-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Cache / TLB / False Sharing</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-arch-tabs-tab-3" data-initial="03" data-mid="cs-arch-tabs::03-dma-pcie-numa-md" data-level="进阶" title="DMA、PCIe 与 NUMA 拓扑" aria-controls="cs-arch-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">DMA、PCIe 与 NUMA 拓扑</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-arch-tabs-tab-4" data-initial="04" data-mid="cs-arch-tabs::04-isa-pipeline-simd-md" data-level="进阶" title="指令集 · 流水线 · 分支预测 · SIMD" aria-controls="cs-arch-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">指令集 · 流水线 · 分支预测 · SIMD</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-arch-tabs-tab-5" data-initial="05" data-mid="cs-arch-tabs::05-cache-coherence-memory-model-md" data-level="精通" title="Cache 一致性（MESI）· 内存模型 · Atomic" aria-controls="cs-arch-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Cache 一致性（MESI）· 内存模型 · Atomic</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="cs-arch-tabs-tab-6" data-initial="06" data-mid="cs-arch-tabs::06-interrupt-io-prefetch-md" data-level="进阶" title="中断 · DMA · 硬件预取 · I/O 亲和性" aria-controls="cs-arch-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">中断 · DMA · 硬件预取 · I/O 亲和性</span><span class="tab-desc"></span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="cs-arch-tabs-panel-1" aria-labelledby="cs-arch-tabs-tab-1" data-mid="cs-arch-tabs::01-cpu-memory-hierarchy-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CPU 与内存层次</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 8 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>CPU 性能不只看核数，更取决于数据离 CPU 有多近：寄存器、L1/L2/L3、本地 DRAM、远端 NUMA 内存延迟逐级放大、带宽逐级降低。很多&quot;CPU 跑满但吞吐上不去&quot;的问题本质是访存受限而非算力不足。</p>
+<div class="card card-m">
+<h3>存储层次金字塔</h3>
+<table><tr><th>层次</th><th>典型容量</th><th>延迟量级</th><th>带宽</th><th>谁管理</th></tr>
+<tr><td>寄存器</td><td>~KB（每 core 几十个）</td><td>1 cycle</td><td>—</td><td>编译器</td></tr>
+<tr><td>L1 Cache（I/D 分离）</td><td>32KB + 32KB / core</td><td>~4 cycles</td><td>&gt;1TB/s</td><td>硬件</td></tr>
+<tr><td>L2 Cache</td><td>256KB–2MB / core</td><td>~12 cycles</td><td>~500GB/s</td><td>硬件</td></tr>
+<tr><td>L3 Cache（LLC）</td><td>数 MB–数百 MB / socket</td><td>~40 cycles</td><td>~100GB/s</td><td>硬件，多 core 共享</td></tr>
+<tr><td>本地 DRAM</td><td>几十 GB–几 TB / socket</td><td>~100ns（~300 cycles）</td><td>~50–100GB/s（DDR5）</td><td>OS（虚拟内存）</td></tr>
+<tr><td>远端 NUMA DRAM</td><td>其他 socket</td><td>~200ns（1.5–2x）</td><td>~30–50% 本地带宽</td><td>OS + 硬件互联</td></tr></table>
+</div>
+<div class="card card-s">
+<h3>关键规律</h3>
+<ul>
+<li><strong>越靠近 CPU：</strong>容量越小、延迟越低、带宽越高、成本/bit 越高</li>
+<li><strong>延迟差 100x：</strong>L1（1ns）到 DRAM（~100ns），相当于从书桌到楼下超市取东西</li>
+<li><strong>带宽差 20x：</strong>L1（&gt;1TB/s）到 DRAM（~50GB/s）</li>
+<li><strong>NUMA 惩罚：</strong>跨 socket 访问延迟增加 50–100%，带宽下降 30–50%</li>
+</ul>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么加了核数吞吐反而下降？</div>
+<div class="qa-a"><p>可能的原因（从硬件到系统）：</p>
+<ul>
+<li><strong>Cache 污染：</strong>多线程共享 L3，工作集挤掉彼此的热数据</li>
+<li><strong>False sharing：</strong>独立变量落在同一 cache line（见 Cache/TLB 章节）</li>
+<li><strong>内存带宽饱和：</strong>所有 core 同时打 DRAM，带宽成为瓶颈</li>
+<li><strong>NUMA 远端访问：</strong>线程被调度到远端 socket</li>
+<li><strong>锁竞争 / 上下文切换：</strong>软件层面串行化</li>
+</ul>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 怎么判断程序是算力瓶颈还是访存瓶颈？</div>
+<div class="qa-a"><p>几个快速判断方法：</p>
+<ul>
+<li><code>perf stat</code> 看 <strong>IPC（instructions per cycle）</strong>：高 IPC（&gt;1）说明算力用满了；低 IPC（<0.5）通常是访存/分支等待</li>
+<li><strong>Cache miss rate：</strong>L1/L2/LLC miss 高 → 访存瓶颈</li>
+<li><strong>Roofline 模型：</strong>计算 Operational Intensity（FLOPs/Byte），看落在算力拐点左侧还是右侧（见性能预测 / Roofline 章节）</li>
+<li><strong>缩数据实验：</strong>把工作集缩到 L3 以内，如果吞吐飙升 → 原先是 DRAM 带宽瓶颈</li>
+</ul>
+</div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::01-cpu-memory-hierarchy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::01-cpu-memory-hierarchy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Cache / TLB / False Sharing</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-arch-tabs-panel-2" aria-labelledby="cs-arch-tabs-tab-2" data-mid="cs-arch-tabs::02-cache-tlb-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Cache / TLB / False Sharing</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>Cache 和 TLB 都是&quot;用空间换时间&quot;：Cache 缓存数据/指令，TLB 缓存虚拟地址→物理地址的翻译结果。两者都依赖程序的局部性（时间局部性+空间局部性），高性能代码的本质是写出对 Cache 和 TLB 友好的访问模式。</p>
+<div class="card card-m">
+<h3>Cache 工作机制</h3>
+<table><tr><th>概念</th><th>一句话</th><th>面试关键词</th></tr>
+<tr><td>Cache Line</td><td>缓存的最小单位，x86 典型 64 字节</td><td>64B、spatial locality、对齐</td></tr>
+<tr><td>映射方式</td><td>直接映射 / N 路组相联 / 全相联</td><td>现代 CPU 多为 N-way set associative</td></tr>
+<tr><td>写策略</td><td>Write-through（直写）vs Write-back（回写）</td><td>现代 L1/L2/L3 多用 write-back + write-allocate</td></tr>
+<tr><td>包含策略</td><td>Inclusive（L3 包含 L2）vs Exclusive / NINE</td><td>Intel 多用 inclusive，AMD Zen 多用 non-inclusive</td></tr>
+<tr><td>时间局部性</td><td>刚访问的数据很快再次访问</td><td>循环变量、热路径代码</td></tr>
+<tr><td>空间局部性</td><td>相邻地址的数据很快被访问</td><td>数组顺序遍历比链表快</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>TLB：地址翻译缓存</h3>
+<ul>
+<li><strong>作用：</strong>缓存虚拟页→物理页帧（PFN）映射，避免每次访存都查多级页表</li>
+<li><strong>层级：</strong>L1 ITLB/DTLB（每 core，小而快）→ L2 TLB（shared，更大）</li>
+<li><strong>Page size：</strong>4KB 常规页；2MB/1GB 大页（HugePage）减少 TLB entry 数量</li>
+<li><strong>TLB Miss 代价：</strong>页表遍历（page walk）需多次访存（x86 4级页表≈4次DRMA访问），~100–200 cycles</li>
+</ul>
+</div>
+<div class="card card-w">
+<h3>False Sharing（伪共享）</h3>
+<p><strong>现象：</strong>多线程修改逻辑独立的变量，但它们落在同一 64B cache line 上 → cache coherence 协议在 core 间反复 invalidate + transfer → 实际变成串行访问。</p>
+<p><strong>检测：</strong><code>perf c2c</code>（cache-to-cache）定位热点 cache line。</p>
+<p><strong>解决：</strong></p>
+<ul>
+<li>Padding：在变量间填充字节，让它们落在不同 cache line</li>
+<li><code>alignas(64)</code>：C++11 标准属性按 cache line 对齐</li>
+<li>线程本地分片：每线程独立计数，最后汇总</li>
+<li>减少共享写：共享读无问题，共享写才会触发 coherence traffic</li>
+</ul>
+</div>
+<div class="card card-d">
+<h3>写友好代码的原则</h3>
+<table><tr><th>原则</th><th>做法</th><th>反例</th></tr>
+<tr><td>顺序访问</td><td>数组行优先遍历</td><td>列优先遍历（cache miss 暴增）</td></tr>
+<tr><td>数据对齐</td><td>结构体按 cache line 对齐热点字段</td><td>跨 cache line 的未对齐访问</td></tr>
+<tr><td>减小工作集</td><td>分块（tiling/blocking）处理大矩阵</td><td>对整个大矩阵随机访问</td></tr>
+<tr><td>用大页</td><td>2MB HugePage 减少 TLB miss</td><td>随机访问大内存用 4KB 页</td></tr>
+<tr><td>避免 false sharing</td><td>Padding + thread-local</td><td>多个线程写相邻的计数器</td></tr>
+</table>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么遍历数组比链表快？</div>
+<div class="qa-a"><p>数组元素在内存中连续存放，遍历时 cache 每次 miss 会预取后续 64B（一个 cache line 含 ~8 个 8 字节元素），空间局部性好。链表节点分散在堆中，每次访问几乎都 cache miss，还可能造成 TLB miss。实测差距可达 10–50x。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: HugePage 为什么能提升性能？</div>
+<div class="qa-a"><p>以 2MB 大页 vs 4KB 常规页为例：2MB = 512 × 4KB，同样的虚拟地址范围需要的 TLB entry 数减少到 1/512。大内存随机访问场景（如大模型 KV cache、数据库 buffer pool）TLB miss 率显著下降。1GB 大页更激进，但需预留连续物理内存，适合长期运行的大进程。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::02-cache-tlb-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::02-cache-tlb-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CPU 与内存层次</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">DMA、PCIe 与 NUMA 拓扑</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-arch-tabs-panel-3" aria-labelledby="cs-arch-tabs-tab-3" data-mid="cs-arch-tabs::03-dma-pcie-numa-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>DMA、PCIe 与 NUMA 拓扑</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>DMA、PCIe 和 NUMA 共同决定了数据在 CPU、GPU、NIC、NVMe 之间「怎么走、走多快」：DMA 让设备绕过 CPU 搬数据，PCIe 是设备互联的带宽上限，NUMA 决定设备和内存的亲和距离——AI Infra 里大量性能问题不是 GPU 不够快，而是数据到 GPU 的路径太差。</p>
+<div class="card card-m"><h3>DMA、PCIe 与 NUMA 拓扑</h3><p>DMA 允许设备绕过 CPU 直接读写内存；PCIe 是 CPU、GPU、NIC、NVMe 等设备的主要互联；NUMA 决定 CPU、内存、GPU、NIC 之间的亲和关系。</p></div>
+<div class="card card-d"><h3>AI Infra 为什么关心这些</h3><table><tr><th>概念</th><th>影响</th><th>典型场景</th></tr><tr><td>DMA</td><td>降低 CPU copy 开销</td><td>GPU copy、RDMA、NVMe 数据加载</td></tr><tr><td>PCIe</td><td>限制 host-device 带宽</td><td>CPU 到 GPU 数据搬运</td></tr><tr><td>NUMA locality</td><td>影响 CPU-GPU/NIC 距离</td><td>数据加载线程应靠近目标 GPU/NIC</td></tr><tr><td>GPU-NIC affinity</td><td>影响 RDMA/NCCL 性能</td><td>跨节点 AllReduce</td></tr></table></div>
+<div class="card card-s">
+<h3>设备路径怎么读</h3>
+<p>在一台多 Socket 服务器里，GPU、NIC、NVMe 通常挂在不同 PCIe switch 或 root complex 下。路径越短、越少跨 Socket，延迟越低、带宽越稳定。AI Infra 里常见的性能问题不是“GPU 不够快”，而是数据从 CPU、NIC 或另一张 GPU 到目标 GPU 的路径太差。</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-index">01</div><div class="flow-title">同 PCIe switch</div><div class="flow-desc">GPU-GPU P2P 或 GPU-NIC 路径较短</div></div>
+<div class="flow-step"><div class="flow-index">02</div><div class="flow-title">同 Socket / 同 NUMA</div><div class="flow-desc">CPU 线程、内存页、GPU、NIC 亲和性较好</div></div>
+<div class="flow-step"><div class="flow-index">03</div><div class="flow-title">跨 Socket</div><div class="flow-desc">经过 CPU interconnect，延迟和抖动上升</div></div>
+<div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Host staging</div><div class="flow-desc">P2P/GDR 不可用时经 CPU pinned memory 中转，代价最高</div></div>
+</div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: 为什么 GPU 训练要看 <code>nvidia-smi topo -m</code>？</div><div class="qa-a"><p>它能显示 GPU-GPU、GPU-NIC、GPU-CPU 的拓扑关系。张量并行、NCCL、RDMA 和数据加载都受拓扑影响；同样 8 张 GPU，NVLink 内互联和跨 PCIe/跨节点性能差异很大。</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::03-dma-pcie-numa-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::03-dma-pcie-numa-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Cache / TLB / False Sharing</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">指令集 · 流水线 · 分支预测 · SIMD</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-arch-tabs-panel-4" aria-labelledby="cs-arch-tabs-tab-4" data-mid="cs-arch-tabs::04-isa-pipeline-simd-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>指令集 · 流水线 · 分支预测 · SIMD</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>现代 CPU 通过指令级并行（ILP）提升单线程性能：流水线让多条指令重叠执行，多发射（superscalar）让每个 cycle 发射多条指令，SIMD 让一条指令处理多个数据。AI 推理/训练框架中的向量化算子（GEMM、Attention）本质是在充分利用 SIMD 和流水线。</p>
+<div class="card card-m">
+<h3>指令集基础</h3>
+<table><tr><th>维度</th><th>CISC（x86）</th><th>RISC（ARM/RISC-V）</th></tr>
+<tr><td>设计理念</td><td>复杂指令，一条指令做更多事</td><td>简单定长指令，硬件高效执行</td></tr>
+<tr><td>指令长度</td><td>变长（1–15 字节）</td><td>定长（ARM 32bit / Thumb 16bit）</td></tr>
+<tr><td>寄存器数量</td><td>16 个 GPR（x86-64）</td><td>32 个 GPR（ARM64/RISC-V）</td></tr>
+<tr><td>代表</td><td>Intel/AMD 服务器/桌面</td><td>手机/嵌入式/Apple M系列/昇腾</td></tr>
+<tr><td>AI Infra 场景</td><td>主流训练/推理服务器</td><td>边缘推理、Apple Silicon、自研芯片</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>流水线（Pipelining）</h3>
+<ul>
+<li><strong>经典 5 级流水线：</strong>取指（IF）→ 译码（ID）→ 执行（EX）→ 访存（MEM）→ 写回（WB）</li>
+<li><strong>理想 CPI = 1：</strong>每个 cycle 完成一条指令（但实际被冒险打断）</li>
+<li><strong>三类冒险：</strong>
+  <ul>
+    <li><strong>结构冒险：</strong>硬件资源冲突（如同一周期争用 ALU）→ 增加硬件资源/流水线停顿</li>
+    <li><strong>数据冒险：</strong>指令间依赖（RAW/WAR/WAW）→ 旁路（forwarding/bypass）、流水线停顿</li>
+    <li><strong>控制冒险：</strong>分支/跳转目标不确定 → 分支预测、延迟槽、预取</li>
+  </ul>
+</li>
+<li><strong>超流水线：</strong>级数更深（如 Pentium 4 有 31 级），提升频率但分支误判代价更高</li>
+<li><strong>超标量（Superscalar）：</strong>每 cycle 发射多条指令到多个执行单元，现代 x86 可 4–6 发射</li>
+<li><strong>乱序执行（OoO）：</strong>不按程序序发射，按数据就绪顺序执行，隐藏延迟（ROB、保留站）</li>
+</ul>
+</div>
+<div class="card card-d">
+<h3>分支预测（Branch Prediction）</h3>
+<ul>
+<li><strong>为什么重要：</strong>误判一次分支意味着清空流水线，代价 10–20 cycles</li>
+<li><strong>静态预测：</strong>编译器提示（如 __builtin_expect）、总是向后跳转（循环）</li>
+<li><strong>动态预测：</strong>
+  <ul>
+    <li>1-bit / 2-bit 饱和计数器：记录分支历史方向</li>
+    <li>（GShare/Perceptron）：结合全局/局部历史，现代预测准确率 &gt;95%</li>
+    <li>BTB（Branch Target Buffer）：预测跳转目标地址</li>
+    <li>RAS（Return Address Stack）：预测函数返回地址</li>
+  </ul>
+</li>
+<li><strong>AI Infra 启发：</strong>写 if-else 时让高频路径走进分支（如常见输入走 then），减少误判；unlikely/likely 宏提示编译器</li>
+</ul>
+</div>
+<div class="card card-w">
+<h3>SIMD：单指令多数据</h3>
+<p>一条指令同时处理多个数据元素，是 CPU 上向量化计算的基础。</p>
+<table><tr><th>指令集</th><td>架构</td><td>宽度</td><td>典型用途</td></tr>
+<tr><td>SSE / SSE2/3/4</td><td>x86</td><td>128 bit（4×float 或 2×double）</td><td>早期向量化</td></tr>
+<tr><td>AVX / AVX2</td><td>x86</td><td>256 bit（8×float）</td><td>主流 CPU GEMM 内核</td></tr>
+<tr><td>AVX-512</td><td>x86（Xeon）</td><td>512 bit（16×float）</td><td>HPC、部分推理场景</td></tr>
+<tr><td>NEON</td><td>ARM/ARM64</td><td>128 bit</td><td>移动端/边缘推理</td></tr>
+<tr><td>SVE / SVE2</td><td>ARMv8/v9</td><td>可变长度（128–2048 bit）</td><td>HPC、富岳/AWS Graviton</td></tr>
+<tr><td>AMX（Advanced Matrix Extensions）</td><td>Intel Sapphire Rapids+</td><td>tile 矩阵运算</td><td>CPU 上的矩阵乘加速</td></tr>
+</table>
+<p><strong>GPU 对应：</strong>CUDA 的 warp 单指令多线程（SIMT）本质是 SIMD 的扩展；Tensor Core 做的是矩阵 tile 运算，和 CPU AMX 同类。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么循环展开（loop unrolling）能加速？</div>
+<div class="qa-a"><p>三个原因：(1) 减少循环控制指令（比较+跳转）的比例，分支预测压力小；(2) 展开后指令调度器能看到更多独立指令，填充流水线发射槽，提升 IPC；(3) 给编译器更多机会做 SIMD 向量化。但过度展开会增加代码 size，导致 I-cache 压力。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 分支误判（branch misprediction）代价有多大？怎么优化？</div>
+<div class="qa-a"><p>现代 OoO 处理器流水线深 10–20 级，误判需清空流水线重新取指，代价约 10–20 cycles。高频 if-else 中误判率 20% 就会让 IPC 大幅下降。优化方法：</p><ul><li><strong>减少分支：</strong>用条件移动（CMOV）替代短 if-else</li><li><strong>排序数据：</strong>先按条件排序让同一分支集中（如 partition 数据）</li><li><strong>likely/unlikely 宏：</strong>给编译器静态预测提示</li><li><strong>查表/分支表：</strong>switch 跳转表替代多分支</li><li><strong>向量化：</strong>SIMD 用 blend/mask 指令无分支处理</li></ul></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::04-isa-pipeline-simd-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::04-isa-pipeline-simd-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">DMA、PCIe 与 NUMA 拓扑</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Cache 一致性（MESI）· 内存模型 · Atomic</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-arch-tabs-panel-5" aria-labelledby="cs-arch-tabs-tab-5" data-mid="cs-arch-tabs::05-cache-coherence-memory-model-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Cache 一致性（MESI）· 内存模型 · Atomic</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>多核 CPU 中每个 core 有私有的 L1/L2，共享 L3，必然面临 cache coherence（缓存一致性）问题：MESI 协议保证各 core 看到一致的数据。但一致性不等于顺序性，CPU 和编译器都会重排指令，多线程编程必须靠内存屏障和 atomic 保证顺序。</p>
+<div class="card card-m">
+<h3>Cache Coherence：MESI 协议</h3>
+<p>每个 cache line 处于四种状态之一：</p>
+<table><tr><th>状态</th><th>全称</th><th>含义</th></tr>
+<tr><td><strong>M</strong>odified</td><td>已修改</td><td>本 core 独有，且被修改（脏），写回前其他 core 不能读</td></tr>
+<tr><td><strong>E</strong>xclusive</td><td>独占</td><td>本 core 独有，且和内存一致（干净）</td></tr>
+<tr><td><strong>S</strong>hared</td><td>共享</td><td>多个 core 都有副本，和内存一致（干净）</td></tr>
+<tr><td><strong>I</strong>nvalid</td><td>无效</td><td>该 cache line 无效/不存在</td></tr>
+</table>
+<ul>
+<li><strong>读请求：</strong>如果本地是 I，向总线发 Read，其他 core 或内存响应；根据是否有其他 core 持有进入 S 或 E</li>
+<li><strong>写请求：</strong>必须先获得所有权（Read For Ownership），向其他 core 发 Invalidate，其他 core 置 I；写后进入 M</li>
+<li><strong>核间通信：</strong>通过 invalidate/response 消息（Ring Bus / Mesh 网络）维护一致性</li>
+</ul>
+<p>MESIF（Intel）/ MOESI（AMD）在 MESI 基础上增加 F（Forward）/ O（Owned）优化共享数据转发。</p>
+</div>
+<div class="card card-w">
+<h3>伪共享与 Coherence Traffic</h3>
+<ul>
+<li>多 core 同时写同一 cache line → 反复 Invalidate + 重新获取所有权 → cache line 在 core 间&quot;弹跳&quot;</li>
+<li><strong>现象：</strong>CPU 利用率高但吞吐上不去</li>
+<li><strong>perf 观测：</strong><code>perf stat -e cache-misses,mem_load_retired.l3_miss</code>，或 <code>perf c2c</code>（cache-to-cache）</li>
+</ul>
+</div>
+<div class="card card-s">
+<h3>内存一致性模型</h3>
+<p>Cache coherence 保证&quot;所有 core 最终看到相同的值&quot;，但不保证&quot;看到的顺序&quot;。</p>
+<table><tr><th>模型</th><th>含义</th><th>代表架构</th></tr>
+<tr><td>SC（Sequential Consistency）</td><td>所有 core 的读写像按某个全局顺序执行</td><td>理想模型，无硬件实现</td></tr>
+<tr><td>TSO（Total Store Order）</td><td>Store 按序、Store→Load 可能重排（允许 Store Buffer）</td><td><strong>x86</strong>（最强内存模型）</td></tr>
+<tr><td>弱内存模型（Weak/Relaxed）</td><td>Load/Store 可随意重排，需显式屏障</td><td>ARM、RISC-V、PowerPC、GPU（PTX）</td></tr>
+</table>
+<p><strong>x86-TSO 下的重排规则：</strong>本质上只有 StoreLoad 重排（写后读可能越过写），其他三种（LoadLoad、LoadStore、StoreStore）都是保序的。所以 x86 只需要 <code>mfence</code>（或 <code>lock</code> 前缀指令）作为完整屏障。</p>
+</div>
+<div class="card card-d">
+<h3>内存屏障与 C++ Atomic</h3>
+<table><tr><th>屏障</th><th>作用</th><th>典型场景</th></tr>
+<tr><td>Write memory barrier（smp_wmb）</td><td>保证屏障前的写先于屏障后的写</td><td>发布数据（先写数据，再写 ready 标志）</td></tr>
+<tr><td>Read memory barrier（smp_rmb）</td><td>保证屏障前的读先于屏障后的读</td><td>依赖读取（先读 ready 标志，再读数据）</td></tr>
+<tr><td>Full memory barrier（smp_mb）</td><td>双向全屏障</td><td>StoreLoad 重排防护</td></tr>
+</table>
+<p>C++ <code>std::atomic</code> 提供 6 种 memory order：</p>
+<ul>
+<li><code>memory_order_seq_cst</code>：顺序一致（最强，默认）</li>
+<li><code>memory_order_acq_rel</code>：Acquire-Release（用于 CAS）</li>
+<li><code>memory_order_acquire</code>：读侧屏障（后续读不越过）</li>
+<li><code>memory_order_release</code>：写侧屏障（前面写不越过）</li>
+<li><code>memory_order_consume</code>：数据依赖序（极少使用，多数编译器升级为 acquire）</li>
+<li><code>memory_order_relaxed</code>：无顺序保证（只保证原子性），用于计数器</li>
+</ul>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MESI 能解决多线程可见性问题吗？为什么还需要 volatile / atomic？</div>
+<div class="qa-a"><p><strong>不能完全解决。</strong>MESI 保证 cache 一致性（最终所有 core 看到一致值），但存在两个问题：(1) <strong>Store Buffer</strong>：core 写数据先放入 store buffer，立即继续执行后续指令，其他 core 此时看不到新值——这是 x86 TSO 允许 StoreLoad 重排的根源；(2) <strong>Load Buffer</strong>：乱序执行让读操作可能提前执行。<code>volatile</code> 只保证编译器不优化掉访问（不重排、不缓存到寄存器），但不插入 CPU 内存屏障；<code>atomic</code> 同时约束编译器和 CPU。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 ARM 上的无锁代码比 x86 更容易出 bug？</div>
+<div class="qa-a"><p>x86 是 TSO（强内存模型），硬件帮你保证了 LoadLoad/LoadStore/StoreStore 顺序，只有 StoreLoad 一种重排，很多&quot;错误&quot;的代码在 x86 上碰巧能跑。ARM/RISC-V 是弱内存模型，四种重排都可能发生，必须用正确的 memory order（acquire/release）才能保证正确性。C++ atomic 如果都用 seq_cst 是可移植的，但性能差；精细调优时要用对 acq/rel。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::05-cache-coherence-memory-model-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::05-cache-coherence-memory-model-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">指令集 · 流水线 · 分支预测 · SIMD</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">中断 · DMA · 硬件预取 · I/O 亲和性</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="cs-arch-tabs-panel-6" aria-labelledby="cs-arch-tabs-tab-6" data-mid="cs-arch-tabs::06-interrupt-io-prefetch-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>中断 · DMA · 硬件预取 · I/O 亲和性</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<p>CPU 和外设（磁盘、网卡、GPU）的交互方式经历了从轮询→中断→DMA 的演进，核心目标是让 CPU 少等 I/O。AI 训练/推理中 GPU 通过 DMA（PCIe）直接访问 Host 内存，NIC 通过 RDMA 直接写 GPU 显存（GPUDirect RDMA），都是为了绕开 CPU 减少数据拷贝。</p>
+<div class="card card-m">
+<h3>I/O 方式演进</h3>
+<table><tr><th>方式</th><th>原理</th><th>CPU 参与</th><th>适用场景</th></tr>
+<tr><td>轮询（PIO / Programmed I/O）</td><td>CPU 不断读设备状态寄存器</td><td>极高（CPU 100% 忙等）</td><td>早期简单设备、低延迟专用场景（DPDK 轮询模式）</td></tr>
+<tr><td>中断驱动 I/O</td><td>设备准备好后发中断，CPU 响应处理</td><td>低（等待时 CPU 可做别的事）</td><td>键盘、磁盘、低吞吐网络</td></tr>
+<tr><td>DMA</td><td>DMA 控制器（或设备自身作为 bus master）直接在设备和内存间搬数据</td><td>仅启动和收尾（初始化 DMA 描述符）</td><td>网卡、GPU、SSD、高性能存储</td></tr>
+</table>
+</div>
+<div class="card card-s">
+<h3>DMA 工作流程（以网卡收包为例）</h3>
+<ol>
+<li><strong>初始化：</strong>驱动在内存中分配环形缓冲区（RX ring），将 buffer 物理地址写入网卡 DMA 描述符</li>
+<li><strong>收包：</strong>网卡收到数据包，通过 DMA 直接写入 RX ring 的 buffer（不需 CPU 参与）</li>
+<li><strong>通知：</strong>网卡发中断（或 NAPI 轮询模式下中断触发后轮询）通知 CPU 有包可处理</li>
+<li><strong>处理：</strong>CPU（内核协议栈 / DPDK 用户态轮询）读取 buffer 处理数据</li>
+<li><strong>归还：</strong>buffer 处理完后还给驱动，重新挂到 RX ring</li>
+</ol>
+<p><strong>GPU DMA：</strong>GPU 通过 PCIe 直接访问 Host 内存（cudaMemcpy 等），GPUDirect P2P 允许 GPU↔GPU 或 GPU↔NIC 直接传输不经过 Host 内存。</p>
+</div>
+<div class="card card-d">
+<h3>中断与上下文切换</h3>
+<ul>
+<li><strong>中断处理分两部分：</strong>
+  <ul>
+    <li><strong>上半部（HardIRQ）：</strong>立即响应，关中断，做最紧急的事（如从 NIC 取数据），必须快</li>
+    <li><strong>下半部（SoftIRQ / tasklet / workqueue）：</strong>开中断，延迟处理重活（如协议栈解析）</li>
+  </ul>
+</li>
+<li><strong>中断亲和性（IRQ Affinity）：</strong>将中断绑定到特定 CPU core，避免跨核 cache miss；高性能场景下每个 RX 队列中断绑一个 core（RSS + RPS/RFS）</li>
+<li><strong>中断风暴：</strong>高吞吐下中断过于频繁，CPU 全在处理中断来不及干活 → NAPI（New API）：中断触发后切换到轮询，一次性处理多个包后再开中断</li>
+<li><strong>DPDK/SPDK：</strong>完全绕过内核中断，用户态轮询驱动（PMD），零中断零拷贝，极低延迟但占满 CPU</li>
+</ul>
+</div>
+<div class="card card-w">
+<h3>Hardware Prefetching（硬件预取）</h3>
+<p>CPU 检测内存访问模式，提前把数据加载到 cache，减少 cache miss。</p>
+<ul>
+<li><strong>Stream prefetcher：</strong>检测顺序访问（步长固定），向前预取多个 cache line（最常见）</li>
+<li><strong>Stride prefetcher：</strong>检测固定步长（如每 4 个元素访问一个）</li>
+<li><strong>NL prefetcher（Next-line）：</strong>总是预取下一个 cache line</li>
+<li><strong>IP-based / Delta prefetcher：</strong>按 PC 历史记录预取</li>
+<li><strong>局限性：</strong>预取只对规则访问有效；随机访问（链表、哈希表）无法预取；预取过度会污染 cache</li>
+<li><strong>软件预取：</strong><code>__builtin_prefetch(&amp;x)</code> / <code>PREFETCHT0</code> 指令手动提示 CPU 提前加载，对不规则但可预测的访问有帮助（如 B-Tree 遍历）</li>
+</ul>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 DPDK 要轮询而不用中断？</div>
+<div class="qa-a"><p>线速 100Gbps 下，一个 64 字节小包每 6.7ns 就到达一个，中断频率 ~148Mpps，中断处理开销（上下文切换 + cache miss + 中断路由）远超轮询。DPDK 采用用户态 PMD 轮询模式：(1) 绕过内核，零 syscall 开销；(2) 大页 + 物理地址连续内存减少 TLB miss；(3) 每个 core 独占一个 RX 队列，无锁；(4) 轮询模式没有中断延迟。代价是 CPU 100% 占用，但在低延迟/高吞吐场景这是可接受的 tradeoff。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: NUMA、PCIe 拓扑和 GPU/NIC 亲和性是什么关系？</div>
+<div class="qa-a"><p>在多路服务器上，PCIe 插槽直接挂在特定 socket（NUMA node）上。GPU 和 NIC 如果在同一个 socket 上，它们之间 DMA 通过本地 PCIe root complex，延迟低、带宽高；跨 socket 则必须走 UPI/QPI 链路，延迟增加、带宽受互联带宽限制。AI 训练多机多卡场景中：GPU 直接接在 CPU0 socket 的 PCIe 上，NIC 最好也插在 CPU0 上，GPUDirect RDMA 才能走最短路径。<code>nvidia-smi topo -m</code> 和 <code>lstopo</code> 可以查看拓扑。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="cs-arch-tabs::06-interrupt-io-prefetch-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="cs-arch-tabs::06-interrupt-io-prefetch-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Cache 一致性（MESI）· 内存模型 · Atomic</span></button></div></div></article></div></section>
+  </main>
+</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>doctor-study · AI Infra 面试准备</span>
+    <span class="footer-dot">·</span>
+    <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
+  </div>
+</footer>
+<script src="../../../assets/script.js?v=1781510254"></script>
+<script>
+(function(){
+  function syncPrismTheme(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var light = document.getElementById('prism-light');
+    var dark2 = document.getElementById('prism-dark');
+    if(light) light.disabled = dark;
+    if(dark2) dark2.disabled = !dark;
+  }
+  syncPrismTheme();
+  var mo = new MutationObserver(syncPrismTheme);
+  mo.observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncPrismTheme);
+})();
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
+</body>
+</html>

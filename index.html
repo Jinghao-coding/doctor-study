@@ -54,12 +54,12 @@
     </div>
     <div class="idx-hero-stats" aria-label="站点内容概览">
       <div class="stat-item">
-        <strong>12</strong>
+        <strong>19</strong>
         <span>学习主题</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat-item">
-        <strong>109</strong>
+        <strong>149</strong>
         <span>知识模块</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
@@ -77,22 +77,118 @@
 </section>
 
 <section class="idx-lanes" id="study-tracks" aria-label="5 条复习主线">
-  <article><span>01</span><h3>计算机基础</h3><p>操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。</p><div class="idx-lane-links">计算机基础知识</div></article>
+  <article><span>01</span><h3>计算机基础</h3><p>操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。</p><div class="idx-lane-links">计算机基础知识 / 操作系统基础 / 计算机组成原理 / 计算机网络基础 / 编程语言与工程基础 (C/C++) / Go 语言基础与工程 / Linux 与容器基础 / Linux 内核与大模型系统 / 分布式与 AI Infra 基础</div></article>
 <article><span>02</span><h3>AI Infra 核心系统</h3><p>从 Transformer、GPU/CUDA 到算力资源模型，建立大模型系统最核心的硬件与模型执行直觉。</p><div class="idx-lane-links">GPU 硬件与资源共享 / Transformer 与大模型基础</div></article>
 <article><span>03</span><h3>调度与集群</h3><p>任务调度理论、Kubernetes 与 GPU 集群管理，覆盖多租户、拓扑、队列和稳定性治理。</p><div class="idx-lane-links">Kubernetes 核心 / 任务调度理论 / GPU 集群管理</div></article>
 <article><span>04</span><h3>推理 / 训练 / 性能</h3><p>LLM 推理、分布式训练与性能预测建模，聚焦吞吐、延迟、显存、通信和容量判断。</p><div class="idx-lane-links">LLM 推理系统 / 分布式训练 / 性能预测与建模</div></article>
 <article><span>05</span><h3>论文项目与 Agent</h3><p>论文工作和 Agent 工程表达，服务自我介绍、项目深挖和高频追问；综合设计题已归入各专题专栏。</p><div class="idx-lane-links">论文工作 / AI Agent</div></article>
 </section>
 
-<section class="idx-track" aria-label="计算机基础"><div class="idx-track-head"><span>Foundation</span><h2>计算机基础</h2><p>操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。</p></div><div class="idx-track-cards"><a class="idx-card c4" href="pages/cs-basics/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/index.html#cs-basics-tabs" data-progress-total="8">
+<section class="idx-track" aria-label="计算机基础"><div class="idx-track-head"><span>Foundation</span><h2>计算机基础</h2><p>操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。</p></div><div class="idx-track-cards"><a class="idx-card c4" href="pages/cs-basics/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/index.html#tabs" data-progress-total="0">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 0</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">计算机基础知识</div>
+  <div class="idx-desc">计算机基础知识地图入口：操作系统、组成原理、网络、C/C++、Go、容器、Linux内核、分布式AI等8个子模块的导航入口。</div>
+  <div class="idx-tags" aria-label="标签"><span>cs-basics</span><span>overview</span><span>knowledge-map</span></div>
+</a>
+
+
+<a class="idx-card c4" href="pages/cs-basics/os/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/os/index.html#cs-os-tabs" data-progress-total="16">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 16</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">操作系统基础</div>
+  <div class="idx-desc">进程线程协程、CPU调度、虚拟内存/分页、I/O多路复用（epoll）、死锁、AI Infra系统视角下的并发/内存/I/O/可观测性与面试清单。</div>
+  <div class="idx-tags" aria-label="标签"><span>os</span><span>linux</span><span>scheduling</span><span>memory</span><span>io</span><span>concurrency</span></div>
+</a>
+
+
+<a class="idx-card c5" href="pages/cs-basics/computer-architecture/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/computer-architecture/index.html#cs-arch-tabs" data-progress-total="6">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 6</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">计算机组成原理</div>
+  <div class="idx-desc">CPU存储层次、Cache/TLB/False Sharing、DMA/PCIe/NUMA拓扑、指令集/流水线/分支预测/SIMD、Cache一致性（MESI）、内存模型与中断预取。</div>
+  <div class="idx-tags" aria-label="标签"><span>computer-architecture</span><span>cpu</span><span>cache</span><span>numa</span><span>pipeline</span></div>
+</a>
+
+
+<a class="idx-card c1" href="pages/cs-basics/networking/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/networking/index.html#cs-network-tabs" data-progress-total="6">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 6</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">计算机网络基础</div>
+  <div class="idx-desc">TCP/UDP、HTTP/gRPC/RPC、RDMA/RoCE/IB、滑动窗口与拥塞控制（CUBIC/BBR）、TCP状态机排障、DNS/TLS/QUIC/HTTP3。</div>
+  <div class="idx-tags" aria-label="标签"><span>networking</span><span>tcp</span><span>udp</span><span>http</span><span>rdma</span><span>quic</span></div>
+</a>
+
+
+<a class="idx-card c2" href="pages/cs-basics/programming-systems/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/programming-systems/index.html#cs-programming-tabs" data-progress-total="9">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 9</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">编程语言与工程基础 (C/C++)</div>
+  <div class="idx-desc">二进制与编译链接、C++面向对象、内存管理、RAII/智能指针、值类别与移动语义、STL容器深度剖析、并发与内存模型、现代C++(11/14/17/20)特性。</div>
+  <div class="idx-tags" aria-label="标签"><span>cpp</span><span>binary</span><span>compiler</span><span>memory</span><span>concurrency</span><span>stl</span></div>
+</a>
+
+
+<a class="idx-card c3" href="pages/cs-basics/golang/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/golang/index.html#golang-tabs" data-progress-total="8">
   <div class="idx-card-top">
     <div class="idx-card-icon"></div>
     <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 8</span></span>
     <span class="idx-card-arrow">打开</span>
   </div>
-  <div class="idx-title">计算机基础知识</div>
-  <div class="idx-desc">操作系统、计算机网络（TCP/UDP/拥塞控制/QUIC）、C++ 值类别/STL/并发/现代特性、Go 语言、数据结构与算法、AI 框架基础。</div>
-  <div class="idx-tags" aria-label="标签"><span>cs-basics</span><span>os</span><span>networking</span><span>cpp</span><span>golang</span></div>
+  <div class="idx-title">Go 语言基础与工程</div>
+  <div class="idx-desc">GMP 调度模型、M:N 并发、CSP 与 Channel、三色标记 GC、Interface 鸭式类型、error/panic/recover、go modules、pprof 与面试高频题。</div>
+  <div class="idx-tags" aria-label="标签"><span>golang</span><span>gmp</span><span>concurrency</span><span>gc</span><span>interview</span></div>
+</a>
+
+
+<a class="idx-card c3" href="pages/cs-basics/linux-container/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/linux-container/index.html#cs-linux-container-tabs" data-progress-total="4">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 4</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">Linux 与容器基础</div>
+  <div class="idx-desc">环境变量、namespace/cgroup/rootfs容器隔离三件套、Docker/K8s资源模型（requests/limits/QoS）、containerd/CRI/OCI运行时架构。</div>
+  <div class="idx-tags" aria-label="标签"><span>linux</span><span>container</span><span>docker</span><span>cgroup</span><span>kubernetes</span></div>
+</a>
+
+
+<a class="idx-card c5" href="pages/cs-basics/linux-kernel-ai/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/linux-kernel-ai/index.html#cs-linux-kernel-ai-tabs" data-progress-total="4">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 4</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">Linux 内核与大模型系统</div>
+  <div class="idx-desc">NUMA绑定与亲和性、cgroups v1/v2与GPU隔离、内存大页(2MB/1GB)与THP透明大页、I/O零拷贝(mmap/Direct I/O/sendfile)与大模型权重加载优化。</div>
+  <div class="idx-tags" aria-label="标签"><span>linux</span><span>kernel</span><span>numa</span><span>cgroups</span><span>hugepages</span><span>zero-copy</span></div>
+</a>
+
+
+<a class="idx-card c1" href="pages/cs-basics/distributed-ai/index.html" data-progress-key="doctor-study-progress::/pages/cs-basics/distributed-ai/index.html#cs-distributed-ai-tabs" data-progress-total="3">
+  <div class="idx-card-top">
+    <div class="idx-card-icon"></div>
+    <span class="idx-card-progress" hidden><span class="idx-card-progress-text">0 / 3</span></span>
+    <span class="idx-card-arrow">打开</span>
+  </div>
+  <div class="idx-title">分布式与 AI Infra 基础</div>
+  <div class="idx-desc">分布式训练的Role/Replica/Rank身份模型、NCCL/RPC通信链路与存储数据面、GPU/NPU基础观测命令与指标（SM Active/MFU/MLU）。</div>
+  <div class="idx-tags" aria-label="标签"><span>distributed</span><span>gpu</span><span>nccl</span><span>observability</span></div>
 </a>
 </div></section>
 

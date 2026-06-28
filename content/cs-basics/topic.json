@@ -1,406 +1,85 @@
 {
   "title": "计算机基础知识",
-  "subtitle": "操作系统 · 组成原理 · 网络 · Linux/容器 · 编程工程 · Go 语言 · 分布式与 AI Infra",
+  "subtitle": "操作系统 · 计算机组成 · 网络 · 容器 · C/C++ · Go · Linux内核 · 分布式AI",
   "kicker": "CS Basics",
-  "tags": [
-    "os",
-    "architecture",
-    "networking",
-    "linux",
-    "cpp",
-    "golang",
-    "distributed"
-  ],
+  "tags": ["cs-basics", "os", "network", "cpp", "golang", "container", "linux"],
   "output": "pages/cs-basics/index.html",
+  "goals": [
+    "系统掌握 AI Infra 工程师所需的计算机基础知识体系",
+    "从 OS / 组成原理 / 网络 / 容器 / 编程语言等维度建立底层认知",
+    "结合 AI Infra 场景理解系统级性能问题"
+  ],
   "layout": [
     {
-      "type": "tabs",
-      "id": "cs-basics-tabs",
-      "title": "计算机基础知识",
-      "groups": [
+      "type": "callout",
+      "tone": "note",
+      "title": "知识地图",
+      "text": "计算机基础知识已拆分为以下 **8 个独立主题**，点击卡片进入对应模块："
+    },
+    {
+      "type": "resources",
+      "title": "基础知识模块",
+      "items": [
         {
-          "title": "系统与硬件",
-          "items": [
-            {
-              "title": "操作系统基础",
-              "description": "AI Infra OS 面试：并发、内存、文件 I/O、CPU 性能、网络、容器、GPU 系统层、排障",
-              "files": [
-                "os/01-process-thread-coroutine.md",
-                "os/02-cpu-scheduling.md",
-                "os/03-memory-oom-numa.md",
-                "os/06-virtual-memory-paging.md",
-                "os/04-signal-stdio.md",
-                "os/05-io-multiplexing.md",
-                "os/07-deadlock.md",
-                "os/08-ai-infra-concurrency.md",
-                "os/09-ai-infra-memory.md",
-                "os/10-ai-infra-file-io.md",
-                "os/11-ai-infra-cpu-perf.md",
-                "os/12-ai-infra-network-syscall.md",
-                "os/13-ai-infra-container-cgroup.md",
-                "os/14-ai-infra-gpu-systems.md",
-                "os/15-ai-infra-observability.md",
-                "os/16-ai-infra-os-priority-checklist.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "进程线程并发",
-                  "description": "进程 / 线程 / 协程、IPC、同步、死锁、DataLoader",
-                  "files": [
-                    "os/01-process-thread-coroutine.md",
-                    "os/07-deadlock.md",
-                    "os/08-ai-infra-concurrency.md"
-                  ]
-                },
-                {
-                  "title": "内存管理",
-                  "description": "虚拟内存、分页、TLB、mmap、COW、OOM、NUMA",
-                  "files": [
-                    "os/03-memory-oom-numa.md",
-                    "os/06-virtual-memory-paging.md",
-                    "os/09-ai-infra-memory.md"
-                  ]
-                },
-                {
-                  "title": "文件系统与 I/O",
-                  "description": "fd / inode、page cache、fsync、epoll、零拷贝、checkpoint",
-                  "files": [
-                    "os/04-signal-stdio.md",
-                    "os/05-io-multiplexing.md",
-                    "os/10-ai-infra-file-io.md"
-                  ]
-                },
-                {
-                  "title": "CPU 调度与性能",
-                  "description": "调度、上下文切换、load、iowait、perf、cache miss",
-                  "files": [
-                    "os/02-cpu-scheduling.md",
-                    "os/11-ai-infra-cpu-perf.md"
-                  ]
-                },
-                {
-                  "title": "网络与系统调用",
-                  "description": "socket、backlog、TIME_WAIT、epoll、分布式通信排查",
-                  "file": "os/12-ai-infra-network-syscall.md"
-                },
-                {
-                  "title": "容器与 cgroup",
-                  "description": "namespace、cgroup、容器 OOM、CPU throttling、/dev/shm",
-                  "file": "os/13-ai-infra-container-cgroup.md"
-                },
-                {
-                  "title": "GPU 系统层",
-                  "description": "DMA、pinned memory、NUMA、PCIe topology、GPU pipeline",
-                  "file": "os/14-ai-infra-gpu-systems.md"
-                },
-                {
-                  "title": "排障工具链",
-                  "description": "top、pidstat、iostat、strace、perf、dmesg、p99 排查",
-                  "files": [
-                    "os/15-ai-infra-observability.md",
-                    "os/16-ai-infra-os-priority-checklist.md"
-                  ]
-                }
-              ],
-              "level": "基础",
-              "priority": 1,
-              "time": 75
-            },
-            {
-              "title": "计算机组成原理",
-              "description": "CPU/内存层次、Cache/TLB/False Sharing、指令集/流水线/SIMD、Cache一致性(MESI)/内存模型/Atomic、DMA/PCIe/NUMA/中断/预取",
-              "files": [
-                "computer-architecture/01-cpu-memory-hierarchy.md",
-                "computer-architecture/02-cache-tlb.md",
-                "computer-architecture/03-dma-pcie-numa.md",
-                "computer-architecture/04-isa-pipeline-simd.md",
-                "computer-architecture/05-cache-coherence-memory-model.md",
-                "computer-architecture/06-interrupt-io-prefetch.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "CPU 内存层次",
-                  "description": "寄存器/L1/L2/L3/DRAM、NUMA、延迟带宽层级",
-                  "file": "computer-architecture/01-cpu-memory-hierarchy.md"
-                },
-                {
-                  "title": "Cache / TLB",
-                  "description": "Cache Line、局部性、False Sharing、HugePage",
-                  "file": "computer-architecture/02-cache-tlb.md"
-                },
-                {
-                  "title": "DMA / PCIe / NUMA",
-                  "description": "DMA 零拷贝、PCIe 拓扑、NUMA 亲和性",
-                  "file": "computer-architecture/03-dma-pcie-numa.md"
-                },
-                {
-                  "title": "ISA / 流水线 / SIMD",
-                  "description": "RISC vs CISC、5级流水线、分支预测、AVX/NEON/AMX",
-                  "file": "computer-architecture/04-isa-pipeline-simd.md"
-                },
-                {
-                  "title": "Cache 一致性 / 内存模型",
-                  "description": "MESI、TSO vs 弱内存模型、memory_order、Atomic",
-                  "file": "computer-architecture/05-cache-coherence-memory-model.md"
-                },
-                {
-                  "title": "中断 / I/O / 预取",
-                  "description": "硬中断/软中断、DMA流程、硬件预取、IRQ亲和性",
-                  "file": "computer-architecture/06-interrupt-io-prefetch.md"
-                }
-              ],
-              "level": "基础",
-              "priority": 1,
-              "time": 75
-            }
-          ]
+          "type": "OS",
+          "title": "操作系统基础",
+          "desc": "进程线程 · CPU调度 · 内存管理 · I/O多路复用 · 死锁 · AI Infra系统视角 · 面试清单",
+          "href": "pages/cs-basics/os/index.html"
         },
         {
-          "title": "网络与容器",
-          "items": [
-            {
-              "title": "计算机网络基础",
-              "description": "TCP/UDP、握手挥手、滑动窗口、拥塞控制、状态机、HTTP 演进、gRPC/RPC、RDMA/RoCE/IB、DNS/TLS/QUIC",
-              "files": [
-                "networking/01-tcp-udp.md",
-                "networking/02-http-grpc-rpc.md",
-                "networking/03-rdma.md",
-                "networking/04-tcp-deep-mechanisms.md",
-                "networking/05-tcp-state-troubleshooting.md",
-                "networking/06-dns-tls-quic.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "TCP/UDP 基础",
-                  "description": "可靠性、连接、三次握手四次挥手、流控概述",
-                  "file": "networking/01-tcp-udp.md"
-                },
-                {
-                  "title": "HTTP/gRPC/RPC",
-                  "description": "服务调用、序列化、超时重试、连接池",
-                  "file": "networking/02-http-grpc-rpc.md"
-                },
-                {
-                  "title": "RDMA/RoCE/IB",
-                  "description": "内核旁路、零拷贝、QP、AI 通信",
-                  "file": "networking/03-rdma.md"
-                },
-                {
-                  "title": "滑动窗口与拥塞控制",
-                  "description": "rwnd/cwnd、BDP、Tahoe/Reno/CUBIC/BBR",
-                  "file": "networking/04-tcp-deep-mechanisms.md"
-                },
-                {
-                  "title": "TCP 状态机与排障",
-                  "description": "11 状态、TIME_WAIT/CLOSE_WAIT、netstat/ss",
-                  "file": "networking/05-tcp-state-troubleshooting.md"
-                },
-                {
-                  "title": "DNS/TLS/QUIC",
-                  "description": "DNS 递归迭代、TLS 1.2/1.3、QUIC、HTTP/3",
-                  "file": "networking/06-dns-tls-quic.md"
-                }
-              ],
-              "level": "基础",
-              "priority": 1,
-              "time": 120
-            },
-            {
-              "title": "Linux 与容器基础",
-              "description": "环境变量、namespace、cgroup、rootfs、Docker/K8s、containerd/CRI/OCI",
-              "files": [
-                "linux-container/01-env-runtime.md",
-                "linux-container/02-namespace-cgroup-rootfs.md",
-                "linux-container/03-docker-k8s-resource.md",
-                "linux-container/04-container-runtime-containerd.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "运行环境",
-                  "description": "env、PATH、LD_LIBRARY_PATH、配置注入",
-                  "file": "linux-container/01-env-runtime.md"
-                },
-                {
-                  "title": "隔离三件套",
-                  "description": "namespace、cgroup、rootfs",
-                  "file": "linux-container/02-namespace-cgroup-rootfs.md"
-                },
-                {
-                  "title": "资源模型",
-                  "description": "requests/limits、QoS、RSS/Usage、OOMKilled",
-                  "file": "linux-container/03-docker-k8s-resource.md"
-                },
-                {
-                  "title": "containerd / CRI",
-                  "description": "containerd、CRI、OCI、runc、shim、pause 容器和节点侧排障",
-                  "file": "linux-container/04-container-runtime-containerd.md"
-                }
-              ],
-              "level": "进阶",
-              "priority": 1,
-              "time": 30
-            }
-          ]
+          "type": "Arch",
+          "title": "计算机组成原理",
+          "desc": "CPU存储层次 · Cache/TLB · 流水线/SIMD · Cache一致性/MESI · DMA/PCIe/NUMA · 中断与预取",
+          "href": "pages/cs-basics/computer-architecture/index.html"
         },
         {
-          "title": "编程语言与工程",
-          "items": [
-            {
-              "title": "C/C++ 编程工程基础",
-              "description": "Binary、编译链接、智能指针、面向对象、内存管理、值类别/移动语义、STL 容器、并发与内存模型、C++11/14/17/20 现代特性",
-              "files": [
-                "programming-systems/01-binary-linking.md",
-                "programming-systems/02-cpp-systems.md",
-                "programming-systems/05-cpp-compile-smartptr.md",
-                "programming-systems/03-cpp-oop.md",
-                "programming-systems/04-cpp-memory.md",
-                "programming-systems/06-cpp-value-move.md",
-                "programming-systems/07-cpp-stl-containers.md",
-                "programming-systems/08-cpp-concurrency.md",
-                "programming-systems/09-cpp-modern-features.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "编译链接与库",
-                  "description": "源码到进程、ELF、动态库、ABI、编译四阶段、智能指针、gdb 调试死锁",
-                  "files": [
-                    "programming-systems/01-binary-linking.md",
-                    "programming-systems/05-cpp-compile-smartptr.md"
-                  ]
-                },
-                {
-                  "title": "面向对象",
-                  "description": "封装继承多态、访问控制、三种继承、虚函数与虚函数表",
-                  "file": "programming-systems/03-cpp-oop.md"
-                },
-                {
-                  "title": "内存管理",
-                  "description": "内存分布、mmap 加载权重、段错误、内存泄漏检测",
-                  "file": "programming-systems/04-cpp-memory.md"
-                },
-                {
-                  "title": "C++ 系统编程",
-                  "description": "RAII、智能指针、并发、性能排查在 AI Infra 的应用",
-                  "file": "programming-systems/02-cpp-systems.md"
-                },
-                {
-                  "title": "值类别与移动语义",
-                  "description": "左值/右值、五边形值类别、std::move、完美转发、RVO",
-                  "file": "programming-systems/06-cpp-value-move.md"
-                },
-                {
-                  "title": "STL 容器深度剖析",
-                  "description": "vector、string SSO、deque、unordered_map、迭代器失效",
-                  "file": "programming-systems/07-cpp-stl-containers.md"
-                },
-                {
-                  "title": "C++ 并发与内存模型",
-                  "description": "mutex、condition_variable、future/promise、atomic、memory_order",
-                  "file": "programming-systems/08-cpp-concurrency.md"
-                },
-                {
-                  "title": "现代 C++ 特性",
-                  "description": "lambda、shared_ptr 控制块、C++17/20 新特性",
-                  "file": "programming-systems/09-cpp-modern-features.md"
-                }
-              ],
-              "level": "进阶",
-              "priority": 1,
-              "time": 181
-            },
-            {
-              "title": "Go 语言基础与工程",
-              "description": "GMP 调度模型、M:N 并发、CSP 与 Channel、三色标记 GC、Interface 鸭式类型、error/panic/recover、go modules、pprof 与面试高频题",
-              "files": [
-                "golang/01-overview.md",
-                "golang/02-types-interfaces.md",
-                "golang/03-error-panic.md",
-                "golang/04-gmp-scheduler.md",
-                "golang/05-concurrency.md",
-                "golang/06-concurrency-patterns.md",
-                "golang/07-memory-gc.md",
-                "golang/08-engineering-qa.md"
-              ],
-              "subtabs": [
-                {
-                  "title": "语言概览",
-                  "description": "设计哲学、与 C++/Java/Python 对比、适用场景",
-                  "file": "golang/01-overview.md"
-                },
-                {
-                  "title": "类型系统与 Interface",
-                  "description": "值语义、struct、interface 鸭式类型、nil interface 陷阱",
-                  "file": "golang/02-types-interfaces.md"
-                },
-                {
-                  "title": "错误处理与 Panic",
-                  "description": "error 接口、errors.Is/As、panic/recover、defer",
-                  "file": "golang/03-error-panic.md"
-                },
-                {
-                  "title": "GMP 调度模型",
-                  "description": "G/M/P 三要素、work-stealing、syscall 处理、GOMAXPROCS",
-                  "file": "golang/04-gmp-scheduler.md"
-                },
-                {
-                  "title": "Channel 与并发同步",
-                  "description": "CSP、buffered/unbuffered channel、select、sync 包、context",
-                  "file": "golang/05-concurrency.md"
-                },
-                {
-                  "title": "并发模式与坑点",
-                  "description": "worker pool、pipeline、fan-in/fan-out、goroutine 泄漏",
-                  "file": "golang/06-concurrency-patterns.md"
-                },
-                {
-                  "title": "内存管理与 GC",
-                  "description": "TCMalloc 分配、三色标记、写屏障、逃逸分析、GOGC",
-                  "file": "golang/07-memory-gc.md"
-                },
-                {
-                  "title": "Go 工程实践",
-                  "description": "go modules、项目结构、测试、pprof、高频面试题",
-                  "file": "golang/08-engineering-qa.md"
-                }
-              ],
-              "level": "精通",
-              "priority": 1,
-              "time": 151
-            }
-          ]
+          "type": "Net",
+          "title": "计算机网络基础",
+          "desc": "TCP/UDP · HTTP/gRPC/RPC · RDMA/RoCE · 滑动窗口/拥塞控制 · 状态机排障 · DNS/TLS/QUIC",
+          "href": "pages/cs-basics/networking/index.html"
         },
         {
-          "title": "AI 视角与工程",
-          "items": [
-            {
-              "title": "Linux 内核与大模型系统",
-              "description": "NUMA、cgroups、THP、大页、I/O、零拷贝与权重加载路径",
-              "files": [
-                "linux-kernel-ai/01-numa-binding.md",
-                "linux-kernel-ai/02-cgroups-gpu-isolation.md",
-                "linux-kernel-ai/03-memory-hugepages-thp.md",
-                "linux-kernel-ai/04-io-zero-copy.md"
-              ],
-              "level": "精通",
-              "priority": 1,
-              "time": 22
-            },
-            {
-              "title": "分布式与 AI Infra 基础",
-              "description": "Role/Replica/Rank、NCCL/RPC、存储链路、GPU/NPU 观测",
-              "files": [
-                "distributed-ai/01-role-replica-rank.md",
-                "distributed-ai/02-communication-storage.md",
-                "distributed-ai/03-gpu-npu-observability.md"
-              ],
-              "level": "精通",
-              "priority": 1,
-              "time": 20
-            }
-          ]
+          "type": "C++",
+          "title": "编程语言与工程基础 (C/C++)",
+          "desc": "二进制/编译链接 · 面向对象 · 内存管理 · 值类别/移动语义 · STL容器 · 并发/内存模型 · 现代C++",
+          "href": "pages/cs-basics/programming-systems/index.html"
+        },
+        {
+          "type": "Go",
+          "title": "Go 语言与工程",
+          "desc": "GMP调度 · Channel · 内存管理 · GC · 并发模式 · 标准库 · 框架与工程实践 · 面试题",
+          "href": "pages/cs-basics/golang/index.html"
+        },
+        {
+          "type": "Container",
+          "title": "Linux 与容器基础",
+          "desc": "环境变量 · namespace/cgroup/rootfs · Docker/K8s资源模型 · containerd/CRI/OCI运行时",
+          "href": "pages/cs-basics/linux-container/index.html"
+        },
+        {
+          "type": "Kernel",
+          "title": "Linux 内核与大模型系统",
+          "desc": "NUMA绑定 · cgroups GPU隔离 · 大页/THP · I/O零拷贝与权重加载优化",
+          "href": "pages/cs-basics/linux-kernel-ai/index.html"
+        },
+        {
+          "type": "Dist",
+          "title": "分布式与 AI Infra 基础",
+          "desc": "Role/Replica/Rank · NCCL/RPC通信链路 · 存储数据面 · GPU/NPU观测",
+          "href": "pages/cs-basics/distributed-ai/index.html"
         }
       ]
+    },
+    {
+      "type": "callout",
+      "tone": "warn",
+      "title": "学习建议",
+      "items": [
+        "推荐按 **操作系统 → 组成原理 → 网络 → 容器/内核** 的顺序系统复习",
+        "编程语言（C++/Go）可结合自身技术栈选择重点，两者均在后端面试中高频出现",
+        "每个主题的最后一个模块通常为「面试收束/复习清单」，建议最后集中回顾",
+        "Linux内核与大模型系统是CS基础与AI Infra的交叉地带，建议在掌握OS基础后再深入"
+      ]
     }
-  ],
-  "sections": []
+  ]
 }

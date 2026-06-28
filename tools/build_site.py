@@ -20,7 +20,17 @@ TRACKS = [
         "short_label": "基础",
         "eyebrow": "Foundation",
         "description": "操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。",
-        "slugs": ["cs-basics"],
+        "slugs": [
+            "cs-basics",
+            "cs-basics/os",
+            "cs-basics/computer-architecture",
+            "cs-basics/networking",
+            "cs-basics/programming-systems",
+            "cs-basics/golang",
+            "cs-basics/linux-container",
+            "cs-basics/linux-kernel-ai",
+            "cs-basics/distributed-ai",
+        ],
     },
     {
         "key": "systems_cards",

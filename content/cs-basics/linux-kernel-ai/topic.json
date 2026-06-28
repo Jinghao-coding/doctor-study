@@ -1,0 +1,60 @@
+{
+  "title": "Linux 内核与大模型系统",
+  "subtitle": "NUMA绑定 · cgroups GPU隔离 · 大页/THP · I/O零拷贝",
+  "kicker": "CS Basics → AI Infra",
+  "tags": ["linux", "kernel", "numa", "cgroups", "hugepages", "zero-copy", "gpu"],
+  "output": "pages/cs-basics/linux-kernel-ai/index.html",
+  "goals": [
+    "理解 NUMA 拓扑对大模型训练/推理性能的关键影响",
+    "掌握 cgroups v1/v2 资源控制机制及 GPU 隔离原理",
+    "理解大页内存与 THP 的工作机制和性能权衡",
+    "掌握 I/O 零拷贝技术（mmap/Direct I/O/sendfile）在权重加载中的应用"
+  ],
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "cs-linux-kernel-ai-tabs",
+      "title": "Linux 内核与大模型系统",
+      "groups": [
+        {
+          "title": "内核机制与 AI 系统性能",
+          "items": [
+            {
+              "title": "NUMA 绑定与亲和性",
+              "description": "NUMA拓扑、UPI/QPI、numactl、CPU/GPU/NIC同NUMA绑定",
+              "file": "01-numa-binding.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 25
+            },
+            {
+              "title": "cgroups 与 GPU 隔离",
+              "description": "cgroups v1/v2、CPU/内存限制、NVIDIA Container Toolkit、Device Plugin",
+              "file": "02-cgroups-gpu-isolation.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 25
+            },
+            {
+              "title": "内存大页与 THP",
+              "description": "2MB/1GB大页、TLB覆盖、THP透明大页、延迟抖动权衡",
+              "file": "03-memory-hugepages-thp.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 22
+            },
+            {
+              "title": "I/O 零拷贝与权重加载",
+              "description": "mmap/Direct I/O/sendfile、权重加载路径、pinned memory",
+              "file": "04-io-zero-copy.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 22
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": []
+}
