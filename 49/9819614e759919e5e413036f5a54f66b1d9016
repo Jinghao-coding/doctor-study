@@ -1,0 +1,60 @@
+templates/page.html
+  s_803de43e368bdc::t_a75d385bbe1e82 54 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a40bf48a51240f132c9a97c","tool_type":"agent","tool_id":"Edit","line_ranges":[{"Single":54}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "499819614e759919e5e413036f5a54f66b1d9016",
+  "prompts": {},
+  "sessions": {
+    "s_803de43e368bdc": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a3f7366a51240f132c998f5",
+        "model": "Doubao-Seed-2.1-Pro__dev"
+      },
+      "human_author": "Jinghao-coding <jeffery_06@163.com>"
+    }
+  },
+  "attestation_metadata": {
+    "templates/page.html": [
+      {
+        "hash": "s_803de43e368bdc::t_a75d385bbe1e82",
+        "line_ranges": [
+          {
+            "Single": 54
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a40bf48a51240f132c9a97c",
+            "tool_type": "agent",
+            "tool_id": "Edit",
+            "line_ranges": [
+              {
+                "Single": 54
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "s_803de43e368bdc": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    },
+    "s_803de43e368bdc::t_a75d385bbe1e82": {
+      "tool": "trae",
+      "conversation_id": "6a3f7366a51240f132c998f5",
+      "session_id": "6a3f7366a51240f132c998f5",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
