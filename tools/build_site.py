@@ -31,6 +31,7 @@ TRACKS = [
             "cs-basics/linux-kernel-ai",
             "cs-basics/distributed-ai",
         ],
+        "home_max": 1,
     },
     {
         "key": "systems_cards",
@@ -1014,9 +1015,20 @@ def _render_home_lanes() -> str:
 def _render_home_tracks(card_template: str) -> str:
     sections = []
     for track in TRACKS:
-        cards = "\n\n".join(topic_card_from_template(topic, card_template) for topic in topics_in_track(track))
+        all_topics = topics_in_track(track)
+        home_max = track.get("home_max", 0)
+        if home_max and len(all_topics) > home_max:
+            visible_topics = all_topics[:home_max]
+            more_href = track.get("home_more_href", all_topics[0]["output"])
+            more_label = track.get("home_more_label", f"查看全部 {len(all_topics)} 个模块 →")
+        else:
+            visible_topics = all_topics
+            more_href = ""
+            more_label = ""
+        cards = "\n\n".join(topic_card_from_template(topic, card_template) for topic in visible_topics)
         if not cards:
             continue
+        more_link = f'<a class="idx-track-more" href="{html.escape(more_href)}">{html.escape(more_label)}</a>' if more_href else ""
         sections.append(
             '<section class="idx-track" aria-label="{label}">'
             '<div class="idx-track-head">'
@@ -1027,11 +1039,13 @@ def _render_home_tracks(card_template: str) -> str:
             '<div class="idx-track-cards">'
             '{cards}'
             '</div>'
+            '{more}'
             '</section>'.format(
                 label=html.escape(track["label"]),
                 eyebrow=html.escape(track.get("eyebrow", "")),
                 description=html.escape(track.get("description", "")),
                 cards=cards,
+                more=more_link,
             )
         )
     return "\n\n".join(sections)
