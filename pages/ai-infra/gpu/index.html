@@ -18,9 +18,9 @@
 <div class="app-shell">
 <aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机基础">基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机基础知识"><span>计算机基础知识</span><small>cs-basics · os</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link active" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与 Agent">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
   <main class="wrap">
-  <section class="topic-hero compact"><div class="hero-copy"><div class="hero-kicker">AI Infra Foundation</div><h1>GPU 硬件与资源共享</h1><p class="sub">硬件架构 · CUDA 执行模型 · 性能指标 · 利用率诊断 · 性能预测 · MIG/MPS · K8S 共享 · CUDA VMM</p><div class="hero-tags"><span>gpu</span><span>hardware</span><span>cuda</span><span>utilization</span><span>sharing</span><span>performance</span><span>prediction</span></div></div></section>
+  <section class="topic-hero"><div class="hero-copy"><div class="hero-kicker">Study Module</div><h1>GPU 硬件与资源共享</h1><p class="sub">硬件架构 · CUDA 执行模型 · 数据搬运 · 资源共享 · 性能诊断 · 调度对比</p><div class="hero-tags"><span>gpu</span><span>hardware</span><span>cuda</span><span>mps</span><span>mig</span></div></div><div class="hero-goals"><div>理解 GPU 与 CPU 的设计目标差异和硬件组件</div><div>掌握 CUDA 执行模型（grid/block/thread/warp/SM）和内存层次</div><div>理解 H2D/D2H 数据搬运和 Stream 异步流水线</div><div>区分 MIG/MPS/Time-slicing 的隔离级别和 K8s 落地方式</div><div>能用 Roofline、SM Active、Warp Stall 等指标诊断 GPU 瓶颈</div></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="gpu-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 15</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="GPU 内容模块"><details class="tab-group" open data-group-id="gpu-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">总览与硬件直觉</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="gpu-tabs-tab-1" data-initial="01" data-mid="gpu-tabs::00-cpu-vs-gpu-md" data-level="基础" title="CPU vs GPU" aria-controls="gpu-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CPU vs GPU</span><span class="tab-desc">架构差异、为什么 GPU 适合深度学习</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 8 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-2" data-initial="02" data-mid="gpu-tabs::01-hardware-md" data-level="基础" title="硬件基础" aria-controls="gpu-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">硬件基础</span><span class="tab-desc">架构、A100/H100/H200、显存带宽</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-3" data-initial="03" data-mid="gpu-tabs::11-interconnect-data-paths-md" data-level="进阶" title="GPU 互联与数据路径" aria-controls="gpu-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 互联与数据路径</span><span class="tab-desc">NVLink/NVSwitch、PCIe、RDMA、GPUDirect、NUMA/NIC 亲和</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details><details class="tab-group" open data-group-id="gpu-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">CUDA 执行与内存模型</span><span class="tab-group-meta"><span class="tab-group-count">5</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-4" data-initial="04" data-mid="gpu-tabs::06-cuda-execution-model-md" data-level="基础" title="CUDA 执行模型" aria-controls="gpu-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CUDA 执行模型</span><span class="tab-desc">GPU core、kernel launch、grid、block、thread、warp、SM</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-5" data-initial="05" data-mid="gpu-tabs::13-cuda-memory-occupancy-md" data-level="进阶" title="内存模型与 Occupancy" aria-controls="gpu-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">内存模型与 Occupancy</span><span class="tab-desc">CUDA 内存模型、grid/block size 选择、occupancy、内存墙、PyTorch 自定义算子、TensorCore I/O</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 14 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-6" data-initial="06" data-mid="gpu-tabs::08-host-device-copy-md" data-level="进阶" title="Host-Device 数据拷贝" aria-controls="gpu-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Host-Device 数据拷贝</span><span class="tab-desc">H2D/D2H 路径、pinned memory、DataLoader、D2H 同步与拷贝诊断</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-7" data-initial="07" data-mid="gpu-tabs::08-cuda-streams-data-copy-md" data-level="进阶" title="Stream 与异步流水线" aria-controls="gpu-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Stream 与异步流水线</span><span class="tab-desc">CUDA stream、event、异步队列、计算/拷贝重叠与多缓冲流水线</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-8" data-initial="08" data-mid="gpu-tabs::12-cfs-vs-cuda-scheduling-md" data-level="精通" title="CFS vs CUDA 调度" aria-controls="gpu-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CFS vs CUDA 调度</span><span class="tab-desc">Linux CFS、vruntime、CUDA block/warp、Stream/Event 分层对比</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="gpu-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">资源共享与 K8S 隔离</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-9" data-initial="09" data-mid="gpu-tabs::02-sharing-md" data-level="进阶" title="共享方式" aria-controls="gpu-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">共享方式</span><span class="tab-desc">MIG、MPS、时间片、CUDA VMM</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-10" data-initial="10" data-mid="gpu-tabs::10-k8s-gpu-sharing-md" data-level="进阶" title="K8S GPU 共享" aria-controls="gpu-tabs-panel-10" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">K8S GPU 共享</span><span class="tab-desc">K8S 里的 MPS、time-slicing、device-plugin 配置</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button></div></details><details class="tab-group" open data-group-id="gpu-tabs-grp-4"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">性能诊断与瓶颈判断</span><span class="tab-group-meta"><span class="tab-group-count">4</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-11" data-initial="11" data-mid="gpu-tabs::03-performance-metrics-md" data-level="基础" title="性能指标" aria-controls="gpu-tabs-panel-11" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能指标</span><span class="tab-desc">TFLOPS、显存带宽、Roofline、利用率、互联带宽</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 10 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-12" data-initial="12" data-mid="gpu-tabs::07-utilization-diagnosis-md" data-level="进阶" title="利用率诊断" aria-controls="gpu-tabs-panel-12" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">利用率诊断</span><span class="tab-desc">GPU-Util、SM Active、Occupancy、Warp Stall、Compute/Memory、Tensor Core</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-13" data-initial="13" data-mid="gpu-tabs::09-bottleneck-classification-md" data-level="进阶" title="瓶颈分类" aria-controls="gpu-tabs-panel-13" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">瓶颈分类</span><span class="tab-desc">计算瓶颈、显存瓶颈、通信瓶颈的判断与优化</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-14" data-initial="14" data-mid="gpu-tabs::04-prediction-metrics-md" data-level="精通" title="性能预测指标" aria-controls="gpu-tabs-panel-14" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能预测指标</span><span class="tab-desc">MFU、SM Active、Occupancy、特征工程、DCGM、诊断矩阵</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="gpu-tabs-grp-5"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试收束与关联</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="gpu-tabs-tab-15" data-initial="15" data-mid="gpu-tabs::14-interview-wrap-up-md" data-level="精通" title="GPU 面试收束" aria-controls="gpu-tabs-panel-15" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 面试收束</span><span class="tab-desc">30 秒/2 分钟回答模板、排查路径、与 LLM/K8S/训练/调度的关联</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="gpu-tabs-panel-1" aria-labelledby="gpu-tabs-tab-1" data-mid="gpu-tabs::00-cpu-vs-gpu-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CPU vs GPU</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 8 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<section class="tabs-shell" data-tabs data-tabs-id="topic-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 10</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"><div class="tabs-level-filter" role="group" aria-label="按级别筛选"><button type="button" class="level-chip active" data-level="all">全部</button><button type="button" class="level-chip" data-level="基础">基础</button><button type="button" class="level-chip" data-level="进阶">进阶</button><button type="button" class="level-chip" data-level="精通">精通</button></div></div><div class="tabs-list" role="tablist" aria-label="GPU 内容模块"><details class="tab-group" open data-group-id="topic-tabs-grp-1"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">硬件基础直觉</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button active" type="button" role="tab" id="topic-tabs-tab-1" data-initial="01" data-mid="topic-tabs::idx-1" data-level="基础" title="GPU硬件直觉" aria-controls="topic-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU硬件直觉</span><span class="tab-desc">CPU vs GPU差异、SM/Tensor Core/HBM组件、NVLink/PCIe/RDMA互联</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 30 min</span></span></button></div></details><details class="tab-group" open data-group-id="topic-tabs-grp-2"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">CUDA编程模型</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-2" data-initial="02" data-mid="topic-tabs::06-cuda-execution-model-md" data-level="基础" title="CUDA执行模型" aria-controls="topic-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CUDA执行模型</span><span class="tab-desc">kernel launch、grid/block/thread/warp/SM 层级关系、warp调度</span></span><span class="tab-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 20 min</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-3" data-initial="03" data-mid="topic-tabs::13-cuda-memory-occupancy-md" data-level="进阶" title="内存模型与Occupancy" aria-controls="topic-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">内存模型与Occupancy</span><span class="tab-desc">寄存器/shared memory/L1/L2/HBM层次、Occupancy计算与调优</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-4" data-initial="04" data-mid="topic-tabs::idx-4" data-level="进阶" title="数据搬运与异步流水线" aria-controls="topic-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">数据搬运与异步流水线</span><span class="tab-desc">H2D/D2H拷贝、pinned memory、cudaMemcpyAsync、Stream/event计算拷贝重叠</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></button></div></details><details class="tab-group" open data-group-id="topic-tabs-grp-3"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">资源共享与调度</span><span class="tab-group-meta"><span class="tab-group-count">2</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-5" data-initial="05" data-mid="topic-tabs::idx-5" data-level="进阶" title="GPU共享机制" aria-controls="topic-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU共享机制</span><span class="tab-desc">MIG硬件隔离、MPS并发复用、Time-slicing时间片、CUDA VMM、显存碎片</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 22 min</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-6" data-initial="06" data-mid="topic-tabs::12-cfs-vs-cuda-scheduling-md" data-level="精通" title="CFS vs CUDA 调度" aria-controls="topic-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CFS vs CUDA 调度</span><span class="tab-desc">Linux CFS与GPU调度器差异、抢占模型、为什么GPU不能直接套用CPU调度</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></button></div></details><details class="tab-group" open data-group-id="topic-tabs-grp-4"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">性能诊断与预测</span><span class="tab-group-meta"><span class="tab-group-count">3</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-7" data-initial="07" data-mid="topic-tabs::03-performance-metrics-md" data-level="进阶" title="性能指标体系" aria-controls="topic-tabs-panel-7" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能指标体系</span><span class="tab-desc">TFLOPS、HBM带宽、Roofline模型、利用率/互联/能耗指标全景</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-8" data-initial="08" data-mid="topic-tabs::idx-8" data-level="进阶" title="利用率诊断与瓶颈分析" aria-controls="topic-tabs-panel-8" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">利用率诊断与瓶颈分析</span><span class="tab-desc">SM Active、Occupancy、Warp Stall诊断链路、计算/显存/通信瓶颈分类</span></span><span class="tab-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 25 min</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-9" data-initial="09" data-mid="topic-tabs::04-prediction-metrics-md" data-level="精通" title="性能预测与特征工程" aria-controls="topic-tabs-panel-9" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能预测与特征工程</span><span class="tab-desc">MFU/HFU、FLOPs特征、DCGM采集、解析模型vs ML模型、跨硬件泛化</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 20 min</span></span></button></div></details><details class="tab-group" open data-group-id="topic-tabs-grp-5"><summary class="tab-group-summary"><span class="tab-group-caret" aria-hidden="true">▾</span><span class="tab-group-title">面试收束</span><span class="tab-group-meta"><span class="tab-group-count">1</span></span></summary><div class="tab-group-items"><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-10" data-initial="10" data-mid="topic-tabs::14-interview-wrap-up-md" data-level="精通" title="GPU面试收束" aria-controls="topic-tabs-panel-10" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU面试收束</span><span class="tab-desc">高频问题串联、知识地图、跨模块关联、一句话答题模板</span></span><span class="tab-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></button></div></details></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="topic-tabs-panel-1" aria-labelledby="topic-tabs-tab-1" data-mid="topic-tabs::idx-1" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU硬件直觉</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 30 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-1-sub-1" aria-controls="topic-tabs-panel-1-subpanel-1" aria-selected="true" title="CPU vs GPU 设计差异"><span class="subtab-title">CPU vs GPU 设计差异</span><span class="subtab-desc">设计目标、核心形态、内存体系、适合/不适合任务对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-2" aria-controls="topic-tabs-panel-1-subpanel-2" aria-selected="false" title="GPU硬件组件"><span class="subtab-title">GPU硬件组件</span><span class="subtab-desc">SM、CUDA Core、Tensor Core、HBM、L2 Cache、主流GPU规格对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-3" aria-controls="topic-tabs-panel-1-subpanel-3" aria-selected="false" title="GPU互联与数据路径"><span class="subtab-title">GPU互联与数据路径</span><span class="subtab-desc">NVLink/NVSwitch、PCIe、RDMA/GPUDirect、HGX拓扑、NUMA亲和性</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-1-subpanel-1" aria-labelledby="topic-tabs-panel-1-sub-1" ><h2>一句话结论</h2>
 <p>CPU 和 GPU 的根本区别不是“核心多少”，而是设计目标不同：CPU 追求单线程低延迟和复杂控制能力，GPU 追求大规模数据并行吞吐。深度学习的核心计算以矩阵乘法、批量并行和高带宽访存为主，所以天然更匹配 GPU。</p>
 <h2>核心概念</h2>
 <ul><li><strong>CPU 定位</strong>：低延迟 · 强控制流 · 通用计算 — 分支预测、乱序执行、大缓存，适合 OS 调度、业务逻辑、IO 编排、串行控制</li><li><strong>GPU 定位</strong>：高吞吐 · 数据并行 · 数值计算 — 大量轻量执行单元（SM）+ 高带宽显存（HBM），适合矩阵乘、卷积、Attention、batch 并行</li><li><strong>CPU-GPU 协作</strong>：CPU 做数据准备/控制/调度/kernel launch/IO；GPU 做大规模数值计算/Tensor Core 加速</li><li><strong>常见瓶颈</strong>：CPU↔GPU 数据搬运、显存带宽、kernel 并行度、多卡通信链路</li></ul>
@@ -58,7 +58,7 @@
 <tr><td>GPU 利用率高就代表训练快</td><td><code>GPU-Util</code> 只是粗指标，还要看 SM Active、Tensor Core 利用率、显存带宽、通信和数据加载。</td></tr>
 </table></div>
 <h2>关联模块</h2>
-<ul><li><code>硬件基础</code>：继续看 SM、Tensor Core、HBM、NVLink/NVSwitch 等硬件组件。</li><li><code>CUDA 执行模型</code>：理解 kernel launch、grid、block、thread、warp 和 SM 的执行关系。</li><li><code>Host-Device 数据拷贝</code>：理解 CPU-GPU 数据路径、pinned memory 和 H2D/D2H 开销。</li><li><code>性能指标</code>：用 TFLOPS、显存带宽、Roofline 和利用率指标判断 GPU 是否真的被用好。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::00-cpu-vs-gpu-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::00-cpu-vs-gpu-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">硬件基础</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-2" aria-labelledby="gpu-tabs-tab-2" data-mid="gpu-tabs::01-hardware-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>硬件基础</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ul><li><code>硬件基础</code>：继续看 SM、Tensor Core、HBM、NVLink/NVSwitch 等硬件组件。</li><li><code>CUDA 执行模型</code>：理解 kernel launch、grid、block、thread、warp 和 SM 的执行关系。</li><li><code>Host-Device 数据拷贝</code>：理解 CPU-GPU 数据路径、pinned memory 和 H2D/D2H 开销。</li><li><code>性能指标</code>：用 TFLOPS、显存带宽、Roofline 和利用率指标判断 GPU 是否真的被用好。</li></ul></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-1-subpanel-2" aria-labelledby="topic-tabs-panel-1-sub-2" hidden><h2>一句话结论</h2>
 <p>GPU 硬件要从三类资源理解：SM/Tensor Core 决定计算吞吐，HBM 决定显存容量和带宽，NVLink/NVSwitch/PCIe 决定数据在 GPU、CPU 和网卡之间怎么流动。面试里不要只背型号参数，要能把“算力、显存、互联”对应到训练和推理瓶颈。</p>
 <h2>核心概念</h2>
 <div class="table-scroll"><table>
@@ -94,178 +94,156 @@
 <tr><td>单卡强就代表多卡也强</td><td>多卡性能还受 NVLink/NVSwitch、PCIe、RDMA、NCCL 拓扑影响。</td></tr>
 </table></div>
 <h2>关联模块</h2>
-<ul><li><code>CPU vs GPU</code>：先理解 GPU 为什么为吞吐而设计。</li><li><code>CUDA 执行模型</code>：把 SM、warp、block 和 kernel 执行关系串起来。</li><li><code>性能指标</code>：用 TFLOPS、HBM 带宽、Roofline 判断硬件上限。</li><li><code>GPU 互联与数据路径</code>：继续看 PCIe、NVLink、NVSwitch、RDMA 的真实数据流。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::01-hardware-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::01-hardware-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CPU vs GPU</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">GPU 互联与数据路径</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-3" aria-labelledby="gpu-tabs-tab-3" data-mid="gpu-tabs::11-interconnect-data-paths-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU 互联与数据路径</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>在 8 卡 H100/A100 训练服务器里，<strong>单机内 GPU-GPU 通信优先走 NVLink/NVSwitch，跨机优先走 GPUDirect RDMA，PCIe 则承担 CPU、GPU、NIC、NVMe 之间的通用 I/O</strong>。理解这三者不是为了背硬件名词，而是为了回答一个 AI Infra 的核心问题：同样是「8 张 GPU」，为什么放置位置不同，训练吞吐和延迟会差很多？</p>
-<h2>系统链路</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">单机内 GPU-GPU</div><div class="flow-desc">优先走 NVLink / NVSwitch，高带宽、低延迟</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">CPU / GPU / NIC / SSD</div><div class="flow-desc">通过 PCIe 连接，负责通用 I/O 和设备互联</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">跨服务器 GPU-GPU</div><div class="flow-desc">通过 NIC + InfiniBand/RoCE RDMA 网络传输</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">调度器决策</div><div class="flow-desc">把通信频繁的 rank 放到更近、更宽、更低延迟的路径上</div></div></div>
-<h2>三者定位</h2>
+<ul><li><code>CPU vs GPU</code>：先理解 GPU 为什么为吞吐而设计。</li><li><code>CUDA 执行模型</code>：把 SM、warp、block 和 kernel 执行关系串起来。</li><li><code>性能指标</code>：用 TFLOPS、HBM 带宽、Roofline 判断硬件上限。</li><li><code>GPU 互联与数据路径</code>：继续看 PCIe、NVLink、NVSwitch、RDMA 的真实数据流。</li></ul></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-1-subpanel-3" aria-labelledby="topic-tabs-panel-1-sub-3" hidden><h2>一句话结论</h2>
+<p>在 8 卡 H100/A100 训练服务器里，<strong>单机内 GPU-GPU 通信优先走 NVLink/NVSwitch，跨机优先走 GPUDirect RDMA，PCIe 则承担 CPU、GPU、NIC、NVMe 之间的通用 I/O</strong>。这三者不是孤立的硬件名词，而是回答一个 AI Infra 核心问题：<strong>同样是「8 张 GPU」，放置位置、拓扑和通信路径不同，训练吞吐可能差数倍。</strong></p>
+<img src="../../../resources/images/gpu/interconnect-bandwidth-comparison.svg" alt="GPU 三大互联带宽对比" style="width:100%;max-width:900px;margin:16px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">图 1：NVLink、PCIe、RDMA 三大互联技术带宽量级对比。NVLink 4.0 单卡聚合带宽 900 GB/s，约为 PCIe Gen5 x16 的 7 倍，约为单口 400G RDMA NIC 的 18 倍。</p>
+<h2>三大互联技术定位</h2>
 <div class="table-scroll"><table>
-<tr><th>技术</th><th>主要用途</th><th>典型通信范围</th><th>特点</th><th>训练中的角色</th></tr>
-<tr><td><strong>NVLink / NVSwitch</strong></td><td>GPU-GPU 高速互联</td><td>单机内，或 NVLink Switch 扩展域</td><td>高带宽、低延迟、面向 GPU 内存访问</td><td>单机内 AllReduce、张量并行、Pipeline stage 间通信</td></tr>
-<tr><td><strong>PCIe</strong></td><td>通用 I/O 总线</td><td>CPU-GPU、GPU-NIC、GPU-SSD、部分 GPU-GPU P2P</td><td>通用性强，但带宽和延迟弱于 NVLink</td><td>Host 到 GPU 拷贝、GPU 到 NIC、无 NVLink 时的 GPU-GPU fallback</td></tr>
-<tr><td><strong>RDMA / InfiniBand / RoCE</strong></td><td>跨服务器远程直接内存访问</td><td>服务器之间</td><td>绕过远端 CPU、低 CPU 开销、适合大规模集群</td><td>跨节点梯度同步、参数交换、分布式训练通信</td></tr>
+<tr><th>技术</th><th>主要用途</th><th>典型通信范围</th><th>H100 典型带宽</th><th>训练中的角色</th></tr>
+<tr><td><strong>NVLink / NVSwitch</strong></td><td>GPU-GPU 高速互联</td><td>单机内（或 NVLink Switch 扩展域）</td><td><strong>900 GB/s</strong> 双向/GPU</td><td>单机内 AllReduce、张量并行、MoE All-to-All、Pipeline stage 通信</td></tr>
+<tr><td><strong>PCIe</strong></td><td>通用 I/O 总线</td><td>CPU↔GPU、GPU↔NIC、GPU↔NVMe、部分 GPU-GPU P2P</td><td><strong>128 GB/s</strong> 双向（Gen5 x16）</td><td>Host→GPU 拷贝、GPU→NIC、无 NVLink 时的 GPU-GPU fallback</td></tr>
+<tr><td><strong>RDMA / InfiniBand / RoCE</strong></td><td>跨服务器远程直接内存访问</td><td>服务器之间</td><td><strong>~50 GB/s</strong>（单口 400G NIC）</td><td>跨节点梯度同步、参数交换、分布式训练 collective</td></tr>
 </table></div>
 <p>简单类比：</p>
-<ul><li><strong>NVLink</strong>：GPU 之间的“高速内环路”。</li><li><strong>PCIe</strong>：服务器内部设备之间的“通用高速公路”。</li><li><strong>RDMA</strong>：服务器之间的“跨城专线”。</li></ul>
-<h2>带宽差异</h2>
-<h3>NVLink：单机 GPU-GPU 通信的最高优先级</h3>
-<p>对 H100 来说，NVIDIA 给出的 H100 SXM 互联规格是 <strong>NVLink 900 GB/s</strong>，H100 NVL 的 PCIe 形态则列出 <strong>NVLink 600 GB/s</strong> 和 <strong>PCIe Gen5 128 GB/s</strong>。</p>
-<p>对 A100 来说，NVIDIA 给出的 A100 80GB SXM 互联规格是 <strong>NVLink 600 GB/s</strong>，PCIe Gen4 为 <strong>64 GB/s</strong>，并且 A100 PCIe 版本通过 NVLink Bridge 主要支持最多两张 GPU 的桥接。</p>
-<p>这里要注意：</p>
-<ul><li>NVIDIA 规格表里的 <strong>600 GB/s、900 GB/s</strong> 通常是 GPU 级别的 NVLink 聚合带宽。</li><li>这是面向 <strong>GPU-GPU</strong> 的专用互联，不是 CPU-GPU 通用总线。</li><li>在 8 卡 SXM 服务器里，NVLink 往往不是简单点对点线缆，而是通过 <strong>NVSwitch</strong> 形成交换网络，让多张 GPU 之间可以高带宽互联。</li></ul>
-<h3>PCIe：通用但相对慢</h3>
-<p>PCIe 的带宽按 <strong>代际 × lane 数</strong>计算。PCI-SIG 说明 PCIe 4.0 每 lane 每方向支持 16.0 GT/s，PCIe 5.0 每 lane 每方向支持 32.0 GT/s。</p>
-<p>常见 GPU 是 x16 链路，可以近似理解为：</p>
+<ul><li><strong>NVLink</strong>：GPU 之间的&quot;高速内环路&quot;——专用、超宽、超低延迟。</li><li><strong>PCIe</strong>：服务器内部的&quot;通用高速公路&quot;——什么设备都能走，但车道少。</li><li><strong>RDMA</strong>：服务器之间的&quot;跨城专线&quot;——距离远，但 NIC 可以直接读写对端 GPU 显存。</li></ul>
+<div class="card card-d">
+<h3>面试高频追问：为什么 NVLink 带宽比 PCIe 高这么多？</h3>
+<p>NVLink 是 NVIDIA 专为 GPU-GPU 设计的<strong>专有协议</strong>，物理层使用更多差分对（H100 有 18 条 NVLink 4.0 链路），不需要兼容通用 PCIe 设备枚举、地址空间映射等 I/O 开销；同时 NVSwitch 芯片提供 in-network reduction（SHARP）硬件加速，AllReduce 类 collective 可以在交换机芯片内完成累加，不需要每张 GPU 都收到完整数据再本地相加。PCIe 是通用 I/O 总线，要服务 CPU、GPU、NIC、SSD 等多种设备，协议栈更重，链路数量也受限于插槽形态。</p>
+</div>
+<h2>NVLink 与 NVSwitch：单机 GPU-GPU 的高速通道</h2>
+<h3>NVLink 演进</h3>
+<p>NVLink 自 2016 年 P100 推出以来已发展四代：</p>
 <div class="table-scroll"><table>
-<tr><th>PCIe 版本</th><th>常见 x16 单向有效量级</th><th>双向合计量级</th><th>常见对应 GPU</th></tr>
-<tr><td><strong>PCIe Gen4 x16</strong></td><td>约 32 GB/s</td><td>约 64 GB/s</td><td>A100 PCIe</td></tr>
-<tr><td><strong>PCIe Gen5 x16</strong></td><td>约 64 GB/s</td><td>约 128 GB/s</td><td>H100 PCIe</td></tr>
+<tr><th>代数</th><th>代表 GPU</th><th>每条链路带宽</th><th>链路数/GPU</th><th>聚合带宽/GPU</th></tr>
+<tr><td>NVLink 1.0</td><td>P100</td><td>20 GB/s 双向</td><td>4</td><td>80 GB/s</td></tr>
+<tr><td>NVLink 2.0</td><td>V100</td><td>25 GB/s 双向</td><td>6</td><td>150 GB/s</td></tr>
+<tr><td>NVLink 3.0</td><td>A100</td><td>50 GB/s 双向</td><td>12</td><td>600 GB/s</td></tr>
+<tr><td>NVLink 4.0</td><td>H100/H200</td><td>50 GB/s 双向</td><td>18</td><td><strong>900 GB/s</strong></td></tr>
+<tr><td>NVLink 5.0</td><td>B200/GB200</td><td>~100 GB/s 双向</td><td>18</td><td>1.8 TB/s</td></tr>
 </table></div>
-<p>所以 PCIe 和 NVLink 的差距很明显：</p>
+<p>A100 SXM 单 GPU 有 12 条 NVLink 3.0，聚合 600 GB/s；H100 SXM 增加到 18 条 NVLink 4.0，聚合 900 GB/s，是 PCIe Gen5 x16（~128 GB/s 双向）的 7 倍。</p>
+<h3>NVSwitch：让所有 GPU 全互联</h3>
+<p>仅靠 NVLink 点对点连接（NVLink Bridge）只能支持两张 GPU 直连（如 PCIe 版本的 H100 双卡桥接）。要让 8 张 GPU 两两之间都有高带宽通路，需要 <strong>NVSwitch</strong> 交换芯片。</p>
+<p>HGX H100 8-GPU 基板上集成了 <strong>4 颗第三代 NVSwitch</strong> 芯片，形成全互联无阻塞（non-blocking）交换矩阵：任意 GPU 对之间都能以 ~900 GB/s 的速度同时通信，不会争用带宽。</p>
+<img src="../../../resources/images/gpu/hgx-h100-nvswitch-topology.svg" alt="HGX H100 NVSwitch 拓扑" style="width:100%;max-width:900px;margin:16px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">图 2：HGX H100 8-GPU 基板拓扑概念图。8 颗 GPU 通过 4 颗 NVSwitch 芯片形成全互联，每颗 GPU 的 18 条 NVLink 分布连接到 4 颗 NVSwitch，实现 all-to-all 无阻塞通信。CPU 仅负责控制面（kernel 启动、通信调度），不参与 GPU-GPU 数据搬运。</p>
+<p>HGX A100 使用 <strong>6 颗第二代 NVSwitch</strong>（每颗 GPU 有 2 条 NVLink 连到每颗 NVSwitch），对分带宽（bisection bandwidth）2.4 TB/s；HGX H100 使用 4 颗第三代 NVSwitch（每颗 GPU 有 4~5 条 NVLink 连到 NVSwitch），对分带宽提升到 <strong>3.6 TB/s</strong>。</p>
+<p>第三代 NVSwitch 的一个关键新特性是 <strong>in-switch reduction</strong>（SHARP 风格）：AllReduce 操作中的加法运算可以在 NVSwitch 芯片内的 ALU 上直接完成，减少数据在 GPU 间的往返，常见 collective（如 all-reduce）有效带宽相比 A100 提升约 3 倍。</p>
+<h2>PCIe：通用 I/O 总线</h2>
+<p>PCIe（Peripheral Component Interconnect Express）是服务器内部连接 CPU、GPU、NIC、NVMe SSD 的通用总线。它不是 GPU-GPU 通信的最优路径，但在没有 NVLink 时是 fallback 选择，同时承担 CPU-GPU、GPU-NIC 等关键数据路径。</p>
+<h3>PCIe 带宽计算</h3>
+<p>PCIe 带宽 = <strong>代际速率 × lane 数 × 编码开销</strong>。常见 GPU 使用 x16 链路：</p>
 <div class="table-scroll"><table>
-<tr><th>对比项</th><th>典型带宽量级</th></tr>
-<tr><td>A100 SXM NVLink</td><td>约 600 GB/s</td></tr>
-<tr><td>A100 PCIe Gen4</td><td>约 64 GB/s 双向合计</td></tr>
-<tr><td>H100 SXM NVLink</td><td>约 900 GB/s</td></tr>
-<tr><td>H100 PCIe Gen5</td><td>约 128 GB/s 双向合计</td></tr>
+<tr><th>PCIe 版本</th><th>编码前每 lane 速率</th><th>x16 单向有效带宽</th><th>x16 双向合计</th><th>常见对应 GPU</th></tr>
+<tr><td>PCIe Gen3</td><td>8 GT/s → ~1 GB/s/lane</td><td>~16 GB/s</td><td>~32 GB/s</td><td>V100 PCIe</td></tr>
+<tr><td>PCIe Gen4</td><td>16 GT/s → ~2 GB/s/lane</td><td>~32 GB/s</td><td>~64 GB/s</td><td>A100 PCIe</td></tr>
+<tr><td>PCIe Gen5</td><td>32 GT/s → ~4 GB/s/lane</td><td>~64 GB/s</td><td>~128 GB/s</td><td>H100 PCIe</td></tr>
+<tr><td>PCIe Gen6</td><td>64 GT/s → ~8 GB/s/lane</td><td>~128 GB/s</td><td>~256 GB/s</td><td>B100/未来 GPU</td></tr>
 </table></div>
-<p>也就是说，<strong>NVLink 的 GPU-GPU 带宽通常是 PCIe 的数倍到十几倍</strong>。这也是为什么张量并行、MoE All-to-All、频繁 collective 更偏好单机 NVLink/NVSwitch。</p>
-<h3>RDMA / InfiniBand：跨机通信的主力</h3>
-<p>跨服务器时，数据不能直接走 NVLink，通常走 <strong>InfiniBand 或 RoCE RDMA</strong>。NVIDIA Quantum-2 InfiniBand 平台支持最高 <strong>400 Gb/s</strong>，ConnectX-7 InfiniBand 适配器也支持单端口或双端口 <strong>400 Gb/s</strong>。</p>
-<p>换算一下：</p>
-<pre><code class="language-text">400 Gb/s ÷ 8 ≈ 50 GB/s</code></pre>
-<p>所以一张 400G 网卡的理论线速大约是 <strong>50 GB/s</strong>。如果一台服务器有多张 400G NIC，例如 8 张 GPU 搭配 4 到 8 张 NIC，就可以通过 multi-rail 并行提升跨机总带宽。</p>
-<p>但即便如此，跨机 RDMA 的单链路带宽通常仍低于单机内 NVLink/NVSwitch：</p>
-<ul><li>单 GPU NVLink 聚合：数百 GB/s 级别。</li><li>单 400G RDMA NIC：约 50 GB/s 线速级别。</li><li>多 NIC 可以并行，但会受 PCIe、NUMA、交换机、拥塞控制、通信库调度影响。</li></ul>
-<h2>延迟差异</h2>
-<p>延迟比带宽更依赖平台、拓扑、驱动、通信库和消息大小，所以很难给一个绝对固定值。工程上可以按这个顺序理解：</p>
-<pre><code class="language-text">NVLink/NVSwitch 延迟最低
-  &lt; PCIe P2P
-  &lt; 跨 Socket PCIe / Host staging
-  &lt; RDMA 跨机</code></pre>
-<h3>NVLink / NVSwitch 延迟</h3>
-<p>NVLink 面向 GPU-GPU 通信，路径短、协议栈轻、带宽高。单机内 GPU 之间做 AllReduce、AllGather、ReduceScatter 时，如果能走 NVLink/NVSwitch，通常是最优路径。</p>
-<p>在 8 卡 SXM 服务器里，GPU 间通信通常是：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU HBM</div><div class="flow-desc">源 GPU 的参数、梯度、激活值或 KV Cache</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">GPU NVLink interface</div><div class="flow-desc">从 GPU 内存侧进入 NVLink 通道</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">NVSwitch</div><div class="flow-desc">在单机内部做 GPU-GPU 交换</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">目标 GPU NVLink interface</div><div class="flow-desc">目标 GPU 接收数据</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">目标 GPU HBM</div><div class="flow-desc">数据写入目标 GPU 显存</div></div></div>
-<p>CPU 不负责搬运这段数据，只负责启动 kernel、提交通信操作、管理进程和页表等控制逻辑。</p>
-<h3>PCIe 延迟</h3>
-<p>PCIe 是通用 I/O 协议，层次更多，路径可能经过：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU</div><div class="flow-desc">源设备</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe switch / root complex</div><div class="flow-desc">进入 PCIe 拓扑</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">CPU socket</div><div class="flow-desc">可能经过本地 CPU root</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">另一个 PCIe root / switch</div><div class="flow-desc">跨 root 或跨 Socket 时路径变长</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">目标 GPU 或 NIC</div><div class="flow-desc">目标设备接收数据</div></div></div>
-<p>如果两张 GPU 在同一个 PCIe switch 下，PCIe P2P 还算可接受；如果跨 Socket，则可能经过 CPU 间互联，例如 UPI、Infinity Fabric 等，延迟和抖动都会上升。</p>
-<p>更糟糕的情况是不能直接 P2P，需要走 host staging：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU0 HBM</div><div class="flow-desc">源 GPU 显存</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">CPU pinned memory</div><div class="flow-desc">先落到主机页锁定内存</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">GPU1 HBM</div><div class="flow-desc">再从主机内存拷贝到目标 GPU</div></div></div>
-<p>这会额外消耗 CPU 内存带宽，并增加一次或多次拷贝。</p>
-<h3>RDMA 延迟</h3>
-<p>RDMA 的优势是跨机时避免远端 CPU 参与数据搬运。NVIDIA 对 GPUDirect 的描述是，网络适配器和存储设备可以直接读写 GPU memory，从而消除不必要的内存拷贝、降低 CPU 开销和延迟。</p>
-<p>但跨机 RDMA 仍然要经过：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">本机 GPU</div><div class="flow-desc">源 GPU HBM</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">本机 PCIe / PCIe switch / root complex</div><div class="flow-desc">GPU 到 NIC 的本机路径</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">本机 NIC</div><div class="flow-desc">RDMA 网卡发起网络传输</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">网络交换机</div><div class="flow-desc">InfiniBand / RoCE fabric</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">远端 NIC</div><div class="flow-desc">远端服务器接收</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">远端 PCIe</div><div class="flow-desc">NIC 到远端 GPU 的本机路径</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">远端 GPU</div><div class="flow-desc">数据写入远端 GPU HBM</div></div></div>
-<p>所以它通常比单机 NVLink/NVSwitch 延迟更高，并且容易受网络拥塞、交换机层级、路由、ECN/PFC、RoCE/IB 配置影响。</p>
-<h2>一台 8 卡 H100/A100 服务器内部，数据如何流转？</h2>
-<p>这里分两种常见形态：<strong>SXM/HGX 8 卡服务器</strong>和<strong>PCIe 8 卡服务器</strong>。</p>
-<h3>8 卡 H100/A100 SXM/HGX：主路径是 NVLink + NVSwitch</h3>
-<p>高端 8 卡 A100/H100 训练服务器通常使用 SXM 模组和 HGX/DGX 形态。以这种形态为例，单机内 GPU-GPU 通信一般不走 PCIe，而是走：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU0 HBM</div><div class="flow-desc">源 GPU 的梯度、激活值、KV Cache 或参数分片</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">GPU0 NVLink</div><div class="flow-desc">离开源 GPU</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">NVSwitch fabric</div><div class="flow-desc">单机内交换网络</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">GPU1/GPU2/.../GPU7 NVLink</div><div class="flow-desc">进入目标 GPU</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">目标 GPU HBM</div><div class="flow-desc">写入目标显存</div></div></div>
-<p>在这种服务器内：</p>
-<p>模型参数、梯度、激活值、KV Cache 等主要在 GPU HBM。H100 SXM 的 GPU memory bandwidth 是 <strong>3.35 TB/s</strong>，H100 NVL 规格中列出的 memory bandwidth 是 <strong>3.9 TB/s</strong>。A100 80GB PCIe/SXM 的 GPU memory bandwidth 分别列为 <strong>1,935 GB/s</strong> 和 <strong>2,039 GB/s</strong>。</p>
-<ol><li><strong>GPU 自己的计算数据在 HBM 中</strong>。</li></ol>
-<p>例如 GPU0 要把梯度 chunk 发给 GPU3，数据从 GPU0 HBM 读出，经 NVLink 进入 NVSwitch，再通过 NVLink 到 GPU3 HBM。CPU 不拷贝这段数据。</p>
-<ol><li><strong>GPU-GPU 通信走 NVLink/NVSwitch</strong>。</li></ol>
-<p>CPU 会启动 CUDA kernel、初始化 NCCL communicator、管理进程、内存注册、同步等，但真正的数据平面不应该经过 CPU 内存。</p>
-<ol><li><strong>CPU 主要负责控制和调度</strong>。</li></ol>
-<p>PCIe 仍负责 CPU-GPU 控制、Host memory 到 GPU memory 的数据加载、GPU 到 NIC 的路径、GPU 到 NVMe 或存储路径，以及没有 NVLink 可用时的 fallback。</p>
-<ol><li><strong>PCIe 仍然存在，但不是 GPU-GPU 主通道</strong>。</li></ol>
-<h3>8 卡 PCIe 服务器：GPU-GPU 可能走 PCIe P2P 或 Host staging</h3>
-<p>如果是 PCIe 形态的 8 卡服务器，拓扑就更复杂。典型路径可能是：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU0</div><div class="flow-desc">源 GPU</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe switch</div><div class="flow-desc">同 switch 下 P2P</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">GPU1</div><div class="flow-desc">目标 GPU</div></div></div>
-<p>也可能是：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU0</div><div class="flow-desc">源 GPU</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe switch</div><div class="flow-desc">本地 PCIe switch</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">CPU root complex</div><div class="flow-desc">本地 CPU root</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">CPU interconnect</div><div class="flow-desc">跨 Socket，例如 UPI / Infinity Fabric</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">另一个 CPU root complex</div><div class="flow-desc">远端 Socket root</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">PCIe switch</div><div class="flow-desc">远端 PCIe switch</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">GPU5</div><div class="flow-desc">目标 GPU</div></div></div>
-<p>如果 P2P 不可用，可能退化为：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU0 HBM</div><div class="flow-desc">源 GPU 显存</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">CPU pinned memory</div><div class="flow-desc">主机中转缓冲区</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">GPU5 HBM</div><div class="flow-desc">目标 GPU 显存</div></div></div>
-<p>这就是为什么 8 卡 PCIe 服务器做大模型训练时，性能通常不如 8 卡 SXM/NVSwitch 服务器。PCIe 服务器不是不能训练，而是 GPU-GPU 通信密集型任务会更容易被互联瓶颈限制。</p>
-<h2>单机内 AllReduce 数据如何走？</h2>
-<p>以 8 卡数据并行训练为例，每张 GPU 都有一份模型副本，每轮 backward 后需要同步梯度。NCCL 通常会根据拓扑选择 ring、tree、CollNet、NVLS 等算法。概念上可以理解为：</p>
-<pre><code class="language-text">GPU0 梯度 chunk A → GPU1 → GPU2 → ... → GPU7
-GPU1 梯度 chunk B → GPU2 → GPU3 → ... → GPU0
-...</code></pre>
-<p>在 SXM/NVSwitch 机器里，这些 chunk 主要沿 NVLink/NVSwitch 交换。</p>
-<p>更具体地说：</p>
-<ol><li>每张 GPU 把梯度切成多个 chunk。</li><li>reduce-scatter 阶段，每个 chunk 沿环或树传播，并在目标 GPU 上累加。</li><li>all-gather 阶段，累加后的结果再分发回所有 GPU。</li><li>如果 NVLink/NVSwitch 可用，NCCL 会尽量让通信走 GPU-GPU 高速路径。</li><li>如果某些 GPU 间只能走 PCIe，通信图会变慢，尤其是跨 Socket GPU 对。</li></ol>
-<p>因此在单机 8 卡服务器中，<strong>拓扑好坏直接影响 AllReduce 的有效带宽</strong>。</p>
-<h2>服务器之间，数据如何流转？</h2>
-<p>跨服务器时，NVLink 通常只管本机内 GPU；跨机要靠 NIC 和网络。理想路径是 <strong>GPUDirect RDMA</strong>。</p>
-<h3>有 GPUDirect RDMA 时</h3>
-<p>假设 Server A 的 GPU0 要发数据给 Server B 的 GPU3，理想路径是：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">Server A GPU0 HBM</div><div class="flow-desc">源 GPU 显存</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Server A PCIe / PCIe switch</div><div class="flow-desc">GPU 到 NIC 的本机路径</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Server A RDMA NIC</div><div class="flow-desc">NIC 直接读 GPU memory</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">InfiniBand/RoCE 网络交换机</div><div class="flow-desc">跨机传输</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Server B RDMA NIC</div><div class="flow-desc">远端 NIC 接收</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">Server B PCIe / PCIe switch</div><div class="flow-desc">NIC 到远端 GPU 的路径</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">Server B GPU3 HBM</div><div class="flow-desc">写入远端 GPU 显存</div></div></div>
-<p>这个路径的关键点是：</p>
-<ul><li>NIC 可以直接读写 GPU memory。</li><li>数据不需要先拷贝到 CPU DRAM。</li><li>CPU 主要负责控制面，例如注册内存、提交 work request、处理中断或轮询 completion queue。</li><li>数据面由 GPU、PCIe、NIC、网络交换机完成。</li></ul>
-<p>NVIDIA 对 GPUDirect RDMA 的说明是，它为远程系统中的 NVIDIA GPU 提供直接通信，并消除系统 CPU 和经由系统内存的数据 buffer copy。</p>
-<h3>没有 GPUDirect RDMA 或拓扑不佳时</h3>
-<p>如果不能直接从 GPU memory 做 RDMA，可能退化为：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">Server A GPU0 HBM</div><div class="flow-desc">源 GPU 显存</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Server A CPU pinned memory</div><div class="flow-desc">本机 host staging</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Server A NIC</div><div class="flow-desc">从 CPU 内存发包</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">网络</div><div class="flow-desc">跨机传输</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Server B NIC</div><div class="flow-desc">远端接收</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">Server B CPU pinned memory</div><div class="flow-desc">远端 host staging</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">Server B GPU3 HBM</div><div class="flow-desc">再拷贝到目标 GPU</div></div></div>
-<p>这会多出两侧 host memory staging：</p>
-<ul><li>GPU → CPU 内存。</li><li>CPU 内存 → NIC。</li><li>远端 NIC → CPU 内存。</li><li>CPU 内存 → GPU。</li></ul>
-<p>这类路径会显著增加延迟、占用 CPU 内存带宽，并降低通信吞吐。</p>
-<h2>8 卡 H100/A100 多机训练的典型通信层级</h2>
-<p>多机多卡训练通常采用<strong>分层通信</strong>：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">单机内 GPU ↔ GPU</div><div class="flow-desc">NVLink / NVSwitch</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">跨机器 GPU ↔ NIC ↔ 网络 ↔ NIC ↔ GPU</div><div class="flow-desc">GPUDirect RDMA</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">CPU 控制面</div><div class="flow-desc">控制、调度、内存注册、进程管理，不应成为大规模数据搬运路径</div></div></div>
-<p>以两台 8 卡服务器做 AllReduce 为例，较优通信流程通常是：</p>
-<p>8 张 GPU 先通过 NVLink/NVSwitch 做本机内 reduce-scatter，这样可以把本机内的高带宽利用起来。</p>
-<ol><li><strong>每台机器内部先 reduce</strong>。</li></ol>
-<p>每台服务器的 GPU 数据通过 GPUDirect RDMA 发到对端。如果有多张 NIC，会做 multi-rail 并行。</p>
-<ol><li><strong>每台机器通过 NIC 跨机交换部分结果</strong>。</li></ol>
-<p>跨机同步完成后，再通过本机 NVLink/NVSwitch 分发给本机所有 GPU。</p>
-<ol><li><strong>每台机器内部再 all-gather</strong>。</li></ol>
-<p>这就是为什么大规模训练通信库通常会做 topology-aware 优化：<strong>先用单机内最快的 NVLink/NVSwitch，跨机部分才使用 RDMA</strong>。</p>
-<h2>为什么 NUMA、Socket、NIC 亲和性很重要？</h2>
-<p>即使都有 H100/A100 和 400G RDMA，性能也可能差很多，原因是本机内 GPU 到 NIC 的路径不同。</p>
-<h3>情况一：GPU 和 NIC 在同一 PCIe switch / 同一 Socket 下</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU</div><div class="flow-desc">源 GPU</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe switch</div><div class="flow-desc">本地 PCIe 路径</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">NIC</div><div class="flow-desc">同 switch 或同 Socket 下的 RDMA 网卡</div></div></div>
-<p>这是比较理想的路径：</p>
-<ul><li>路径短。</li><li>不跨 CPU socket。</li><li>PCIe 带宽更可控。</li><li>GPUDirect RDMA 效率较高。</li></ul>
-<h3>情况二：GPU 和 NIC 跨 Socket</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU</div><div class="flow-desc">源 GPU</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe switch</div><div class="flow-desc">GPU 所在侧</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">CPU Socket 0</div><div class="flow-desc">本地 socket</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">CPU interconnect</div><div class="flow-desc">跨 Socket 互联</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">CPU Socket 1</div><div class="flow-desc">NIC 所在侧</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">PCIe root complex</div><div class="flow-desc">远端 root</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">NIC</div><div class="flow-desc">目标 RDMA 网卡</div></div></div>
+<p>PCIe 是<strong>树形拓扑</strong>：设备通过 PCIe switch 连接到 CPU root complex。两张 GPU 是否能高效通信，取决于它们在 PCIe 树中的位置：</p>
+<ul><li><strong>同 PCIe switch 下的 P2P</strong>：路径最短，延迟和带宽相对最好。</li><li><strong>跨 PCIe switch / 跨 root complex</strong>：路径变长。</li><li><strong>跨 CPU Socket</strong>：需要经过 CPU 间互联（Intel UPI、AMD Infinity Fabric），延迟显著增加，抖动变大。</li><li><strong>Host staging（最差情况）</strong>：GPU→CPU pinned memory→GPU，多一次拷贝，占用 CPU 内存带宽。</li></ul>
+<div class="callout warn">
+<p><strong>注意</strong>：PCIe P2P（Peer-to-Peer）需要硬件和驱动支持。即使两张 GPU 物理上在同一 PCIe switch 下，也可能因为 ACS（Access Control Services）、IOMMU 配置或驱动限制无法直接 P2P，此时会静默退化为 host staging。排查时可用 <code>nvidia-smi topo -p2p</code> 确认 P2P 是否可达。</p>
+</div>
+<h2>RDMA 与 GPUDirect：跨机通信主力</h2>
+<p>跨服务器时 NVLink 无法直接延伸，必须通过 NIC 和网络。高性能 AI 训练集群使用 <strong>InfiniBand</strong> 或 <strong>RoCE（RDMA over Converged Ethernet）</strong> 实现 RDMA（Remote Direct Memory Access）。</p>
+<h3>RDMA 的核心优势</h3>
+<p>传统网络通信需要 CPU 参与数据搬运（socket buffer → kernel → NIC），RDMA 允许 NIC <strong>绕过远端 CPU</strong> 直接读写远端内存，大幅降低延迟和 CPU 开销。400G InfiniBand（NDR）单口线速约 50 GB/s（400 Gb/s ÷ 8），一台服务器通常配 4~8 张 ConnectX-7 NIC，通过 multi-rail 并行提供数百 GB/s 的跨机总带宽。</p>
+<h3>GPUDirect RDMA：让 NIC 直接读写 GPU 显存</h3>
+<p>GPUDirect RDMA 是 RDMA 的关键增强：NIC 可以通过 PCIe 直接 DMA 读写 GPU HBM 显存，不需要先把数据拷贝到 CPU 内存再发送。</p>
+<img src="../../../resources/images/gpu/gpudirect-rdma-path-comparison.svg" alt="GPUDirect RDMA 路径对比" style="width:100%;max-width:920px;margin:16px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
+<p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">图 3：传统跨机通信路径 vs GPUDirect RDMA 路径对比。传统路径在发送端和接收端都需要经过 CPU 内存中转（host staging），共 4 次额外拷贝；GPUDirect RDMA 让 NIC 直接读写 GPU HBM，消除 host staging，CPU 仅负责控制面操作。</p>
+<p>传统路径：<code>GPU0 HBM → CPU DRAM → NIC → 网络 → NIC → CPU DRAM → GPU3 HBM</code>（4 次拷贝，CPU 全程参与）。 GPUDirect RDMA 路径：<code>GPU0 HBM → PCIe → NIC → 网络 → NIC → PCIe → GPU3 HBM</code>（零 CPU 内存中转）。</p>
 <p>这会带来：</p>
-<ul><li>更高延迟。</li><li>更低有效带宽。</li><li>更强抖动。</li><li>CPU socket 间互联被占用。</li><li>多任务并发时更容易产生瓶颈。</li></ul>
-<p>所以调度 8 卡任务时，不仅要看 GPU-GPU 是否同属 NVLink/NVSwitch 域，还要看 <strong>GPU-NIC 路径</strong>。跨机训练时，GPU 到 NIC 的亲和性几乎和 GPU 到 GPU 的亲和性一样重要。</p>
+<ul><li><strong>延迟降低</strong>：省去 2~4 次内存拷贝。</li><li><strong>CPU 开销降低</strong>：CPU 仅负责控制面（注册内存、提交 Work Request、轮询 Completion Queue），不参与数据搬运。</li><li><strong>带宽提升</strong>：避免 CPU 内存带宽成为瓶颈，PCIe 带宽利用率更高。</li><li><strong>支持 GPU-Direct Storage（GDS）</strong>：同样的思路让 NVMe 直接读写 GPU 显存。</li></ul>
+<h2>一台 8 卡 H100/A100 服务器内，数据如何流转？</h2>
+<h3>8 卡 SXM/HGX 形态（DGX/HGX 高端训练服务器）</h3>
+<p>这是大模型训练的主力机型。8 张 H100 SXM GPU 通过 NVSwitch 全互联：</p>
+<ol><li><strong>计算数据主要在 HBM 中</strong>：模型参数、梯度、激活值、KV Cache 都在 GPU HBM 中（H100 SXM HBM 带宽 3.35 TB/s）。</li><li><strong>GPU-GPU 通信走 NVLink/NVSwitch</strong>：GPU0 发梯度给 GPU3，数据从 GPU0 HBM → NVLink → NVSwitch → NVLink → GPU3 HBM，CPU 不拷贝数据。</li><li><strong>CPU 负责控制面</strong>：启动 CUDA kernel、初始化 NCCL communicator、管理进程和内存注册，但不参与数据平面。</li><li><strong>PCIe 仍然存在但不是主通道</strong>：负责 CPU-GPU 控制命令、Host 到 GPU 的初始数据加载、GPU 到 NIC 的跨机路径、GPU 到 NVMe 的存储 I/O。</li></ol>
+<h3>8 卡 PCIe 形态（消费级/推理服务器）</h3>
+<p>PCIe 形态的 8 卡服务器没有 NVSwitch，GPU-GPU 通信依赖 PCIe 拓扑：</p>
+<ul><li><strong>同 PCIe switch 下 P2P</strong>：路径短，带宽相对可接受，但远低于 NVLink。</li><li><strong>跨 CPU Socket</strong>：经过 UPI/Infinity Fabric，延迟和抖动大幅增加。</li><li><strong>Host staging</strong>：如果 P2P 不可用，退化为 GPU→CPU→GPU，性能最差。</li></ul>
+<p>这就是为什么 8 卡 PCIe 服务器训练大模型性能通常不如 SXM/NVSwitch 服务器——通信密集型任务（张量并行、MoE 专家并行、大 batch AllReduce）会被互联瓶颈严重限制。</p>
+<h3>单机 AllReduce 的数据路径</h3>
+<p>以 8 卡数据并行训练为例，NCCL 根据拓扑自动选择 ring、tree、CollNet、NVLS 等算法。在 SXM/NVSwitch 机器上：</p>
+<ol><li>每张 GPU 把梯度切成多个 chunk。</li><li><strong>reduce-scatter</strong> 阶段：每个 chunk 沿 ring 或 tree 传播，在目标 GPU 上累加——走 NVLink/NVSwitch。</li><li><strong>all-gather</strong> 阶段：累加后的结果再通过 NVLink/NVSwitch 分发给所有 GPU。</li><li>NVSwitch 的 in-switch reduction 可以在交换芯片内完成部分加法，减少 GPU 间数据往返。</li></ol>
+<h2>跨机数据流转：分层通信</h2>
+<p>多机多卡训练采用<strong>分层通信</strong>策略：</p>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">单机内 GPU↔GPU</div><div class="flow-desc">NVLink/NVSwitch（最高优先级，充分利用单机带宽）</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">本机 GPU↔NIC</div><div class="flow-desc">PCIe（GPUDirect 直连，同 Socket 最优）</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">跨机 NIC↔NIC</div><div class="flow-desc">InfiniBand/RoCE RDMA（多 NIC multi-rail 并行）</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">远端 NIC↔GPU</div><div class="flow-desc">PCIe（GPUDirect 直连）</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">CPU 控制面</div><div class="flow-desc">仅做内存注册、调度、进程管理，不搬运数据</div></div></div>
+<p>两台 8 卡服务器做 AllReduce 的典型流程：</p>
+<ol><li><strong>每台机器内部先 reduce-scatter</strong>：8 张 GPU 通过 NVLink/NVSwitch 做本机内归约，把高带宽用满。</li><li><strong>跨机交换</strong>：每台服务器的 GPU 数据通过 GPUDirect RDMA 发到对端，多 NIC 并行。</li><li><strong>每台机器内部再 all-gather</strong>：跨机同步完成后，通过 NVLink/NVSwitch 分发给本机所有 GPU。</li></ol>
+<p>这就是 NCCL 做 topology-aware 通信优化的核心思想：<strong>先用单机内最快的 NVLink/NVSwitch 做本地聚合，减少必须跨机传输的数据量。</strong></p>
+<h2>NUMA 与 GPU-NIC 亲和性：容易被忽视的性能杀手</h2>
+<p>即使都配了 H100 + 400G RDMA，性能也可能差很多——关键在于 GPU 到 NIC 的 PCIe 路径。</p>
+<h3>理想情况：GPU 和 NIC 同 Socket / 同 PCIe switch</h3>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU → PCIe switch → NIC（同 Socket 下，路径短、延迟低、无跨 UPI）</div></div></div>
+<h3>糟糕情况：GPU 和 NIC 跨 Socket</h3>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU → PCIe switch → CPU Socket 0 → UPI/Infinity Fabric → CPU Socket 1 → PCIe root → NIC</div></div></div>
+<p>跨 Socket 带来的问题：</p>
+<ul><li>延迟增加 1~2 μs 甚至更多。</li><li>有效带宽降低 30%~50%。</li><li>抖动变大（UPI 链路被其他流量竞争）。</li><li>CPU socket 间互联带宽被占用，影响其他任务。</li></ul>
+<p>调度多机训练任务时，不仅要保证 8 张 GPU 属于同一 NVSwitch 域，还要确保 <strong>每张 GPU 到其对应 NIC 的 PCIe 路径是同 Socket 的</strong>。<code>nvidia-smi topo -m</code> 输出中的 <code>CPU Affinity</code> 和 <code>NUMA Affinity</code> 列可以直接看到 GPU 与哪些 CPU 核亲和。</p>
 <h2>通信路径优先级总结</h2>
-<h3>单机内 GPU-GPU</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">优先级 1：NVLink / NVSwitch</div><div class="flow-desc">单机内最优 GPU-GPU 路径</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">优先级 2：PCIe P2P，同 PCIe switch</div><div class="flow-desc">没有 NVLink 时的较优 fallback</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">优先级 3：PCIe P2P，跨 root complex / 跨 Socket</div><div class="flow-desc">路径变长，延迟和抖动增加</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">优先级 4：GPU → CPU pinned memory → GPU</div><div class="flow-desc">Host staging，通常应避免</div></div></div>
+<h3>单机内 GPU-GPU（带宽从高到低）</h3>
+<div class="table-scroll">
+<table>
+<tr><th>优先级</th><th>路径</th><th>典型带宽</th><th>说明</th></tr>
+<tr><td>1</td><td>NVLink / NVSwitch</td><td>900 GB/s</td><td>单机内最优 GPU-GPU 路径，全互联无阻塞</td></tr>
+<tr><td>2</td><td>PCIe P2P（同 switch）</td><td>~50~100 GB/s</td><td>无 NVLink 时的较优 fallback</td></tr>
+<tr><td>3</td><td>PCIe P2P（跨 root / 跨 Socket）</td><td>~20~50 GB/s</td><td>路径长，延迟和抖动增加</td></tr>
+<tr><td>4</td><td>GPU → CPU pinned memory → GPU（host staging）</td><td>&lt;20 GB/s</td><td>最差，占用 CPU 内存带宽，应尽量避免</td></tr>
+</table>
+</div>
 <h3>跨机 GPU-GPU</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">优先级 1：GPU HBM → 本地 NIC → RDMA 网络 → 远端 NIC → 远端 GPU HBM</div><div class="flow-desc">GPUDirect RDMA，理想路径</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">优先级 2：GPU HBM → 本地 CPU 内存 → NIC → 网络 → 远端 CPU 内存 → 远端 GPU HBM</div><div class="flow-desc">Host staging，性能较差</div></div></div>
-<h3>综合排序</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">NVLink/NVSwitch 单机内通信</div><div class="flow-desc">GPU-GPU 最优路径</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">PCIe P2P 单机内通信</div><div class="flow-desc">通用总线上的设备间直连</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">GPUDirect RDMA 跨机通信</div><div class="flow-desc">跨服务器的理想数据路径</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Host staging 跨机通信</div><div class="flow-desc">经过 CPU 内存中转，尽量避免</div></div></div>
-<p>注意：这里的排序是工程上的常见优先级，不代表所有消息大小下都绝对成立。小消息更敏感于 latency，大消息更敏感于 bandwidth，实际还要看 NCCL 算法、batch size、通信 overlap、网络拥塞和拓扑绑定。</p>
-<h2>对调度和性能优化的启示</h2>
+<div class="table-scroll">
+<table>
+<tr><th>优先级</th><th>路径</th><th>说明</th></tr>
+<tr><td>1</td><td>GPU HBM → PCIe → NIC → RDMA 网络 → NIC → PCIe → GPU HBM</td><td>GPUDirect RDMA，理想路径，零 host staging</td></tr>
+<tr><td>2</td><td>GPU → CPU 内存 → NIC → 网络 → NIC → CPU 内存 → GPU</td><td>Host staging，多 4 次拷贝，性能差 30%~50%</td></tr>
+</table>
+</div>
+<div class="callout note">
+<p><strong>大小消息的敏感性差异</strong>：以上排序是大消息（tensor/gradient 传输）场景的常见优先级。小消息（如控制信号、barrier）对延迟更敏感，可能 NVLink P2P 比 NVSwitch 多跳延迟更低；实际最优路径还取决于 NCCL 算法选择、通信 overlap、网络拥塞状态等。</p>
+</div>
+<h2>调度策略启示</h2>
 <h3>单机 8 卡任务</h3>
-<p>如果任务正好需要 8 张 GPU，最优是：</p>
-<pre><code class="language-text">同一台 HGX/DGX 8 卡机器
-  + 同一 NVSwitch fabric
-  + GPU 到 NIC 拓扑均衡</code></pre>
-<p>不建议把一个强通信任务拆成：</p>
-<pre><code class="language-text">4 卡在机器 A + 4 卡在机器 B</code></pre>
-<p>除非单机没有 8 卡资源，或者任务本身跨机并行效率很好。因为这样会把本来可以走 NVLink/NVSwitch 的通信变成 RDMA 跨机通信。</p>
+<p>最优：<strong>同一台 HGX/DGX 8 卡机器</strong> + 同一 NVSwitch fabric + GPU-NIC 拓扑均衡。</p>
+<p>不建议把一个强通信任务拆成「4 卡机器 A + 4 卡机器 B」——这会把本来可以走 NVLink 的通信变成 RDMA 跨机通信，带宽从 900 GB/s 降到 ~50 GB/s，性能可能差 10 倍以上。</p>
 <h3>4 卡任务</h3>
-<p>如果一个任务只需要 4 张 GPU，优先级通常是：</p>
-<ol><li>同一 NVLink/NVSwitch 域内的 4 张 GPU。</li><li>同一 PCIe switch 或同一 Socket 下的 4 张 GPU。</li><li>同机但跨 Socket 的 4 张 GPU。</li><li>跨机器 2+2 或 1+3。</li></ol>
-<p>原因是跨 Socket 和跨机都会增加通信路径长度，并引入 PCIe、CPU interconnect、NIC、交换机等额外瓶颈。</p>
+<p>优先级：</p>
+<ol><li>同一 NVSwitch 域内的 4 张 GPU（最优）。</li><li>同一 PCIe switch / 同一 Socket 下的 4 张 GPU。</li><li>同机但跨 Socket 的 4 张 GPU。</li><li>跨机器 2+2 或 1+3（最差）。</li></ol>
 <h3>多机 8×N 卡任务</h3>
-<p>多机训练时，调度器需要同时考虑：</p>
-<ul><li>每台机器内部是否是完整 8 卡 NVSwitch 拓扑。</li><li>每张 GPU 到 NIC 的距离。</li><li>NIC 数量和 rail 分布。</li><li>多台机器是否在同一 leaf switch 或同一网络 pod。</li><li>是否有 RDMA 拥塞。</li><li>NCCL topology file 或自动探测结果是否正确。</li></ul>
+<p>调度器需要同时考虑：</p>
+<ul><li>每台机器内部是否是完整的 8 卡 NVSwitch 拓扑。</li><li>每张 GPU 到 NIC 的距离（NUMA 亲和性）。</li><li>NIC 数量和 rail 分布（multi-rail 平衡）。</li><li>多台机器是否在同一 leaf switch / 同一网络 pod。</li><li>RDMA 网络是否有拥塞（ECN/PFC 配置）。</li><li>NCCL topology file 或自动探测是否正确。</li></ul>
 <h2>常见排查命令</h2>
-<div class="table-scroll"><table>
+<div class="table-scroll">
+<table>
 <tr><th>目标</th><th>命令 / 工具</th><th>看什么</th></tr>
-<tr><td>查看 GPU-GPU / GPU-NIC 拓扑</td><td><code>nvidia-smi topo -m</code></td><td>GPU 是否 NVLink 互联，GPU 到 NIC 是否同 NUMA</td></tr>
-<tr><td>查看 NCCL 选择的路径</td><td><code>NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,GRAPH</code></td><td>ring/tree/NVLS/IB 路径是否符合预期</td></tr>
-<tr><td>查看 IB/RDMA 设备</td><td><code>ibstat</code>、<code>ibv_devinfo</code></td><td>端口速率、链路状态、HCA 能力</td></tr>
-<tr><td>查看 PCIe 拓扑</td><td><code>lspci -tv</code></td><td>GPU、NIC、PCIe switch、root complex 关系</td></tr>
-<tr><td>查看 NUMA 拓扑</td><td><code>numactl --hardware</code>、<code>lstopo</code></td><td>CPU、内存、PCIe 设备亲和性</td></tr>
-</table></div>
-<p>排查时不要只看“有没有 8 张 GPU”，而要同时看：</p>
-<ul><li>GPU-GPU 是否走 NVLink/NVSwitch。</li><li>GPU-NIC 是否跨 Socket。</li><li>RDMA 是否启用 GPUDirect。</li><li>NCCL 是否真的选择了 IB/RDMA，而不是 fallback 到 TCP。</li><li>是否存在某个慢 rank、慢 NIC 或拥塞路径拖累整体。</li></ul>
+<tr><td>查看 GPU-GPU / GPU-NIC 拓扑</td><td><code>nvidia-smi topo -m</code></td><td>GPU 间是否 NVLink 互联（NV#），GPU 到 NIC 是 PIX/PXB/PHB/NODE/SYS 哪种路径，CPU/NUMA Affinity</td></tr>
+<tr><td>查看 P2P 可达性</td><td><code>nvidia-smi topo -p2p r</code> / <code>nvidia-smi topo -p2p w</code></td><td>GPU 对之间是否支持 P2P 读写</td></tr>
+<tr><td>查看 NCCL 选择的路径和算法</td><td><code>NCCL_DEBUG=INFO NCCL_DEBUG_SUBSYS=INIT,GRAPH</code></td><td>ring/tree/NVLS/IB 路径是否符合预期，是否 fallback 到 TCP</td></tr>
+<tr><td>查看 NVLink 状态和速率</td><td><code>nvidia-smi nvlink -s</code></td><td>每条 NVLink 的速率、是否 active、有无错误</td></tr>
+<tr><td>查看 IB/RDMA 设备</td><td><code>ibstat</code>、<code>ibv_devinfo</code></td><td>端口速率、链路状态、HCA 能力、Firmware 版本</td></tr>
+<tr><td>查看 PCIe 拓扑</td><td><code>lspci -tv</code></td><td>GPU、NIC、PCIe switch、root complex 层级关系</td></tr>
+<tr><td>查看 NUMA 拓扑</td><td><code>numactl --hardware</code>、<code>lstopo</code></td><td>CPU、内存、PCIe 设备的 NUMA 亲和性</td></tr>
+<tr><td>查看 Fabric Manager 状态</td><td><code>systemctl status nvidia-fabricmanager</code></td><td>NVSwitch 是否正常初始化、有无 SXid 错误</td></tr>
+</table>
+</div>
+<p>排查时不要只看「有没有 8 张 GPU」，要同时确认：</p>
+<ul><li>GPU-GPU 是否真的走 NVLink/NVSwitch（<code>NV12</code>/<code>NV18</code> 而非 <code>SYS</code>）。</li><li>GPU-NIC 是否同 Socket（<code>PIX</code>/<code>PXB</code> 优于 <code>NODE</code>/<code>SYS</code>）。</li><li>RDMA 是否启用 GPUDirect（NCCL 日志中不应出现 <code>Trees are not used</code> 或 TCP fallback）。</li><li>是否存在某个慢 rank、慢 NIC 或拥塞路径拖累整体（看 NCCL 日志中各 rank 的 ALG/CHANNEL 信息）。</li></ul>
+<h3>nvidia-smi topo -m 输出示例解读</h3>
+<p>典型的 HGX H100 8-GPU 输出：</p>
+<pre><code>        GPU0    GPU1    GPU2    GPU3    GPU4    GPU5    GPU6    GPU7
+GPU0     X      NV18    NV18    NV18    NV18    NV18    NV18    NV18
+GPU1    NV18     X      NV18    NV18    NV18    NV18    NV18    NV18
+GPU2    NV18    NV18     X      NV18    NV18    NV18    NV18    NV18
+...（全矩阵 NV18，即每对 GPU 间 18 条 NVLink）</code></pre>
+<p>Legend 中关键缩写：</p>
+<ul><li><strong>NV#</strong>：通过 # 条 NVLink 连接（最好）。</li><li><strong>PIX</strong>：经过单个 PCIe bridge（PCIe 内最好）。</li><li><strong>PXB</strong>：经过多个 PCIe bridge。</li><li><strong>PHB</strong>：经过 PCIe Host Bridge（CPU root complex）。</li><li><strong>NODE</strong>：跨 PCIe Host Bridge，同一 NUMA 节点内。</li><li><strong>SYS</strong>：跨 NUMA 节点（经过 UPI/Infinity Fabric，最慢）。</li></ul>
 <h2>一句话面试版回答</h2>
-<p>NVLink/NVSwitch 是 8 卡 H100/A100 服务器内部 GPU-GPU 通信的主路径，带宽可达数百 GB/s 到 900 GB/s 级别；PCIe 是 CPU、GPU、NIC 之间的通用 I/O 总线，A100 常见是 Gen4，H100 常见是 Gen5，带宽明显低于 NVLink；RDMA 是跨服务器通信机制，通常通过 InfiniBand 或 RoCE，把本机 GPU memory 经 NIC 和网络直接写到远端 GPU memory，避免 CPU host memory staging。单机内训练通信应优先走 NVLink/NVSwitch，跨机时应使用 GPUDirect RDMA，并尽量保证 GPU-NIC 在同一 NUMA/SOCKET/PCIe switch 附近，否则跨 Socket 会增加延迟、降低有效带宽并引入抖动。</p>
+<p>NVLink/NVSwitch 是 8 卡 H100/A100 服务器内 GPU-GPU 通信的主路径，H100 SXM 单卡聚合带宽 900 GB/s（18 条 NVLink 4.0 × 50 GB/s），约为 PCIe Gen5 x16（128 GB/s）的 7 倍；PCIe 是 CPU、GPU、NIC、NVMe 间的通用 I/O 总线，带宽低但通用性强；RDMA（InfiniBand/RoCE）是跨服务器通信机制，单口 400G NIC 约 50 GB/s 线速，配合 GPUDirect RDMA 让 NIC 直接读写 GPU HBM、绕过 CPU 内存中转，比传统 host staging 路径延迟低 30%~50%。单机内训练通信应优先走 NVLink/NVSwitch（NCCL 会做 topology-aware 分层 reduce），跨机时使用 GPUDirect RDMA 并保证 GPU-NIC 同 Socket 亲和，避免跨 UPI/Infinity Fabric 导致的带宽下降和抖动。</p>
 <h2>参考资料</h2>
-<ol><li><a href="https://www.nvidia.com/en-us/data-center/h100/">NVIDIA H100 Tensor Core GPU</a></li><li><a href="https://www.nvidia.com/en-us/data-center/a100/">NVIDIA A100 Tensor Core GPU</a></li><li><a href="https://pcisig.com/what-bit-rates-does-pcie-50-specification-support-and-how-does-it-compare-prior-pcie-generations">PCI-SIG: PCIe 5.0 bit rates</a></li><li><a href="https://www.nvidia.com/en-us/networking/quantum2/">NVIDIA Quantum-2 InfiniBand Platform</a></li><li><a href="https://developer.nvidia.com/gpudirect">NVIDIA GPUDirect</a></li></ol></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::11-interconnect-data-paths-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::11-interconnect-data-paths-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">硬件基础</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CUDA 执行模型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-4" aria-labelledby="gpu-tabs-tab-4" data-mid="gpu-tabs::06-cuda-execution-model-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CUDA 执行模型</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ol><li><a href="https://www.nvidia.com/en-us/technologies/hopper-architecture/">NVIDIA H100 Tensor Core GPU 架构白皮书</a></li><li><a href="https://developer.nvidia.com/blog/introducing-nvidia-hgx-h100-an-accelerated-server-platform-for-ai-and-high-performance-computing/">NVIDIA HGX H100 官方介绍博客</a></li><li><a href="https://docs.nvidia.com/datacenter/tesla/fabric-manager-user-guide/">NVIDIA Fabric Manager User Guide</a></li><li><a href="https://pcisig.com/">PCI-SIG PCIe 5.0 规范</a></li><li><a href="https://www.nvidia.com/en-us/networking/quantum2/">NVIDIA Quantum-2 InfiniBand 平台</a></li><li><a href="https://developer.nvidia.com/gpudirect">NVIDIA GPUDirect 技术</a></li><li><a href="https://www.nvidia.com/content/dam/en-zz/Solutions/gtcs22/data-center/h100/PB-11133-001_v01.pdf">NVIDIA H100 PCIe Product Brief</a></li></ol></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::idx-1" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::idx-1" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CUDA执行模型</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-2" aria-labelledby="topic-tabs-tab-2" data-mid="topic-tabs::06-cuda-execution-model-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CUDA执行模型</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>CUDA 执行模型的核心链路是：CPU Host 发起 kernel launch，CUDA runtime 创建 grid，grid 拆成 block，block 被调度到 SM 上，block 内 thread 被组织成 warp，SM 以 warp 为单位发射指令并用多 warp 并发隐藏延迟。</p>
 <h2>系统链路</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">CPU Host</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; kernel&lt;&lt;&lt;gridDim, blockDim&gt;&gt;&gt;(args)</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; Grid：一次 launch 的全部 block</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Block：调度到 SM 的基本任务包</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; Thread：程序员看到的逻辑并行单元</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">-&gt; Warp：硬件调度的 thread 组，通常 32 个 thread</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">-&gt; SM：执行 block、调度 warp、使用 CUDA Core/Tensor Core/HBM</div></div></div>
@@ -549,7 +527,7 @@ thread31 -> a[99999]</code></pre>
 <tr><td>occupancy 越高越好</td><td>occupancy 是诊断指标，不是最终性能目标。</td></tr>
 </table></div>
 <h2>关联模块</h2>
-<ul><li><code>CUDA 内存模型与 Occupancy</code>：继续看 block size、register、shared memory 对 occupancy 的影响。</li><li><code>利用率诊断</code>：用 SM Active、Occupancy、Warp Stall 验证执行模型是否高效。</li><li><code>Stream 与异步流水线</code>：区分 kernel 内部调度和 kernel 之间的 stream 调度。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::06-cuda-execution-model-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::06-cuda-execution-model-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">GPU 互联与数据路径</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">内存模型与 Occupancy</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-5" aria-labelledby="gpu-tabs-tab-5" data-mid="gpu-tabs::13-cuda-memory-occupancy-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>内存模型与 Occupancy</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 14 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ul><li><code>CUDA 内存模型与 Occupancy</code>：继续看 block size、register、shared memory 对 occupancy 的影响。</li><li><code>利用率诊断</code>：用 SM Active、Occupancy、Warp Stall 验证执行模型是否高效。</li><li><code>Stream 与异步流水线</code>：区分 kernel 内部调度和 kernel 之间的 stream 调度。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::06-cuda-execution-model-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::06-cuda-execution-model-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="1"><span class="tab-step-label">上一篇</span><span class="tab-step-title">GPU硬件直觉</span></button><button type="button" class="tab-step tab-step-next" data-step-target="3"><span class="tab-step-label">下一篇</span><span class="tab-step-title">内存模型与Occupancy</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-3" aria-labelledby="topic-tabs-tab-3" data-mid="topic-tabs::13-cuda-memory-occupancy-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>内存模型与Occupancy</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>CUDA 内存和 occupancy 要一起看：register/shared memory/global memory 决定数据访问成本，block size、寄存器和 shared memory 用量决定一个 SM 能挂多少 warp。Occupancy 是隐藏延迟的条件，不是最终性能目标。</p>
 <h2>系统链路</h2>
 <p><strong>硬件视角</strong>：基本单位是 SP（Streaming Processor，也叫 CUDA Core），每个 SP 有自己的 register 和 local memory（片下内存，应对寄存器不足），只能被自己访问；多个 SP 和一块 shared memory 构成一个 SM，shared memory 被 SM 内线程共享；多个 SM 和一块全局内存构成 GPU，global memory 被所有线程访问。</p>
@@ -629,7 +607,7 @@ Tensor Core 是专门做矩阵乘加（GEMM、卷积、Attention）的硬件单�
 
 - <code>CUDA 执行模型</code>：block、warp、SM 是 occupancy 的前置概念。
 - <code>性能指标</code>：Roofline 和 arithmetic intensity 判断是否被内存墙限制。
-- <code>利用率诊断</code>：用 achieved occupancy、eligible warps、stall reason 做实证判断。</div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::13-cuda-memory-occupancy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::13-cuda-memory-occupancy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CUDA 执行模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Host-Device 数据拷贝</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-6" aria-labelledby="gpu-tabs-tab-6" data-mid="gpu-tabs::08-host-device-copy-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Host-Device 数据拷贝</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+- <code>利用率诊断</code>：用 achieved occupancy、eligible warps、stall reason 做实证判断。</div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::13-cuda-memory-occupancy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::13-cuda-memory-occupancy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CUDA执行模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">数据搬运与异步流水线</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-4" aria-labelledby="topic-tabs-tab-4" data-mid="topic-tabs::idx-4" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>数据搬运与异步流水线</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-4-sub-1" aria-controls="topic-tabs-panel-4-subpanel-1" aria-selected="true" title="Host-Device 数据拷贝"><span class="subtab-title">Host-Device 数据拷贝</span><span class="subtab-desc">H2D/D2H触发场景、pinned memory、DataLoader诊断、拷贝带宽</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-2" aria-controls="topic-tabs-panel-4-subpanel-2" aria-selected="false" title="Stream异步流水线"><span class="subtab-title">Stream异步流水线</span><span class="subtab-desc">Stream异步队列、event同步、多缓冲、计算与拷贝重叠</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-4-subpanel-1" aria-labelledby="topic-tabs-panel-4-sub-1" ><h2>一句话结论</h2>
 <p>H2D/D2H 拷贝是 CPU 内存和 GPU 显存之间的数据搬运，常见性能问题不是“有拷贝”本身，而是拷贝频繁、小而碎、触发同步、无法和计算重叠，或者多 GPU 通信绕回 CPU。优化主线是少拷贝、批量拷贝、异步拷贝、拷贝计算重叠。</p>
 <h2>诊断入口</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU timeline 有空洞或 step time 抖动</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; 看 DataLoader / CPU preprocessing / I/O</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; 看 Nsight Systems 的 Memcpy HtoD / DtoH / stream sync</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; 查 PyTorch 里的 .item() / .cpu() / .numpy() / aten::to</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; 看 pinned memory、non_blocking、prefetch、stream 重叠是否生效</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">-&gt; 多 GPU 场景检查是否绕 CPU，优先 NCCL / NVLink / GPUDirect</div></div></div>
@@ -834,7 +812,7 @@ kernel 之间的大空洞</code></pre>
 </div>
 </div>
 <h2>关联模块</h2>
-<ul><li><code>Stream 与异步流水线</code>：用 stream/event 和多缓冲把拷贝与计算重叠。</li><li><code>利用率诊断</code>：timeline 空洞、memcpy 和同步是 H2D/D2H 瓶颈证据。</li><li><code>GPU 互联与数据路径</code>：理解 PCIe、NVLink、GPUDirect RDMA 的路径差异。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::08-host-device-copy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::08-host-device-copy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">内存模型与 Occupancy</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">Stream 与异步流水线</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-7" aria-labelledby="gpu-tabs-tab-7" data-mid="gpu-tabs::08-cuda-streams-data-copy-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>Stream 与异步流水线</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ul><li><code>Stream 与异步流水线</code>：用 stream/event 和多缓冲把拷贝与计算重叠。</li><li><code>利用率诊断</code>：timeline 空洞、memcpy 和同步是 H2D/D2H 瓶颈证据。</li><li><code>GPU 互联与数据路径</code>：理解 PCIe、NVLink、GPUDirect RDMA 的路径差异。</li></ul></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-2" aria-labelledby="topic-tabs-panel-4-sub-2" hidden><h2>一句话结论</h2>
 <p>CUDA stream 是 GPU 侧的异步任务队列，同一个 stream 内顺序执行，不同 stream 在资源允许时可以并行。优化目标是用 pinned memory、<code>cudaMemcpyAsync</code>、event 和多缓冲，把 CPU 准备、H2D/D2H 拷贝和 kernel 计算流水线化。</p>
 <h2>核心概念</h2>
 <p>本节关注“如何用 stream/event 把拷贝、kernel 和 CPU 准备组织成异步流水线”。H2D/D2H 的触发场景和 DataLoader 诊断见 <code>Host-Device 数据拷贝</code>。</p>
@@ -936,7 +914,226 @@ Buffer C: CPU 正在准备再下一批数据
 
 - <code>Host-Device 数据拷贝</code>：定位 H2D/D2H 触发点和 DataLoader 问题。
 - <code>CUDA 执行模型</code>：理解 stream、kernel、block/warp 的层级差异。
-- <code>利用率诊断</code>：在 Nsight Systems timeline 中识别 memcpy、空洞和同步。</div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::08-cuda-streams-data-copy-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::08-cuda-streams-data-copy-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Host-Device 数据拷贝</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CFS vs CUDA 调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-8" aria-labelledby="gpu-tabs-tab-8" data-mid="gpu-tabs::12-cfs-vs-cuda-scheduling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CFS vs CUDA 调度</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+- <code>利用率诊断</code>：在 Nsight Systems timeline 中识别 memcpy、空洞和同步。</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::idx-4" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::idx-4" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">内存模型与Occupancy</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">GPU共享机制</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-5" aria-labelledby="topic-tabs-tab-5" data-mid="topic-tabs::idx-5" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU共享机制</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 22 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-5-sub-1" aria-controls="topic-tabs-panel-5-subpanel-1" aria-selected="true" title="MIG/MPS/Time-slicing 原理"><span class="subtab-title">MIG/MPS/Time-slicing 原理</span><span class="subtab-desc">隔离级别对比、CUDA VMM虚拟内存、显存碎片来源与治理</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-5-sub-2" aria-controls="topic-tabs-panel-5-subpanel-2" aria-selected="false" title="K8S GPU共享落地"><span class="subtab-title">K8S GPU共享落地</span><span class="subtab-desc">Device Plugin/GPU Operator、replicas配置、MIG管理、生产注意事项</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-5-subpanel-1" aria-labelledby="topic-tabs-panel-5-sub-1" ><h2>一句话结论</h2>
+<p>GPU 共享不是一种机制，而是一组取舍：MIG 追求硬件隔离，MPS 追求多进程并发，time-slicing 追求低成本复用，CUDA VMM 解决虚拟地址和物理显存映射弹性。面试里要先说清隔离边界，再谈利用率提升。</p>
+<h2>核心概念</h2>
+<div class="table-scroll"><table>
+<tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
+<tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离、稳定 SLA</td></tr>
+<tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并发执行 kernel</td><td>可信团队、小 kernel、小模型推理</td></tr>
+<tr><td>Time Slicing</td><td>时间级复用</td><td>多个进程按时间片轮换使用同一 GPU</td><td>Notebook、开发测试、低优实验</td></tr>
+<tr><td>CUDA VMM</td><td>虚拟内存</td><td>虚拟地址空间预留，物理页按需映射</td><td>KV cache、显存池、弹性内存管理</td></tr>
+<tr><td>vGPU</td><td>虚拟化</td><td>Hypervisor 层虚拟化 GPU</td><td>云桌面、传统虚拟化多租户</td></tr>
+</table></div>
+<h2>系统链路</h2>
+<p>Kubernetes 里常见链路是：GPU Operator 或 NVIDIA Device Plugin 读取共享配置，把一张物理 GPU 暴露成多个逻辑扩展资源；kube-scheduler 只按资源数量调度 Pod；真正的共享语义由 driver、MPS daemon、CUDA runtime 或 MIG manager 执行。</p>
+<p>在 Kubernetes 里，MPS 和 Time Slicing 通常不是通过改 kube-scheduler 实现，而是通过 <strong>NVIDIA Device Plugin / NVIDIA GPU Operator</strong> 把一张物理 GPU 暴露成多个可被 Pod 申请的逻辑 GPU slot。</p>
+<table>
+<tr><th>机制</th><th>K8s 资源表达</th><th>底层含义</th><th>适合场景</th></tr>
+<tr><td>Time Slicing</td><td><code>sharing.timeSlicing.resources[].replicas</code></td><td>多个 Pod 按时间片轮流使用同一张 GPU</td><td>Notebook、开发测试、低优实验、小推理</td></tr>
+<tr><td>MPS</td><td><code>sharing.mps.resources[].replicas</code></td><td>多个 CUDA 进程通过 MPS daemon 并发共享 GPU</td><td>可信团队内的小 kernel、多进程推理</td></tr>
+</table>
+<p>例如把 <code>nvidia.com/gpu</code> 配成 <code>replicas: 4</code> 后，一张物理 GPU 会向 Kubernetes 上报为 4 个逻辑可申请资源；如果开启 <code>renameByDefault: true</code>，Pod 侧通常申请 <code>nvidia.com/gpu.shared: 1</code>，从语义上区分共享 GPU 和独占 GPU。</p>
+<p>关键边界：<strong>scheduler 只看到逻辑资源数量，不理解每个 slot 的真实性能隔离。</strong>Time Slicing 和 MPS 都不是 MIG 那种硬件切分，生产使用时要特别关注显存 OOM、P99 延迟抖动、监控归因和 workload 之间的干扰。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: MIG 和 MPS 的本质区别？</div>
+<div class="qa-a"><p><strong>MIG</strong> 是硬件级切分——GPU 被物理切成若干独立实例，每个实例有自己的 SM、显存控制器和缓存，互相完全隔离，类似物理分区。<strong>MPS</strong> 是软件级复用——多个进程共享同一个 GPU 上下文，kernel 可以并行执行在不同 SM 上，但共享显存和缓存，有干扰风险。MIG 安全但粒度粗（A100 最多 7 个实例），MPS 灵活但需要干扰控制。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: K8s 里 Time Slicing 和 MPS 是否需要改 kube-scheduler？</div>
+<div class="qa-a"><p>通常不需要。常见做法是让 NVIDIA Device Plugin 或 GPU Operator 读取 sharing ConfigMap，把每张物理 GPU 按 <code>replicas</code> 上报成多个逻辑扩展资源。scheduler 仍然按扩展资源数量做普通调度；真正的时间片复用或 MPS 并发共享发生在 NVIDIA device plugin、driver 和 MPS daemon 层。面试时要强调：K8s 调度的是逻辑 GPU slot，不代表底层有稳定硬隔离。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
+<div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
+</div>
+<h2>显存碎片</h2>
+<p>GPU 显存碎片可以分为两类：<strong>外部碎片</strong>和<strong>内部碎片</strong>。外部碎片是总空闲显存足够，但没有足够大的连续块；内部碎片是为了对齐或预留最大长度而分配了比实际需求更大的块。</p>
+<table>
+<tr><th>来源</th><th>怎么产生</th><th>典型场景</th></tr>
+<tr><td>动态 tensor shape</td><td>不同 batch、seq_len、activation 大小频繁变化，allocator 反复 malloc/free</td><td>训练中动态 batch、变长输入</td></tr>
+<tr><td>KV Cache 长短不一</td><td>每个请求输出长度不同，传统连续 KV 分配难复用</td><td>LLM serving 高并发长尾请求</td></tr>
+<tr><td>多进程共享 GPU</td><td>不同进程各自持有 CUDA context 和 allocator pool，彼此不可见</td><td>MPS/time-slicing 多租户共享</td></tr>
+<tr><td>大块临时 workspace</td><td>cuBLAS/cuDNN/NCCL/attention kernel 需要临时 buffer，峰值时挤占连续空间</td><td>大 batch prefill、长上下文 attention</td></tr>
+<tr><td>框架缓存策略</td><td>PyTorch caching allocator 为减少 cudaMalloc 开销会缓存块，可能形成不可用空洞</td><td>训练/推理长期运行服务</td></tr>
+</table>
+<p>面试要点：OOM 不一定表示总显存不够，也可能是可用连续块不够、allocator pool 不可回收，或某个进程持有了大量碎片化缓存。</p>
+<h2>关键机制</h2>
+<p>显存碎片治理要分层看：</p>
+<table>
+<tr><th>层次</th><th>手段</th><th>作用</th><th>代价</th></tr>
+<tr><td>调度层</td><td>按显存需求做 bin packing</td><td>把大显存任务放到空闲完整 GPU，避免被小任务切碎</td><td>可能牺牲负载均衡</td></tr>
+<tr><td>调度层</td><td>保留整卡/整 MIG profile</td><td>给大模型或长上下文推理保留连续容量</td><td>利用率可能下降</td></tr>
+<tr><td>调度层</td><td>限制共享密度</td><td>MPS/time-slicing 不盲目提高 replicas，避免多进程显存互相挤压</td><td>可调度 slot 变少</td></tr>
+<tr><td>Runtime 层</td><td>预分配 memory pool</td><td>减少运行期频繁 cudaMalloc/free</td><td>启动时占用显存更多</td></tr>
+<tr><td>Runtime 层</td><td>固定 block/page 管理</td><td>把 KV Cache 切成固定块，非连续物理块也能组合</td><td>需要 block table 和引用计数</td></tr>
+<tr><td>Runtime 层</td><td>CUDA VMM / expandable segment</td><td>用虚拟地址隐藏物理页不连续，支持按需映射</td><td>依赖 CUDA/驱动能力和框架支持</td></tr>
+<tr><td>模型层</td><td>GQA/MQA、KV 量化、Prefix Cache</td><td>减少 KV Cache 体积或复用已有缓存</td><td>可能影响精度或增加缓存治理复杂度</td></tr>
+</table>
+<p>如果面试官追问“调度层能不能解决显存碎片”，可以回答：调度层只能减少碎片产生概率，比如保留大块资源、限制共享密度、做显存画像；真正的细粒度碎片复用要靠 runtime allocator、PagedAttention、CUDA VMM 这类机制。</p>
+<h2>对比表</h2>
+<table>
+<tr><th>机制</th><th>优点</th><th>缺点</th><th>调度建议</th></tr>
+<tr><td>MIG</td><td>硬件隔离强，显存/L2/SM 分区清晰，QoS 稳定</td><td>profile 固定，切分不灵活，容易产生 profile 碎片</td><td>生产多租户、强 SLA 推理优先使用</td></tr>
+<tr><td>MPS</td><td>多个 CUDA 进程可并发执行，小 kernel 利用率更高，可限制一定 SM 占比</td><td>共享显存/缓存/故障域，内存争用时性能可能明显下降</td><td>可信团队、同类 workload、小模型推理或实验共享</td></tr>
+<tr><td>Time Slicing</td><td>配置简单，兼容老卡，适合把低利用率任务超卖到同一张卡</td><td>无硬隔离，不保证 1/N 算力或显存，P99 抖动明显</td><td>Notebook、开发测试、低优任务，生产谨慎</td></tr>
+</table>
+<p>一句话：<strong>MIG 是隔离优先，MPS 是并发效率优先，Time Slicing 是部署简单和提高密度优先。</strong>强隔离多租户不要把 MPS/Time Slicing 当 MIG 用。</p>
+<h2>常见误区</h2>
+<div class="table-scroll"><table>
+<tr><th>误区</th><th>正确理解</th></tr>
+<tr><td>time-slicing 的 <code>replicas: 4</code> 等于每个 Pod 固定 1/4 GPU</td><td>它只是暴露 4 个逻辑 slot，不保证算力、显存或 P99 延迟隔离。</td></tr>
+<tr><td>MPS 可以提供 MIG 级别隔离</td><td>MPS 共享显存、cache 和故障域，适合可信 workload，不适合强隔离多租户。</td></tr>
+<tr><td>scheduler 理解 GPU 共享真实性能</td><td>默认 scheduler 只看扩展资源数量，不理解每个 slot 的干扰和带宽争用。</td></tr>
+<tr><td>显存碎片只靠调度解决</td><td>调度只能减少碎片产生，细粒度复用要靠 runtime allocator、PagedAttention、CUDA VMM。</td></tr>
+</table></div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 显存碎片在调度系统里怎么观测？</div>
+<div class="qa-a"><p>至少要同时看三类指标：GPU 总显存使用率、进程级显存占用、allocator 层 reserved/allocated 差值。对 PyTorch 服务，可以看 <code>memory_reserved - memory_allocated</code> 判断缓存池空洞；对推理引擎，还要看 KV block 使用率、空闲 block 数、prefix cache 命中率和 OOM 前的最大可分配块。调度层可把这些画像沉淀成任务 profile，用于后续显存 bin packing 和共享密度控制。</p></div>
+</div>
+<h2>关联模块</h2>
+<ul><li><code>K8S GPU 共享</code>：继续看 device plugin、replicas 和节点级配置。</li><li><code>CUDA 内存模型与 Occupancy</code>：理解显存、shared memory、register 对共享密度的影响。</li><li><code>LLM 推理系统</code>：KV cache、PagedAttention 和 CUDA VMM 是显存共享的重要场景。</li><li><code>调度与集群</code>：共享 GPU 会引入干扰建模、碎片治理和拓扑感知调度问题。</li></ul></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-5-subpanel-2" aria-labelledby="topic-tabs-panel-5-sub-2" hidden><h2>一句话结论</h2>
+<p>K8S 默认把 GPU 当作不可分割的扩展资源，GPU 共享要靠 NVIDIA device-plugin / GPU Operator 把物理 GPU 表达成多个可调度资源。time-slicing、MPS 和 MIG 的本质差异在隔离级别、执行方式和调度语义，不要把逻辑 slot 当成稳定的 1/N 性能。</p>
+<h2>系统链路</h2>
+<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU Operator / Device Plugin 读取共享配置</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; 把物理 GPU 或 MIG 实例上报给 kubelet</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; kube-scheduler 按扩展资源数量调度 Pod</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Pod 内获得 CUDA_VISIBLE_DEVICES / GPU 访问权限</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; driver / MPS daemon / MIG manager 执行真实共享语义</div></div></div>
+<div class="card card-m">
+<h3>K8S 里的 GPU 共享：整体认知</h3>
+<p>K8S 默认把 GPU 当作<strong>不可分割的整数资源</strong>：一个容器 request <code>nvidia.com/gpu: 1</code> 就独占一整张卡。要在 K8S 里实现共享（MPS / time-slicing / MIG），靠的都是 <strong>NVIDIA k8s-device-plugin</strong>。它负责把物理 GPU &quot;拆分&quot;成多个可调度的资源单元，上报给 kubelet。</p>
+<table>
+<tr><th>共享方式</th><th>K8S 落地组件</th><th>隔离强度</th><th>本质</th></tr>
+<tr><td>Time-slicing</td><td>device-plugin 配置 replicas</td><td>无隔离（仅时间轮转）</td><td>把 1 张卡复制成 N 个逻辑资源</td></tr>
+<tr><td>MPS</td><td>device-plugin sharing.mps</td><td>弱隔离（空分复用）</td><td>多进程共享 CUDA 上下文并行执行</td></tr>
+<tr><td>MIG</td><td>device-plugin + MIG Manager</td><td>硬件强隔离</td><td>物理切片，独立 SM/显存</td></tr>
+</table>
+<p>三者底层都是上层 device-plugin 把同一张 GPU 的 UUID 重复或切片上报，让多个 Pod 调度到同一张物理卡。</p>
+</div>
+<div class="card card-s">
+<h3>方式一：Time-slicing(时间片)</h3>
+<p><strong>原理</strong>：device-plugin 把一张物理 GPU 复制成 N 个同名资源（共享同一 UUID），多个 Pod 调度上去后由 GPU 驱动的时间片调度器轮流执行。没有内存隔离、没有故障隔离，一个 Pod 跑飞会影响其他 Pod。</p>
+<p><strong>配置步骤</strong>：通过 ConfigMap 定义切分策略，再让 device-plugin 加载。</p>
+<pre><code># time-slicing ConfigMap：把每张卡复制成 4 份
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config
+  namespace: gpu-operator
+data:
+  any: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        renameByDefault: false
+        failRequestsGreaterThanOne: true
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 4
+</code></pre>
+<p><strong>关键参数</strong>：</p>
+<ul>
+<li><code>replicas: 4</code> —— 一张卡上报为 4 个 <code>nvidia.com/gpu</code>，最多 4 个 Pod 共享。</li>
+<li><code>failRequestsGreaterThanOne: true</code> —— 共享模式下单个 Pod 只能 request 1，防止误用。</li>
+<li><code>renameByDefault: true</code> —— 把资源名改为 <code>nvidia.com/gpu.shared</code>，便于和独占卡区分调度。</li>
+</ul>
+<p><strong>启用（GPU Operator）</strong>：</p>
+<pre><code>kubectl patch clusterpolicy/cluster-policy \
+  -n gpu-operator --type merge \
+  -p '{"spec":{"devicePlugin":{"config":{"name":"time-slicing-config","default":"any"}}}}'
+</code></pre>
+<p><strong>Pod 使用</strong>：和普通 GPU Pod 写法完全一样，调度器自动把它放到被复制的逻辑资源上。</p>
+<pre><code>resources:
+  limits:
+    nvidia.com/gpu: 1   # 实际是 1/4 张卡的时间片
+</code></pre>
+</div>
+<div class="card card-w">
+<h3>方式二:MPS(Multi-Process Service)</h3>
+<p><strong>原理</strong>：device-plugin 启动 MPS Control Daemon，多个 Pod 的 CUDA 进程通过 MPS Server 共享同一 GPU 上下文，kernel 可以<strong>真正并行</strong>地跑在不同 SM 上（空分复用），而不是 time-slicing 的时间轮转。还能按比例限制每个客户端的显存和算力。</p>
+<p><strong>配置步骤</strong>：</p>
+<pre><code># MPS ConfigMap：把每张卡按 MPS 方式分成 4 份
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mps-config
+  namespace: gpu-operator
+data:
+  any: |-
+    version: v1
+    sharing:
+      mps:
+        renameByDefault: false
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 4
+</code></pre>
+<pre><code>kubectl patch clusterpolicy/cluster-policy \
+  -n gpu-operator --type merge \
+  -p '{"spec":{"devicePlugin":{"config":{"name":"mps-config","default":"any"}}}}'
+</code></pre>
+<p><strong>效果</strong>：每个客户端默认分到 <code>1/replicas</code> 的显存上限（4 份即每份约 1/4 显存）和算力配额。device-plugin 会自动拉起 MPS daemon，无需手动 <code>nvidia-cuda-mps-control</code>。</p>
+<p><strong>Pod 使用</strong>：同样 request <code>nvidia.com/gpu: 1</code> 即可，对应一个 MPS slice。</p>
+</div>
+<div class="card card-r">
+<h3>Time-slicing vs MPS:怎么选?</h3>
+<table>
+<tr><th>维度</th><th>Time-slicing</th><th>MPS</th></tr>
+<tr><td>执行方式</td><td>时间轮转(串行切换)</td><td>SM 空分(真并行)</td></tr>
+<tr><td>显存隔离</td><td>无,容易互相 OOM</td><td>有,可按比例限制</td></tr>
+<tr><td>算力 QoS</td><td>无,抢占式</td><td>可设 active thread 百分比</td></tr>
+<tr><td>故障隔离</td><td>差,一个崩可能拖累全部</td><td>较差,共享上下文一个进程崩可能影响 MPS server</td></tr>
+<tr><td>上下文切换开销</td><td>有(切换上下文)</td><td>低(共享上下文)</td></tr>
+<tr><td>适用场景</td><td>开发/测试、推理流量低、Notebook</td><td>多个稳定小推理、I/O 互补的训练任务</td></tr>
+</table>
+<p><strong>经验法则</strong>：纯粹想&quot;塞更多任务进来、不在乎隔离&quot;用 time-slicing；想要并行吞吐和一定的显存/算力配额用 MPS;要强隔离、多租户生产环境用 MIG。三者不能在同一张卡上叠加(同一时刻一张卡只能选一种共享策略)。</p>
+</div>
+<div class="card card-s">
+<h3>节点级差异化配置</h3>
+<p>集群里往往有的节点要共享、有的要独占。device-plugin config 支持多份命名配置,再用节点 label 选择。</p>
+<pre><code># ConfigMap 里放多份配置
+data:
+  shared: |-
+    version: v1
+    sharing:
+      timeSlicing:
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 8
+  exclusive: |-
+    version: v1
+    flags:
+      migStrategy: none
+</code></pre>
+<pre><code># 给节点打 label 选择对应配置
+kubectl label node gpu-node-1 \
+  nvidia.com/device-plugin.config=shared
+kubectl label node gpu-node-2 \
+  nvidia.com/device-plugin.config=exclusive
+</code></pre>
+<p>这样一个集群里既能有 8 路共享的推理节点,也能保留整卡独占的训练节点。</p>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: time-slicing 的 replicas=4，是不是每个 Pod 拿到 1/4 算力？</div>
+<div class="qa-a"><p>不是。time-slicing 只是<strong>时间轮转</strong>，没有任何资源配额。replicas=4 意味着最多 4 个 Pod 能调度到这张卡,它们轮流占用整张卡跑一个时间片。如果只有 1 个 Pod 在跑,它能用满整卡;如果 4 个都满负载,它们大致平分时间但会有上下文切换开销。它解决的是&quot;调度上能不能放进来&quot;,不解决&quot;性能隔离&quot;。要按比例限制算力/显存,得用 MPS 或 MIG。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: K8S 里 MPS 比裸机 MPS 多做了什么？</div>
+<div class="qa-a"><p>裸机用 MPS 需要手动启动 <code>nvidia-cuda-mps-control -d</code>、设置 <code>CUDA_MPS_*</code> 环境变量、管理 pipe 目录。K8S 里 device-plugin(GPU Operator)把这些全自动化:自动拉起 MPS Control Daemon、为每个 slice 注入正确的环境变量和显存/算力配额、把 N 个 MPS slice 作为可调度资源上报给 kubelet。开发者只要正常 request <code>nvidia.com/gpu: 1</code>,底层就落在一个受配额限制的 MPS 客户端上。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 共享 GPU 后，Pod 里 nvidia-smi 看到的是什么？</div>
+<div class="qa-a"><p>time-slicing 和 MPS 下,Pod 里 <code>nvidia-smi</code> 看到的是<strong>整张物理卡</strong>(同一个 UUID),显示的显存总量也是整卡的——因为它们本质是共享同一设备。这容易误导:程序如果按 nvidia-smi 的总显存来分配,在 MPS 配额或多 Pod 共存时会 OOM。相比之下 MIG 下看到的是切分后的实例(独立显存)。所以共享场景要靠应用自己控制显存用量,或依赖 MPS 的显存上限配额。</p></div>
+</div>
+<h2>常见误区</h2>
+<div class="table-scroll"><table>
+<tr><th>误区</th><th>正确理解</th></tr>
+<tr><td><code>replicas=4</code> 就是每个 Pod 固定 1/4 算力</td><td>time-slicing 只是逻辑 slot 和时间轮转，不保证固定算力。</td></tr>
+<tr><td>kube-scheduler 理解 GPU 干扰</td><td>默认 scheduler 只看扩展资源数量，不知道 SM、HBM、P99 抖动。</td></tr>
+<tr><td>MPS 和 MIG 都是硬隔离</td><td>MIG 是硬件切片，MPS 是共享上下文，隔离弱很多。</td></tr>
+<tr><td>Pod 里看到整卡显存就可以全用</td><td>time-slicing/MPS 下多个 Pod 共享同一卡，应用需要限制显存使用。</td></tr>
+</table></div>
+<h2>关联模块</h2>
+<ul><li><code>共享方式</code>：理解 MIG/MPS/time-slicing 的底层取舍。</li><li><code>Kubernetes 核心</code>：device plugin、extended resource、node label 和调度语义。</li><li><code>调度与集群</code>：共享密度、显存碎片、干扰建模和租户配额。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::idx-5" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::idx-5" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">数据搬运与异步流水线</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">CFS vs CUDA 调度</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-6" aria-labelledby="topic-tabs-tab-6" data-mid="topic-tabs::12-cfs-vs-cuda-scheduling-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>CFS vs CUDA 调度</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>Linux CFS 和 CUDA thread/block 调度都叫“调度”，但它们解决的是完全不同层次的问题。</p>
 <p><strong>Linux CFS 是 CPU 上的操作系统调度器</strong>，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享。它通过 <code>vruntime</code>、优先级权重、抢占和上下文切换来决定哪个任务运行。</p>
 <p><strong>CUDA thread block 调度主要由 GPU 硬件完成</strong>，调度对象是 kernel grid 中的 block，也叫 CTA。GPU 把 block 分配到 SM 上执行；block 一旦驻留在某个 SM 上，通常会运行到完成。SM 内部再通过 warp scheduler 在多个 ready warp 之间切换，以隐藏访存和执行延迟。</p>
@@ -1100,226 +1297,7 @@ stream2: H2D batch1 → kernel batch1 → D2H result1</code></pre>
 <div class="qa-a">
 <p>严格来说没有一一对应。<code>vruntime</code> 是 CFS 为了公平分配 CPU 时间定义的虚拟运行时间，用来决定哪个 OS task 更应该运行。GPU kernel 内部没有为每个 CUDA thread 维护类似 <code>vruntime</code> 的公平指标。GPU 更常看的指标是 active warps、occupancy、warp stall、SM Active、memory coalescing、HBM bandwidth 等，它们衡量的是硬件吞吐和延迟隐藏效果，而不是公平份额。</p>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::12-cfs-vs-cuda-scheduling-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::12-cfs-vs-cuda-scheduling-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">Stream 与异步流水线</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">共享方式</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-9" aria-labelledby="gpu-tabs-tab-9" data-mid="gpu-tabs::02-sharing-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>共享方式</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>GPU 共享不是一种机制，而是一组取舍：MIG 追求硬件隔离，MPS 追求多进程并发，time-slicing 追求低成本复用，CUDA VMM 解决虚拟地址和物理显存映射弹性。面试里要先说清隔离边界，再谈利用率提升。</p>
-<h2>核心概念</h2>
-<div class="table-scroll"><table>
-<tr><th>方式</th><th>隔离级别</th><th>原理</th><th>适用场景</th></tr>
-<tr><td>MIG</td><td>硬件切片</td><td>物理切分 GPU 为独立实例，各有独立显存和 SM</td><td>推理、多租户强隔离、稳定 SLA</td></tr>
-<tr><td>MPS</td><td>进程级复用</td><td>多进程共享 GPU 上下文，并发执行 kernel</td><td>可信团队、小 kernel、小模型推理</td></tr>
-<tr><td>Time Slicing</td><td>时间级复用</td><td>多个进程按时间片轮换使用同一 GPU</td><td>Notebook、开发测试、低优实验</td></tr>
-<tr><td>CUDA VMM</td><td>虚拟内存</td><td>虚拟地址空间预留，物理页按需映射</td><td>KV cache、显存池、弹性内存管理</td></tr>
-<tr><td>vGPU</td><td>虚拟化</td><td>Hypervisor 层虚拟化 GPU</td><td>云桌面、传统虚拟化多租户</td></tr>
-</table></div>
-<h2>系统链路</h2>
-<p>Kubernetes 里常见链路是：GPU Operator 或 NVIDIA Device Plugin 读取共享配置，把一张物理 GPU 暴露成多个逻辑扩展资源；kube-scheduler 只按资源数量调度 Pod；真正的共享语义由 driver、MPS daemon、CUDA runtime 或 MIG manager 执行。</p>
-<p>在 Kubernetes 里，MPS 和 Time Slicing 通常不是通过改 kube-scheduler 实现，而是通过 <strong>NVIDIA Device Plugin / NVIDIA GPU Operator</strong> 把一张物理 GPU 暴露成多个可被 Pod 申请的逻辑 GPU slot。</p>
-<table>
-<tr><th>机制</th><th>K8s 资源表达</th><th>底层含义</th><th>适合场景</th></tr>
-<tr><td>Time Slicing</td><td><code>sharing.timeSlicing.resources[].replicas</code></td><td>多个 Pod 按时间片轮流使用同一张 GPU</td><td>Notebook、开发测试、低优实验、小推理</td></tr>
-<tr><td>MPS</td><td><code>sharing.mps.resources[].replicas</code></td><td>多个 CUDA 进程通过 MPS daemon 并发共享 GPU</td><td>可信团队内的小 kernel、多进程推理</td></tr>
-</table>
-<p>例如把 <code>nvidia.com/gpu</code> 配成 <code>replicas: 4</code> 后，一张物理 GPU 会向 Kubernetes 上报为 4 个逻辑可申请资源；如果开启 <code>renameByDefault: true</code>，Pod 侧通常申请 <code>nvidia.com/gpu.shared: 1</code>，从语义上区分共享 GPU 和独占 GPU。</p>
-<p>关键边界：<strong>scheduler 只看到逻辑资源数量，不理解每个 slot 的真实性能隔离。</strong>Time Slicing 和 MPS 都不是 MIG 那种硬件切分，生产使用时要特别关注显存 OOM、P99 延迟抖动、监控归因和 workload 之间的干扰。</p>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: MIG 和 MPS 的本质区别？</div>
-<div class="qa-a"><p><strong>MIG</strong> 是硬件级切分——GPU 被物理切成若干独立实例，每个实例有自己的 SM、显存控制器和缓存，互相完全隔离，类似物理分区。<strong>MPS</strong> 是软件级复用——多个进程共享同一个 GPU 上下文，kernel 可以并行执行在不同 SM 上，但共享显存和缓存，有干扰风险。MIG 安全但粒度粗（A100 最多 7 个实例），MPS 灵活但需要干扰控制。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: K8s 里 Time Slicing 和 MPS 是否需要改 kube-scheduler？</div>
-<div class="qa-a"><p>通常不需要。常见做法是让 NVIDIA Device Plugin 或 GPU Operator 读取 sharing ConfigMap，把每张物理 GPU 按 <code>replicas</code> 上报成多个逻辑扩展资源。scheduler 仍然按扩展资源数量做普通调度；真正的时间片复用或 MPS 并发共享发生在 NVIDIA device plugin、driver 和 MPS daemon 层。面试时要强调：K8s 调度的是逻辑 GPU slot，不代表底层有稳定硬隔离。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: CUDA VMM 的虚拟内存超配原理？</div>
-<div class="qa-a"><p>类似操作系统的虚拟内存：用 cuMemAddressReserve 分配大块虚拟地址（如 122GB），再用 cuMemMap 按需映射物理页。物理显存只有 40GB，但虚拟地址空间 122GB。应用看到连续大内存，实际物理页按需分配和回收。</p></div>
-</div>
-<h2>显存碎片</h2>
-<p>GPU 显存碎片可以分为两类：<strong>外部碎片</strong>和<strong>内部碎片</strong>。外部碎片是总空闲显存足够，但没有足够大的连续块；内部碎片是为了对齐或预留最大长度而分配了比实际需求更大的块。</p>
-<table>
-<tr><th>来源</th><th>怎么产生</th><th>典型场景</th></tr>
-<tr><td>动态 tensor shape</td><td>不同 batch、seq_len、activation 大小频繁变化，allocator 反复 malloc/free</td><td>训练中动态 batch、变长输入</td></tr>
-<tr><td>KV Cache 长短不一</td><td>每个请求输出长度不同，传统连续 KV 分配难复用</td><td>LLM serving 高并发长尾请求</td></tr>
-<tr><td>多进程共享 GPU</td><td>不同进程各自持有 CUDA context 和 allocator pool，彼此不可见</td><td>MPS/time-slicing 多租户共享</td></tr>
-<tr><td>大块临时 workspace</td><td>cuBLAS/cuDNN/NCCL/attention kernel 需要临时 buffer，峰值时挤占连续空间</td><td>大 batch prefill、长上下文 attention</td></tr>
-<tr><td>框架缓存策略</td><td>PyTorch caching allocator 为减少 cudaMalloc 开销会缓存块，可能形成不可用空洞</td><td>训练/推理长期运行服务</td></tr>
-</table>
-<p>面试要点：OOM 不一定表示总显存不够，也可能是可用连续块不够、allocator pool 不可回收，或某个进程持有了大量碎片化缓存。</p>
-<h2>关键机制</h2>
-<p>显存碎片治理要分层看：</p>
-<table>
-<tr><th>层次</th><th>手段</th><th>作用</th><th>代价</th></tr>
-<tr><td>调度层</td><td>按显存需求做 bin packing</td><td>把大显存任务放到空闲完整 GPU，避免被小任务切碎</td><td>可能牺牲负载均衡</td></tr>
-<tr><td>调度层</td><td>保留整卡/整 MIG profile</td><td>给大模型或长上下文推理保留连续容量</td><td>利用率可能下降</td></tr>
-<tr><td>调度层</td><td>限制共享密度</td><td>MPS/time-slicing 不盲目提高 replicas，避免多进程显存互相挤压</td><td>可调度 slot 变少</td></tr>
-<tr><td>Runtime 层</td><td>预分配 memory pool</td><td>减少运行期频繁 cudaMalloc/free</td><td>启动时占用显存更多</td></tr>
-<tr><td>Runtime 层</td><td>固定 block/page 管理</td><td>把 KV Cache 切成固定块，非连续物理块也能组合</td><td>需要 block table 和引用计数</td></tr>
-<tr><td>Runtime 层</td><td>CUDA VMM / expandable segment</td><td>用虚拟地址隐藏物理页不连续，支持按需映射</td><td>依赖 CUDA/驱动能力和框架支持</td></tr>
-<tr><td>模型层</td><td>GQA/MQA、KV 量化、Prefix Cache</td><td>减少 KV Cache 体积或复用已有缓存</td><td>可能影响精度或增加缓存治理复杂度</td></tr>
-</table>
-<p>如果面试官追问“调度层能不能解决显存碎片”，可以回答：调度层只能减少碎片产生概率，比如保留大块资源、限制共享密度、做显存画像；真正的细粒度碎片复用要靠 runtime allocator、PagedAttention、CUDA VMM 这类机制。</p>
-<h2>对比表</h2>
-<table>
-<tr><th>机制</th><th>优点</th><th>缺点</th><th>调度建议</th></tr>
-<tr><td>MIG</td><td>硬件隔离强，显存/L2/SM 分区清晰，QoS 稳定</td><td>profile 固定，切分不灵活，容易产生 profile 碎片</td><td>生产多租户、强 SLA 推理优先使用</td></tr>
-<tr><td>MPS</td><td>多个 CUDA 进程可并发执行，小 kernel 利用率更高，可限制一定 SM 占比</td><td>共享显存/缓存/故障域，内存争用时性能可能明显下降</td><td>可信团队、同类 workload、小模型推理或实验共享</td></tr>
-<tr><td>Time Slicing</td><td>配置简单，兼容老卡，适合把低利用率任务超卖到同一张卡</td><td>无硬隔离，不保证 1/N 算力或显存，P99 抖动明显</td><td>Notebook、开发测试、低优任务，生产谨慎</td></tr>
-</table>
-<p>一句话：<strong>MIG 是隔离优先，MPS 是并发效率优先，Time Slicing 是部署简单和提高密度优先。</strong>强隔离多租户不要把 MPS/Time Slicing 当 MIG 用。</p>
-<h2>常见误区</h2>
-<div class="table-scroll"><table>
-<tr><th>误区</th><th>正确理解</th></tr>
-<tr><td>time-slicing 的 <code>replicas: 4</code> 等于每个 Pod 固定 1/4 GPU</td><td>它只是暴露 4 个逻辑 slot，不保证算力、显存或 P99 延迟隔离。</td></tr>
-<tr><td>MPS 可以提供 MIG 级别隔离</td><td>MPS 共享显存、cache 和故障域，适合可信 workload，不适合强隔离多租户。</td></tr>
-<tr><td>scheduler 理解 GPU 共享真实性能</td><td>默认 scheduler 只看扩展资源数量，不理解每个 slot 的干扰和带宽争用。</td></tr>
-<tr><td>显存碎片只靠调度解决</td><td>调度只能减少碎片产生，细粒度复用要靠 runtime allocator、PagedAttention、CUDA VMM。</td></tr>
-</table></div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 显存碎片在调度系统里怎么观测？</div>
-<div class="qa-a"><p>至少要同时看三类指标：GPU 总显存使用率、进程级显存占用、allocator 层 reserved/allocated 差值。对 PyTorch 服务，可以看 <code>memory_reserved - memory_allocated</code> 判断缓存池空洞；对推理引擎，还要看 KV block 使用率、空闲 block 数、prefix cache 命中率和 OOM 前的最大可分配块。调度层可把这些画像沉淀成任务 profile，用于后续显存 bin packing 和共享密度控制。</p></div>
-</div>
-<h2>关联模块</h2>
-<ul><li><code>K8S GPU 共享</code>：继续看 device plugin、replicas 和节点级配置。</li><li><code>CUDA 内存模型与 Occupancy</code>：理解显存、shared memory、register 对共享密度的影响。</li><li><code>LLM 推理系统</code>：KV cache、PagedAttention 和 CUDA VMM 是显存共享的重要场景。</li><li><code>调度与集群</code>：共享 GPU 会引入干扰建模、碎片治理和拓扑感知调度问题。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::02-sharing-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::02-sharing-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CFS vs CUDA 调度</span></button><button type="button" class="tab-step tab-step-next" data-step-target="10"><span class="tab-step-label">下一篇</span><span class="tab-step-title">K8S GPU 共享</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-10" aria-labelledby="gpu-tabs-tab-10" data-mid="gpu-tabs::10-k8s-gpu-sharing-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>K8S GPU 共享</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
-<p>K8S 默认把 GPU 当作不可分割的扩展资源，GPU 共享要靠 NVIDIA device-plugin / GPU Operator 把物理 GPU 表达成多个可调度资源。time-slicing、MPS 和 MIG 的本质差异在隔离级别、执行方式和调度语义，不要把逻辑 slot 当成稳定的 1/N 性能。</p>
-<h2>系统链路</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">GPU Operator / Device Plugin 读取共享配置</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; 把物理 GPU 或 MIG 实例上报给 kubelet</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; kube-scheduler 按扩展资源数量调度 Pod</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Pod 内获得 CUDA_VISIBLE_DEVICES / GPU 访问权限</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; driver / MPS daemon / MIG manager 执行真实共享语义</div></div></div>
-<div class="card card-m">
-<h3>K8S 里的 GPU 共享：整体认知</h3>
-<p>K8S 默认把 GPU 当作<strong>不可分割的整数资源</strong>：一个容器 request <code>nvidia.com/gpu: 1</code> 就独占一整张卡。要在 K8S 里实现共享（MPS / time-slicing / MIG），靠的都是 <strong>NVIDIA k8s-device-plugin</strong>。它负责把物理 GPU &quot;拆分&quot;成多个可调度的资源单元，上报给 kubelet。</p>
-<table>
-<tr><th>共享方式</th><th>K8S 落地组件</th><th>隔离强度</th><th>本质</th></tr>
-<tr><td>Time-slicing</td><td>device-plugin 配置 replicas</td><td>无隔离（仅时间轮转）</td><td>把 1 张卡复制成 N 个逻辑资源</td></tr>
-<tr><td>MPS</td><td>device-plugin sharing.mps</td><td>弱隔离（空分复用）</td><td>多进程共享 CUDA 上下文并行执行</td></tr>
-<tr><td>MIG</td><td>device-plugin + MIG Manager</td><td>硬件强隔离</td><td>物理切片，独立 SM/显存</td></tr>
-</table>
-<p>三者底层都是上层 device-plugin 把同一张 GPU 的 UUID 重复或切片上报，让多个 Pod 调度到同一张物理卡。</p>
-</div>
-<div class="card card-s">
-<h3>方式一：Time-slicing(时间片)</h3>
-<p><strong>原理</strong>：device-plugin 把一张物理 GPU 复制成 N 个同名资源（共享同一 UUID），多个 Pod 调度上去后由 GPU 驱动的时间片调度器轮流执行。没有内存隔离、没有故障隔离，一个 Pod 跑飞会影响其他 Pod。</p>
-<p><strong>配置步骤</strong>：通过 ConfigMap 定义切分策略，再让 device-plugin 加载。</p>
-<pre><code># time-slicing ConfigMap：把每张卡复制成 4 份
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: time-slicing-config
-  namespace: gpu-operator
-data:
-  any: |-
-    version: v1
-    flags:
-      migStrategy: none
-    sharing:
-      timeSlicing:
-        renameByDefault: false
-        failRequestsGreaterThanOne: true
-        resources:
-        - name: nvidia.com/gpu
-          replicas: 4
-</code></pre>
-<p><strong>关键参数</strong>：</p>
-<ul>
-<li><code>replicas: 4</code> —— 一张卡上报为 4 个 <code>nvidia.com/gpu</code>，最多 4 个 Pod 共享。</li>
-<li><code>failRequestsGreaterThanOne: true</code> —— 共享模式下单个 Pod 只能 request 1，防止误用。</li>
-<li><code>renameByDefault: true</code> —— 把资源名改为 <code>nvidia.com/gpu.shared</code>，便于和独占卡区分调度。</li>
-</ul>
-<p><strong>启用（GPU Operator）</strong>：</p>
-<pre><code>kubectl patch clusterpolicy/cluster-policy \
-  -n gpu-operator --type merge \
-  -p '{"spec":{"devicePlugin":{"config":{"name":"time-slicing-config","default":"any"}}}}'
-</code></pre>
-<p><strong>Pod 使用</strong>：和普通 GPU Pod 写法完全一样，调度器自动把它放到被复制的逻辑资源上。</p>
-<pre><code>resources:
-  limits:
-    nvidia.com/gpu: 1   # 实际是 1/4 张卡的时间片
-</code></pre>
-</div>
-<div class="card card-w">
-<h3>方式二:MPS(Multi-Process Service)</h3>
-<p><strong>原理</strong>：device-plugin 启动 MPS Control Daemon，多个 Pod 的 CUDA 进程通过 MPS Server 共享同一 GPU 上下文，kernel 可以<strong>真正并行</strong>地跑在不同 SM 上（空分复用），而不是 time-slicing 的时间轮转。还能按比例限制每个客户端的显存和算力。</p>
-<p><strong>配置步骤</strong>：</p>
-<pre><code># MPS ConfigMap：把每张卡按 MPS 方式分成 4 份
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mps-config
-  namespace: gpu-operator
-data:
-  any: |-
-    version: v1
-    sharing:
-      mps:
-        renameByDefault: false
-        resources:
-        - name: nvidia.com/gpu
-          replicas: 4
-</code></pre>
-<pre><code>kubectl patch clusterpolicy/cluster-policy \
-  -n gpu-operator --type merge \
-  -p '{"spec":{"devicePlugin":{"config":{"name":"mps-config","default":"any"}}}}'
-</code></pre>
-<p><strong>效果</strong>：每个客户端默认分到 <code>1/replicas</code> 的显存上限（4 份即每份约 1/4 显存）和算力配额。device-plugin 会自动拉起 MPS daemon，无需手动 <code>nvidia-cuda-mps-control</code>。</p>
-<p><strong>Pod 使用</strong>：同样 request <code>nvidia.com/gpu: 1</code> 即可，对应一个 MPS slice。</p>
-</div>
-<div class="card card-r">
-<h3>Time-slicing vs MPS:怎么选?</h3>
-<table>
-<tr><th>维度</th><th>Time-slicing</th><th>MPS</th></tr>
-<tr><td>执行方式</td><td>时间轮转(串行切换)</td><td>SM 空分(真并行)</td></tr>
-<tr><td>显存隔离</td><td>无,容易互相 OOM</td><td>有,可按比例限制</td></tr>
-<tr><td>算力 QoS</td><td>无,抢占式</td><td>可设 active thread 百分比</td></tr>
-<tr><td>故障隔离</td><td>差,一个崩可能拖累全部</td><td>较差,共享上下文一个进程崩可能影响 MPS server</td></tr>
-<tr><td>上下文切换开销</td><td>有(切换上下文)</td><td>低(共享上下文)</td></tr>
-<tr><td>适用场景</td><td>开发/测试、推理流量低、Notebook</td><td>多个稳定小推理、I/O 互补的训练任务</td></tr>
-</table>
-<p><strong>经验法则</strong>：纯粹想&quot;塞更多任务进来、不在乎隔离&quot;用 time-slicing；想要并行吞吐和一定的显存/算力配额用 MPS;要强隔离、多租户生产环境用 MIG。三者不能在同一张卡上叠加(同一时刻一张卡只能选一种共享策略)。</p>
-</div>
-<div class="card card-s">
-<h3>节点级差异化配置</h3>
-<p>集群里往往有的节点要共享、有的要独占。device-plugin config 支持多份命名配置,再用节点 label 选择。</p>
-<pre><code># ConfigMap 里放多份配置
-data:
-  shared: |-
-    version: v1
-    sharing:
-      timeSlicing:
-        resources:
-        - name: nvidia.com/gpu
-          replicas: 8
-  exclusive: |-
-    version: v1
-    flags:
-      migStrategy: none
-</code></pre>
-<pre><code># 给节点打 label 选择对应配置
-kubectl label node gpu-node-1 \
-  nvidia.com/device-plugin.config=shared
-kubectl label node gpu-node-2 \
-  nvidia.com/device-plugin.config=exclusive
-</code></pre>
-<p>这样一个集群里既能有 8 路共享的推理节点,也能保留整卡独占的训练节点。</p>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: time-slicing 的 replicas=4，是不是每个 Pod 拿到 1/4 算力？</div>
-<div class="qa-a"><p>不是。time-slicing 只是<strong>时间轮转</strong>，没有任何资源配额。replicas=4 意味着最多 4 个 Pod 能调度到这张卡,它们轮流占用整张卡跑一个时间片。如果只有 1 个 Pod 在跑,它能用满整卡;如果 4 个都满负载,它们大致平分时间但会有上下文切换开销。它解决的是&quot;调度上能不能放进来&quot;,不解决&quot;性能隔离&quot;。要按比例限制算力/显存,得用 MPS 或 MIG。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: K8S 里 MPS 比裸机 MPS 多做了什么？</div>
-<div class="qa-a"><p>裸机用 MPS 需要手动启动 <code>nvidia-cuda-mps-control -d</code>、设置 <code>CUDA_MPS_*</code> 环境变量、管理 pipe 目录。K8S 里 device-plugin(GPU Operator)把这些全自动化:自动拉起 MPS Control Daemon、为每个 slice 注入正确的环境变量和显存/算力配额、把 N 个 MPS slice 作为可调度资源上报给 kubelet。开发者只要正常 request <code>nvidia.com/gpu: 1</code>,底层就落在一个受配额限制的 MPS 客户端上。</p></div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 共享 GPU 后，Pod 里 nvidia-smi 看到的是什么？</div>
-<div class="qa-a"><p>time-slicing 和 MPS 下,Pod 里 <code>nvidia-smi</code> 看到的是<strong>整张物理卡</strong>(同一个 UUID),显示的显存总量也是整卡的——因为它们本质是共享同一设备。这容易误导:程序如果按 nvidia-smi 的总显存来分配,在 MPS 配额或多 Pod 共存时会 OOM。相比之下 MIG 下看到的是切分后的实例(独立显存)。所以共享场景要靠应用自己控制显存用量,或依赖 MPS 的显存上限配额。</p></div>
-</div>
-<h2>常见误区</h2>
-<div class="table-scroll"><table>
-<tr><th>误区</th><th>正确理解</th></tr>
-<tr><td><code>replicas=4</code> 就是每个 Pod 固定 1/4 算力</td><td>time-slicing 只是逻辑 slot 和时间轮转，不保证固定算力。</td></tr>
-<tr><td>kube-scheduler 理解 GPU 干扰</td><td>默认 scheduler 只看扩展资源数量，不知道 SM、HBM、P99 抖动。</td></tr>
-<tr><td>MPS 和 MIG 都是硬隔离</td><td>MIG 是硬件切片，MPS 是共享上下文，隔离弱很多。</td></tr>
-<tr><td>Pod 里看到整卡显存就可以全用</td><td>time-slicing/MPS 下多个 Pod 共享同一卡，应用需要限制显存使用。</td></tr>
-</table></div>
-<h2>关联模块</h2>
-<ul><li><code>共享方式</code>：理解 MIG/MPS/time-slicing 的底层取舍。</li><li><code>Kubernetes 核心</code>：device plugin、extended resource、node label 和调度语义。</li><li><code>调度与集群</code>：共享密度、显存碎片、干扰建模和租户配额。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::10-k8s-gpu-sharing-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::10-k8s-gpu-sharing-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="9"><span class="tab-step-label">上一篇</span><span class="tab-step-title">共享方式</span></button><button type="button" class="tab-step tab-step-next" data-step-target="11"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能指标</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-11" aria-labelledby="gpu-tabs-tab-11" data-mid="gpu-tabs::03-performance-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标</h2><span class="tab-panel-chips"><span class="chip chip-level-basic">基础</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::12-cfs-vs-cuda-scheduling-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::12-cfs-vs-cuda-scheduling-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">GPU共享机制</span></button><button type="button" class="tab-step tab-step-next" data-step-target="7"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能指标体系</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-7" aria-labelledby="topic-tabs-tab-7" data-mid="topic-tabs::03-performance-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标体系</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>GPU 性能指标要按“算力、显存、利用率、互联、能耗”五条线理解，再用 Roofline 把 kernel 归类为 compute-bound 或 memory-bound。面试中最重要的判断是：不要把理论 TFLOPS、GPU-Util 或显存占用单独当成“性能好”的证据。</p>
 <h2>核心概念</h2>
 <div class="table-scroll"><table>
@@ -1536,7 +1514,7 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 <a class="resource-card" href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html"><div class="resource-type">official</div><div class="resource-title">Nsight Compute Profiling Guide</div><div class="resource-desc">GPU 性能分析指标详解，Roofline、Occupancy、Memory 分析。</div></a>
 <a class="resource-card" href="https://arxiv.org/abs/2205.05937"><div class="resource-type">paper</div><div class="resource-title">FlashAttention</div><div class="resource-desc">内存高效 Attention 算法，IO-Aware 优化经典论文。</div></a>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::03-performance-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::03-performance-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="10"><span class="tab-step-label">上一篇</span><span class="tab-step-title">K8S GPU 共享</span></button><button type="button" class="tab-step tab-step-next" data-step-target="12"><span class="tab-step-label">下一篇</span><span class="tab-step-title">利用率诊断</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-12" aria-labelledby="gpu-tabs-tab-12" data-mid="gpu-tabs::07-utilization-diagnosis-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>利用率诊断</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::03-performance-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::03-performance-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="6"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CFS vs CUDA 调度</span></button><button type="button" class="tab-step tab-step-next" data-step-target="8"><span class="tab-step-label">下一篇</span><span class="tab-step-title">利用率诊断与瓶颈分析</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-8" aria-labelledby="topic-tabs-tab-8" data-mid="topic-tabs::idx-8" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>利用率诊断与瓶颈分析</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 25 min</span></span></div><div class="tab-panel-body"><div class="subtabs" data-subtabs><div class="subtabs-nav" role="tablist" aria-label="子模块"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-8-sub-1" aria-controls="topic-tabs-panel-8-subpanel-1" aria-selected="true" title="利用率诊断链路"><span class="subtab-title">利用率诊断链路</span><span class="subtab-desc">GPU-Util→SM Active→Occupancy→Warp Stall→Throughput 诊断路径</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-8-sub-2" aria-controls="topic-tabs-panel-8-subpanel-2" aria-selected="false" title="瓶颈分类与排查"><span class="subtab-title">瓶颈分类与排查</span><span class="subtab-desc">Compute/Memory-bandwidth/Memory-capacity/Communication 四类瓶颈排查</span></button></div><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-8-subpanel-1" aria-labelledby="topic-tabs-panel-8-sub-1" ><h2>一句话结论</h2>
 <p>GPU 利用率诊断不能停在 <code>nvidia-smi</code> 的 <code>GPU-Util</code>。推荐链路是：GPU-Util 看时间上有没有 kernel，SM Active 看活有没有铺满 SM，Occupancy 看 SM 里 warp 是否足够，Warp Stall 看 warp 为什么发不出去，Compute/Memory Throughput 看瓶颈类型，最后用业务吞吐和延迟判断“忙得是否有效”。</p>
 <h2>诊断入口</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">业务慢或 GPU 看起来异常</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; nvidia-smi / DCGM 粗看 GPU-Util、显存、功耗、温度、进程</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; Nsight Systems 看 timeline：空洞、Memcpy、同步、NCCL、CPU 等待</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Nsight Compute 看热点 kernel：SM Active、Occupancy、Warp Stall、Throughput</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; 结合业务指标：step time、tokens/sec、QPS、TTFT、TPOT、P99</div></div></div>
@@ -1821,7 +1799,7 @@ Power / Clock / Thermal：
 - <code>性能指标</code>：理解 GPU-Util、SM Active、Occupancy、Roofline 的定义。
 - <code>瓶颈分类</code>：把诊断指标组合翻译成 compute/memory/communication 瓶颈。
 - <code>Host-Device 数据拷贝</code>：timeline 空洞和 memcpy 往往来自 H2D/D2H。
-- <code>CUDA 内存模型与 Occupancy</code>：解释 occupancy 受 block size、寄存器和 shared memory 影响。</div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::07-utilization-diagnosis-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::07-utilization-diagnosis-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="11"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能指标</span></button><button type="button" class="tab-step tab-step-next" data-step-target="13"><span class="tab-step-label">下一篇</span><span class="tab-step-title">瓶颈分类</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-13" aria-labelledby="gpu-tabs-tab-13" data-mid="gpu-tabs::09-bottleneck-classification-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>瓶颈分类</h2><span class="tab-panel-chips"><span class="chip chip-level-mid">进阶</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 12 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+- <code>CUDA 内存模型与 Occupancy</code>：解释 occupancy 受 block size、寄存器和 shared memory 影响。</div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-8-subpanel-2" aria-labelledby="topic-tabs-panel-8-sub-2" hidden><h2>一句话结论</h2>
 <p>GPU 慢不能只说“利用率低”或“显存满”，要先分类：计算瓶颈看 Tensor Core/CUDA Core 是否打满，显存瓶颈看 HBM 带宽和访存 stall，通信瓶颈看 NCCL/memcpy/拓扑等待。分类决定优化方向，方向错了会越调越慢。</p>
 <h2>诊断入口</h2>
 <div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">业务指标异常</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; nvidia-smi / DCGM 看 GPU-Util、显存、功耗、PCIe/NVLink</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; Nsight Systems 看 timeline：kernel / memcpy / NCCL / 空洞 / 同步</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Nsight Compute 看热点 kernel：compute、memory、occupancy、stall</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; 扩展性实验：单卡、多卡、不同 batch、不同 seq_len 对比</div></div></div>
@@ -1895,7 +1873,7 @@ Power / Clock / Thermal：
 <div class="qa-a"><p>在同一个 kernel 上通常不会——Roofline 模型里一个点要么在斜线区域（memory-bound），要么在水平区域（compute-bound）。但在端到端场景中，不同 kernel 可以是不同瓶颈：prefill 阶段 compute-bound，decode 阶段 memory-bound，某些小算子 launch-bound。所以优化时需要针对不同阶段不同策略，这也是为什么推理引擎会把 prefill 和 decode 分开调度。</p></div>
 </div>
 <h2>关联模块</h2>
-<ul><li><code>性能指标</code>：Roofline、TFLOPS、HBM 带宽是分类基础。</li><li><code>利用率诊断</code>：从 GPU-Util 继续深入到 SM Active、Occupancy、Warp Stall。</li><li><code>GPU 互联与数据路径</code>：通信瓶颈必须结合 PCIe/NVLink/RDMA/NUMA。</li><li><code>LLM 推理系统</code>：prefill/decode 的瓶颈类型不同。</li></ul></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::09-bottleneck-classification-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::09-bottleneck-classification-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="12"><span class="tab-step-label">上一篇</span><span class="tab-step-title">利用率诊断</span></button><button type="button" class="tab-step tab-step-next" data-step-target="14"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能预测指标</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-14" aria-labelledby="gpu-tabs-tab-14" data-mid="gpu-tabs::04-prediction-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能预测指标</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 3/3">★★★</span><span class="chip chip-time">⏱ 18 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+<ul><li><code>性能指标</code>：Roofline、TFLOPS、HBM 带宽是分类基础。</li><li><code>利用率诊断</code>：从 GPU-Util 继续深入到 SM Active、Occupancy、Warp Stall。</li><li><code>GPU 互联与数据路径</code>：通信瓶颈必须结合 PCIe/NVLink/RDMA/NUMA。</li><li><code>LLM 推理系统</code>：prefill/decode 的瓶颈类型不同。</li></ul></div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::idx-8" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::idx-8" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="7"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能指标体系</span></button><button type="button" class="tab-step tab-step-next" data-step-target="9"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能预测与特征工程</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-9" aria-labelledby="topic-tabs-tab-9" data-mid="topic-tabs::04-prediction-metrics-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能预测与特征工程</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 20 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>GPU 性能预测的核心是把硬件、模型和部署策略转成可解释特征，再预测 step time、MFU、peak memory、communication time 等标签。面试里要强调：GPU 指标不是孤立监控项，而是模型性能、调度决策和容量规划的输入。</p>
 <h2>核心概念</h2>
 <div class="table-scroll"><table>
@@ -2156,7 +2134,7 @@ $$&lt;/div&gt;
 <a class="resource-card" href="https://arxiv.org/abs/2104.04473"><div class="resource-type">paper</div><div class="resource-title">Megatron-LM v3</div><div class="resource-desc">3D 并行策略、MFU 定义和测量方法。</div></a>
 <a class="resource-card" href="https://developer.nvidia.com/blog/understanding-the-nvidia-ampere-architecture/"><div class="resource-type">official</div><div class="resource-title">Understanding Ampere Architecture</div><div class="resource-desc">SM、Warp、Tensor Core 的硬件原理。</div></a>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::04-prediction-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::04-prediction-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="13"><span class="tab-step-label">上一篇</span><span class="tab-step-title">瓶颈分类</span></button><button type="button" class="tab-step tab-step-next" data-step-target="15"><span class="tab-step-label">下一篇</span><span class="tab-step-title">GPU 面试收束</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="gpu-tabs-panel-15" aria-labelledby="gpu-tabs-tab-15" data-mid="gpu-tabs::14-interview-wrap-up-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU 面试收束</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 1/3">★☆☆</span><span class="chip chip-time">⏱ 15 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::04-prediction-metrics-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::04-prediction-metrics-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="8"><span class="tab-step-label">上一篇</span><span class="tab-step-title">利用率诊断与瓶颈分析</span></button><button type="button" class="tab-step tab-step-next" data-step-target="10"><span class="tab-step-label">下一篇</span><span class="tab-step-title">GPU面试收束</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-10" aria-labelledby="topic-tabs-tab-10" data-mid="topic-tabs::14-interview-wrap-up-md" hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU面试收束</h2><span class="tab-panel-chips"><span class="chip chip-level-pro">精通</span><span class="chip chip-priority" title="优先级 2/3">★★☆</span><span class="chip chip-time">⏱ 10 min</span></span></div><div class="tab-panel-body"><h2>一句话结论</h2>
 <p>GPU 面试不要只背硬件名词，要把问题落到三条主线：<strong>数据怎么流动</strong>、<strong>计算怎么铺满</strong>、<strong>资源怎么共享和诊断</strong>。能把这三条讲清楚，就能自然连接 LLM 推理、分布式训练、K8S GPU 调度和性能预测。</p>
 <h2>30 秒回答模板</h2>
 <p>GPU 适合 AI 的核心原因是矩阵计算密集、数据并行度高、显存带宽高。面试回答时我会先区分 CPU 和 GPU：CPU 擅长控制流和低延迟串行逻辑，GPU 擅长用大量 SM、warp 和 Tensor Core 做吞吐型计算。然后补充三类工程问题：第一，数据路径上要关注 HBM、PCIe、NVLink、RDMA 和 NUMA；第二，执行模型上要关注 kernel、grid/block/thread、warp、stream 和 occupancy；第三，性能诊断上要用 <code>nvidia-smi</code>、Nsight Systems、Nsight Compute、DCGM 去判断是计算、显存、通信、数据加载还是 kernel launch 瓶颈。</p>
@@ -2208,7 +2186,7 @@ Memcpy 或同步很多 | 查 .item()/.cpu()、DataLoader、pinned memory、strea
 <div class="qa-section"><div class="qa-section-title">回答</div><p>我会先确认业务指标，比如训练 step time、推理 QPS/TPOT/TTFT，然后从粗到细排查。第一步用 nvidia-smi/DCGM 看 GPU-Util、显存、功耗、PCIe/NVLink 计数和进程。第二步用 Nsight Systems 看端到端 timeline，确认空洞、Memcpy、同步、NCCL、kernel 碎片和 CPU 等待。第三步对热点 kernel 用 Nsight Compute，看 SM Active、Achieved Occupancy、Memory Throughput、Tensor Core Util、Warp Stall。最后结合模型阶段判断：prefill 可能 compute-bound，decode 常 memory-bound，多卡训练可能 communication-bound，数据加载慢则 input pipeline-bound。</p></div>
 <div class="qa-summary">排查顺序：业务指标 → nvidia-smi/DCGM → Nsight Systems → Nsight Compute → 阶段化判断瓶颈。</div>
 </div>
-</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="gpu-tabs::14-interview-wrap-up-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="gpu-tabs::14-interview-wrap-up-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="14"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能预测指标</span></button></div></div></article></div></section>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::14-interview-wrap-up-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::14-interview-wrap-up-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="9"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能预测与特征工程</span></button></div></div></article></div></section>
   </main>
 </div>
 <footer class="site-footer">

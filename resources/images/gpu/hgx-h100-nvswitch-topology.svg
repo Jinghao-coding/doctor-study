@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+  <defs>
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.10"/>
+    </filter>
+    <linearGradient id="gNv" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#76b900"/>
+      <stop offset="100%" stop-color="#5a9400"/>
+    </linearGradient>
+    <linearGradient id="gSw" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#805ad5"/>
+      <stop offset="100%" stop-color="#6b46c1"/>
+    </linearGradient>
+  </defs>
+
+  <text x="460" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#1a202c">HGX H100 8-GPU：NVSwitch 全互联拓扑</text>
+  <text x="460" y="50" text-anchor="middle" font-size="11" fill="#718096">8 颗 H100 SXM GPU + 4 颗 NVSwitch 芯片，任意 GPU 对之间均有高速 NVLink 通路（900 GB/s/GPU）</text>
+
+  <!-- NVSwitch fabric (center region) -->
+  <rect x="260" y="155" width="400" height="200" rx="16" fill="#faf5ff" stroke="#805ad5" stroke-width="2" stroke-dasharray="6,3" filter="url(#sh)"/>
+  <text x="460" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#553c9a">NVSwitch Fabric（4× NVSwitch 3rd Gen）</text>
+  <text x="460" y="198" text-anchor="middle" font-size="10" fill="#805ad5">全互联无阻塞交换 · 支持 in-switch reduction（SHARP）</text>
+
+  <!-- 4 NVSwitch chips in 2x2 grid -->
+  <rect x="320" y="225" width="80" height="50" rx="8" fill="url(#gSw)" filter="url(#sh)"/>
+  <text x="360" y="255" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">NVSwitch 0</text>
+
+  <rect x="420" y="225" width="80" height="50" rx="8" fill="url(#gSw)" filter="url(#sh)"/>
+  <text x="460" y="255" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">NVSwitch 1</text>
+
+  <rect x="520" y="225" width="80" height="50" rx="8" fill="url(#gSw)" filter="url(#sh)"/>
+  <text x="560" y="255" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">NVSwitch 2</text>
+
+  <rect x="420" y="290" width="80" height="50" rx="8" fill="url(#gSw)" filter="url(#sh)"/>
+  <text x="460" y="320" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">NVSwitch 3</text>
+
+  <!-- ===== 8 GPUs arranged around the fabric ===== -->
+  <g font-size="12" font-weight="700" fill="#fff">
+    <rect x="80" y="85" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="135" y="110" text-anchor="middle">GPU 0</text>
+    <text x="135" y="127" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="250" y="70" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="305" y="95" text-anchor="middle">GPU 1</text>
+    <text x="305" y="112" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="420" y="70" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="475" y="95" text-anchor="middle">GPU 2</text>
+    <text x="475" y="112" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="560" y="70" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="615" y="95" text-anchor="middle">GPU 3</text>
+    <text x="615" y="112" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="730" y="85" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="785" y="110" text-anchor="middle">GPU 4</text>
+    <text x="785" y="127" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="80" y="385" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="135" y="410" text-anchor="middle">GPU 5</text>
+    <text x="135" y="427" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="250" y="400" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="305" y="425" text-anchor="middle">GPU 6</text>
+    <text x="305" y="442" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+
+    <rect x="560" y="400" width="110" height="58" rx="10" fill="url(#gNv)" filter="url(#sh)"/>
+    <text x="615" y="425" text-anchor="middle">GPU 7</text>
+    <text x="615" y="442" text-anchor="middle" font-size="8" font-weight="400" fill="#c6f6d5">HBM3 · 3.35 TB/s</text>
+  </g>
+
+  <!-- NVLink connections (conceptual curved lines from GPUs to NVSwitch region) -->
+  <g stroke="#76b900" stroke-width="1.5" fill="none" opacity="0.45">
+    <path d="M190,114 C220,150 260,180 300,225"/>
+    <path d="M360,100 C365,140 370,175 375,225"/>
+    <path d="M475,100 C472,140 468,175 465,225"/>
+    <path d="M670,100 C640,140 600,175 575,225"/>
+    <path d="M730,114 C690,150 640,180 600,225"/>
+    <path d="M190,414 C220,380 270,355 320,340"/>
+    <path d="M360,429 C370,395 390,365 410,340"/>
+    <path d="M615,429 C590,395 550,365 510,340"/>
+  </g>
+
+  <!-- Key specs callout -->
+  <rect x="680" y="220" width="210" height="135" rx="10" fill="#fff" stroke="#e2e8f0" stroke-width="1" filter="url(#sh)"/>
+  <text x="785" y="243" text-anchor="middle" font-size="12" font-weight="700" fill="#1a202c">关键规格</text>
+  <text x="693" y="265" font-size="10" fill="#4a5568">• 每 GPU：18 条 NVLink 4.0</text>
+  <text x="693" y="283" font-size="10" fill="#4a5568">• 每条链路：50 GB/s 双向</text>
+  <text x="693" y="301" font-size="10" fill="#4a5568">• 每 GPU 聚合：900 GB/s</text>
+  <text x="693" y="319" font-size="10" fill="#4a5568">• 对分带宽：3.6 TB/s</text>
+  <text x="693" y="337" font-size="10" fill="#4a5568">• PCIe：Gen5 x16（到 CPU/NIC）</text>
+  <text x="693" y="352" font-size="10" fill="#76b900" font-weight="600">→ NVLink ≈ PCIe Gen5 的 7×</text>
+
+  <!-- CPU + PCIe side panel -->
+  <rect x="20" y="220" width="210" height="80" rx="10" fill="#ebf8ff" stroke="#4299e1" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="125" y="245" text-anchor="middle" font-size="12" font-weight="700" fill="#2b6cb0">CPU + PCIe Gen5 x16</text>
+  <text x="125" y="263" text-anchor="middle" font-size="9" fill="#4299e1">控制面：kernel 启动、通信调度、内存管理</text>
+  <text x="125" y="278" text-anchor="middle" font-size="9" fill="#4299e1">数据面：CPU↔GPU、GPU↔NIC、GPU↔NVMe</text>
+  <text x="125" y="293" text-anchor="middle" font-size="9" fill="#a0aec0">GPU↔GPU 主路径不走 PCIe</text>
+
+  <g stroke="#4299e1" stroke-width="1" stroke-dasharray="4,3" fill="none" opacity="0.4">
+    <path d="M80,114 C60,160 60,200 100,220"/>
+    <path d="M80,414 C60,380 60,320 100,300"/>
+  </g>
+
+  <text x="460" y="488" text-anchor="middle" font-size="10" fill="#a0aec0">连线为概念示意图；实际每颗 GPU 的 18 条 NVLink 分布连接到 4 颗 NVSwitch，实现 all-to-all 全互联</text>
+  <text x="460" y="505" text-anchor="middle" font-size="9" fill="#cbd5e0">来源：NVIDIA HGX H100 官方白皮书</text>
+</svg>

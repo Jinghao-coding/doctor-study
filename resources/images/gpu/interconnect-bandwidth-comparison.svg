@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
+  <defs>
+    <filter id="sh" x="-3%" y="-3%" width="106%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="gNV" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#76b900"/>
+      <stop offset="100%" stop-color="#4a8a00"/>
+    </linearGradient>
+    <linearGradient id="gPCIe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4299e1"/>
+      <stop offset="100%" stop-color="#2b6cb0"/>
+    </linearGradient>
+    <linearGradient id="gRDMA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ed8936"/>
+      <stop offset="100%" stop-color="#c05621"/>
+    </linearGradient>
+  </defs>
+
+  <text x="480" y="30" text-anchor="middle" font-size="17" font-weight="700" fill="#1a202c">GPU 三大互联技术：带宽量级对比</text>
+  <text x="480" y="52" text-anchor="middle" font-size="11" fill="#718096">理解互联层级是做拓扑感知调度和分布式训练优化的基础</text>
+
+  <!-- ======= Three tiers shown as horizontal bars ======= -->
+  <!-- NVLink / NVSwitch -->
+  <rect x="60" y="80" width="840" height="80" rx="10" fill="#f0fff4" stroke="#76b900" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="60" y="80" width="140" height="80" rx="10" fill="url(#gNV)"/>
+  <rect x="190" y="80" width="10" height="80" fill="url(#gNV)"/>
+  <text x="130" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">NVLink</text>
+  <text x="130" y="135" text-anchor="middle" font-size="11" fill="#c6f6d5">NVSwitch</text>
+  <rect x="210" y="100" width="670" height="40" rx="6" fill="#76b900" opacity="0.15"/>
+  <text x="225" y="126" font-size="13" font-weight="700" fill="#22543d">H100 SXM: 900 GB/s 双向带宽（18 条 NVLink 4.0 × 50 GB/s）</text>
+  <text x="225" y="144" font-size="10" fill="#276749">单机内 GPU↔GPU 全互联，CPU 不参与数据搬运，AllReduce/TP/EP 首选路径</text>
+
+  <!-- PCIe -->
+  <rect x="60" y="180" width="840" height="80" rx="10" fill="#ebf8ff" stroke="#4299e1" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="60" y="180" width="140" height="80" rx="10" fill="url(#gPCIe)"/>
+  <rect x="190" y="180" width="10" height="80" fill="url(#gPCIe)"/>
+  <text x="130" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">PCIe</text>
+  <text x="130" y="235" text-anchor="middle" font-size="11" fill="#bee3f8">Gen5 x16</text>
+  <rect x="210" y="200" width="96" height="40" rx="6" fill="#4299e1" opacity="0.15"/>
+  <text x="225" y="226" font-size="13" font-weight="700" fill="#2a4365">H100 PCIe: 128 GB/s 双向（≈64 GB/s 单向）</text>
+  <text x="225" y="244" font-size="10" fill="#2c5282">通用 I/O 总线：CPU↔GPU、GPU↔NIC、GPU↔NVMe；无 NVLink 时的 GPU-GPU fallback</text>
+
+  <!-- RDMA / InfiniBand -->
+  <rect x="60" y="280" width="840" height="80" rx="10" fill="#fffaf0" stroke="#ed8936" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="60" y="280" width="140" height="80" rx="10" fill="url(#gRDMA)"/>
+  <rect x="190" y="280" width="10" height="80" fill="url(#gRDMA)"/>
+  <text x="130" y="315" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">RDMA</text>
+  <text x="130" y="335" text-anchor="middle" font-size="11" fill="#feebc8">IB / RoCE</text>
+  <rect x="210" y="300" width="38" height="40" rx="6" fill="#ed8936" opacity="0.15"/>
+  <text x="225" y="326" font-size="13" font-weight="700" fill="#652b19">400G NIC: ~50 GB/s（400 Gb/s ÷ 8）</text>
+  <text x="225" y="344" font-size="10" fill="#7b341e">跨服务器通信：GPUDirect RDMA 让 NIC 直接读写 GPU HBM，绕过 CPU；多 NIC multi-rail 可提升总带宽</text>
+
+  <!-- Legend: scale bar -->
+  <line x1="210" y1="385" x2="880" y2="385" stroke="#a0aec0" stroke-width="1"/>
+  <text x="210" y="405" font-size="10" fill="#a0aec0">0</text>
+  <text x="306" y="405" font-size="10" fill="#4299e1" text-anchor="middle">~50 GB/s (RDMA 单口)</text>
+  <text x="550" y="405" font-size="10" fill="#4299e1" text-anchor="middle">~128 GB/s (PCIe Gen5 x16 双向)</text>
+  <text x="880" y="405" font-size="10" fill="#76b900" text-anchor="end">~900 GB/s (NVLink 4.0)</text>
+</svg>

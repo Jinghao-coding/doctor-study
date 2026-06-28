@@ -11,11 +11,13 @@
 一个请求在系统中的状态不是"在跑/没在跑"两种，而是一个明确的状态机：
 
 ```flow
-WAITING → ADMITTED → PREFILL_RUNNING → DECODE_RUNNING → STREAMING → FINISHED
-   ↑          |              |                |             |
-   |          ↓              ↓                ↓             ↓
-   |       等待重试      PREEMPTED       PREEMPTED      释放 KV Cache
-   └──────────────────────────────────────────────────────┘ (可重新排队)
+WAITING | 在等待队列中，tokenizer 已完成，等待 scheduler 准入
+ADMITTED | 准入通过，block table 建立，分配到 KV block
+PREFILL_RUNNING | 整段 prompt 并行计算 attention，写入初始 KV Cache → TTFT
+DECODE_RUNNING | 进入 decode 迭代，每步生成 1 个 token 自回归 → TPOT
+STREAMING | token 逐 token 通过 SSE/WebSocket 流式返回给用户
+FINISHED | 生成 EOS 或达到 max_tokens，释放 KV block 归还 free list
+PREEMPTED | 显存不足时被抢占，KV 换出到 CPU 或丢弃（可重新排队回到 WAITING）
 ```
 
 <div class="table-scroll">
