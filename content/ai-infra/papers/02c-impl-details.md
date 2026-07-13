@@ -1,185 +1,95 @@
 ## 一句话结论
 
-DeepShare 的两级队列中，第一级租户级 Guaranteed/Best-effort 队列在 Controller 里显式维护并做准入，第二级全局队列是逻辑队列——由 Controller 准入后的 Pod 集合加 Scheduler Plugin 的 QAD-aware QueueSort 共同体现，调度执行落在 Framework 各扩展点。
+DeepShare 的关键实现链路是：Scheduler Plugin 从 informer cache 计算租户保障状态，在内部做两级队列排序，再按“独占放置 → 安全合用 → CPU/Memory 回收 → GPU 抢占”的干扰递增顺序尝试落点。
+
+## 一次调度周期怎么走
+
+```flow
+读取租户 quota、作业 class 与运行 Pod | Controller 提供配置元数据，informer 提供实时状态
+计算瞬时 QAD | A_i^G / min(q_i, D_i^G)，无 Guaranteed demand 时为 1
+EMA 平滑 | 得到调度控制信号 Q̃_i
+两级队列排序 | Guaranteed 先于 Best-effort，Q̃ 低优先，预测剩余时间短次优先
+尝试独占 GPU | 无干扰，优先级最高
+尝试安全 colocation | RF retention 预测与 QAD 动态门槛同时通过
+回收 CPU / Memory | 对 Best-effort Pod 发起 in-place resize
+选择 GPU victims | PostFilter 按抢占效率贪心回收足够的完整 GPU
+```
+
+## 两级队列不要记成两个 Controller
+
 <div class="card card-s">
-<h3>两级队列具体在哪里实现</h3>
-<p>论文里的队列结构：</p>
-
-<pre><code class="language-text">每个 tenant 有：
-  Q_i^G：Guaranteed 队列
-  Q_i^B：Best-effort 队列
-集群级有：
-  Q^G：全局 Guaranteed 候选队列
-  Q^B：全局 Best-effort 候选队列</code></pre>
-
-<div class="comp">
-<div class="comp-t">第一级（租户队列）：Controller 内显式维护</div>
-<p>这是 tenant/job 级语义，必须在 Controller 里：</p>
-
-<pre><code class="language-go">type TenantQueue struct {
-    TenantID         string
-    GuaranteedQueue  PriorityQueue
-    BestEffortQueue  PriorityQueue
-}
-
-tenantQueues map[string]*TenantQueue</code></pre>
-
-<p>Controller watch 到新 Job 后，根据 <code>tenant</code> / <code>class</code> / <code>submitTime</code> / <code>estimatedRuntime</code> 放入对应租户队列。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">第二级（全局队列）：Controller 生成候选集 + Scheduler Plugin QueueSort</div>
-<p>建议回答：<strong>Controller 生成全局候选集，Scheduler Plugin 的 QueueSort 实现最终全局排序。</strong></p>
-
-<pre><code class="language-text">Controller 不显式维护长期存在的 Q^G/Q^B 物理队列；
-它周期性从各 tenant 队列里挑出 admitted jobs；
-这些 admitted Pods 进入 kube-scheduler；
-然后 QueueSort 按 DeepShare 规则排序。</code></pre>
-
-<p>所以 <code>Q^G / Q^B</code> 是<strong>逻辑队列</strong>，由"admitted Pod 集合 + QueueSort 排序规则"共同体现。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">为什么不完全放 Controller 排好顺序再逐个放行</div>
-<ul>
-<li>kube-scheduler 内部仍有自己的 ActiveQ。</li>
-<li>Pod 进入 scheduler 后还会经历 backoff / unschedulable。</li>
-<li>节点状态变化后，顺序需要重新评估。</li>
-<li>QAD 是动态的，会持续变化。</li>
-<li>调度还要结合 Filter / Score 的结果。</li>
-</ul>
-<p>所以更自然：<strong>Controller 控制 admission，Scheduler Plugin 控制 scheduler 内部排序和落点。</strong></p>
-</div>
-</div>
-
-<div class="card card-m">
-<h3>Controller 具体工作流</h3>
-
-<div class="comp">
-<div class="comp-t">Step 1 — watch Job / Pod，放入租户队列</div>
-<p>用户提交 <code>team-a, Guaranteed, 4 GPU</code>，Controller 将其放入 <code>Q_a^G</code>；Best-effort 任务放入 <code>Q_a^B</code>。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">Step 2 — 计算 QAD</div>
-<div class="formula">$$\mathrm{QAD} = \frac{\text{Allocated GPU time}}{\text{Guaranteed GPU time}}$$</div>
-<p>简化实现：</p>
-<div class="formula">$$\mathrm{QAD} = \frac{\text{已满足 Guaranteed GPU}}{\min(\text{quota},\, \text{当前 Guaranteed demand})}$$</div>
-<p>例：team-a quota = 32，Guaranteed demand = 40，Guaranteed allocated = 16 → QAD = 16 / min(32, 40) = 0.5。<strong>QAD 越低，租户保障越不足。</strong></p>
-</div>
-
-<div class="comp">
-<div class="comp-t">Step 3 — Guaranteed admission</div>
-<p>对 Guaranteed job 检查：</p>
-<div class="formula">$$U_i^G + R_j \le q_i$$</div>
-<p>满足则进入调度候选集；否则继续留在 <code>Q_i^G</code> 中等待。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">Step 4 — Best-effort admission（更保守）</div>
-<p>需同时满足：</p>
-<div class="formula">$$\text{没有可放置的 Guaranteed job}\quad\text{且}\quad U_i^B + R_j \le \eta \cdot q_i$$</div>
-<p><strong>含义：</strong>Best-effort 可借用空闲资源，但不能无限借，也不能挡住 Guaranteed 作业。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">Step 5 — 释放 admitted Pod 到调度器</div>
-<p><strong>方法 A（推荐）：移除 schedulingGate</strong></p>
-
-<pre><code class="language-yaml">spec:
-  schedulingGates:
-  - name: deepshare.io/admission</code></pre>
-
-<p>Controller 判断可以调度后移除 gate，Pod 才进入 kube-scheduler。</p>
-<p><strong>方法 B：annotation 兜底</strong> — Pod 已存在但 plugin 仅放行 <code>deepshare.io/admitted: "true"</code> 的 Pod；不推荐完全依赖，因为 Pod 已进入 scheduler 后可能造成无效调度循环。</p>
-</div>
-</div>
-
-<div class="card card-m">
-<h3>Scheduler Plugin 的扩展点实现</h3>
-<p>运行自定义调度器：<code>schedulerName: deepshare-scheduler</code>，复用 Kubernetes Scheduler Framework 加载 DeepShare 插件。</p>
-
-<div class="comp">
-<div class="comp-t">QueueSort — DeepShare 全局排序</div>
-<p>排序 key（按优先级从高到低）：</p>
-<ol>
-<li><strong>class</strong>：Guaranteed 优先于 Best-effort。</li>
-<li><strong>tenant QAD</strong>：QAD 低优先。</li>
-<li><strong>predicted runtime</strong>：短任务优先。</li>
-<li><strong>submit time</strong>：早提交优先（tie-breaker）。</li>
-</ol>
-
+<h3>队列符号和职责</h3>
 <table>
-<thead><tr><th>Pod</th><th>class</th><th>tenant</th><th>QAD</th><th>runtime</th></tr></thead>
+<thead><tr><th>队列</th><th>含义</th><th>做什么</th></tr></thead>
 <tbody>
-<tr><td>pod-a</td><td>Guaranteed</td><td>team-a</td><td>0.4</td><td>2h</td></tr>
-<tr><td>pod-b</td><td>Guaranteed</td><td>team-b</td><td>0.9</td><td>10min</td></tr>
-<tr><td>pod-c</td><td>Best-effort</td><td>team-c</td><td>1.0</td><td>5min</td></tr>
+<tr><td><code>Q_i^G</code> / <code>Q_i^B</code></td><td>租户 <code>i</code> 的 Guaranteed / Best-effort 队列</td><td>按 quota 与 cap 做租户级 admission</td></tr>
+<tr><td><code>Q^G</code> / <code>Q^B</code></td><td>集群级 Guaranteed / Best-effort 队列</td><td>按平滑 QAD 和预测剩余时间决定放置顺序</td></tr>
 </tbody>
 </table>
 
-<p>排序：<code>pod-a → pod-b → pod-c</code>。即使 pod-b 更短，team-a QAD 更低也优先。<span class="hl">先恢复保障不足的租户，再用预测运行时间优化局部顺序。</span></p>
+<p>Guaranteed 作业只有在 <code>U_i^G + R_j ≤ q_i</code> 时进入集群 Guaranteed 队列。Best-effort 作业只有在没有剩余 Guaranteed 作业能通过独占或安全合用落点，并且 <code>U_i^B + R_j ≤ ηq_i</code> 时才进入候选集。</p>
+<p>集群级排序采用词典序：先区分 Guaranteed / Best-effort，再按 <code>(Q̃_i ↑, T̂(j) ↑)</code> 排序。QAD 是第一键，所以运行时间预测误差不会让保障充分的租户跨过保障不足的租户。</p>
 </div>
 
-<div class="comp">
-<div class="comp-t">PreFilter — 解析调度上下文</div>
+## QAD 在调度路径中的输入输出
 
-<pre><code class="language-text">读取 tenant / class / GPU request
-读取 estimated runtime / QAD / preemptible
-写入 cycle state，供后续插件复用</code></pre>
-
-</div>
-
-<div class="comp">
-<div class="comp-t">Filter — 节点可放置性</div>
+<div class="card card-m">
+<h3>输入：已兑现与应兑现</h3>
+<div class="formula">$$
+Q_i(t)=
+\begin{cases}
+1, & D_i^G(t)=0,\\
+\dfrac{A_i^G(t)}{\min\!\left(q_i,D_i^G(t)\right)}, & D_i^G(t)>0.
+\end{cases}
+$$</div>
 <ul>
-<li>节点是否有足够 GPU；GPU 型号是否满足。</li>
-<li>node affinity / taint toleration 是否满足。</li>
-<li>共享 GPU 是否超过共享上限。</li>
-<li>colocation 干扰是否在阈值内（对应论文 interference-aware colocation）。</li>
-<li>Best-effort 是否会影响 Guaranteed 的资源恢复能力。</li>
+<li><code>A_i^G(t)</code>：当前已经分配的 Guaranteed GPU，Best-effort 不计入。</li>
+<li><code>min(q_i,D_i^G(t))</code>：当前应兑现的 Guaranteed GPU。</li>
+<li><code>Q_i(t)</code>：瞬时兑现率；<code>Q̃_i(t)</code>：EMA 平滑后的控制信号。</li>
 </ul>
 </div>
 
-<div class="comp">
-<div class="comp-t">Score — 节点打分</div>
+<div class="card card-d">
+<h3>输出：同一个 Q̃ 驱动三类决策</h3>
+<ol>
+<li><strong>恢复排序：</strong><code>Q̃</code> 越低，租户越欠保障，越先调度。</li>
+<li><strong>共享收紧：</strong>任一租户 <code>Q̃</code> 低时，提高所需 throughput retention 门槛；极端时停止创建新 colocation。</li>
+<li><strong>QoS 报告：</strong>用连续的保障度观察长期 deficit，而不是只看“是否超 quota”的二值状态。</li>
+</ol>
+<p>注意：QAD 不直接无条件触发删除 Pod。GPU 抢占由 Guaranteed 作业 placement failure 触发，PostFilter 再用代价模型选 Best-effort victims。</p>
+</div>
+
+## 五个扩展点怎么串起来
+
+<table>
+<thead><tr><th>顺序</th><th>扩展点</th><th>关键动作</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Filter</td><td>检查空闲/单 resident GPU、CPU/内存/显存 headroom 和 Best-effort cap</td></tr>
+<tr><td>2</td><td>Score</td><td>比较 RF 预测 retention，优先低干扰候选</td></tr>
+<tr><td>3</td><td>Reserve</td><td>在下一周期视图中预占 GPU，防止并发调度 double booking</td></tr>
+<tr><td>4</td><td>PostFilter</td><td>无可行节点时执行 cost-aware victim selection</td></tr>
+<tr><td>5</td><td>Permit</td><td>仅在 CPU/Memory resize 已发起时等待 Pod.Status.Resources 更新</td></tr>
+</tbody>
+</table>
+
+## 故障恢复与热路径
+
+<div class="card card-s">
 <ul>
-<li><strong>bin packing</strong>：减少碎片，2-GPU 任务优先放到刚好剩 2 张 GPU 的节点；不要打散完整 8-GPU 节点。</li>
-<li><strong>GPU utilization</strong>：优先利用空闲碎片。</li>
-<li><strong>interference score</strong>：选择干扰更小的 colocated 节点。</li>
-<li><strong>reserved capacity</strong>：避免破坏 Guaranteed 恢复能力。</li>
-<li>Best-effort 优先放到可回收、低干扰位置；Guaranteed 优先放到稳定、低干扰位置。</li>
+<li>Plugin 以多副本 Deployment 运行，通过 Lease 选主。</li>
+<li>QAD 可从 informer cache 的运行 Pod 推导；新 leader 用首轮瞬时 QAD warm-start EMA。</li>
+<li>抢占表达为 Pod deletion，由 API Server 幂等 reconcile，不需要自定义补偿事务。</li>
+<li>调度端到端延迟低于 50ms，其中特征提取、队列记账和受限候选打分合计低于 25ms。</li>
 </ul>
 </div>
 
-<div class="comp">
-<div class="comp-t">Reserve / Unreserve — 维护资源账本</div>
-<p>选定节点但未 Bind 时更新 DeepShare 账本：</p>
-
-<pre><code class="language-text">tenant guaranteedUsed += gpuRequest
-node   allocatedGpu  += gpuRequest
-if Best-effort:
-    tenant bestEffortUsed += gpuRequest</code></pre>
-
-<p>Bind 失败时 Unreserve 回滚。<strong>很重要：</strong>避免 DeepShare 账本与 kube-scheduler assumed state 不一致。</p>
-</div>
-
-<div class="comp">
-<div class="comp-t">PostFilter — 抢占</div>
-<p>Guaranteed Pod 调度失败且 tenant QAD 很低时触发。Victim 选择优先级：</p>
-
-<pre><code class="language-text">Best-effort Pod
-低优先级 Pod
-可抢占 Pod
-抢占代价低的 Pod</code></pre>
-
-<p>对应论文 predictive scheduling 与 preemption cost：综合 progress loss、checkpoint 状况、restart overhead，确认抢占后能真正释放足够 GPU 并提升低 QAD 租户保障。</p>
-</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 面试官问“两级队列和 QAD 到底怎么连起来”，怎么回答？</div>
+<div class="qa-a"><p>每个租户先在自己的 Guaranteed / Best-effort 队列做 quota admission；通过后进入对应的集群级队列。集群级排序先保证 Guaranteed 优先，再用平滑 QAD 让欠保障租户先恢复，只有在保障程度相近时才用预测剩余时间做短作业优化。QAD 因此负责跨租户公平，runtime prediction 只负责局部效率。</p></div>
 </div>
 
 ## 关联模块
 
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。
+- `DeepShare / QAD 记忆模型`：分子、分母、特殊分支和 EMA。
+- `DeepShare / 总体架构`：Controller、Scheduler Plugin、DaemonSet 的边界。
+- `DeepShare / 论文延伸问答`：抢占效率、动态 retention 门槛和过载降级。

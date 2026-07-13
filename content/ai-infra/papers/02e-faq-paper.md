@@ -12,7 +12,7 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 当租户暂时没有 Guaranteed 需求时 QAD 怎么定？为什么不直接定 0？</div>
-<div class="qa-a"><p>论文 Eq.1 显式规定 \(Q_i(t)=1\) 当 \(D_i^G(t)=0\)。这是为了 <strong>"暂时不用 quota ≠ 被亏待"</strong>：定 0 会让空闲租户被错误识别为最受损者并抢回资源；同时分母用 <code>min(q_i, D_i^G(t))</code> 又防止租户通过虚报巨大 \(D_i^G\) 哄抬 QAD 优先级。这两条共同实现"既不奖励虚假 demand，也不惩罚临时空闲"。</p></div>
+<div class="qa-a"><p>论文 Eq.1 显式规定 \(Q_i(t)=1\) 当 \(D_i^G(t)=0\)。这是为了 <strong>"暂时不用 quota ≠ 被亏待"</strong>：定 0 会让空闲租户被错误识别为最受损者并抢回资源；同时分母用 <code>min(q_i, D_i^G(t))</code> 又防止租户通过虚报巨大 \(D_i^G\) 压低 QAD、抬高恢复优先级。这两条共同实现"既不奖励虚假 demand，也不惩罚临时空闲"。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

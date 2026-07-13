@@ -1,27 +1,61 @@
 ## 一句话结论
 
-这一节给出 DeepShare 在面试里可直接背诵的完整口述版：不考虑 Gang Scheduling 时，Controller 维护两级租户队列、计算 QAD 并做 quota 准入，Scheduler Plugin 用 QAD-aware QueueSort 加 Filter/Score/Reserve/PostFilter 完成 Pod 级排序、落点和抢占。
+讲 DeepShare 时不要从 Kubernetes 扩展点开始。先讲“静态 quota 浪费、完全共享又破坏保障”的矛盾，再用 QAD 的“已兑现 / 该兑现”解释统一控制信号，最后展开 DRA、预测调度、colocation 和 Kubernetes 落地。
+
 <div class="card card-w">
-<h3>面试版完整回答（背诵展开版）</h3>
-<p>如果先不考虑 Gang Scheduling，我会把 DeepShare 在 Kubernetes 里的实现拆成 Controller 和 Scheduler Plugin 两部分。<strong>Controller 负责租户级资源治理，Scheduler Plugin 负责 Pod 级调度。</strong></p>
-<p>Controller 维护每个租户的 Guaranteed 队列和 Best-effort 队列，也就是论文里的 <code>Q_i^G</code> 和 <code>Q_i^B</code>。它 watch 用户提交的 GPU Job 或 Pod，读取 tenant、class、GPU request 和预测运行时间，然后放入对应租户队列。Controller 还会周期性统计每个租户的 quota 使用量，计算 QAD，并维护 TenantQuota 的 status。</p>
-<p>Controller 还负责准入。对于 Guaranteed 作业，只有满足 <code>U_i^G + R_j ≤ q_i</code> 时才允许进入调度候选集；对于 Best-effort 作业，只有在没有可放置的 Guaranteed 作业，并且 <code>U_i^B + R_j ≤ η·q_i</code> 时才允许进入候选集。被准入的 Pod 通过移除 schedulingGate，或打上 admitted annotation 进入 kube-scheduler。</p>
-<p>第二级集群队列由 Scheduler Plugin 的 QueueSort 实现：Controller 负责生成 admitted Pod 集合，QueueSort 在 kube-scheduler 内部按 DeepShare 规则排序——Guaranteed 优先于 Best-effort；同一类中 QAD 低的租户优先；QAD 接近时预测运行时间短的作业优先；最后用提交时间作为 tie-breaker。</p>
-<p>后续 Scheduler Plugin 负责真正的节点决策。PreFilter 解析 tenant、class、GPU 需求和预测时间；Filter 检查节点 GPU 是否足够、是否满足共享和干扰约束；Score 做 bin packing、碎片控制和干扰感知打分；Reserve/Unreserve 维护 DeepShare 自己的资源账本；PostFilter 在 Guaranteed 作业调度失败且租户 QAD 很低时，选择低代价 Best-effort Pod 进行抢占。</p>
-<p><strong>两个队列的实现总结：</strong>第一级租户队列在 Controller 中显式维护；第二级全局队列不一定是单独物理队列，而是<strong>由 Controller 准入后的 Pod 集合 + Scheduler Plugin 的 QAD-aware QueueSort 共同实现</strong>。这样既保留 Kubernetes-native 的调度框架，又能实现 DeepShare 的 QAD 驱动资源管理。</p>
+<h3>口述记忆骨架</h3>
+
+```flow
+矛盾 | 静态 quota 浪费，过度共享破坏 QoS
+指标 | QAD = 已兑现 Guaranteed GPU / 当前应兑现 Guaranteed GPU
+借还 | DRA 让 Best-effort 借空闲资源，Guaranteed 需要时可回收
+排序 | 先 Q̃ 低的租户，再预测运行时间短的作业
+共享 | 低 Q̃ 租户提高 retention 门槛，必要时停止新 colocation
+落地 | Controller 管配置态，Scheduler Plugin 管实时控制环，DaemonSet 管 MPS/DCGM
+结果 | 利用率、排队时间和 QoS 同时改善
+```
 </div>
 
-<div class="card card-d">
-<h3>面试版 60 秒背诵版</h3>
-<p>不考虑 Gang Scheduling 时，Controller + Scheduler Plugin 的分工是：<strong>Controller 管 tenant/job 级逻辑，Scheduler Plugin 管 Pod/node 级逻辑。</strong></p>
-<p>Controller 维护每个租户的 Guaranteed / Best-effort 队列，计算 QAD，做 quota admission 和 Best-effort cap 控制。通过准入的 Pod 才进入 scheduler。</p>
-<p>Scheduler Plugin 通过 QueueSort 实现全局排序：<em>Guaranteed first，QAD low first，runtime short first</em>。然后用 Filter/Score 做节点选择和 colocation 判断，用 Reserve/Unreserve 更新资源账本，用 PostFilter 做 Best-effort 抢占。</p>
-<p><span class="hl">第一级队列在 Controller 里，第二级队列由 admitted Pod 集合 + QueueSort 逻辑实现。</span></p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 请介绍一下 DeepShare。</div>
+<div class="qa-a">
+<p>DeepShare 解决的是多租户 GPU 集群里 quota 保障和资源效率之间的矛盾。严格静态 quota 会让暂时无人使用的 GPU 空闲；完全共享虽然利用率高，但原租户需求回来时可能拿不回承诺资源。</p>
+<p>我们的核心设计是 QAD，也就是 Quota Assurance Degree。它衡量租户当前 Guaranteed 权益的兑现率：分子 <code>A_i^G(t)</code> 是已经分配的 Guaranteed GPU，分母 <code>min(q_i,D_i^G(t))</code> 是 quota 和当前 Guaranteed demand 取小，也就是平台此刻真正应该保障的 GPU 数。没有 Guaranteed demand 时 QAD 定义为 1；Best-effort 借用不计入分子，所以 QAD 位于 0 到 1。</p>
+<p>我们再对瞬时 QAD 做 EMA 平滑，用同一个信号协调三个模块。第一，DRA 把空闲 capacity 给 Best-effort 作业使用，但资源保持可回收；第二，调度采用词典序，先让平滑 QAD 低的租户恢复，再用预测运行时间优化局部顺序；第三，GPU colocation 同时看 RF 预测的 throughput retention 和双方 QAD，任一租户欠保障时就提高共享门槛。</p>
+<p>工程上，轻量 Controller 只 reconcile TenantQuota 和作业类别元数据，Scheduler Plugin 在内存里维护 QAD、队列、放置和抢占控制环，节点 DaemonSet 用 MPS 执行共享、用 DCGM 做运行时干扰保护。实验中系统把 GPU 利用率提升到 70.58%，租户 QoS 合规率达到 93%；在 16-GPU 部署中，结合 DRA 与 colocation 后 JCT 和排队时间也明显下降。</p>
+<p>所以 DeepShare 的创新不只是一个排序算法，而是用 QAD 把弹性借用、预测调度和干扰感知共享闭环起来。</p>
 </div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: QAD 这一段最短怎么说？</div>
+<div class="qa-a"><p>QAD 就是租户 Guaranteed 权益的兑现率：分子是已经给到的 Guaranteed GPU，分母是 quota 和当前 Guaranteed demand 取小，也就是此刻应该给到的 GPU。需求为零时 QAD 记为 1；Best-effort 不计入分子。瞬时 QAD 再做 EMA 平滑，低 QAD 租户优先恢复，共享门槛也更严格。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 QAD 的分母不是 quota？</div>
+<div class="qa-a"><p>因为 quota 是承诺上限，不是每时每刻都必须占满。quota 为 8、当前只需求 4、实际已给 4 时，租户已经完全被保障，QAD 应该是 1；如果直接除以 quota 会得到 0.5，错误地把主动空闲当成系统亏欠。</p></div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你在这篇工作里最核心的设计判断是什么？</div>
+<div class="qa-a"><p>我认为最关键的不是单独引入短作业优先或 GPU 共享，而是让“租户保障是否兑现”成为所有优化之前的第一约束。预测运行时间只能在保障程度相近时优化局部顺序；低干扰 pair 也不能在租户欠保障时盲目共享。QAD 把公平和效率的优先级关系固定下来。</p></div>
+</div>
+
+## 容易说错的四句话
+
+<table>
+<thead><tr><th>不要这样说</th><th>应该这样说</th></tr></thead>
+<tbody>
+<tr><td>QAD 大于 1 表示借了额外资源</td><td>Best-effort 单独记账，不进入 QAD 分子</td></tr>
+<tr><td>Controller 计算 QAD 写到 CRD</td><td>Scheduler Plugin 在内存中维护 QAD，故障后可从 Pod 重建</td></tr>
+<tr><td>QAD 低就立刻杀 Best-effort</td><td>QAD 决定恢复优先级；placement failure 才触发抢占搜索</td></tr>
+<tr><td>DeepShare 就是 SJF + GPU 共享</td><td>QAD 是第一控制信号，预测和共享都不能越过租户保障</td></tr>
+</tbody>
+</table>
 
 ## 关联模块
 
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。
+- `DeepShare / QAD 记忆模型`：数字例子和边界条件。
+- `DeepShare / 总体架构`：论文实现的真实组件边界。
+- `DeepShare / 高频问答`：DRF、MPS、过载与抢占追问。

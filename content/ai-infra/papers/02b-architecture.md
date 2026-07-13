@@ -1,142 +1,92 @@
 ## 一句话结论
 
-DeepShare 在 Kubernetes 上拆成 Controller 加 Scheduler Plugin 两层：Controller 管租户级的 quota、QAD、队列与准入，通过 TenantQuota CRD 和 Pod annotation 把租户语义传给调度路径；Scheduler Plugin 复用 Scheduler Framework 五个扩展点做 Pod 级排序、过滤、打分、预留和抢占。
-<div class="card card-d">
-<h3>总体架构</h3>
-
-<pre><code class="language-text">用户提交 GPU Job / Pod
-        |
-        v
-DeepShare Controller
-        |-- 维护 TenantQuota
-        |-- 计算 QAD
-        |-- 维护租户级 Guaranteed / Best-effort 队列
-        |-- 做 quota admission
-        |-- 给 Pod 打 annotation / 移除 schedulingGate
-        |-- 必要时触发 Best-effort 抢占
-        v
-kube-scheduler + DeepShare Scheduler Plugins
-        |-- QueueSort：QAD-aware 排序
-        |-- PreFilter：解析 tenant / class / GPU request
-        |-- Filter：quota、节点 GPU、共享可行性
-        |-- Score：bin packing、干扰感知、碎片控制
-        |-- Reserve / Unreserve：更新资源账本
-        |-- PostFilter：资源不足时触发抢占候选选择
-        v
-Bind Pod 到 Node</code></pre>
-
-</div>
+DeepShare 的实现不是“Controller 算好 QAD 再通知 Scheduler”。论文里的真实分工是：**轻量 quota Controller 整理配置元数据，Scheduler Plugin 维护实时 QAD 控制环并完成所有放置决策。**
 
 <div class="card card-s">
-<h3>为什么要拆成 Controller + Scheduler Plugin</h3>
-<p>DeepShare 的核心机制（QAD、弹性配额借用、预测性调度、干扰感知合用、Best-effort 借用与回收、Guaranteed QoS）属于<strong>租户级 / 作业级</strong>逻辑；而 kube-scheduler 默认的调度对象是 <strong>Pod</strong>，原生并不知道：</p>
+<h3>总体架构</h3>
 
-<ul>
-<li>这个 Pod 属于哪个 tenant</li>
-<li>这个 Pod 是 Guaranteed 还是 Best-effort</li>
-<li>这个 tenant quota 是多少</li>
-<li>这个 tenant 当前 QAD 是多少</li>
-<li>这个 Pod 是否借用了别人的空闲资源</li>
-<li>这个 Pod 是否应该被抢占</li>
-<li>这个 Pod 与已有 GPU workload 是否会互相干扰</li>
-</ul>
+```flow
+TenantQuota CRD + Job class annotation | 描述 quota、Best-effort 上限和作业类别
+Lightweight Quota Controller | reconcile 配置，生成 per-tenant quota metadata
+Scheduler Plugin | 维护 Q / Q̃、两级队列、colocation 准入和抢占
+Informer Cache | 从运行 Pod 重建 Guaranteed allocation 与 demand
+MPS + DCGM DaemonSet | 执行 GPU 共享、采样干扰并上报 degraded pair
+Kubernetes API Server | Bind、Pod resize、Pod deletion 与故障幂等恢复
+```
 
-<table>
-<thead><tr><th>模块</th><th>适合处理的问题</th></tr></thead>
-<tbody>
-<tr><td>Controller</td><td>租户状态、quota、QAD、队列、准入、抢占策略</td></tr>
-<tr><td>Scheduler Plugin</td><td>Pod 级排序、节点过滤、节点打分、资源预留、绑定前决策</td></tr>
-</tbody>
-</table>
+<div class="qa-summary">面试记忆：Controller 管“配置态”，Plugin 管“决策态”，DaemonSet 管“节点运行态”。</div>
 </div>
 
-<div class="card card-m">
-<h3>系统里需要的 K8S 对象</h3>
+## 三类组件分别管什么
 
-<div class="comp">
-<div class="comp-t">TenantQuota CRD</div>
-<p>表示每个租户的 GPU quota 与当前状态：</p>
+<table>
+<thead><tr><th>组件</th><th>核心状态</th><th>关键职责</th><th>不负责什么</th></tr></thead>
+<tbody>
+<tr><td>Quota Controller</td><td>TenantQuota、作业 class annotation</td><td>reconcile 租户 quota 与 Best-effort cap 元数据</td><td>不做节点放置，不维护实时 QAD</td></tr>
+<tr><td>Scheduler Plugin</td><td>队列、瞬时/平滑 QAD、节点视图、预测结果</td><td>排序、Filter、Score、Reserve、PostFilter、Permit</td><td>不负责 MPS 进程和 DCGM 采样</td></tr>
+<tr><td>Node-local DaemonSet</td><td>MPS client、DCGM counters、degraded pair</td><td>GPU 共享、干扰监控、异常上下文清理</td><td>不决定租户优先级</td></tr>
+</tbody>
+</table>
+
+## QAD 在哪里维护
+
+<div class="card card-m">
+<h3>QAD 是 Scheduler Plugin 的内存状态</h3>
+<p>Scheduler Plugin 从 informer cache 里的运行 Pod 推导 <code>A_i^G(t)</code>、<code>D_i^G(t)</code> 和 quota 元数据，计算瞬时 <code>Q_i(t)</code>，再维护 EMA 平滑值 <code>Q̃_i(t)</code>。这样排序、colocation 和抢占看到的是同一份实时状态。</p>
+<p>论文没有把每一轮 QAD 写进 <code>TenantQuota.status</code>。发生 leader failover 后，新 leader 可以从运行 Pod 重建瞬时 QAD，并用首轮值 warm-start EMA，避免额外持久化和热路径写放大。</p>
+</div>
+
+## Kubernetes 对象如何表达
+
+<div class="card card-s">
+<h3>TenantQuota CRD：保存权益配置，不保存实时控制环</h3>
 
 <pre><code class="language-yaml">apiVersion: deepshare.io/v1
 kind: TenantQuota
 metadata:
   name: team-a
 spec:
-  gpuQuota: 32
-  bestEffortMultiplier: 2
-status:
-  guaranteedDemand: 40
-  guaranteedAllocated: 20
-  bestEffortUsed: 8
-  qad: 0.625</code></pre>
+  gpuQuota: 8
+  bestEffortMultiplier: 2</code></pre>
 
 <ul>
-<li><code>gpuQuota</code>：租户 Guaranteed 配额。</li>
-<li><code>bestEffortMultiplier</code>：Best-effort 借用上限 η（如 η=2）。</li>
-<li><code>guaranteedDemand</code>：当前 Guaranteed 需求。</li>
-<li><code>guaranteedAllocated</code>：当前已满足的 Guaranteed 资源。</li>
-<li><code>bestEffortUsed</code>：当前 Best-effort 使用量。</li>
-<li><code>qad</code>：当前租户保障程度。</li>
+<li><code>gpuQuota</code> 对应 <code>q_i</code>，即 Guaranteed GPU quota。</li>
+<li><code>bestEffortMultiplier</code> 对应 <code>η</code>，限制机会型作业的借用上限。</li>
+<li>作业通过 <code>deepshare.io/class: guaranteed|best-effort</code> annotation 声明服务类别。</li>
 </ul>
-</div>
 
-<div class="comp">
-<div class="comp-t">GPU Job / Pod 的两种表达方式</div>
-<p><strong>方式 A：DeepShareJob CRD</strong>（推荐，更工程化，便于做租户级排队和准入）</p>
-
-<pre><code class="language-yaml">apiVersion: deepshare.io/v1
-kind: DeepShareJob
-metadata:
-  name: train-a
-spec:
-  tenant: team-a
-  class: Guaranteed
-  gpu: 4
-  estimatedRuntime: 3600
-  preemptible: false</code></pre>
-
-<p><strong>方式 B：原生 Pod / Job + label</strong>（轻量化）</p>
-
-<pre><code class="language-yaml">apiVersion: v1
-kind: Pod
-metadata:
-  name: train-a
-  labels:
-    deepshare.io/tenant: team-a
-    deepshare.io/class: guaranteed
+<pre><code class="language-yaml">metadata:
   annotations:
-    deepshare.io/estimated-runtime: "3600"
+    deepshare.io/class: guaranteed
 spec:
   schedulerName: deepshare-scheduler
   containers:
   - name: train
-    image: train:latest
     resources:
       limits:
         nvidia.com/gpu: 4</code></pre>
-
 </div>
 
-<div class="comp">
-<div class="comp-t">Pod Annotation / Label（Controller 写入，调度路径读取）</div>
+## Scheduler Framework 五个扩展点
 
-<pre><code class="language-yaml">metadata:
-  labels:
-    deepshare.io/tenant: team-a
-    deepshare.io/class: guaranteed
-  annotations:
-    deepshare.io/qad: "0.625"
-    deepshare.io/estimated-runtime: "3600"
-    deepshare.io/admitted: "true"
-    deepshare.io/preemptible: "false"</code></pre>
+<table>
+<thead><tr><th>扩展点</th><th>DeepShare 中的作用</th></tr></thead>
+<tbody>
+<tr><td>Filter</td><td>筛出有空闲 GPU，或满足 CPU、内存、显存、Best-effort cap 和共享条件的节点</td></tr>
+<tr><td>Score</td><td>用 RF 干扰预测和双边 retention 门槛排序候选位置</td></tr>
+<tr><td>Reserve</td><td>把 GPU claim 写入下一调度周期的集群视图，避免 double booking</td></tr>
+<tr><td>PostFilter</td><td>没有可行 GPU 时运行代价感知的 Best-effort victim 选择</td></tr>
+<tr><td>Permit</td><td>只有触发 CPU/Memory in-place resize 时等待 Pod 状态反映新资源量；不是用来做 Gang Scheduling</td></tr>
+</tbody>
+</table>
 
-<p>Scheduler Plugin 通过这些字段做 QueueSort、Filter、Score。</p>
-</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么 QAD 不放在 Controller 里周期性写 CRD？</div>
+<div class="qa-a"><p>QAD 是 50ms 调度周期内持续变化的热状态，排序、共享和抢占都要同步消费。若 Controller 计算后再写 CRD，既增加 API Server 写压力，也引入控制环延迟和一致性窗口。放在 Scheduler Plugin 内存里能直接复用 informer cache，并在 leader 切换后重建。</p></div>
 </div>
 
 ## 关联模块
 
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。
+- `DeepShare / QAD 记忆模型`：先掌握实时状态的输入和含义。
+- `DeepShare / K8S 实现细节`：沿一次调度周期看 QAD 如何被消费。
+- `Kubernetes 核心 / Scheduling Framework`：补齐 Filter、Score、Reserve、PostFilter、Permit 的通用语义。

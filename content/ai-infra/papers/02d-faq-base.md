@@ -6,7 +6,7 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: QAD 和 DRF（Dominant Resource Fairness）的区别？</div>
-<div class="qa-a"><p>DRF 追求均等分配，不区分保障和尽力而为。QAD 量化"距离保障配额有多远"——允许过量分配（QAD &gt; 1），但超额可回收。QAD 同时服务调度优先级、合用准入、QoS 报告三个子系统，是一个统一控制信号；DRF 只做资源分配。</p></div>
+<div class="qa-a"><p>DRF 用 dominant share 在多资源之间追求 max-min fairness；QAD 则衡量单个租户当前 Guaranteed 权益的<strong>兑现率</strong>。QAD 的分子只算 Guaranteed allocation，Best-effort 借用单独记账，因此 QAD 位于 0 到 1，不用 QAD&gt;1 表示超额资源。QAD 还能同时驱动租户恢复排序、colocation 准入和 QoS 报告，而 DRF 主要回答公平分配问题。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -35,27 +35,27 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: QAD 存在哪里？调度路径如何读？</div>
-<div class="qa-a"><p>QAD 由 Controller 计算，写入 <code>TenantQuota.status.qad</code>。Scheduler Plugin 通过 informer cache 订阅这份状态，本地维护 <code>tenantID → qad</code> 映射。QueueSort 与 Filter 不直接 RPC Controller，只读本地 cache，避免调度热路径阻塞。结果是<strong>低延迟、最终一致、调度路径不阻塞</strong>。</p></div>
+<div class="qa-a"><p>论文实现中，<strong>Scheduler Plugin 在内存里维护瞬时 <code>Q_i(t)</code> 和平滑 <code>Q̃_i(t)</code></strong>。原始状态来自 informer cache 中的运行 Pod，因此故障切主后可以重建，并用首轮瞬时 QAD warm-start EMA，不需要把每轮 QAD 写回 CRD。Controller 只把 <code>TenantQuota</code> 和作业 class annotation 整理成 quota 元数据，不承担实时 QAD 控制环。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么不全放 Scheduler Plugin？</div>
-<div class="qa-a"><p>Scheduler Plugin 是 Pod 调度热路径上的组件，适合做快速决策（排序、过滤、打分）；但租户队列、quota 统计、QAD 计算、job admission、Best-effort cap 这些是<strong>全局状态管理</strong>，放在 Controller 更合适。Controller 可以异步 watch 集群状态并维护租户级资源账本，避免把复杂全局逻辑塞进调度热路径。</p></div>
+<div class="qa-q">Q: Controller 和 Scheduler Plugin 到底怎么分工？</div>
+<div class="qa-a"><p><strong>Controller 管配置态，Plugin 管决策态。</strong>Controller reconcile <code>TenantQuota</code> CRD 和 <code>deepshare.io/class</code> annotation，形成租户 quota、Best-effort cap 和作业类别元数据；Scheduler Plugin 维护实时队列与 QAD，完成排序、Filter、Score、Reserve、PostFilter 抢占和 Permit 等待 resize。这样实时信号和所有放置决策留在同一个调度控制环里。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不全放 Controller？</div>
-<div class="qa-a"><p>Controller 可以决定哪些 Pod 被释放，但 Pod 进入 kube-scheduler 后，真正的<strong>出队顺序、节点过滤、节点打分、抢占</strong>都是 scheduler 决定。DeepShare 需要影响 Pod 级调度过程（QAD-aware QueueSort、interference-aware Filter/Score、Reserve 账本更新、PostFilter 抢占），所以必须 Scheduler Plugin 与 Controller 配合。</p></div>
+<div class="qa-a"><p>Controller 是异步 reconcile 配置态的组件，不拥有单次 scheduling cycle 的节点快照、候选打分和 assumed state。DeepShare 的 QAD、队列排序、干扰准入和抢占必须和 Filter / Score / Reserve / PostFilter 处在同一个实时控制环里，所以由 Scheduler Plugin 完成；Controller 只提供 quota 与 class 元数据。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Best-effort 是怎么借用和归还的？</div>
-<div class="qa-a"><p>Best-effort Pod 由 Controller 做准入，<strong>仅当没有可放置的 Guaranteed 作业，且租户 Best-effort 使用量未超过 cap（η·q_i）</strong> 时才允许进入调度。当某租户 Guaranteed 需求回来导致 QAD 下降，Controller 或 PostFilter 会触发资源回收：优先选择 Best-effort、可抢占、抢占代价低的 Pod 作为 victim，抢占后释放 GPU，低 QAD 租户的 Guaranteed Pod 重新进入调度。本质：<span class="hl">可借但可回收</span>。</p></div>
+<div class="qa-a"><p>Scheduler 仅在没有可放置的 Guaranteed 作业、且租户 Best-effort 用量满足 <code>U_i^B + R_j ≤ η·q_i</code> 时考虑 Best-effort。Guaranteed 作业放置失败后，PostFilter 才按低代价策略选择 Best-effort victims；所以 QAD 负责决定谁更急需恢复，真正触发 GPU 抢占的是 placement failure。本质：<span class="hl">可借、单独记账、需要时可回收</span>。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 不考虑 Gang Scheduling 后流程能简化什么？</div>
-<div class="qa-a"><p>不需要讲 PodGroup / minAvailable / Permit waiting / Reserve 多 Pod 后统一放行 / 超时整体回滚。流程简化为"一个 Pod 满足条件 → 直接调度"。Scheduler Plugin 先实现 <strong>QueueSort / PreFilter / Filter / Score / Reserve / Unreserve / PostFilter</strong> 即可，不重点讲 Permit。如果面试官追问分布式训练，再补充：<em>"如果后续要支持多 worker 训练，再引入 PodGroup 和 Permit 扩展点做 Gang Scheduling。"</em></p></div>
+<div class="qa-a"><p>不需要讲 PodGroup、minAvailable、等待全部 worker 到齐或整组回滚。论文的五个扩展点是 <strong>Filter / Score / Reserve / PostFilter / Permit</strong>；其中 Permit 只在 CPU/Memory in-place resize 发起后等待 Pod 状态更新，不用于 Gang Scheduling。如果以后支持多 worker 训练，才需要给 Permit 增加 PodGroup 级等待语义。</p></div>
 </div>
 </div>
 

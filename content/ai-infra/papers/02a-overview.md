@@ -19,8 +19,16 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 <div class="card card-d">
 <h3>系统设计</h3>
 <p>统一控制信号——<span class="hl">配额保障度 QAD</span>，同时驱动三个子系统：</p>
-<div class="formula">$$\mathrm{QAD} = \frac{AG_i(t)}{\min(q_i,\, DG_i(t))}$$</div>
-<p>QAD = 1.0 恰好满足，&lt; 1.0 欠缺，&gt; 1.0 使用借来的额外资源。经 EMA 平滑避免瞬时波动。</p>
+<div class="formula">$$Q_i(t)=\frac{A_i^G(t)}{\min\!\left(q_i,\,D_i^G(t)\right)}\quad\left(D_i^G(t)>0\right)$$</div>
+<table>
+<thead><tr><th>部分</th><th>含义</th><th>记忆</th></tr></thead>
+<tbody>
+<tr><td>分子 <code>A_i^G(t)</code></td><td>已经分配给租户的 Guaranteed GPU</td><td>已经兑现多少</td></tr>
+<tr><td>分母 <code>min(q_i,D_i^G(t))</code></td><td>quota 与当前 Guaranteed demand 取小</td><td>此刻应该兑现多少</td></tr>
+<tr><td>比值 <code>Q_i(t)</code></td><td>当前保障兑现率</td><td>已给 / 该给</td></tr>
+</tbody>
+</table>
+<p><strong>边界：</strong>没有 Guaranteed demand 时 <code>Q_i(t)=1</code>；Best-effort 借用不计入分子，所以 QAD 位于 <code>[0,1]</code>，不会因为借卡大于 1。完整数字例子见“QAD 记忆模型”。</p>
 
 <div class="comp">
 <div class="comp-t">子系统一：弹性配额借用（DRA）</div>
@@ -55,13 +63,13 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 
 <div class="card card-d">
 <h3>核心定位</h3>
-<p>不考虑 Gang Scheduling 时，可以把 DeepShare 的 Kubernetes 实现拆成两层：</p>
+<p>DeepShare 的 Kubernetes 实现拆成轻量 Controller 与实时 Scheduler Plugin 两层：</p>
 <ul>
-<li><strong>Controller</strong>：租户级资源治理 — tenant、quota、QAD、Guaranteed/Best-effort 队列、准入、抢占决策。</li>
-<li><strong>Scheduler Plugin</strong>：Pod 级调度执行 — 谁先出队、能不能放到某个节点、放哪个节点、是否允许 colocation。</li>
+<li><strong>Controller</strong>：把 <code>TenantQuota</code> CRD 和作业 class annotation 整理为租户 quota 元数据。</li>
+<li><strong>Scheduler Plugin</strong>：维护瞬时/平滑 QAD 和队列，执行排序、放置、colocation 准入与抢占。</li>
 </ul>
-<p>面试一句话总结：<span class="hl">Controller 管"资源权益和队列准入"，Scheduler Plugin 管"Pod 出队和节点放置"。</span></p>
-<p>调度对象简化：<strong>一个 Job 对应一个 Pod</strong>，不引入 PodGroup / minAvailable / Permit。</p>
+<p>面试一句话总结：<span class="hl">Controller 管静态权益元数据，Scheduler Plugin 管实时 QAD 控制环。</span></p>
+<p>论文不覆盖 Gang Scheduling，因此不引入 PodGroup / minAvailable；但 <strong>Permit 仍用于等待 CPU/Memory in-place resize 生效</strong>，不要把两种用途混在一起。</p>
 </div>
 
 <div class="card card-w">
@@ -133,7 +141,7 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 <div class="card card-s">
 <h3>3. QAD 是什么？</h3>
 <p>QAD 的直观定义是：</p>
-<pre><code>QAD = 已满足的 Guaranteed 资源 / 当前应该被保障的 Guaranteed 资源</code></pre>
+<pre><code>QAD = 已经兑现的 Guaranteed GPU / 当前应该兑现的 Guaranteed GPU</code></pre>
 <p>更具体一点，瞬时 QAD 可以理解为：</p>
 <pre><code>如果租户当前没有 Guaranteed demand：
     QAD = 1
@@ -156,6 +164,7 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 <p>也就是说：</p>
 <pre><code>当前平滑 QAD = 30% 当前瞬时 QAD + 70% 上一轮平滑 QAD</code></pre>
 <p>这样系统不会因为短期波动频繁重排队列或者抢占 Best-effort 作业，但如果一个租户持续保障不足，平滑 QAD 仍然会逐步下降，从而提高它的恢复优先级。</p>
+<p><strong>不要混：</strong><code>Q_i(t)</code> 是瞬时观测，真正进入排序和 colocation 控制的是 EMA 平滑后的 <code>Q̃_i(t)</code>。</p>
 </div>
 
 <div class="card card-m">
@@ -236,27 +245,26 @@ QAD 接近时，预测运行时间短的作业优先。</code></pre>
 <div class="card card-s">
 <h3>7. Kubernetes 实现怎么落地？</h3>
 <p>论文说 DeepShare 是 Kubernetes-native，也就是它不是重新造一个集群系统，而是集成到 Kubernetes 生态里。</p>
-<p>我理解比较合理的实现方式是：</p>
+<p>论文实现拆成：</p>
 <pre><code>Controller + Scheduler Plugin</code></pre>
-<p>Controller 负责租户级状态管理，比如：</p>
+<p>轻量 Controller 负责配置态：</p>
 <ul>
-<li>TenantQuota；</li>
-<li>Guaranteed / Best-effort 队列；</li>
-<li>QAD 计算；</li>
-<li>DRA 准入；</li>
-<li>Best-effort 回收策略。</li>
+<li>reconcile <code>TenantQuota</code> CRD；</li>
+<li>读取 Guaranteed / Best-effort class annotation；</li>
+<li>生成 per-tenant quota metadata。</li>
 </ul>
-<p>Scheduler Plugin 负责调度路径，比如：</p>
+<p>Scheduler Plugin 负责实时控制环：</p>
 <ul>
-<li>QueueSort：按 Guaranteed first、QAD low first、runtime short first 排序；</li>
+<li>在内存中维护瞬时/平滑 QAD 和两级队列排序；</li>
 <li>Filter：检查节点 GPU 是否足够、是否允许 colocation；</li>
-<li>Score：做 bin packing、碎片控制和干扰最小化；</li>
-<li>Reserve / Unreserve：维护资源账本；</li>
+<li>Score：使用 RF 干扰预测和动态 retention 门槛选择位置；</li>
+<li>Reserve：更新下一周期 GPU claim，避免 double booking；</li>
 <li>PostFilter：当 Guaranteed 作业调度失败时，选择低代价 Best-effort 作业进行抢占。</li>
+<li>Permit：等待 CPU/Memory in-place resize 反映到 Pod 状态。</li>
 </ul>
 <p>这里有一个关键点：</p>
 <blockquote>
-<p><strong>Kubernetes 默认调度器是 Pod 级的，但 DeepShare 的核心是 tenant/job 级资源保障，所以需要 Controller 维护租户级语义，再通过 Scheduler Plugin 影响 Pod 级调度。</strong></p>
+<p><strong>Controller 管配置态，Scheduler Plugin 管 QAD 和所有实时放置决策；QAD 可从 informer cache 中的运行 Pod 重建，不需要每轮写回 CRD。</strong></p>
 </blockquote>
 </div>
 
