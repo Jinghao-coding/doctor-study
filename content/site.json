@@ -38,7 +38,7 @@
       "slug": "ai-infra/gpu",
       "source": "content/ai-infra/gpu/topic.json",
       "output": "pages/ai-infra/gpu/index.html",
-      "description": "GPU 架构、A100/H100/H200 对比、HBM/NVLink、MIG、MPS、时间片、CUDA VMM 等硬件与资源复用基础。",
+      "description": "GPU 架构、HBM/NVLink、MIG、MPS、Time-Slicing、HAMi、CUDA VMM 与 Kubernetes GPU 共享实战。",
       "tags": ["gpu", "hardware", "sharing"],
       "color": "c2"
     },

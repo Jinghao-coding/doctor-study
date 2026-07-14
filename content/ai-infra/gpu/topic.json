@@ -2,7 +2,7 @@
   "title": "GPU 硬件与资源共享",
   "subtitle": "硬件架构 · CUDA 执行模型 · 数据搬运 · 资源共享 · 性能诊断 · 调度对比",
   "output": "pages/ai-infra/gpu/index.html",
-  "tags": ["gpu", "hardware", "cuda", "mps", "mig"],
+  "tags": ["gpu", "hardware", "cuda", "mps", "mig", "time-slicing", "hami"],
   "goals": [
     "理解 GPU 与 CPU 的设计目标差异和硬件组件",
     "掌握 CUDA 执行模型（grid/block/thread/warp/SM）和内存层次",
@@ -88,21 +88,41 @@
           "title": "资源共享与调度",
           "items": [
             {
-              "title": "GPU共享机制",
-              "description": "MIG硬件隔离、MPS并发复用、Time-slicing时间片、CUDA VMM、显存碎片",
-              "level": "进阶",
+              "title": "GPU虚拟化与共享",
+              "description": "从隔离原理到 MIG/MPS/Time-Slicing/HAMi 实际部署、验证与生产选型",
+              "level": "精通",
               "priority": 3,
-              "time": 22,
+              "time": 55,
               "subtabs": [
                 {
-                  "title": "MIG/MPS/Time-slicing 原理",
-                  "description": "隔离级别对比、CUDA VMM虚拟内存、显存碎片来源与治理",
+                  "title": "机制总览",
+                  "description": "五层虚拟化边界、核心机制对比、选型决策树",
                   "file": "02-sharing.md"
                 },
                 {
-                  "title": "K8S GPU共享落地",
-                  "description": "Device Plugin/GPU Operator、replicas配置、MIG管理、生产注意事项",
-                  "file": "10-k8s-gpu-sharing.md"
+                  "title": "MIG 实战",
+                  "description": "裸机切分、GPU Operator 配置、Pod 申请、验证与重配风险",
+                  "file": "02a-mig-practice.md"
+                },
+                {
+                  "title": "MPS 实战",
+                  "description": "MPS daemon、SM/显存限制、K8S 配置、验证与隔离边界",
+                  "file": "02b-mps-practice.md"
+                },
+                {
+                  "title": "Time-Slicing 实战",
+                  "description": "replicas 配置、共享资源申请、验证、适用范围与常见误区",
+                  "file": "02c-timeslicing-practice.md"
+                },
+                {
+                  "title": "HAMi 开源方案",
+                  "description": "架构链路、Helm 部署、显存/算力申请、调度策略与排障",
+                  "file": "02d-hami-practice.md"
+                },
+                {
+                  "title": "生产选型与论文映射",
+                  "description": "部署决策、监控兜底，以及 DeepShare/ElastiCo/Maestro 的机制落点",
+                  "file": "02e-virtualization-selection.md"
                 }
               ]
             },
