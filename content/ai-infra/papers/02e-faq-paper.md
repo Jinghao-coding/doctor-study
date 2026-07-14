@@ -1,6 +1,6 @@
 ## 一句话结论
 
-这一节是基于 IEEE Cluster 2026 原稿的论文级深度问答，覆盖面试官按论文细节追问的参数与机制：EMA λ=0.3 与 50ms 周期的收敛意义、QAD 边界规定、RF 选型依据与 31.84% MAPE、抢占效率 E_j、动态容忍 ρ_tol、过载降级数据、消融贡献，以及与 Lucid/Tiresias/Gavel/HiveD 的本质差异和论文承认的四条局限。
+这一节是基于 IEEE Cluster 2026 原稿的论文级深度问答，覆盖面试官按论文细节追问的参数与机制：EMA λ=0.3 与 50ms 周期的收敛意义、QAD 边界规定、运行时间预测准确率、Random Forest 干扰预测、抢占效率 E_j、动态容忍 ρ_tol、过载降级数据、消融贡献，以及与 Lucid/Tiresias/Gavel/HiveD 的本质差异和论文承认的四条局限。
 <div class="card card-d">
 <h3>论文原文延伸问答（基于 IEEE Cluster 2026 原稿）</h3>
 <p>下面这组问题对应面试官真正会按论文细节追问的角度：参数选取、消融、敏感性、对比 baseline、工程边界。回答全部出自论文正文与 §V 实验。</p>
@@ -16,8 +16,8 @@
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么选 Random Forest？论文给的理由是什么？</div>
-<div class="qa-a"><p>论文 §III-C 给三点：(1) <strong>sub-millisecond 推理</strong>，能挂在 Kubernetes scheduler 关键路径上；(2) RFE 选出的主特征是 <strong>SM Active (44.5%)、co-run SM Active (20.6%)、mem copy util (12.3%)</strong>，符合干扰主因可解释；(3) 输入是 DCGM 硬件计数器，跨 framework / model 泛化好。准确率上：MAPE 从 Lucid 的 68.72% 降到 31.84%（<strong>2.16× 误差缩减</strong>），\(R^2\) 从 0.6413 升到 0.7286；干扰预测 \(R^2=0.902\)。深度模型在 sub-ms 预算下做不到，且 16 个 model family 数据量不足以稳定训出更大模型。</p></div>
+<div class="qa-q">Q: 干扰预测为什么选 Random Forest？论文给的理由是什么？</div>
+<div class="qa-a"><p>这里问的是<strong>干扰预测器</strong>，不要和运行时间预测混在一起。论文 §III-C 的考虑包括：(1) <strong>sub-millisecond 推理</strong>，可以放在 Kubernetes scheduler 关键路径上；(2) RFE 选出的主特征是 <strong>SM Active (44.5%)、co-run SM Active (20.6%)、mem copy util (12.3%)</strong>，与干扰来源相符且可解释；(3) 输入是 DCGM 硬件计数器，跨 framework / model 更容易泛化。它预测共享吞吐保持率，\(R^2=0.902\)。<strong>31.84% MAPE 和 \(R^2=0.7286\) 属于另一个 per-tenant gradient boosting 运行时间预测器</strong>，不能拿来证明 Random Forest 的准确率。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -41,7 +41,7 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 31.84% MAPE 是怎么得到的？冷启动用户怎么办？</div>
-<div class="qa-a"><p>Venus 23,859 jobs 上按 user 训 RF 回归。论文给出两档：<strong>历史提交 ≥50 的老用户 MAPE&lt;25</strong>，新用户落到<strong>集群级 fallback 模型，MAPE&lt;60</strong>，从而冷启动不会阻断调度，只是排序在租户内不那么准。Figure 4 在随机 2000 jobs 上对照 real vs prediction，曲线整体贴合，长尾 jobs 误差稍大但不影响 QAD 主排序——因为 \(\hat{T}(j)\) 只是租户内 secondary key。</p></div>
+<div class="qa-a"><p>Venus 23,859 jobs 上采用<strong>按租户训练的 gradient boosting regressor</strong>。总体 MAPE 为 31.84%，\(R^2=0.7286\)；历史提交 ≥50 的老租户 MAPE&lt;25，新租户落到<strong>集群级 fallback 模型，MAPE&lt;60</strong>。冷启动不会阻断调度，只是时间排序不那么准。Figure 4 在随机 2000 jobs 上对照 real vs prediction；即使长尾作业误差较大，也不会覆盖 QAD 主排序，因为 \(\hat{T}(j)\) 只是 secondary key。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -71,7 +71,7 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 跟 Lucid、Tiresias、Gavel、HiveD 这些 prior art 的本质差异点是什么？</div>
-<div class="qa-a"><p>论文 §VI Related Work 总结：<br/>· <strong>Tiresias</strong>：MLFQ 排序但无 runtime knowledge；DeepShare 加了 RF 预测和 QAD。<br/>· <strong>Lucid</strong>：最强非侵入式 sharing baseline，但干扰模型简单（DeepShare 干扰 \(R^2=0.902\) 显著更准）+ 静态阈值（DeepShare 用 \(\rho_{tol}\) 动态调）。<br/>· <strong>Gavel</strong>：max-min fair throughput 但<strong>假设 GPU 独占</strong>，没法 colocate。<br/>· <strong>HiveD</strong>：静态 cell 分区给保证，<strong>不弹性</strong>，恰好是 DRA 要解的问题。<br/>· <strong>Optimus / ElasticFlow</strong>：在线 runtime prediction 但<strong>无 QAD</strong>，会让短任务覆盖租户公平性。<br/>论文卖点是<strong>把 quota assurance + interference colocation + runtime prediction 三者用单一 \(\tilde{Q}_i(t)\) 信号闭环</strong>，前述任何一篇都只解决其中一两块。</p></div>
+<div class="qa-a"><p>论文 §VI Related Work 总结：<br/>· <strong>Tiresias</strong>：MLFQ 排序但无 runtime knowledge；DeepShare 加了运行时间预测和 QAD。<br/>· <strong>Lucid</strong>：最强非侵入式 sharing baseline，但干扰模型简单（DeepShare 干扰 \(R^2=0.902\) 显著更准）+ 静态阈值（DeepShare 用 \(\rho_{tol}\) 动态调）。<br/>· <strong>Gavel</strong>：max-min fair throughput 但<strong>假设 GPU 独占</strong>，没法 colocate。<br/>· <strong>HiveD</strong>：静态 cell 分区给保证，<strong>不弹性</strong>，恰好是 DRA 要解的问题。<br/>· <strong>Optimus / ElasticFlow</strong>：在线 runtime prediction 但<strong>无 QAD</strong>，会让短任务覆盖租户公平性。<br/>论文卖点是<strong>把 quota assurance + interference colocation + runtime prediction 三者用单一 \(\tilde{Q}_i(t)\) 信号闭环</strong>，前述任何一篇都只解决其中一两块。</p></div>
 </div>
 </div>
 

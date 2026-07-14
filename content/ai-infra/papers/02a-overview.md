@@ -37,7 +37,7 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 
 <div class="comp">
 <div class="comp-t">子系统二：预测性调度</div>
-<p>Random Forest 预测作业运行时间（MAPE 31.84%，R² = 0.73）。调度排序采用词典序：</p>
+<p>Per-tenant gradient boosting regressor 预测作业剩余运行时间（MAPE 31.84%，R² = 0.7286）。调度排序采用词典序：</p>
 <div class="formula">$$\big(\tilde{Q}_i(t)\uparrow,\; \hat{T}(j)\uparrow\big)$$</div>
 <p>先按 QAD 升序（优先欠缺的租户），再按预测运行时间升序（短作业优先）。</p>
 <p>抢占牺牲者选择：代价基抢占效率</p>
@@ -193,7 +193,7 @@ Guaranteed 保障不足时，回收借出去的资源。</code></pre>
 <div class="card card-m">
 <h3>5. 模块二：Predictive Scheduling</h3>
 <p>第二个模块是 <strong>预测调度</strong>。</p>
-<p>论文使用预测模型，比如 random forest，去预测作业完成时间或者剩余运行时间。这个预测信息主要有两个用途。</p>
+<p>论文正文使用 per-tenant gradient boosting regressor 预测作业剩余运行时间。这个预测信息主要有两个用途。</p>
 <p>第一个用途是 <strong>队列排序</strong>。</p>
 <p>DeepShare 的排序不是简单 FIFO，也不是单纯短任务优先，而是：</p>
 <pre><code>Guaranteed 优先于 Best-effort；
