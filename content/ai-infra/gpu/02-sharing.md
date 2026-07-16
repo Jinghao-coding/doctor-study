@@ -99,6 +99,7 @@ GPU 虚拟化不是单一技术，而是从“整卡直通”到“硬件切片�
 
 ## 关联模块
 
+- `新 GPU 节点接入`：从 Driver、Runtime、Device Plugin 到 `nvidia.com/gpu` 和 CUDA canary 的完整链路。
 - `MIG 实战`：从裸机启用到 GPU Operator 管理和 Pod 申请。
 - `MPS 实战`：从 MPS daemon 到 Kubernetes 共享配置和资源限制。
 - `Time-Slicing 实战`：配置 replicas、申请共享资源并验证真实边界。

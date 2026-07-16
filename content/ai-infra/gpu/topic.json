@@ -89,15 +89,20 @@
           "items": [
             {
               "title": "GPU虚拟化与共享",
-              "description": "从隔离原理到 MIG/MPS/Time-Slicing/HAMi 实际部署、验证与生产选型",
+              "description": "从新 GPU 节点接入到 MIG/MPS/Time-Slicing/HAMi 部署、验证与生产选型",
               "level": "精通",
               "priority": 3,
-              "time": 55,
+              "time": 75,
               "subtabs": [
                 {
                   "title": "机制总览",
                   "description": "五层虚拟化边界、核心机制对比、选型决策树",
                   "file": "02-sharing.md"
+                },
+                {
+                  "title": "新 GPU 节点接入",
+                  "description": "Driver、containerd、Container Toolkit/CDI、Device Plugin、GPU Operator 与全链路验收",
+                  "file": "02f-node-onboarding.md"
                 },
                 {
                   "title": "MIG 实战",
