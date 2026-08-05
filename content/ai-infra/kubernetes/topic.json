@@ -161,12 +161,12 @@
           "title": "AI Infra 与扩展",
           "items": [
             {
-              "title": "AI Infra：GPU / 批调度 / DRA",
-              "description": "Device Plugin、MIG/MPS、Topology、Gang、Kueue、Volcano、DRA",
+              "title": "AI Infra：Device Plugin 与 DRA",
+              "description": "Kubernetes 视角的 GPU 注册、Extended Resource、Allocate、DRA ResourceClaim 与调度边界",
               "file": "07-ai-infra-gpu-dra.md",
               "level": "精通",
               "priority": 1,
-              "time": 20
+              "time": 18
             },
             {
               "title": "Operator 与 CRD",
@@ -236,6 +236,35 @@
               "level": "精通",
               "priority": 2,
               "time": 30
+            }
+          ]
+        },
+        {
+          "title": "面试收束",
+          "items": [
+            {
+              "title": "Kubernetes 高频面试题",
+              "description": "基础机制、故障诊断、平台设计三组问题，形成从 API Server 到 kubelet 的完整回答链路",
+              "level": "精通",
+              "priority": 3,
+              "time": 55,
+              "subtabs": [
+                {
+                  "title": "核心机制高频题",
+                  "description": "架构、Pod、Controller、Scheduler、Service、存储、安全的高频问答",
+                  "file": "16-interview-core.md"
+                },
+                {
+                  "title": "故障排查场景",
+                  "description": "Pending、CrashLoop、Service 不通、Node NotReady、控制面异常的诊断树",
+                  "file": "17-interview-troubleshooting.md"
+                },
+                {
+                  "title": "平台系统设计",
+                  "description": "多租户、批任务、GPU、可观测性、升级与容灾的系统设计题",
+                  "file": "18-interview-system-design.md"
+                }
+              ]
             }
           ]
         }

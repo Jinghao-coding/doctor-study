@@ -105,7 +105,7 @@ K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator �
 <tr><td>静态准入策略（禁特权、强制 label）</td><td>ValidatingAdmissionPolicy（CEL）</td><td>无需部署 webhook，毫秒级</td></tr>
 <tr><td>动态准入（查外部系统）</td><td>Validating / Mutating Webhook</td><td>能跑任意逻辑</td></tr>
 <tr><td>调度策略（拓扑、组调度、Backfill）</td><td>Scheduler Plugin（Filter / Score / PreBind）</td><td>调度内核内嵌扩展</td></tr>
-<tr><td>新种类设备 / 资源</td><td>DRA（DeviceClass + ResourceClaim）</td><td>替代 Device Plugin，支持复杂 attributes</td></tr>
+<tr><td>新种类设备 / 资源</td><td>Device Plugin 或 DRA（DeviceClass + ResourceClaim）</td><td>简单整数资源沿用 Device Plugin；富属性和动态配置优先评估 DRA</td></tr>
 <tr><td>新存储后端</td><td>CSI Driver</td><td>统一卷接口</td></tr>
 <tr><td>新网络方案</td><td>CNI Plugin</td><td>Pod 网络模型扩展</td></tr>
 <tr><td>聚合 API（自己提供 K8s 风格 API）</td><td>API Aggregation Layer</td><td>复用 RBAC、kubectl，但服务自管</td></tr>

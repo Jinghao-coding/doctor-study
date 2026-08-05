@@ -386,6 +386,6 @@ spec:
 ## 关联模块
 
 - `02-scheduling-resource-model`：资源模型（requests/limits）是 HPA 和 Karpenter 调度决策的基础。
-- `07-ai-infra-gpu-dra`：GPU 共享（MIG/MPS）、DRA 动态资源分配影响 GPU 节点伸缩策略。
+- `07-ai-infra-gpu-dra`：Device Plugin、DRA 资源声明如何影响 GPU 节点伸缩；MIG/MPS 机制转到 GPU 专题。
 - `15-node-lifecycle`：Node 注册、NotReady 处理、drain 流程和 PDB 紧密相关。
 - `05-fault-tolerance`：分布式训练容错、checkpoint、PDB 对训练任务保护。

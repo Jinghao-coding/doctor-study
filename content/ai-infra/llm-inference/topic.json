@@ -108,11 +108,27 @@
           "items": [
             {
               "title": "性能指标与瓶颈",
-              "description": "TTFT、TPOT、吞吐、显存、MFU",
-              "file": "06-performance-bottlenecks.md",
+              "description": "从 TTFT/TPOT 到 Decode 算术强度和逐算子 Bound 分类",
               "level": "进阶",
               "priority": 1,
-              "time": 15
+              "time": 42,
+              "subtabs": [
+                {
+                  "title": "指标与瓶颈总览",
+                  "description": "TTFT、TPOT、吞吐、显存与利用率的端到端解释",
+                  "file": "06-performance-bottlenecks.md"
+                },
+                {
+                  "title": "Decode 为何 Memory-bound",
+                  "description": "70B FP16 batch=1 Decode 的 FLOPs、访存量和算术强度实算",
+                  "file": "10-decode-memory-bound.md"
+                },
+                {
+                  "title": "逐算子 Bound 分类",
+                  "description": "QKV、FFN、Softmax、Norm 和 KV Cache 在 Prefill/Decode 的瓶颈差异",
+                  "file": "11-operator-bound-classification.md"
+                }
+              ]
             },
             {
               "title": "优化技术概览",

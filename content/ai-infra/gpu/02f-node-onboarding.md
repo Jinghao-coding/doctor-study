@@ -41,6 +41,11 @@ DCGM/告警接管 | 持续观测 Xid、ECC、温度、功耗与利用率
 - **NFD/GFD** 负责硬件与 GPU 属性标签，帮助 Operator 和 scheduler 识别节点类型。
 - **DCGM Exporter** 负责指标，不参与设备分配。
 
+<div class="figure">
+<img src="../../../resources/images/gpu/nvidia-gpu-operator-stack.png" alt="NVIDIA GPU Operator 将 GPU 节点软件栈从手工安装转为自动化管理的对比图" loading="lazy">
+<p class="caption">NVIDIA 官方 GPU Operator 概念图：左侧需要分别维护 Driver、Runtime、Device Plugin 和监控，右侧由 Operator 统一部署和收敛。该图用于理解责任边界；生产版本与组件兼容性仍以当前 <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html">GPU Operator Platform Support</a> 为准。图片来源：<a href="https://developer.nvidia.com/blog/nvidia-gpu-operator-simplifying-gpu-management-in-kubernetes/">NVIDIA Technical Blog</a>。</p>
+</div>
+
 ## 接入前检查：先隔离，再部署
 
 ### 1. 节点基础面

@@ -1,6 +1,33 @@
 ## 一句话结论
 
-GPU-Util 只说明采样窗口内 GPU「有没有在忙」，不等于算力用满、更不等于吞吐高。真正判断 GPU 是否高效，要同时看显存、SM Active、Tensor Core 利用率、HBM 带宽、NCCL 通信占比和端到端吞吐——只盯 GPU-Util 是最常见的误判。
-<div class="card card-m"><h3>GPU 观测不要只看 GPU-Util</h3><p>GPU-Util 表示采样窗口内 GPU 是否忙，不等于 Tensor Core 用满，也不等于模型吞吐高。排查要同时看显存、拓扑、SM Active、HBM、NCCL、数据加载和端到端吞吐。</p></div>
-<table><tr><th>目标</th><th>看什么</th><th>工具</th></tr><tr><td>设备可见性</td><td>GPU 数量、型号、UUID</td><td><code>nvidia-smi -L</code></td></tr><tr><td>显存</td><td>used/free、进程占用</td><td><code>nvidia-smi</code>、框架 summary</td></tr><tr><td>拓扑</td><td>GPU-GPU、GPU-NIC</td><td><code>nvidia-smi topo -m</code></td></tr><tr><td>计算效率</td><td>SM Active、Tensor Core、MFU</td><td>DCGM、Nsight、Profiler</td></tr></table>
-<div class="qa" onclick="this.classList.toggle('open')"><div class="qa-q">Q: GPU-Util 100% 但训练很慢，可能是什么原因？</div><div class="qa-a"><p>可能是小 kernel 连续运行但算力利用低，或通信 kernel 占比高，或 HBM/PCIe/NVLink 瓶颈，或数据加载间歇造成 pipeline 不稳。应看 timeline、SM Active、Tensor Core 利用率、NCCL 时间和端到端吞吐。</p></div></div>
+这一页只建立 GPU/NPU 等异构加速器的通用观测模型：设备是否可见、容量是否够、计算是否忙、数据是否搬得动、通信是否正常、设备是否健康。NVIDIA GPU 的具体指标与排障命令统一放在 GPU 专题。
+
+## 通用观测维度
+
+| 维度 | 通用问题 | NVIDIA 示例 | 其他加速器需要映射的概念 |
+|---|---|---|---|
+| 身份 | 有几张卡、UUID/逻辑 ID 是什么 | `nvidia-smi -L` | 设备枚举、逻辑卡与物理卡关系 |
+| 容量 | 显存/HBM 使用和峰值是多少 | memory used/free | HBM/Device Memory 容量 |
+| 计算 | 计算单元是否持续执行有效工作 | SM Active、Tensor Core | AI Core/Vector Core 活跃度 |
+| 带宽 | HBM、Host-Device 是否成为瓶颈 | HBM、PCIe Throughput | HBM 与互联吞吐 |
+| 拓扑 | 卡、CPU、NIC 的距离如何 | `nvidia-smi topo -m` | PCIe/片间互联/NUMA 映射 |
+| 通信 | Collective 时间和错误如何 | NCCL 时间、RDMA counters | 对应 Collective Library 与网络指标 |
+| 健康 | 温度、功耗、错误和降频 | Xid、ECC、clock | 供应商错误码、健康状态、频率 |
+
+## 观测原则
+
+- 先看业务吞吐、延迟和任务进度，再解释硬件指标。
+- 区分“设备忙”“计算单元吃满”“有效模型计算高效”三个概念。
+- 跨厂商对比使用物理语义，不直接比较名称相似但口径不同的百分比。
+- 工具输出必须记录采样窗口、设备 ID、驱动/固件版本和工作负载阶段。
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么不能把不同厂商的 Utilization 直接比较？</div>
+<div class="qa-a"><p>不同工具可能测量“任意 Kernel 活跃时间”“计算核心忙碌比例”或“某类矩阵单元使用率”，采样周期和聚合方式也不同。跨设备比较应回到 Token/s、Step Time、有效 FLOPs、HBM 吞吐和功耗等可解释量，并核对指标定义。</p></div>
+</div>
+
+## 关联模块
+
+- `GPU 硬件与资源共享`：NVIDIA GPU 的 CUDA、SM、HBM、共享与完整诊断。
+- `分布式训练`：NCCL/集合通信、Rank Hang 和通信计算重叠。
+- `性能预测与建模`：如何把观测量变成特征、标签和容量判断。

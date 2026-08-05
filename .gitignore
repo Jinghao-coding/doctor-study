@@ -25,3 +25,4 @@ resources/private/
 .claude/
 .ttadk/
 .omc/
+.playwright-cli/

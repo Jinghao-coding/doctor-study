@@ -142,7 +142,7 @@
           ]
         },
         {
-          "title": "性能诊断与预测",
+          "title": "性能指标与诊断",
           "items": [
             {
               "title": "性能指标体系",
@@ -172,12 +172,12 @@
               ]
             },
             {
-              "title": "性能预测与特征工程",
-              "description": "MFU/HFU、FLOPs特征、DCGM采集、解析模型vs ML模型、跨硬件泛化",
+              "title": "GPU 指标与性能预测边界",
+              "description": "明确 GPU 页面负责指标语义，预测专题负责特征、标签、模型、评估与校准",
               "file": "04-prediction-metrics.md",
-              "level": "精通",
-              "priority": 2,
-              "time": 20
+              "level": "进阶",
+              "priority": 1,
+              "time": 6
             }
           ]
         },
@@ -185,12 +185,28 @@
           "title": "面试收束",
           "items": [
             {
-              "title": "GPU面试收束",
-              "description": "高频问题串联、知识地图、跨模块关联、一句话答题模板",
-              "file": "14-interview-wrap-up.md",
+              "title": "GPU 面试题库",
+              "description": "基础机制、性能排障与平台设计三类面试问题，覆盖从单卡到集群的回答链路",
               "level": "精通",
-              "priority": 2,
-              "time": 10
+              "priority": 3,
+              "time": 45,
+              "subtabs": [
+                {
+                  "title": "基础机制高频题",
+                  "description": "CPU/GPU、CUDA、内存层次、数据路径、共享隔离的核心回答",
+                  "file": "14-interview-wrap-up.md"
+                },
+                {
+                  "title": "性能与故障场景",
+                  "description": "GPU 利用率低、OOM、掉卡、通信慢、Pod 看不到 GPU 的诊断路径",
+                  "file": "15-interview-troubleshooting.md"
+                },
+                {
+                  "title": "GPU 平台系统设计",
+                  "description": "多租户 GPU 平台、资源抽象、调度、监控、弹性与容错设计",
+                  "file": "16-interview-system-design.md"
+                }
+              ]
             }
           ]
         }

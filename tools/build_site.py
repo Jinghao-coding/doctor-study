@@ -16,10 +16,10 @@ SITE = json.loads((CONTENT / "site.json").read_text(encoding="utf-8"))
 TRACKS = [
     {
         "key": "foundation_cards",
-        "label": "计算机基础",
-        "short_label": "基础",
+        "label": "计算机与系统基础",
+        "short_label": "系统基础",
         "eyebrow": "Foundation",
-        "description": "操作系统、组成原理、网络、Linux/容器、编程工程与分布式基础，先补足 AI Infra 面试的系统底座。",
+        "description": "操作系统、组成原理、网络、Linux/容器、编程工程与分布式系统，建立 AI Infra 面试所需的系统底座。",
         "slugs": [
             "cs-basics",
             "cs-basics/os",
@@ -977,7 +977,7 @@ def _topic_progress_meta(topic: dict) -> tuple[str, int]:
 def _render_home_nav() -> str:
     links = [
         '<a href="#study-tracks">5 条主线</a>',
-        '<a href="pages/cs-basics/index.html">计算机基础</a>',
+        '<a href="pages/cs-basics/index.html">计算机与系统基础</a>',
         '<a href="pages/ai-infra/gpu/index.html">GPU</a>',
         '<a href="pages/ai-infra/llm-inference/index.html">LLM 推理</a>',
         '<a href="pages/ai-infra/papers/index.html">论文项目</a>',

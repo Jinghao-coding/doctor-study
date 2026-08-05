@@ -29,7 +29,8 @@ K8S 调度的核心是 requests/limits、QoS、过滤打分、抢占和扩展资
 <table>
 <tr><th>问题类型</th><th>应该看哪里</th></tr>
 <tr><td>requests/limits、QoS、资源需求和放置约束总览</td><td>本页：调度与资源模型</td></tr>
-<tr><td>Extended Resource、Device Plugin、DRA、MIG/MPS</td><td>AI Infra：GPU / 批调度 / DRA</td></tr>
+<tr><td>Extended Resource、Device Plugin、DRA</td><td>AI Infra：Device Plugin 与 DRA</td></tr>
+<tr><td>MIG、MPS、Time-Slicing、HAMi</td><td>GPU 硬件与资源共享</td></tr>
 <tr><td>NodeAffinity、PodAffinity、TaintToleration 的插件行为</td><td>Scheduler 插件与扩展 → 设计理念与经典插件</td></tr>
 <tr><td>ActiveQ/BackoffQ/UnschedulableQ、Assume、Preemption</td><td>Scheduler 主链路</td></tr>
 <tr><td>PreFilter/Filter/Score、QueueingHint、Extender、自定义插件</td><td>Scheduler 插件与扩展</td></tr>

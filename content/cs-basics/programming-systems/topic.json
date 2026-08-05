@@ -20,14 +20,6 @@
               "level": "基础",
               "priority": 1,
               "time": 15
-            },
-            {
-              "title": "编译链接与智能指针",
-              "description": "编译四阶段、静态/动态库、智能指针要素、gdb 调试死锁",
-              "file": "05-cpp-compile-smartptr.md",
-              "level": "基础",
-              "priority": 1,
-              "time": 18
             }
           ]
         },
@@ -86,6 +78,14 @@
               "level": "精通",
               "priority": 1,
               "time": 25
+            },
+            {
+              "title": "GDB 并发故障调试",
+              "description": "线程卡死、死锁、崩溃现场的 attach、线程栈、core dump 与验证流程",
+              "file": "10-gdb-concurrency-debugging.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 12
             },
             {
               "title": "现代 C++ 特性（11/14/17/20）",

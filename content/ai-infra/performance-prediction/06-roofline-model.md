@@ -176,6 +176,6 @@ Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β**
 ## 关联模块
 
 - [`Transformer 与大模型基础 / 07-roofline-analysis`](../../transformer/07-roofline-analysis.md)：把 Roofline 用在 Transformer 算子分类上。
-- [`Transformer / 08-decode-memory-bound`](../../transformer/08-decode-memory-bound.md)、[`09-operator-bound-classification`](../../transformer/09-operator-bound-classification.md)：LLM Decode 为何是 Memory-Bound 的具体推导。
+- [`LLM 推理 / Decode Memory-bound`](../llm-inference/10-decode-memory-bound.md)、[`逐算子 Bound 分类`](../llm-inference/11-operator-bound-classification.md)：LLM Decode 为何受显存带宽限制的具体推导。
 - [`GPU / 03-performance-metrics`](../../gpu/03-performance-metrics.md)、[`09-bottleneck-classification`](../../gpu/09-bottleneck-classification.md)：从 GPU 视角看算力 / 带宽 / 利用率诊断。
 - [`性能预测与建模 / 01-examples`](01-examples.md)：把 Roofline 这种"白盒上界"和 ML 树模型的"黑盒回归"放在一起对比，理解何时该用哪种预测方法。

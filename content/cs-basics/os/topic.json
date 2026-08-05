@@ -122,28 +122,12 @@
               "time": 10
             },
             {
-              "title": "容器与 cgroup",
-              "description": "cgroup v1/v2、CPU/内存限制、容器隔离对GPU的影响",
-              "file": "13-ai-infra-container-cgroup.md",
+              "title": "OS 到 AI Infra 的知识映射",
+              "description": "把 namespace/cgroup、NUMA、I/O、可观测性映射到容器、GPU、训练和推理专题，不重复展开专项内容",
+              "file": "13-ai-infra-system-mapping.md",
               "level": "精通",
               "priority": 2,
               "time": 10
-            },
-            {
-              "title": "GPU 系统层",
-              "description": "CUDA驱动、UVM、MPS/MIG、GPU拓扑与CPU亲和性",
-              "file": "14-ai-infra-gpu-systems.md",
-              "level": "精通",
-              "priority": 2,
-              "time": 12
-            },
-            {
-              "title": "可观测性与排障",
-              "description": "strace/ltrace、ftrace、BPF、系统调用追踪",
-              "file": "15-ai-infra-observability.md",
-              "level": "精通",
-              "priority": 2,
-              "time": 12
             }
           ]
         },

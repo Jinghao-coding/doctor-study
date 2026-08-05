@@ -6,6 +6,16 @@ MIG 的正确使用流程不是“打开一个开关”，而是：**确认硬�
 
 MIG 把一张支持该能力的 GPU 划分为若干 GPU Instance（GI），每个 GI 再包含可运行 CUDA workload 的 Compute Instance（CI）。profile 名称中的两部分分别表达计算切片和显存规格，例如 `1g.10gb`；具体 profile、数量和名称取决于 GPU 型号。
 
+<div class="figure">
+<img src="../../../resources/images/gpu/nvidia-mig-partitioning-slices.png" alt="NVIDIA A100 40GB 的 MIG 显存切片与计算切片示意图" loading="lazy">
+<p class="caption">NVIDIA 官方 MIG 图：A100 40GB 被抽象为 8 个 5GB 显存切片和 7 个计算切片。来源：<a href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/concepts.html">NVIDIA MIG User Guide · Partitioning</a>。</p>
+</div>
+
+<div class="figure">
+<img src="../../../resources/images/gpu/nvidia-mig-profile-composition.png" alt="NVIDIA MIG 1g.5gb GPU Instance 组成示意图" loading="lazy">
+<p class="caption">一个 <code>1g.5gb</code> GPU Instance 将 1 个计算切片与 1 个 5GB 显存切片组合成固定规格。新型号的 profile 名称和显存容量会变化，面试时应讲清“固定计算份额 + 固定显存份额”，不要死背 A100 数字。来源：<a href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/concepts.html">NVIDIA MIG User Guide · GPU Instances</a>。</p>
+</div>
+
 ```flow
 物理 GPU
   -> 开启 MIG mode

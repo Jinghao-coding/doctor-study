@@ -1,11 +1,11 @@
 {
-  "title": "计算机基础知识",
+  "title": "计算机与系统基础",
   "subtitle": "操作系统 · 计算机组成 · 网络 · 容器 · C/C++ · Go · Linux内核 · 分布式AI",
   "kicker": "CS Basics",
   "tags": ["cs-basics", "os", "network", "cpp", "golang", "container", "linux"],
   "output": "pages/cs-basics/index.html",
   "goals": [
-    "系统掌握 AI Infra 工程师所需的计算机基础知识体系",
+    "系统掌握 AI Infra 工程师所需的计算机与系统基础知识体系",
     "从 OS / 组成原理 / 网络 / 容器 / 编程语言等维度建立底层认知",
     "结合 AI Infra 场景理解系统级性能问题"
   ],
@@ -14,7 +14,7 @@
       "type": "callout",
       "tone": "note",
       "title": "知识地图",
-      "text": "计算机基础知识已拆分为以下 **8 个独立主题**，点击卡片进入对应模块："
+      "text": "计算机与系统基础已拆分为以下 **8 个独立主题**，点击卡片进入对应模块："
     },
     {
       "type": "resources",

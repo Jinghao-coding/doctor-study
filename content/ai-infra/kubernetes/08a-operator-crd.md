@@ -202,5 +202,5 @@ spec:
 
 - `Workload 与 Controller`：理解 controller / reconcile 的基础。
 - `Scheduler 插件与扩展`：理解调度逻辑不应该塞进 Operator。
-- `AI Infra：GPU / 批调度 / DRA`：理解 AIJob、PodGroup、GPU 资源语义。
+- `AI Infra：Device Plugin 与 DRA`：理解设备注册、资源声明和容器交付；GPU 切分机制转到 GPU 专题。
 - `扩展与工程化`：理解 Operator 如何被 Helm、Kustomize、GitOps 部署和发布。

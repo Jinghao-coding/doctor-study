@@ -12,7 +12,7 @@
     {"title": "分布式训练", "href": "pages/ai-infra/distributed-training/index.html"},
     {"title": "GPU 集群管理", "href": "pages/ai-infra/cluster-management/index.html"},
     {"title": "性能预测与建模", "href": "pages/ai-infra/performance-prediction/index.html"},
-    {"title": "计算机基础", "href": "pages/cs-basics/index.html"},
+    {"title": "计算机与系统基础", "href": "pages/cs-basics/index.html"},
     {"title": "操作系统", "href": "pages/cs-basics/os/index.html"},
     {"title": "计算机组成原理", "href": "pages/cs-basics/computer-architecture/index.html"},
     {"title": "计算机网络", "href": "pages/cs-basics/networking/index.html"},
@@ -65,7 +65,7 @@
       "slug": "ai-infra/kubernetes",
       "source": "content/ai-infra/kubernetes/topic.json",
       "output": "pages/ai-infra/kubernetes/index.html",
-      "description": "架构、API 对象、调度框架、GPU Device Plugin、etcd Raft/MVCC、Informer 机制、CNI/kube-proxy、API Server 链路、Karpenter 与节点生命周期。",
+      "description": "架构、Pod 主链路、Controller、调度框架、Device Plugin/DRA、网络存储、安全、故障排查、扩缩容与平台系统设计面试题。",
       "tags": ["k8s", "scheduler", "etcd", "cni"],
       "color": "c3"
     },
@@ -106,11 +106,11 @@
       "color": "c2"
     },
     {
-      "title": "计算机基础知识",
+      "title": "计算机与系统基础",
       "slug": "cs-basics",
       "source": "content/cs-basics/topic.json",
       "output": "pages/cs-basics/index.html",
-      "description": "计算机基础知识地图入口：操作系统、组成原理、网络、C/C++、Go、容器、Linux内核、分布式AI等8个子模块的导航入口。",
+      "description": "计算机与系统基础知识地图：操作系统、组成原理、网络、C/C++、Go、容器、Linux 内核与分布式 AI 等模块。",
       "tags": ["cs-basics", "overview", "knowledge-map"],
       "color": "c4"
     },
@@ -119,7 +119,7 @@
       "slug": "cs-basics/os",
       "source": "content/cs-basics/os/topic.json",
       "output": "pages/cs-basics/os/index.html",
-      "description": "进程线程协程、CPU调度、虚拟内存/分页、I/O多路复用（epoll）、死锁、AI Infra系统视角下的并发/内存/I/O/可观测性与面试清单。",
+      "description": "进程线程协程、CPU 调度、虚拟内存、I/O 多路复用、死锁，以及 OS 机制到容器、GPU、训练和推理的知识映射。",
       "tags": ["os", "linux", "scheduling", "memory", "io", "concurrency"],
       "color": "c4"
     },
