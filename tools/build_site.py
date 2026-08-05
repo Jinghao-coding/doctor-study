@@ -514,26 +514,15 @@ def render_side_nav(output: Path, current_output: Path) -> str:
     )
 
 
-def render_chip_list(items: list[str]) -> str:
-    return "".join(f"<span>{html.escape(item)}</span>" for item in items)
-
-
 def render_topic_hero(topic: dict) -> str:
-    tags = render_chip_list(topic.get("tags", []))
-    goals = topic.get("goals", [])
-    goal_html = ""
-    if goals:
-        goal_html = '<div class="hero-goals">' + "".join(f"<div>{apply_inline(goal)}</div>" for goal in goals) + "</div>"
-    hero_class = "topic-hero" if goals else "topic-hero compact"
+    subtitle = topic.get("subtitle", "")
+    subtitle_html = f'<p class="sub">{html.escape(subtitle)}</p>' if subtitle else ""
     return (
-        f'<section class="{hero_class}">'
+        '<section class="topic-hero" aria-label="主题概览">'
         '<div class="hero-copy">'
-        f'<div class="hero-kicker">{html.escape(topic.get("kicker", "Study Module"))}</div>'
         f'<h1>{html.escape(topic["title"])}</h1>'
-        f'<p class="sub">{html.escape(topic.get("subtitle", ""))}</p>'
-        f'<div class="hero-tags">{tags}</div>'
+        f'{subtitle_html}'
         "</div>"
-        f"{goal_html}"
         "</section>"
     )
 
