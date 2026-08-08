@@ -244,15 +244,30 @@
           "items": [
             {
               "title": "Kubernetes 高频面试题",
-              "description": "基础机制、故障诊断、平台设计三组问题，形成从 API Server 到 kubelet 的完整回答链路",
+              "description": "基础、Workload、Scheduler、GPU、排障和系统设计六组直接问答，支持快速复述与连续追问",
               "level": "精通",
               "priority": 3,
-              "time": 55,
+              "time": 105,
               "subtabs": [
                 {
                   "title": "核心机制高频题",
-                  "description": "架构、Pod、Controller、Scheduler、Service、存储、安全的高频问答",
+                  "description": "架构、Pod、etcd、Controller、Runtime 与资源模型的高频问答",
                   "file": "16-interview-core.md"
+                },
+                {
+                  "title": "Workload、网络与存储",
+                  "description": "Deployment、探针、Service、CSI、安全与弹性的直接问答",
+                  "file": "16a-interview-workload-network.md"
+                },
+                {
+                  "title": "Scheduler 高频题",
+                  "description": "调度周期、Cache、Assume、队列、抢占、扩展点、Gang 与 GPU 拓扑",
+                  "file": "16b-interview-scheduler.md"
+                },
+                {
+                  "title": "GPU Kubernetes 高频题",
+                  "description": "节点接入、Device Plugin、Runtime、共享机制、DRA 和设备故障",
+                  "file": "16c-interview-gpu-kubernetes.md"
                 },
                 {
                   "title": "故障排查场景",

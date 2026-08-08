@@ -38,6 +38,59 @@ kubelet 同步 Pod | CRI 创建 Sandbox/Container，CNI 配网，CSI 挂卷
 Probe 与状态回报 | EndpointSlice 根据 Ready 状态接入流量
 ```
 
+## 基础机制直接问答
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Kubernetes 整体架构有哪些组件？</div>
+<div class="qa-a">
+<div class="qa-summary">控制面负责保存状态和做决策，节点面负责运行工作负载并持续上报状态。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>控制面包括 API Server、etcd、Scheduler、Controller Manager 和可选的 Cloud Controller Manager；节点侧包括 kubelet、容器运行时和 kube-proxy/eBPF 数据面。API Server 是统一状态入口，其他组件通过 List/Watch 和写 API 解耦协作。</p></div>
+<div class="qa-section"><div class="qa-section-title">追问</div><p>Scheduler 只选择节点，kubelet 才负责在节点上调用 CRI/CNI/CSI；etcd 保存状态，不直接向节点下发命令。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>不要把 Service、Controller 或 Scheduler 说成真正创建容器的数据面组件。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 一个 Pod 从提交到 Running/Ready 的完整流程是什么？</div>
+<div class="qa-a">
+<div class="qa-summary">请求经过 API Server 写入 etcd，Controller 补齐对象，Scheduler 绑定节点，kubelet 再调用 CSI、CRI 和 CNI 创建运行环境，最后由 Probe 决定是否 Ready。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>API Server 依次执行认证、授权、准入、默认值和校验；Deployment/ReplicaSet Controller 创建 Pod；Scheduler Filter/Score 后写入 NodeName；kubelet Watch 到 Pod，准备 Volume、创建 Sandbox、配置网络、拉镜像并启动容器，随后回写状态。Readiness 成功后 EndpointSlice 才接入流量。</p></div>
+<div class="qa-section"><div class="qa-section-title">追问</div><p>API 返回创建成功只是对象已持久化，不表示 Pod 已经运行；整个过程是多个异步控制循环。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>CNI 通常在 RunPodSandbox 路径由 Runtime 侧调用，CSI 挂载和镜像拉取的先后可能并行或受实现影响，不要背成绝对同步脚本。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: API Server 为什么是 Kubernetes 的统一入口？</div>
+<div class="qa-a">
+<div class="qa-summary">它统一认证、授权、准入、版本转换、校验、乐观并发、审计和 Watch，保证所有组件遵循同一套对象语义。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>只有 API Server 直接访问 etcd，可以集中维护权限、资源版本和存储格式。Controller、Scheduler、kubelet 都面向 API 对象协作，从而避免组件之间点对点耦合，也便于扩展 CRD、Webhook 和聚合 API。</p></div>
+<div class="qa-section"><div class="qa-section-title">追问</div><p>请求量大时还要考虑 API Priority and Fairness、Watch Cache、Webhook 延迟和 etcd 性能。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: kubelet、containerd、runc、containerd-shim 和 pause 容器分别是什么？</div>
+<div class="qa-a">
+<div class="qa-summary">kubelet 编排本节点 Pod；containerd 提供 CRI 和容器生命周期；runc 创建 OCI 容器；shim 托管容器进程；pause 容器持有 Pod 共享 namespace。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>kubelet 通过 CRI 调用 containerd，containerd 管镜像、Snapshot 和 Task，再由 shim 调用 runc 创建进程。业务容器加入 Pod Sandbox 的 network/IPC 等 namespace，因此业务容器重启时 Pod IP 可以保持不变。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>移除 dockershim 不代表 Docker 格式镜像不能运行；镜像格式与节点运行时是两件事。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: requests、limits 和 QoS 的关系是什么？</div>
+<div class="qa-a">
+<div class="qa-summary">requests 参与调度和资源保障，limits 约束运行上限；Pod 的 CPU/内存配置共同决定 Guaranteed、Burstable 或 BestEffort QoS。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>Scheduler 按 requests 判断节点是否可行；CPU limit 通常由 CFS bandwidth 控制，内存超过 limit 可能 OOM。所有容器 CPU/内存 request 等于 limit 且都设置时为 Guaranteed；完全不设置为 BestEffort，其余为 Burstable。</p></div>
+<div class="qa-section"><div class="qa-section-title">追问</div><p>GPU Extended Resource 通常只允许整数 request/limit，资源语义不同于可压缩的 CPU。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>QoS 不等于 PriorityClass；一个 Guaranteed Pod 也不一定比高优 Burstable Pod 更先调度。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Informer 为什么不是不停地全量 List？</div>
+<div class="qa-a">
+<div class="qa-summary">Informer 用 List 建立初始状态，再用 Watch 接收增量变化，并通过本地 Cache 降低 API Server 压力。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>Reflector 把 List/Watch 结果写入 DeltaFIFO，Controller 消费事件并更新 Indexer/Store，再把对象 Key 放入 WorkQueue。Watch 断开、resourceVersion 过旧或遇到 compaction 时，需要重新 List 后继续 Watch。</p></div>
+<div class="qa-section"><div class="qa-section-title">追问</div><p>事件可能重复、合并或丢失，所以 Controller 不能依赖“每个事件只处理一次”，而要根据缓存中的当前状态做幂等 Reconcile。</p></div>
+</div></div>
+
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Kubernetes 为什么使用声明式 API？</div>
 <div class="qa-a"><p>用户提交期望状态，Controller 持续比较期望与实际并执行幂等 Reconcile。这样控制器崩溃、事件丢失或短暂失败后仍可通过重新观察状态继续收敛，不依赖一条不可恢复的命令执行链。</p></div>
