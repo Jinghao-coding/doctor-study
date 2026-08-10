@@ -645,7 +645,11 @@ def _normalize_groups(block: dict) -> list[dict]:
     """统一返回 groups 结构。旧的扁平 items 包成单一隐式 group。"""
     if block.get("groups"):
         return [
-            {"title": grp.get("title", ""), "items": grp.get("items", [])}
+            {
+                "title": grp.get("title", ""),
+                "items": grp.get("items", []),
+                "open": grp.get("open", True),
+            }
             for grp in block["groups"]
             if grp.get("items")
         ]
@@ -866,8 +870,9 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
 
         if grp.get("title"):
             grp_id = f"{group_id}-grp-{grp_idx + 1}"
+            open_attr = " open" if grp.get("open", True) else ""
             nav_groups.append(
-                '<details class="tab-group" open data-group-id="{gid}">'
+                '<details class="tab-group"{open_attr} data-group-id="{gid}">'
                 '<summary class="tab-group-summary">'
                 '<span class="tab-group-caret" aria-hidden="true">▾</span>'
                 '<span class="tab-group-title">{title}</span>'
@@ -876,6 +881,7 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
                 '<div class="tab-group-items">{buttons}</div>'
                 '</details>'.format(
                     gid=html.escape(grp_id),
+                    open_attr=open_attr,
                     title=html.escape(grp["title"]),
                     count=len(grp["items"]),
                     buttons="".join(nav_buttons),
