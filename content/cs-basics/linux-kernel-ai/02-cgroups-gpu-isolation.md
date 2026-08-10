@@ -1,6 +1,3 @@
-## 一句话结论
-
-cgroups 是 Linux 内核限制、统计、隔离一组进程资源的机制，配合 namespace（看见什么）、capabilities/seccomp（能做什么）构成容器基础；v1 是多 controller 多层级、v2 是统一层级语义更一致。CPU 用 quota、weight、cpuset 控制，内存用 memory.max/high/swap.max 控制，I/O 用 io controller 做带宽和 IOPS。关键误区是 cgroups 原生并不理解 GPU 算力或显存配额，它只能通过 devices controller 控制容器能否访问 /dev/nvidia* 设备文件，真正的 GPU 注入和细粒度隔离要靠 NVIDIA Container Toolkit、Device Plugin、MIG/MPS 和上层调度器协同。
 ## cgroups 是什么？
 
 **cgroups** 是 Linux 内核提供的资源控制机制，全称是 **control groups**。它可以限制、统计、隔离一组进程的资源使用。
@@ -243,4 +240,3 @@ cgroups 本身通常不直接精细限制 GPU SM、Tensor Core、HBM 带宽或�
 | time-slicing | 时间片共享 | 简单，适合开发/低优任务 | 性能抖动明显 |
 | 框架限制 | 进程级显存策略 | 易用，例如 PyTorch fraction | 不是真正硬隔离 |
 | 调度器记录 | 上层资源账本 | 能做配额和准入控制 | 依赖平台实现 |
-

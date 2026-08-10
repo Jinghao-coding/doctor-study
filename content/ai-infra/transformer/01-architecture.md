@@ -1,6 +1,3 @@
-## 一句话结论
-
-Transformer 的核心是用 self-attention 在序列内建立全局依赖，再用 FFN 做逐 token 非线性变换。
 ## 架构图
 
 <figure class="transformer-figure">
@@ -74,10 +71,3 @@ Pre-LN 的好处是梯度主干更直接，深层训练更稳定；代价是最�
 | 为什么现代 LLM 多是 Decoder-only？ | 统一输入输出为 next-token prediction，训练数据形式简单，推理状态可用 KV cache 增量维护。 |
 | 为什么 FFN 很重要？ | 参数和计算量大，提供模型容量；很多事实知识和非线性变换能力在 FFN 中体现。 |
 | 为什么 Transformer 适合 GPU？ | 大部分核心算子是 GEMM/attention block，可批量并行；但 decode 阶段会转向 memory-bound。 |
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

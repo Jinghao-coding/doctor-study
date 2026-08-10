@@ -1,7 +1,3 @@
-## 一句话结论
-
-H2D/D2H 拷贝是 CPU 内存和 GPU 显存之间的数据搬运，常见性能问题不是“有拷贝”本身，而是拷贝频繁、小而碎、触发同步、无法和计算重叠，或者多 GPU 通信绕回 CPU。优化主线是少拷贝、批量拷贝、异步拷贝、拷贝计算重叠。
-
 ## 诊断入口
 
 ```flow
@@ -24,7 +20,7 @@ GPU timeline 有空洞或 step time 抖动
 
 <div class="card card-m">
 <h3>Host-to-Device / Device-to-Host Copy 是什么</h3>
-<div class="qa-summary">本节只回答“数据为什么要在 CPU 和 GPU 之间搬、哪些操作会触发搬运、如何减少和诊断搬运”。CUDA stream 的异步队列和多缓冲流水线放在下一节。</div>
+<div class="qa-summary">CPU 与 GPU 数据搬运的核心是识别触发点、使用 pinned memory、合并小拷贝，并通过 profiler 诊断同步与带宽损失。</div>
 <p><strong>Host-to-device copy（H2D）</strong> 是把数据从 CPU 内存拷贝到 GPU 显存；<strong>device-to-host copy（D2H）</strong> 是把数据从 GPU 显存拷贝回 CPU 内存。</p>
 <table>
 <tr><th>术语</th><th>含义</th><th>典型资源</th><th>方向</th><th>常见场景</th></tr>
@@ -33,7 +29,7 @@ GPU timeline 有空洞或 step time 抖动
 <tr><td>H2D</td><td>CPU 内存到 GPU 显存</td><td>Host memory -> Device memory</td><td>CPU -> GPU</td><td>把 batch 输入拷到 GPU</td></tr>
 <tr><td>D2H</td><td>GPU 显存到 CPU 内存</td><td>Device memory -> Host memory</td><td>GPU -> CPU</td><td><code>.cpu()</code>、<code>.numpy()</code>、<code>.item()</code>、日志和后处理</td></tr>
 </table>
-<div class="qa-summary">一句话：H2D 是 CPU 内存到 GPU 显存，D2H 是 GPU 显存到 CPU 内存。</div>
+<div class="qa-summary">H2D 是 CPU 内存到 GPU 显存，D2H 是 GPU 显存到 CPU 内存。</div>
 </div>
 
 <div class="card card-s">
@@ -224,12 +220,6 @@ kernel 之间的大空洞</code></pre>
 <div class="qa-section"><div class="qa-section-title">标准回答</div><p>Host 指 CPU 侧，Device 指 GPU 侧。Host-to-device copy 是把数据从 CPU 内存拷贝到 GPU 显存，例如训练时把 batch 输入拷到 GPU；device-to-host copy 是把 GPU 上的结果拷回 CPU，例如 <code>.cpu()</code>、<code>.numpy()</code>、<code>.item()</code>、日志和后处理。</p></div>
 <div class="qa-section"><div class="qa-section-title">为什么影响性能</div><p>这类拷贝需要走 PCIe、NVLink 等互联，相比 GPU 内部计算和 HBM 访问慢很多。而且很多 D2H 操作会触发同步，破坏 CUDA 异步执行，让 CPU 等 GPU 或 GPU 等数据。</p></div>
 <div class="qa-section"><div class="qa-section-title">优化思路</div><p>第一，减少不必要的拷贝，尤其避免频繁 <code>.cpu()</code>、<code>.numpy()</code>、<code>.item()</code>；第二，用 pinned memory 和 <code>non_blocking=True</code> 加速 H2D；第三，用 DataLoader 多 worker、prefetch、persistent workers 让数据准备和 GPU 计算重叠；第四，尽量把预处理和后处理放在 GPU 上；第五，合并小 tensor 做批量拷贝；第六，多 GPU 场景使用 NCCL、NVLink、GPUDirect，避免 GPU 通信绕回 CPU。</p></div>
-<div class="qa-summary">一句话：少拷贝、批量拷贝、异步拷贝、拷贝计算重叠，避免 GPU -> CPU -> GPU 来回搬。</div>
+<div class="qa-summary">少拷贝、批量拷贝、异步拷贝、拷贝计算重叠，避免 GPU -> CPU -> GPU 来回搬。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `Stream 与异步流水线`：用 stream/event 和多缓冲把拷贝与计算重叠。
-- `利用率诊断`：timeline 空洞、memcpy 和同步是 H2D/D2H 瓶颈证据。
-- `GPU 互联与数据路径`：理解 PCIe、NVLink、GPUDirect RDMA 的路径差异。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-HTTP 是应用层协议，gRPC 是基于 HTTP/2 + Protobuf 的 RPC 框架；RPC 是远程调用的语义抽象（方法、参数、返回值、超时、重试、负载均衡），底层可以走 HTTP/1.1、HTTP/2、TCP 或 RDMA。面试要区分"调用语义"和"承载协议"两个层面。
-
 <div class="card card-m">
 <h3>HTTP/1.1 核心要点</h3>
 <table><tr><th>特性</th><th>说明</th></tr>

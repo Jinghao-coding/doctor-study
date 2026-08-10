@@ -1,7 +1,3 @@
-## 一句话结论
-
-Workload、网络、存储和安全题考的是 Kubernetes 如何把应用声明转换成稳定服务。回答时先讲对象职责，再讲控制链路，最后补充 Ready、EndpointSlice、Volume Mount 和 Admission 等真正影响可用性的边界。
-
 ## Workload 与发布
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -80,10 +76,3 @@ Workload、网络、存储和安全题考的是 Kubernetes 如何把应用声明
 <div class="qa-section"><div class="qa-section-title">展开</div><p>HPA 根据指标修改 replicas；VPA 根据历史用量调整 requests，可能需要重建 Pod；CA 从不可调度 Pod 推导节点组扩容；Karpenter 直接根据 Pod 约束选择节点规格并持续整合。GPU 节点还要等待 Driver、Device Plugin 和镜像预热完成。</p></div>
 <div class="qa-section"><div class="qa-section-title">易错点</div><p>只提高 HPA 副本不保证有节点可运行；只看 GPU-Util 也不足以决定在线推理扩缩容。</p></div>
 </div></div>
-
-## 关联模块
-
-- `Workload 与 Controller`：对象状态机、Operator 和发布细节。
-- `网络与存储`：CNI、Service、DNS、CSI 的完整链路。
-- `安全、准入与多租户`：认证授权、Webhook 和租户治理。
-- `Karpenter 与自动扩缩容`：节点供给、整合和 GPU 节点冷启动。

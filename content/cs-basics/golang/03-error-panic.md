@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 错误处理哲学是**error as value（错误是值）**：用普通值返回错误，调用者必须显式处理；panic 只用于真正不可恢复的程序错误，defer 在函数返回前按 LIFO 执行；面试必考点是 `fmt.Errorf %w` 错误包装、`errors.Is/As`、defer 与 return 的执行顺序。
-
 <div class="card card-m">
 <h3>error 是一个接口</h3>
 <p>Go 内置的 error 就是一个只包含 Error() 方法的 interface，这是最朴素的错误处理设计：</p>
@@ -139,7 +135,7 @@ func g() int {
 fmt.Println(f()) // 1
 fmt.Println(g()) // 0
 </code></pre>
-<div class="qa-summary">一句话：defer 在 return 赋值后、真正返回前执行；如果是命名返回值，defer 可以修改最终返回值；如果是匿名返回值，defer 修改的是局部副本。</div>
+<div class="qa-summary">defer 在 return 赋值后、真正返回前执行；如果是命名返回值，defer 可以修改最终返回值；如果是匿名返回值，defer 修改的是局部副本。</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

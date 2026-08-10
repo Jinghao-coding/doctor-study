@@ -1,13 +1,10 @@
-## 一句话结论
-
-面试官看不到论文全文，只能看到简历上的 3-5 行描述。本节从面试官视角出发，针对简历中每篇论文的每一条 bullet point，预测最可能被追问的问题并给出精炼回答要点。背熟这一页，简历提问环节就不会被问倒。
 <div class="card card-w">
 <h3>简历论文提问的一般规律</h3>
 <p>面试官看简历上的论文/项目描述时，通常按以下路径追问：</p>
 <ol>
 <li><strong>"这个东西解决什么问题？"</strong>——先确认你理解问题本身，不是只记了术语。</li>
 <li><strong>"为什么现有方法不行？"</strong>——考察你是否理解 gap 和 motivation。</li>
-<li><strong>"你的核心想法是什么？"</strong>——一句话说清楚 insight。</li>
+<li><strong>"你的核心想法是什么？"</strong>——明确说清楚 insight。</li>
 <li><strong>"具体怎么实现的？"</strong>——深入技术细节，考察你是否真做了。</li>
 <li><strong>"XX 技术为什么选这个不选那个？"</strong>——设计决策题，考察 trade-off 思维。</li>
 <li><strong>"效果怎么样？怎么评估的？"</strong>——数字背后的实验设计和结论可信度。</li>
@@ -307,10 +304,3 @@
 <div class="qa-a"><p>几个直接相关点：(1) <strong>GPU 利用率优化</strong>——我在 DeepShare/ElastiCo 中做的弹性配额、干扰感知共置、训推混部可以直接应用于提高集群利用率，字节实习中已经验证了类似思路在生产环境可行（400 张空闲卡问题）；(2) <strong>LLM 推理系统</strong>——Maestro 的输出长度预测、分级权重缓存、CUDA VMM 弹性显存思路可以优化 LLM 推理服务的显存利用率和 TTFT；(3) <strong>K8s 调度器开发经验</strong>——我有从零写 Scheduler Plugin、Controller、DaemonSet 的实战经验，不需要 Ramp-up 就能上手 K8s 相关开发；(4) <strong>性能预测能力</strong>——SagePilot 的 GNN 预测思路可以用于作业调度前的资源预估、容量规划、自动扩缩容决策；(5) <strong>工程能力</strong>——Crater 250 卡开源平台的经验证明我能把研究原型推进到生产级可用系统。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `论文工作 / Maestro`：Maestro 详细设计和问答。
-- `论文工作 / DeepShare`：DeepShare 详细设计和问答。
-- `论文工作 / ElastiCo`：训推混部机制细节。
-- `论文工作 / SagePilot`：GNN 预测技术细节。

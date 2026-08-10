@@ -1,6 +1,3 @@
-## 一句话结论
-
-Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行器和状态管理。
 <div class="card card-m">
 <h3>记忆系统：Agent 的上下文管理</h3>
 <p>记忆是 Agent 区别于单次 LLM 调用的关键。一个合格的 Agent 需要管理<strong>短期记忆、长期记忆和工作记忆</strong>，面试中要能说清楚三者的区别和实现方式。</p>
@@ -65,10 +62,3 @@ Agent 组件要拆成模型、提示词、记忆、工具、规划器、执行�
 </table>
 <div class="qa-section"><div class="qa-section-title">多 Agent 的核心挑战</div><ul><li><strong>通信协议：</strong>Agent 之间如何交换信息？结构化 JSON 还是自然语言？</li><li><strong>任务分配：</strong>谁来决定哪个 Agent 做什么？集中式调度还是协商？</li><li><strong>冲突解决：</strong>多个 Agent 意见不一致时如何决策？投票、仲裁还是层级决策？</li><li><strong>上下文共享：</strong>哪些信息需要共享？如何避免上下文爆炸？</li><li><strong>错误传播：</strong>上游 Agent 的错误如何影响下游？如何隔离和恢复？</li></ul></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

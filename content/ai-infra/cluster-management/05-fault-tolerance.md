@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 集群规模越大故障越频繁（1024 卡 MTBF 仅约 42 分钟），所以容错的目标不是防故障而是降 MTTR：靠 DCGM/Prometheus 秒级检测，靠 Checkpoint（最优频率 T*=√(2FC)）兜底进度，靠 PyTorch Elastic 弹性缩容快速恢复，小故障弹性续跑、大故障 Checkpoint 重启。
-
 <div class="card card-m">
 <h3>故障类型全景</h3>
 <p>GPU 集群故障远比 CPU 集群频繁——一块 A100 的 MTBF 约 24 个月，一个 1024 卡集群的平均无故障时间仅约 24 小时。理解每种故障的特征是设计容错体系的前提。</p>
@@ -344,10 +340,3 @@ Step 4: 继续训练
 <p class="qa-summary">GPU 监控的核心不是指标多，而是三层联动——硬件异常要能追溯到训练影响，训练瓶颈要能定位到硬件根因。</p>
 </div>
 </div>
-
-## 关联模块
-
-- <a href="../gpu/index.html">GPU 硬件与资源共享</a>：SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- <a href="../llm-inference/index.html">LLM 推理系统</a>：Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- <a href="../kubernetes/index.html">Kubernetes 核心</a>：调度、资源模型、控制器和扩展机制。
-- <a href="../distributed-training/index.html">分布式训练</a>：多卡通信、队列、公平性、拓扑和容错背景。

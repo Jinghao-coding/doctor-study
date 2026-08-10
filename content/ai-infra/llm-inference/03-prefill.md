@@ -1,6 +1,3 @@
-## 一句话结论
-
-Prefill 阶段的核心是大矩阵计算和首 token 延迟，优化重点是 batching、prefix cache、算子选择和 GPU 算力利用。
 ## Prefill 阶段
 
 Prefill 阶段一次性处理完整 Prompt，计算所有输入 token 的 attention，并生成后续 Decode 所需的 KV Cache。它主要影响 `TTFT`，也就是用户看到第一个 token 前的等待时间。
@@ -47,10 +44,3 @@ TTFT = 排队等待 + Tokenization + Prefill 计算 + 首 token 采样 + 网络�
 ## 易错点
 
 Prefill 不等于“生成阶段”，它主要处理输入上下文。Prefill 慢不一定是模型本身慢，也可能是排队、Prompt 过长、batch 组织不合理或前缀缓存没有命中。
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

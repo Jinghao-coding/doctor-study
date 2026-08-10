@@ -1,9 +1,5 @@
-## 一句话结论
-
-请求生命周期从系统/scheduler 视角看一条请求如何流过推理服务：从 API 接入、排队等待、被 scheduler 选中进入 batch、Prefill 建立 KV Cache、Decode 迭代生成，到最终完成释放 KV block。理解这条链路，才能定位 TTFT、TPOT、吞吐、显存、P99 抖动分别发生在哪个环节。
-
 <div class="callout note">
-<p><strong>与"端到端链路全景"tab 的区别</strong>：全景 tab 从<strong>计算和数据</strong>视角讲 prompt 如何变成 token（Prefill/Decode、Attention、BPE、Continuous Batching 原理）；本 tab 从<strong>系统和调度</strong>视角讲一个<strong>请求</strong>如何在服务中流动、scheduler 做哪些决策、出问题时怎么排查。</p>
+<p>一个推理请求会依次经过接入、预处理、调度、模型执行、采样与流式返回；系统性能取决于请求在各阶段的排队、批处理与资源占用。</p>
 </div>
 
 ## 请求状态机（Request Lifecycle）
@@ -127,11 +123,3 @@ Stream Response | detokenize → 通过 SSE/WebSocket 逐 token 返回用户
 <li><strong>"Prefix Caching 怎么实现的？"</strong>——相同 system prompt 或常见前缀的请求通过 hash 前缀匹配，可以直接引用已存在的物理 block（reference count++），不需要重新 prefill，大幅降低多轮对话和 RAG 场景的 TTFT。</li>
 </ul>
 </div>
-
-## 关联模块
-
-- `端到端链路全景`（subtab）：6 阶段数据计算视角详解，包括 BPE 分词原理、Continuous Batching 对比图、Prefill/Decode 计算过程。
-- `Prefill 阶段 / Decode 阶段`：两阶段计算细节与优化手段。
-- `KV Cache 与 Attention`：Attention 数学原理、GQA/MQA、FlashAttention 详解。
-- `PagedAttention 图解`：block、block table、CoW 共享前缀的 SVG 示意图和例子。
-- `部署运维与 SLO`：TTFT/TPOT 分位数、弹性扩缩容、CUDA Graph、生产 Checklist。

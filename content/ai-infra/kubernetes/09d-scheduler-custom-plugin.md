@@ -1,6 +1,3 @@
-## 一句话结论
-
-自定义调度逻辑优先用 Scheduling Framework Plugin，复杂系统再考虑 extender 或独立 scheduler。
 <div class="card card-m">
 <h3>自定义 Scheduler Plugin 实战</h3>
 <p>面试中经常被问到"你有没有写过自定义调度插件"。回答时应该先讲清楚<strong>有哪些实现方式</strong>，再深入 Framework Plugin 的开发流程，最后给出具体代码示例。</p>
@@ -341,7 +338,7 @@ status:
     return r.Client.Status().Update(ctx, result)
 }</code></pre>
 
-<div class="qa-summary">一句话：PredictionResult 在 AIJob 创建后的 Reconcile 中产生，运行中异步校准；用户用它排查预测状态，scheduler plugin 用它做本地查表决策。</div>
+<div class="qa-summary">PredictionResult 在 AIJob 创建后的 Reconcile 中产生，运行中异步校准；用户用它排查预测状态，scheduler plugin 用它做本地查表决策。</div>
 </div>
 
 <div class="card card-m">
@@ -501,10 +498,3 @@ func (pl *PredictivePlugin) Unreserve(
 </table>
 <div class="qa-summary">收束：预测运行时间决定“先调谁”，共置干扰预测决定“能不能放和放哪里”；预测值统一由 Operator 写 CRD，scheduler plugin 只通过 Informer 本地缓存读取。</div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

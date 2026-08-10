@@ -1,16 +1,13 @@
-## 一句话结论
-
-Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bound。
 <div class="card card-m">
-<h3>本页只讲 Transformer 场景下怎么用 Roofline</h3>
-<p>完整的 Roofline 定义、公式、图和 VGG/MobileNet 例子统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只回答一个问题：<strong>Transformer 里的哪些算子更可能 compute-bound，哪些更可能 memory-bound？</strong></p>
+<h3>Roofline 在 Transformer 算子中的用法</h3>
+<p>Roofline 用算术强度与机器平衡点判断 Transformer 算子更可能 compute-bound 还是 memory-bound。</p>
 <table>
-<tr><th>概念</th><th>本页用法</th></tr>
+<tr><th>概念</th><th>Transformer 分析方法</th></tr>
 <tr><td>算术强度</td><td>判断一个 Transformer kernel 的数据复用程度</td></tr>
 <tr><td>机器平衡点</td><td>A100 约 156 FLOPs/Byte，低于它通常更偏 memory-bound</td></tr>
 <tr><td>优化方向</td><td>memory-bound 优先减少 HBM 读写；compute-bound 优先提高 Tensor Core 利用率</td></tr>
 </table>
-<div class="qa-summary">跳转记忆：模型公式和通用图看性能预测；Transformer 具体算子分类看本页。</div>
+<div class="qa-summary">算术强度低于机器平衡点时优先减少 HBM 读写，高于平衡点时优先提高 Tensor Core 利用率。</div>
 </div>
 
 <div class="card card-d">
@@ -42,14 +39,6 @@ Roofline 用算术强度把 Transformer 算子分成 compute-bound 和 memory-bo
 <div class="qa-q">Q: Roofline 模型在面试中怎么完整回答？</div>
 <div class="qa-a">
 <p>我会先定义横轴和纵轴：横轴是算术强度 <code>FLOPs/Byte</code>，纵轴是实际性能 <code>FLOPs/s</code>。然后给公式：可达性能上限等于 <code>min(峰值算力, 峰值带宽 × 算术强度)</code>。图上斜线是 memory roof，水平线是 compute roof，交点 ridge point 是机器平衡点。如果 kernel 落在斜线区域，优化方向是减少访存、提高数据复用、融合算子；如果落在水平线区域，优化方向是提高 Tensor Core 利用率、优化 tile、使用低精度或减少 FLOPs。</p>
-<div class="qa-summary">一句话：Roofline 用 FLOPs/Byte 判断 kernel 是缺数据还是缺算力。</div>
+<div class="qa-summary">Roofline 用 FLOPs/Byte 判断 kernel 是缺数据还是缺算力。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `性能预测与建模 / Roofline Model`：完整 Roofline 公式、图、硬件 ridge point 和 VGG/MobileNet 例子。
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

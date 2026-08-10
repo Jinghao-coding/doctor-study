@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 调度器核心是 **GMP 模型**：G（goroutine，用户态轻量协程）、M（machine/OS 线程）、P（processor/逻辑处理器）；通过 M:N 调度、work-stealing 窃取、syscall  handoff 实现高效并发，这是 goroutine 比线程轻量、能开几十万的根本原因；面试必问 P 的作用、syscall 阻塞怎么处理、GOMAXPROCS 设置。
-
 <div class="card card-m">
 <h3>GMP 三要素</h3>
 <p>GMP 是 Go runtime 调度器的三个核心数据结构，理解它们是理解整个调度模型的基础。</p>
@@ -12,7 +8,7 @@ Go 调度器核心是 **GMP 模型**：G（goroutine，用户态轻量协程）�
 <tr><td><strong>M</strong></td><td>Machine</td><td>操作系统线程，真正执行代码的实体</td><td>默认最大 10000（runtime.SetMaxThreads），实际活跃数 ≈ GOMAXPROCS + 阻塞 syscall 数</td><td>每个 M 绑定一个内核线程，M 不保存 G 的状态，需要 P 才能运行 G</td></tr>
 <tr><td><strong>P</strong></td><td>Processor</td><td>逻辑处理器，持有本地 G 运行队列，是 M 运行 G 的「许可证」</td><td>GOMAXPROCS 个，默认 = CPU 核数</td><td>P 本地队列无锁、容量 256；P 还有 mcache（内存本地缓存），减少全局锁竞争</td></tr>
 </table>
-<div class="qa-summary">一句话：G 是要执行的任务，M 是干活的工人（OS 线程），P 是工人的工作台（本地队列+资源），M 必须绑定 P 才能执行 G。</div>
+<div class="qa-summary">G 是要执行的任务，M 是干活的工人（OS 线程），P 是工人的工作台（本地队列+资源），M 必须绑定 P 才能执行 G。</div>
 </div>
 
 <div class="card card-s">
@@ -58,7 +54,7 @@ Go 调度器核心是 **GMP 模型**：G（goroutine，用户态轻量协程）�
    </ul>
 </li>
 </ol>
-<div class="qa-summary">一句话：阻塞 syscall 时 P 和 M 分离，P 换个 M 继续跑其他 G，这就是为什么一个 goroutine 阻塞不会卡住整个程序——前提是不要用 CGO 阻塞、不要做纯计算死循环（需要抢占）。</div>
+<div class="qa-summary">阻塞 syscall 时 P 和 M 分离，P 换个 M 继续跑其他 G，这就是为什么一个 goroutine 阻塞不会卡住整个程序——前提是不要用 CGO 阻塞、不要做纯计算死循环（需要抢占）。</div>
 <div class="card-w">
 <h4>⚠️ 什么操作会阻塞 P，什么不会？</h4>
 <table>

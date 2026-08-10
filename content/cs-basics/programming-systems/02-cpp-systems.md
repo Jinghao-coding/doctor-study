@@ -1,5 +1,2 @@
-## 一句话结论
-
-C++ 在 AI Infra 里占据 Python 之下的性能关键路径——训练框架、推理引擎、通信库、算子 runtime 都靠它扛吞吐，所以面试 C++ 的考点也都围绕这条路径：RAII/智能指针管资源、move/allocator 抠内存性能、mutex/atomic 做并发、动态库/ABI 处理链接加载、perf/gdb/sanitizer 做性能排障。
 <div class="card card-m"><h3>C++ 在 AI Infra 中为什么重要</h3><p>训练框架、推理引擎、通信库、算子 runtime 和高性能服务里，C++ 常处在 Python 之下的性能关键路径。</p></div>
 <div class="card card-d"><h3>高频考点</h3><table><tr><th>方向</th><th>基础概念</th><th>AI Infra 场景</th></tr><tr><td>资源管理</td><td>RAII、析构、智能指针</td><td>CUDA stream、buffer、socket 自动释放</td></tr><tr><td>内存性能</td><td>move、拷贝、省略、allocator</td><td>减少 tensor metadata 拷贝</td></tr><tr><td>并发同步</td><td>mutex、atomic、condition_variable</td><td>调度队列、异步回调</td></tr><tr><td>链接加载</td><td>动态库、符号、ABI</td><td>CUDA/NCCL 插件加载失败</td></tr><tr><td>性能排查</td><td>perf、gdb、sanitizer</td><td>CPU hotspot、死锁、越界、泄漏</td></tr></table></div>

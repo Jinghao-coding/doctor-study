@@ -1,6 +1,3 @@
-## 一句话结论
-
-KV Cache 显存预算决定推理并发上限，单 token、单请求、并发请求要逐级放大计算。
 <div class="card card-d">
 <h3>单 token KV Cache 到底多大：Llama-2-70B 实算</h3>
 <p>KV Cache 大小公式：</p>
@@ -75,10 +72,3 @@ KV Cache 显存预算决定推理并发上限，单 token、单请求、并发�
 <div class="qa-q">Q: 为什么 KV Cache 量化比权重量化更需要小心？</div>
 <div class="qa-a"><p>权重量化误差是静态的、一次性的；而 KV 在 decode 阶段每一步都被反复读出来做 attention，量化误差会沿生成步累积并扰动注意力分布，越长的序列影响越明显。所以 KV 一般 INT8 较稳，INT4 要配合 per-channel/group 量化、保护敏感层，否则容易掉点。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

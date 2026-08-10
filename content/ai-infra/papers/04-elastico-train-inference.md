@@ -1,6 +1,3 @@
-## 一句话结论
-
-ElastiCo 面向训练与离线 LLM 推理在同一 GPU 上的安全共置，提出资源形态变换、弹性影子定价与干扰感知共置三项机制，以 Kubernetes 原生中间件实现、无需改用户代码，在 64 卡实测中 JCT 降低 2.94×、GPU 利用率从 25% 提升至 46%。
 <div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/PE_Journal2026_ElastiCo.pdf" target="_blank">Performance Evaluation 2026 — ElastiCo PDF</a></p>
 </div>
@@ -131,10 +128,3 @@ ElastiCo 面向训练与离线 LLM 推理在同一 GPU 上的安全共置，提�
 <div class="qa-a"><p>MPS SM 比例调整通过设置 CUDA_MPS_ACTIVE_THREAD_PERCENTAGE 并重启 MPS control daemon 实现，切换延迟约 50-200ms。ElastiCo 不会在 prefill 阶段调整 SM 比例（那是推理的关键路径），而是在 decode 阶段或训练通信阶段做调整。对离线推理来说，200ms 级别的波动完全可接受。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `论文工作 / DeepShare`：多租户层面的配额治理，可与 ElastiCo 组合。
-- `GPU 硬件与资源共享 / MIG/MPS`：GPU 共享的硬件基础。
-- `Kubernetes 核心 / Scheduler 插件`：K8S 调度框架扩展点落地。
-- `LLM 推理系统`：推理侧 prefill/decode 资源特征。

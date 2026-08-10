@@ -24,10 +24,6 @@
 | 复杂拓扑感知训练调度 | 每个作业只占几 GB 显存，核心矛盾先是同卡装箱和机器多维配比 |
 | 只追求单作业性能最优 | 目标是整体吞吐和利用率，允许在可控范围内做同卡并发 |
 
-## 一句话结论
-
-这个场景的本质是**海量短作业在异构 GPU 集群上的在线多维装箱问题**。调度器不是给每个作业独占一张 GPU，而是把 GPU 显存当成主要可切分资源，同时把 CPU 和 host memory 作为硬约束；先补齐资源画像和调度观测，再做 GPU flavor 分池、候选机器快速索引、显存主导 best-fit / bin packing、短作业 backfill 和运行时反馈校准，最后再引入预测和批量调度优化吞吐。
-
 ## 题目边界
 
 | 维度 | 题设信息 | 调度含义 |
@@ -171,7 +167,7 @@ Best-Fit 打分 | 最小剩余显存 + 最少机器残余碎片
 <div class="qa-section"><div class="qa-section-title">3. 再做资源池和索引</div><p>按 GPU 型号和显存容量分池，维护每张 GPU 的剩余显存、每台机器的剩余 CPU/内存，用 memory bucket 或有序结构快速找候选，避免全量扫描。</p></div>
 <div class="qa-section"><div class="qa-section-title">4. 调度策略</div><p>核心用显存主导的 best-fit/bin packing：优先把作业放到刚好能容纳的 GPU 上，CPU/内存做硬约束；批量调度时按显存需求从大到小，短作业可以 backfill 碎片窗口。</p></div>
 <div class="qa-section"><div class="qa-section-title">5. 工程化和迭代</div><p>为了支撑几千万作业，需要 batch scheduling、scheduler cache reserve、分片调度器和失败 rollback。后续再引入显存/时长预测、干扰检测、defrag 和容量规划。</p></div>
-<div class="qa-summary">一句话收束：先量化浪费，再按 GPU flavor 分池，用显存 best-fit 做在线多维装箱，靠批量调度和反馈预测把吞吐做上去。</div>
+<div class="qa-summary">先量化浪费，再按 GPU flavor 分池，用显存 best-fit 做在线多维装箱，靠批量调度和反馈预测把吞吐做上去。</div>
 </div>
 </div>
 
@@ -196,10 +192,3 @@ Best-Fit 打分 | 最小剩余显存 + 最少机器残余碎片
 <div class="qa-q">Q: 怎么衡量优化有效？</div>
 <div class="qa-a"><p>看四类指标：GPU 显存利用率和碎片率、作业吞吐和 queue time、CPU/内存残余资源浪费、失败率/OOM/重试率。不能只看平均 GPU-Util，因为这个场景主瓶颈是显存装箱和作业调度吞吐。</p></div>
 </div>
-
-## 关联模块
-
-- `多租户 GPU 调度`：提供 GPU 调度系统设计的通用框架。
-- `任务调度理论`：提供 bin packing、SJF、backfill、多资源公平等算法背景。
-- `性能预测与建模`：提供显存峰值和运行时长预测的后续优化方向。
-- `GPU 硬件与资源共享`：提供同卡多进程、显存隔离和利用率诊断背景。

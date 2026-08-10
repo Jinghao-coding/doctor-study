@@ -1,6 +1,3 @@
-## 一句话结论
-
-DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配额借用、预测性调度和干扰感知合用三个子系统串成闭环，在保障租户 QoS 的前提下把 GPU 利用率从 39.64% 提到 70.58%，QoS 合规率 93%。
 <div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/IEEE_cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
 </div>
@@ -68,7 +65,7 @@ DeepShare 用统一指标配额保障度 QAD 把多租户 GPU 集群的弹性配
 <li><strong>Controller</strong>：把 <code>TenantQuota</code> CRD 和作业 class annotation 整理为租户 quota 元数据。</li>
 <li><strong>Scheduler Plugin</strong>：维护瞬时/平滑 QAD 和队列，执行排序、放置、colocation 准入与抢占。</li>
 </ul>
-<p>面试一句话总结：<span class="hl">Controller 管静态权益元数据，Scheduler Plugin 管实时 QAD 控制环。</span></p>
+<p>面试<span class="hl">Controller 管静态权益元数据，Scheduler Plugin 管实时 QAD 控制环。</span></p>
 <p>论文不覆盖 Gang Scheduling，因此不引入 PodGroup / minAvailable；但 <strong>Permit 仍用于等待 CPU/Memory in-place resize 生效</strong>，不要把两种用途混在一起。</p>
 </div>
 
@@ -306,7 +303,7 @@ QAD 接近时，预测运行时间短的作业优先。</code></pre>
 <p>第一，提出了 <strong>QAD</strong> 这个连续的租户保障指标。它不是简单 quota，也不是简单资源使用率，而是衡量租户当前 Guaranteed 需求被满足的程度。</p>
 <p>第二，用 QAD 把多个原本分散的资源管理决策统一起来，包括 quota 借用和回收、队列排序、抢占、colocation admission 和 QoS reporting。</p>
 <p>第三，做了一个 Kubernetes-native 的资源管理系统，把 DRA、预测调度和干扰感知 colocation 结合起来，在保证 tenant QoS 的同时提高 GPU 利用率。</p>
-<p>所以如果用一句话总结 DeepShare：</p>
+<p>DeepShare 的核心机制可以概括为：</p>
 <blockquote>
 <p><strong>DeepShare 不是单纯追求更高 GPU 利用率，也不是单纯做静态 quota 隔离，而是用 QAD 这个统一指标，在多租户 GPU 集群里动态平衡 QoS 保障和资源效率。</strong></p>
 </blockquote>
@@ -319,10 +316,3 @@ QAD 接近时，预测运行时间短的作业优先。</code></pre>
 <p>所以这篇论文的核心不是某一个单点调度算法，而是一个围绕租户资源保障的统一资源管理框架。</p>
 </blockquote>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-多核 CPU 中每个 core 有私有的 L1/L2，共享 L3，必然面临 cache coherence（缓存一致性）问题：MESI 协议保证各 core 看到一致的数据。但一致性不等于顺序性，CPU 和编译器都会重排指令，多线程编程必须靠内存屏障和 atomic 保证顺序。
-
 <div class="card card-m">
 <h3>Cache Coherence：MESI 协议</h3>
 <p>每个 cache line 处于四种状态之一：</p>

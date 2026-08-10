@@ -1,6 +1,3 @@
-## 一句话结论
-
-Decode 阶段的核心是逐 token 生成和 KV cache 访存，batch 小时常见 memory-bound。
 ## Decode 阶段
 
 Decode 阶段负责自回归生成。模型每一步只生成一个新 token，但每一步都需要读取历史 KV Cache，所以它通常是推理服务中最容易受到显存带宽限制的阶段。
@@ -46,10 +43,3 @@ Decode 阶段的用户感知不是“第一个 token 多快”，而是“后续
 ## 易错点
 
 Decode 的 GPU 利用率低不一定是实现差，根因通常是 memory-bound。增大 batch 可以摊销权重读取，但 KV Cache 读取也会随 batch 和序列长度增长，所以 batch 不是无限增大的。
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

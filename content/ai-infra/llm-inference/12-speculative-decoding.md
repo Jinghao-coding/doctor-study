@@ -1,6 +1,3 @@
-## 一句话结论
-
-Speculative Decoding 利用 autoregressive decode 阶段的 memory-bound 特性，用小模型（或同等模型的轻量头）快速"猜"多个 future token，再用大模型一次 forward pass 并行验证，用略多于生成 1 个 token 的代价拿到 k 个被接受的 token，在不改变输出分布的前提下获得 2-3x 加速。
 <div class="card card-m">
 <h3>核心洞察：Autoregressive Decode 为什么慢</h3>
 <p>LLM 推理分两阶段：prefill（处理输入 prompt，一次 forward 算完所有 token）和 decode（自回归逐个生成输出 token）。<strong>Decode 阶段是典型的 memory-bound 场景</strong>：</p>
@@ -182,10 +179,3 @@ Tree draft:  [prefix] → t1a ── t2a ── t3a
 <div class="qa-q">Q: Speculative decoding 能用于 chunked prefill 吗？</div>
 <div class="qa-a"><p>投机解码的原理本身不局限于 decode，但在 prefill（包括 chunked prefill）上收益很小：prefill 是 compute-bound 的（矩阵×矩阵运算，算力利用率高），"多读几个 token 一起算"的边际节省不大——因为本来就一次算了很多 token，权重读取成本早已被摊薄。投机解码的核心收益来自 decode 阶段"每步只算 1 个 token 却读完全部权重"的极度不平衡，prefill 不存在这个不平衡，所以基本不用。但 chunked prefill 把长 prompt 分成多块 prefill，可以和 decode 混跑，在系统层面可以协同调度，这是另一回事。</p></div>
 </div>
-
-## 关联模块
-
-- `04-decode.md`：Decode 阶段的 memory-bound 特性是投机解码存在的根本前提。
-- `06-performance-bottlenecks.md`：Roofline 分析、compute-bound vs memory-bound 的判断框架。
-- `07-optimization-techniques.md`：投机解码是主流推理优化技术之一，与量化、batching、FlashAttention 等正交。
-- `16-flashattention-explained.md`：同样是 IO-aware 优化，一个优化 attention kernel 的 HBM 读写，一个利用 decode 的带宽瓶颈做并行验证。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-Scheduler 面试题不能停留在“Filter 后 Score”。需要讲清队列、Snapshot、Assume、调度周期与绑定周期，并说明普通 Pod 调度为什么不能直接满足 Gang、GPU 拓扑、公平性和高代价抢占。
-
 ## 核心调度链路
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -85,10 +81,3 @@ Scheduler 面试题不能停留在“Filter 后 Score”。需要讲清队列、
 <div class="qa-section"><div class="qa-section-title">展开</div><p>小任务可优先填充已有碎片，大任务保留完整节点或 NVLink island；用 Reservation 防止长期饥饿，用 Backfill 利用等待窗口。短期可通过 Node Label、拓扑发现和 Scheduler Plugin 实现，设备级属性逐步可用 DRA ResourceSlice/Claim 表达。</p></div>
 <div class="qa-section"><div class="qa-section-title">易错点</div><p>总空闲 GPU 数足够不代表能形成任务需要的同机或同拓扑集合。</p></div>
 </div></div>
-
-## 关联模块
-
-- `Scheduler 主链路`：队列、Cache、Assume、绑定与抢占源码路径。
-- `插件开发与扩展点`：各 Framework Hook 和工程代码骨架。
-- `任务调度理论`：Gang、Backfill、公平性、碎片与代价感知抢占。
-- `GPU 集群管理`：Volcano、Kueue、拓扑和故障恢复。

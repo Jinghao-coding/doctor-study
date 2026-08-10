@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 性能指标要按“算力、显存、利用率、互联、能耗”五条线理解，再用 Roofline 把 kernel 归类为 compute-bound 或 memory-bound。面试中最重要的判断是：不要把理论 TFLOPS、GPU-Util 或显存占用单独当成“性能好”的证据。
-
 ## 核心概念
 
 | 指标族 | 代表指标 | 回答什么问题 | 常见误区 |
@@ -87,7 +83,7 @@ GPU 性能指标要按“算力、显存、利用率、互联、能耗”五条�
 
 <div class="card card-d">
 <h3>Roofline 模型：判断 kernel 是缺算力还是缺数据</h3>
-<p>完整的 Roofline 模型定义、公式和图已经统一放在 <strong>性能预测与建模 / Roofline Model</strong>。本页只保留 GPU 指标视角：Roofline 用来把 kernel 的 FLOPs、Bytes、实际吞吐和硬件峰值放在一张图里，判断瓶颈是算力、显存带宽还是其他因素。</p>
+<p>Roofline 把 kernel 的 FLOPs、Bytes、实际吞吐和硬件峰值放在一张图里，判断瓶颈是算力、显存带宽还是其他因素。</p>
 <table>
 <tr><th>要看什么</th><th>指标来源</th><th>说明</th></tr>
 <tr><td>Arithmetic Intensity</td><td>FLOPs / Bytes</td><td>低于 ridge point 通常偏 memory-bound</td></tr>
@@ -111,8 +107,8 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 什么是 Roofline 模型？面试怎么回答？</div>
 <div class="qa-a">
-<p>Roofline 模型完整解释统一看 <strong>性能预测与建模 / Roofline Model</strong>。在 GPU 指标页里，我会把它作为诊断工具：先估 FLOPs 和 Bytes，算 Arithmetic Intensity，再和硬件 ridge point 比较，判断热点 kernel 是 memory-bound 还是 compute-bound。</p>
-<div class="qa-summary">本页只记用途：Roofline 把 GPU 性能指标收敛成“缺数据还是缺算力”。</div>
+<p>先估 FLOPs 和 Bytes，算 Arithmetic Intensity，再和硬件 ridge point 比较，判断热点 kernel 是 memory-bound 还是 compute-bound。</p>
+<div class="qa-summary">Roofline 把 GPU 性能指标收敛成“缺数据还是缺算力”。</div>
 </div>
 </div>
 
@@ -215,13 +211,6 @@ ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- `利用率诊断`：把 GPU-Util 深挖到 SM Active、Occupancy、Warp Stall。
-- `瓶颈分类`：把指标组合映射到 compute-bound、memory-bound、communication-bound。
-- `GPU 互联与数据路径`：解释 PCIe、NVLink、RDMA 对多卡性能的影响。
-- `性能预测指标`：把这些指标进一步转成特征和标签。
 
 <div class="card card-d">
 <h3>官方参考</h3>

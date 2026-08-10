@@ -1,7 +1,3 @@
-## 一句话结论
-
-Kueue 是 K8s SIG Scheduling 的作业准入与排队系统：它不替换 kube-scheduler，而是在 Pod 真正进入调度前决定 Workload 能不能开始、用哪类资源开始。
-
 <div class="card card-m">
 <h3>Kueue 解决什么问题</h3>
 <p>Kueue 的核心不是“给 Pod 打分”，而是“作业能不能被准入”。它适合你不想替换默认 scheduler，但需要 LocalQueue、ClusterQueue、ResourceFlavor、borrowing 和公平共享的场景。</p>
@@ -24,7 +20,7 @@ Kueue 是 K8s SIG Scheduling 的作业准入与排队系统：它不替换 kube-
 <li>准入后给 PodSet 写入 flavor 相关 nodeSelector / toleration 等信息。</li>
 <li>具体 Pod → Node 绑定仍由 kube-scheduler 完成。</li>
 </ol>
-<div class="qa-summary">一句话：Kueue 像售票系统，决定作业能不能进场和坐哪个区域；kube-scheduler 像领位员，决定具体坐哪个座位。</div>
+<div class="qa-summary">Kueue 像售票系统，决定作业能不能进场和坐哪个区域；kube-scheduler 像领位员，决定具体坐哪个座位。</div>
 </div>
 
 <div class="card card-w">

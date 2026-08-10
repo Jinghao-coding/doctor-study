@@ -1,20 +1,3 @@
-## 一句话结论
-
-操作系统专题负责解释进程、虚拟内存、I/O、调度和隔离这些底层机制；容器、GPU、训练和推理专题负责解释它们在具体 AI Infra 系统里如何落地。复习时要能完成“现象 → OS 机制 → 专项模块”的映射，但不要在 OS 页面重复背一遍专项实现。
-
-## 知识边界
-
-| OS 基础 | 在 AI Infra 中的现象 | 深入模块 |
-|---|---|---|
-| namespace、cgroup、rootfs | 容器隔离、OOMKilled、CPU throttling、`/dev/shm` 不足 | Linux 与容器、Linux 内核与大模型 |
-| 虚拟内存、page cache、mmap | 权重加载慢、RSS 与 page cache 混淆、缺页抖动 | Linux 内核与大模型、LLM 推理 |
-| NUMA、CPU affinity | DataLoader 供给不足、跨 Socket H2D、GPU-NIC 路径变长 | 计算机组成、GPU |
-| DMA、pinned memory | H2D/D2H 拷贝与计算无法重叠 | GPU |
-| epoll、线程池、协程 | 推理网关排队、CPU 前后处理、连接数扩展 | LLM 推理 |
-| 文件系统与 I/O | 数据集小文件、Checkpoint、模型冷启动 | 分布式训练、LLM 推理 |
-| signal、进程生命周期 | Pod 优雅终止、训练任务保存 Checkpoint | Kubernetes、分布式训练 |
-| perf、strace、eBPF | CPU 热点、系统调用阻塞、长尾延迟 | 各专项排障页 |
-
 ## 面试回答方法
 
 遇到系统问题时先分四层，不要一上来只报命令：
@@ -42,11 +25,3 @@
 - 显存占用高只说明资源常驻，不说明 GPU 正在高效计算。
 - `top` 中 CPU 不满不能排除单核热点、锁竞争、系统调用等待和 NUMA 问题。
 - `mmap` 不等于数据已经进入物理内存；首次访问仍可能触发缺页。
-
-## 关联模块
-
-- `Linux 与容器基础`：namespace、cgroup、rootfs、CRI/OCI 的完整实现。
-- `Linux 内核与大模型系统`：NUMA、大页、零拷贝和权重加载。
-- `GPU 硬件与资源共享`：CUDA、数据搬运、GPU 共享与性能诊断。
-- `Kubernetes 核心`：Pod 生命周期、资源模型和节点排障。
-- `LLM 推理系统 / 分布式训练`：OS 机制在 Serving 与训练链路中的具体表现。

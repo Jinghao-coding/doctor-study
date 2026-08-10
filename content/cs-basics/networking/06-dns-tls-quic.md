@@ -1,6 +1,3 @@
-## 一句话结论
-
-DNS 解析是网络请求第一步，K8s 中 ndots:5 触发 search domain 扩展是常见性能坑；TLS 1.3 将握手从 2-RTT 降到 1-RTT 并支持 0-RTT 恢复（但 0-RTT 有重放风险）；QUIC 基于 UDP 实现，解决了 TCP 队头阻塞问题，原生支持连接迁移和内置 TLS 1.3，是 HTTP/3 的底层协议。
 <div class="card card-m">
 <h3>DNS：域名系统</h3>
 <p>DNS（Domain Name System）是互联网的电话簿：将域名翻译为 IP 地址。DNS 是一个分层的分布式数据库系统。</p>

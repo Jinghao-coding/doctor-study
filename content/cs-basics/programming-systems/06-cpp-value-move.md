@@ -1,6 +1,3 @@
-## 一句话结论
-
-C++ 值类别分为 glvalue（广义左值：lvalue + xvalue）和 rvalue（纯右值 prvalue + 将亡值 xvalue），移动语义通过 rvalue reference（T&&）"偷"资源而非深拷贝，std::move 只是 static_cast 不做真正移动，完美转发靠 std::forward + 引用折叠保持参数的值类别，移动构造/赋值必须加 noexcept 否则 vector 扩容等场景会退化到拷贝，Rule of Five（或 Zero）是写资源管理类的基本纪律。
 <div class="card card-m">
 <h3>C++ 值类别（Value Categories）</h3>
 <p>C++11 起表达式按两个独立维度分类：有没有身份（identity）、能不能被移动（movable from）：</p>

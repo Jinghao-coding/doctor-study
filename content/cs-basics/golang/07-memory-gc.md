@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 内存管理是 **TCMalloc 风格的三级分配**（mcache/mcentral/mheap）+ **并发三色标记清除 GC**；核心考点是逃逸分析（栈 vs 堆）、三色标记+写屏障、STW 阶段、GOGC/GOMEMLIMIT 调优；Go 不用分代 GC，因为写屏障成本和 Go 的高分配速率不划算。
-
 <div class="card card-m">
 <h3>内存分配器：TCMalloc 风格</h3>
 <p>Go 内存分配器参考了 TCMalloc（Thread-Caching Malloc）的设计，核心思想是「分级缓存、减少锁竞争」，和 GMP 模型中 P 的本地缓存配合得很好。</p>
@@ -57,7 +53,7 @@ func send(ch chan int) {
 <li>在 slice/map 里存指针</li>
 <li>变量太大，栈放不下（Go 栈初始 2KB，最大 1GB，但大对象一般直接堆）</li>
 </ul>
-<div class="qa-summary">一句话：编译器觉得变量在函数返回后还要被引用，就「逃逸」到堆上；减少逃逸 = 减少 GC 压力 = 程序更快。</div>
+<div class="qa-summary">编译器觉得变量在函数返回后还要被引用，就「逃逸」到堆上；减少逃逸 = 减少 GC 压力 = 程序更快。</div>
 </div>
 </div>
 
@@ -95,7 +91,7 @@ func send(ch chan int) {
 <li>新指向的指针如果是堆上的，标灰（插入屏障）</li>
 <li>栈上的写操作不用写屏障（栈扫描是 STW 的，最后会 rescan 一遍栈，性能更好）</li>
 </ol>
-<div class="qa-summary">一句话：写屏障是编译器插在指针赋值前的一小段代码，在并发标记时维护三色不变性，防止误回收存活对象；代价是指针写入慢一点点，但是 STW 大大缩短。</div>
+<div class="qa-summary">写屏障是编译器插在指针赋值前的一小段代码，在并发标记时维护三色不变性，防止误回收存活对象；代价是指针写入慢一点点，但是 STW 大大缩短。</div>
 </div>
 
 <div class="card card-s">

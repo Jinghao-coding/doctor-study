@@ -1,7 +1,3 @@
-## 一句话结论
-
-Kubernetes 不直接执行 CUDA，也不负责切分 GPU。它通过 Device Plugin 或 DRA 获取设备资源模型，由 scheduler 完成“设备与节点”的联合放置，再由 kubelet、设备驱动和容器运行时把已分配设备注入容器。MIG、MPS、Time-Slicing、HAMi 的硬件或共享机制统一放在 GPU 专题。
-
 ## Device Plugin 主链路
 
 ```flow
@@ -93,11 +89,8 @@ Kubernetes 中的资源数量只是调度抽象，不能单独证明硬件隔离
 <div class="qa-a"><p>Device Plugin 解决资源注册和 Allocate，但容器还需要 Container Toolkit/CDI 与运行时正确注入设备节点和驱动库。还应检查 Pod 是否真正请求了资源、Allocate 是否成功，以及宿主机 Driver 与容器 CUDA 兼容性。</p></div>
 </div>
 
-## 关联模块与官方资料
+## 官方资料
 
-- `GPU / 新 GPU 节点接入`：Driver、Runtime、Toolkit、Device Plugin、GPU Operator 的部署和验收。
-- `GPU / MIG、MPS、Time-Slicing、HAMi`：共享机制、配置与隔离边界。
-- `任务调度理论`：Gang、拓扑、公平性和抢占算法。
 - [Kubernetes Device Plugins](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)
 - [Kubernetes Dynamic Resource Allocation](https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/)
 - [Kubernetes v1.34: DRA Core Features Graduate to GA](https://kubernetes.io/blog/2025/09/01/kubernetes-v1-34-dra-updates/)

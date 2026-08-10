@@ -1,6 +1,3 @@
-## 一句话结论
-
-Agent 面试要能解释 ReAct/Plan-Execute/RAG/Memory/Tool Use 的边界和风险。
 <div class="card card-r">
 <h3>Agent 面试高频题</h3>
 <p>以下问题覆盖 Agent 面试中最常被问到的知识点，从基础概念到深入原理。</p>
@@ -105,10 +102,3 @@ Agent 面试要能解释 ReAct/Plan-Execute/RAG/Memory/Tool Use 的边界和风�
 <div class="qa-summary">Prompt Injection 是 Agent 安全的首要威胁。防护 = 输入隔离 + 指令加固 + 权限控制 + 输出审核。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-C++ 并发核心是 std::thread + mutex + condition_variable + future/promise + atomic 五件套；mutex 系列配 RAII 锁（lock_guard/unique_lock/scoped_lock）防死锁，condition_variable 必须和 mutex 一起用且 wait 要带 predicate 防虚假唤醒，atomic 靠 memory order（relaxed/acquire/release/seq_cst）建立跨线程 happens-before 关系，C++ 内存模型定义 data race 为 UB，无锁编程用 CAS 循环但要注意 ABA 问题。
 <div class="card card-m">
 <h3>std::thread 基础</h3>
 <pre><code class="language-cpp">#include &lt;thread&gt;

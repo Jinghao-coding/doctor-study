@@ -1,7 +1,3 @@
-## 一句话结论
-
-端到端推理链路从用户请求进入服务开始，一直到 token 流式返回和资源释放。自回归推理 = 先 Prefill 并行读完整 Prompt（compute-bound，决定 TTFT），再 Decode 逐 token 自回归生成（memory-bound，决定 TPOT）。调度器通过 Continuous Batching 在 iteration 粒度动态重组 batch，是提升 GPU 利用率的关键。
-
 <h3>完整推理链路概览</h3>
 <p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
 
@@ -181,11 +177,3 @@
 </table>
 </div>
 <p><strong>推理引擎决定"怎么高效地跑"，模型决定"到底生成什么"。</strong>前者偏"编排与优化"，后者偏"语义计算与内容生成"。</p>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统 / 请求生命周期与调度`：scheduler 职责、PagedAttention 与 OS 分页类比、常见问题定位表。
-- `Prefill 阶段 / Decode 阶段`：两阶段的深入展开与优化手段。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

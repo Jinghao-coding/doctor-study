@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 利用率诊断不能停在 `nvidia-smi` 的 `GPU-Util`。推荐链路是：GPU-Util 看时间上有没有 kernel，SM Active 看活有没有铺满 SM，Occupancy 看 SM 里 warp 是否足够，Warp Stall 看 warp 为什么发不出去，Compute/Memory Throughput 看瓶颈类型，最后用业务吞吐和延迟判断“忙得是否有效”。
-
 ## 诊断入口
 
 ```flow
@@ -25,7 +21,7 @@ GPU 利用率诊断不能停在 `nvidia-smi` 的 `GPU-Util`。推荐链路是：
 | Tensor Core Util | AI 矩阵算力是否用起来 | 只对 GEMM/Conv/Attention 等相关 |
 
 <div class="card card-w">
-<h3>先记住一句话：GPU-Util 高，不等于 GPU 真正用得好</h3>
+<h3>GPU-Util 高不等于 GPU 真正用得好</h3>
 <p>判断一个 GPU “利用率高不高”，不要只看 <code>nvidia-smi</code> 里的 <code>GPU-Util</code>。它只能告诉你采样窗口里 GPU 时间上是否有 kernel 在跑，但不能告诉你 SM 是否铺满、warp 是否真的能发射、Tensor Core 是否用起来、瓶颈到底在计算还是显存。<code>nvidia-smi</code> 本身定位是 NVIDIA System Management Interface，用于监控和管理 NVIDIA GPU，并支持查询 GPU、显存、功耗、温度、时钟等系统级信息[[nvidia-smi Documentation](https://docs.nvidia.com/deploy/nvidia-smi/index.html)]。</p>
 <div class="qa-summary">最推荐的判断链路：GPU-Util 看有没有活；SM Active 看活有没有铺满 SM；Occupancy 看 SM 里 warp 是否足够；Warp Stall 看 warp 是否真能执行；Compute/Memory Throughput 看瓶颈在哪；Tensor Core Util 看 AI 算力是否用上；最后用吞吐和延迟判断 GPU 忙得是否有效。</div>
 </div>
@@ -304,10 +300,3 @@ Power / Clock / Thermal：
 
 业务指标：
   GPU 忙，是否真的换来了 tokens/sec、samples/sec、QPS 和低延迟。</code></pre>
-
-## 关联模块
-
-- `性能指标`：理解 GPU-Util、SM Active、Occupancy、Roofline 的定义。
-- `瓶颈分类`：把诊断指标组合翻译成 compute/memory/communication 瓶颈。
-- `Host-Device 数据拷贝`：timeline 空洞和 memcpy 往往来自 H2D/D2H。
-- `CUDA 内存模型与 Occupancy`：解释 occupancy 受 block size、寄存器和 shared memory 影响。

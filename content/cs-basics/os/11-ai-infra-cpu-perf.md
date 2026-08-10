@@ -1,6 +1,3 @@
-## 一句话结论
-
-load average 高不等于 CPU 忙，因为 load 同时统计 runnable 和 D 状态不可中断睡眠任务，大量任务卡在磁盘或网络 I/O 也会推高 load。判断 CPU 瓶颈要同时看 load、utilization、run queue、iowait 和 context switch。AI Infra 里数据预处理、tokenizer、序列化和容器 CFS throttling 都可能让 CPU 成瓶颈、拖垮 GPU 喂数据。
 ## AI Infra 面试模块：CPU 调度与性能分析
 
 AI Infra 里 CPU 不是“辅助资源”。数据预处理、tokenizer、detokenizer、请求调度、网络协议栈、NCCL 辅助线程、checkpoint 序列化都可能让 CPU 成为瓶颈。

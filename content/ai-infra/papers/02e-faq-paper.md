@@ -1,6 +1,3 @@
-## 一句话结论
-
-这一节是基于 IEEE Cluster 2026 原稿的论文级深度问答，覆盖面试官按论文细节追问的参数与机制：EMA λ=0.3 与 50ms 周期的收敛意义、QAD 边界规定、运行时间预测准确率、Random Forest 干扰预测、抢占效率 E_j、动态容忍 ρ_tol、过载降级数据、消融贡献，以及与 Lucid/Tiresias/Gavel/HiveD 的本质差异和论文承认的四条局限。
 <div class="card card-d">
 <h3>论文原文延伸问答（基于 IEEE Cluster 2026 原稿）</h3>
 <p>下面这组问题对应面试官真正会按论文细节追问的角度：参数选取、消融、敏感性、对比 baseline、工程边界。回答全部出自论文正文与 §V 实验。</p>
@@ -74,10 +71,3 @@
 <div class="qa-a"><p>论文 §VI Related Work 总结：<br/>· <strong>Tiresias</strong>：MLFQ 排序但无 runtime knowledge；DeepShare 加了运行时间预测和 QAD。<br/>· <strong>Lucid</strong>：最强非侵入式 sharing baseline，但干扰模型简单（DeepShare 干扰 \(R^2=0.902\) 显著更准）+ 静态阈值（DeepShare 用 \(\rho_{tol}\) 动态调）。<br/>· <strong>Gavel</strong>：max-min fair throughput 但<strong>假设 GPU 独占</strong>，没法 colocate。<br/>· <strong>HiveD</strong>：静态 cell 分区给保证，<strong>不弹性</strong>，恰好是 DRA 要解的问题。<br/>· <strong>Optimus / ElasticFlow</strong>：在线 runtime prediction 但<strong>无 QAD</strong>，会让短任务覆盖租户公平性。<br/>论文卖点是<strong>把 quota assurance + interference colocation + runtime prediction 三者用单一 \(\tilde{Q}_i(t)\) 信号闭环</strong>，前述任何一篇都只解决其中一两块。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

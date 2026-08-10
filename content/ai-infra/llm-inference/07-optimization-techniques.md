@@ -1,6 +1,3 @@
-## 一句话结论
-
-推理优化是多层组合：batching 提升吞吐，量化降显存和带宽，投机解码降 decode 步数，prefix cache 复用公共前缀。
 <div class="card card-m">
 <h3>优化技术：用显存、带宽和调度换延迟/吞吐</h3>
 <p>LLM 推理优化不是单一技巧，而是围绕三类资源做权衡：算力、显存和调度队列。高频优化包括 batching、KV cache 管理、量化、投机解码、prefix cache、并行切分和 prefill/decode 分离。</p>
@@ -93,10 +90,3 @@
 <li>vLLM internals 资料：解释 waiting/running 队列、SchedulerOutput、KV block pool 和 continuous batching 的具体机制。</li>
 </ul>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

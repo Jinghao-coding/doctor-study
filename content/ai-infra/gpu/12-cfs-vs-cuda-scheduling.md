@@ -1,13 +1,3 @@
-## 一句话结论
-
-Linux CFS 和 CUDA thread/block 调度都叫“调度”，但它们解决的是完全不同层次的问题。
-
-**Linux CFS 是 CPU 上的操作系统调度器**，调度对象是进程或线程，目标是公平性、响应性和 CPU 时间共享。它通过 `vruntime`、优先级权重、抢占和上下文切换来决定哪个任务运行。
-
-**CUDA thread block 调度主要由 GPU 硬件完成**，调度对象是 kernel grid 中的 block，也叫 CTA。GPU 把 block 分配到 SM 上执行；block 一旦驻留在某个 SM 上，通常会运行到完成。SM 内部再通过 warp scheduler 在多个 ready warp 之间切换，以隐藏访存和执行延迟。
-
-**CUDA Stream/Event 又是另一层**。它们不是 kernel 内部 thread 的调度器，而是 CUDA 程序员用来表达任务级异步执行和依赖关系的工具。
-
 ## 系统链路
 
 ```flow
@@ -288,7 +278,7 @@ GPU kernel 虽然在 GPU 上执行，但 GPU 程序仍依赖 CPU：
 <div class="qa-q">Q: CUDA Stream/Event 和 Thread Block/Warp 调度是什么关系？</div>
 <div class="qa-a">
 <p>它们处在不同层次。Stream/Event 是任务级异步调度和依赖管理工具，用来组织 H2D、kernel、D2H 等 GPU work 的顺序、等待和重叠。同一个 stream 内顺序执行，不同 stream 可以并发；event 可以表达跨 stream 依赖。Thread Block/Warp 调度是 kernel 内部的硬件并行执行机制：一个 kernel launch 产生 grid，grid 中的 block 被调度到 SM，block 内 thread 被组织成 warp，SM 的 warp scheduler 在 ready warp 之间切换。</p>
-<div class="qa-summary">一句话：Stream 管 kernel 之间，block/warp 管 kernel 里面。</div>
+<div class="qa-summary">Stream 管 kernel 之间，block/warp 管 kernel 里面。</div>
 </div>
 </div>
 

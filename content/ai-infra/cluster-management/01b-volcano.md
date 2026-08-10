@@ -1,7 +1,3 @@
-## 一句话结论
-
-Volcano 的核心是 Queue、PodGroup、VolcanoJob：Queue 管多租户资源，PodGroup 管 Gang 原子调度，VolcanoJob 管多角色批作业和生命周期策略。
-
 <div class="card card-m">
 <h3>Volcano 定位与架构</h3>
 <div class="figure">
@@ -49,7 +45,7 @@ kubectl get crd | grep volcano</code></pre>
 <p class="caption">Queue 是资源池，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
 </div>
 <table>
-<tr><th>对象</th><th>一句话</th><th>关键字段</th><th>面试重点</th></tr>
+<tr><th>对象</th><th>核心含义</th><th>关键字段</th><th>面试重点</th></tr>
 <tr><td>Queue</td><td>多租户资源队列</td><td><code>weight</code>、<code>capability</code>、<code>deserved</code>、<code>reclaimable</code></td><td>资源隔离、弹性借用、reclaim</td></tr>
 <tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>All-or-Nothing，避免 partial allocation</td></tr>
 <tr><td>VolcanoJob</td><td>批作业抽象，包含多个 task</td><td><code>schedulerName</code>、<code>minAvailable</code>、<code>tasks</code>、<code>policies</code>、<code>plugins</code>、<code>queue</code></td><td>多角色训练任务、生命周期策略</td></tr>
@@ -147,7 +143,7 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Queue、PodGroup、VolcanoJob 三者是什么关系？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">一句话</div><p>Queue 是租户资源视角，PodGroup 是调度原子性视角，VolcanoJob 是用户提交的批作业视角。</p></div>
+<div class="qa-section"><div class="qa-section-title">核心含义</div><p>Queue 是租户资源视角，PodGroup 是调度原子性视角，VolcanoJob 是用户提交的批作业视角。</p></div>
 <div class="qa-section"><div class="qa-section-title">运行链路</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 属于哪个资源池；PodGroup 决定这组 Pod 是否满足 minMember / minResources，可以 all-or-nothing 启动；VolcanoJob 自己定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
 <div class="qa-section"><div class="qa-section-title">面试易错点</div><p>不要把 VolcanoJob 等同于 PodGroup。VolcanoJob 是用户作业；PodGroup 是调度器用于 Gang 的原子单元；Queue 是资源治理对象。</p></div>
 <div class="qa-summary">记忆：Queue = 资源池；PodGroup = Gang 原子单元；VolcanoJob = 批作业结构。</div>
@@ -176,7 +172,7 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa-section"><div class="qa-section-title">Action</div><p>Action 是调度流程中的动作，例如 enqueue、allocate、backfill、reclaim、preempt。它决定“这一轮调度要做哪些步骤”。</p></div>
 <div class="qa-section"><div class="qa-section-title">Plugin</div><p>Plugin 是算法提供者，例如 gang、drf、priority、binpack。它把排序、过滤、抢占、可回收判断等函数注册到 Session。</p></div>
 <div class="qa-section"><div class="qa-section-title">Session</div><p>每轮调度先 OpenSession，插件在 OnSessionOpen 里注册函数；Action 执行时调用 Session 里的函数；最后 CloseSession 清理状态。</p></div>
-<div class="qa-summary">一句话：Action 决定“什么时候做”，Plugin 决定“怎么做”，Session 是二者之间的上下文。</div>
+<div class="qa-summary">Action 决定“什么时候做”，Plugin 决定“怎么做”，Session 是二者之间的上下文。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">

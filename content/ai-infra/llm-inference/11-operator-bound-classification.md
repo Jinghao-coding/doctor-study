@@ -1,7 +1,3 @@
-## 一句话结论
-
-不能笼统地说 Transformer 是 Compute-bound 或 Memory-bound。相同算子在 Prefill 与 Decode 阶段可能因为矩阵形状和数据复用不同而改变瓶颈类型；多卡通信还需要单独归为 Communication-bound。
-
 ## 逐算子分类
 
 | 组件 | Prefill | 小 Batch Decode | 原因 |
@@ -39,10 +35,3 @@ Residual、Activation、Norm 等算子单独执行时需要多次读写 HBM。Fu
 <div class="qa-q">Q: 为什么长上下文会让 Decode 越来越慢？</div>
 <div class="qa-a"><p>每生成一个 Token，Attention 都要读取历史 K/V。上下文变长后，KV Cache 的读取量近似线性增加，单步 Decode 的带宽压力随之增大；因此需要 GQA/MQA、KV 量化、分页管理和更好的调度。</p></div>
 </div>
-
-## 关联模块
-
-- `LLM 推理 / Prefill 与 Decode`：阶段语义和 TTFT/TPOT。
-- `LLM 推理 / FlashAttention`：减少 Attention 中间结果的 HBM I/O。
-- `GPU / CUDA 内存模型`：寄存器、Shared Memory、L2 与 HBM。
-- `分布式训练 / NCCL`：Communication-bound 的完整诊断链路。

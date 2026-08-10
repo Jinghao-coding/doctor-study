@@ -1,6 +1,3 @@
-## 一句话结论
-
-多资源公平的核心是怎么在多维资源空间里定义"公平"：从单资源的 Max-Min Fairness 和 Proportional Share 起步，DRF 用 dominant share（每个用户占比最高的那维资源）做公平定义并保证 Sharing Incentive/Envy-freeness/Pareto Efficiency 三性质，工程上再用 Elastic Quota（min/max）和 QAD（保障度连续值）落地，最后叠加异构 GPU、拓扑、弹性和抢占代价四个 GPU 集群特有难点。
 <div class="card card-m">
 <h3>多资源公平：调度方向的核心基本功</h3>
 <p>GPU 集群不是单资源系统。一个训练任务同时消耗 GPU、CPU、内存、网络、存储带宽和拓扑位置。多资源公平要解决的问题是：当不同租户的资源需求形态不同，系统如何定义"公平"。</p>
@@ -248,10 +245,3 @@
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"公平性不是均分，而是在多维资源空间里让每个用户的瓶颈资源都不吃亏。DRF 解决了定义问题，Elastic Quota + QAD 解决了工程实现问题，异构 GPU 和拓扑是 GPU 集群特有的延伸。"</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

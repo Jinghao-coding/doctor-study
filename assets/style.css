@@ -2018,7 +2018,16 @@ body.resizing-module {
 .tab-button.is-done .tab-progress::before { content: '✓'; }
 .tab-text { flex: 1 1 auto; min-width: 0; }
 .tab-title { display: block; font-weight: 800; font-size: 0.9rem; line-height: 1.35; }
-.tab-desc { display: block; margin-top: 0.22rem; font-size: 0.73rem; color: var(--muted); line-height: 1.45; }
+.tab-desc {
+  display: -webkit-box;
+  margin-top: 0.22rem;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.73rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
 
 /* 分组 */
 .tab-group { border: 0; }
@@ -2339,6 +2348,11 @@ body.resizing-module {
 .tab-panel h2 { margin: 0; font-size: 1.4rem; order: 1; }
 .tab-panel h2::before { display: none; }
 .tab-panel h3:first-child { margin-top: 0; }
+.tab-panel-head .subtabs-nav {
+  order: 4;
+  flex: 1 1 100%;
+  margin-top: 0.35rem;
+}
 
 .tab-panel-body { min-width: 0; }
 .tab-panel-body > :first-child { margin-top: 0; }
@@ -2365,30 +2379,18 @@ body.resizing-module {
 .tab-panel-body > .qa .qa-q { padding: 0.8rem 1rem; }
 
 /* ============================================
-   SUBTABS — 内容页内部子标签
+   SUBTABS — 正文标题区的相关知识点切换
    ============================================ */
-.subtabs {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 .subtabs-nav {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 0.3rem;
   padding: 0.3rem;
   background: var(--soft);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
-  position: sticky;
-  top: 0.4rem;
-  z-index: 5;
-  overflow-x: auto;
-  scrollbar-width: thin;
+  position: static;
 }
-.subtabs-nav::-webkit-scrollbar { height: 6px; }
-.subtabs-nav::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 999px; }
 .subtab-button {
   appearance: none;
   background: transparent;
@@ -2401,8 +2403,11 @@ body.resizing-module {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  white-space: nowrap;
-  flex: 0 0 auto;
+  justify-content: center;
+  flex: 1 1 11rem;
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
   line-height: 1.3;
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
@@ -2425,8 +2430,7 @@ body.resizing-module {
 .subtab-panel > :first-child { margin-top: 0; }
 .subtab-panel > :last-child { margin-bottom: 0; }
 @media (max-width: 720px) {
-  .subtabs-nav { position: static; }
-  .subtab-button { flex-shrink: 0; }
+  .subtab-button { flex-basis: 100%; }
 }
 
 /* ============================================

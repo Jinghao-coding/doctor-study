@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 并发常见模式包括 worker pool、pipeline、fan-in/fan-out、超时/限流；面试最高频坑点是 **for-range 循环变量捕获**、goroutine 泄漏、WaitGroup.Add 位置错误，必须能手写出错代码和修正版本，知道用 `go test -race` 检测 data race、pprof 检测 goroutine 泄漏。
-
 <div class="card card-m">
 <h3>常见并发模式</h3>
 <p>这些模式是 Go 并发编程的「套路」，写服务端代码会反复用到。</p>

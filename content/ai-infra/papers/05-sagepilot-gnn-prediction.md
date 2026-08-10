@@ -1,6 +1,3 @@
-## 一句话结论
-
-SagePilot 面向深度学习负载资源预测和 Agentic 工作流编排问题：通过 ONNX 计算图表征 + GNN 多目标预测，在不实际运行的情况下预测模型的时延/显存/GPU利用率，并将预测信号用于 Agent 工作流的模型冷启动预部署、OOM 风险选卡和显存复用，解决 profiling 成本高和 Agent 冷启动慢的问题。
 <div class="card card-m">
 <h3>问题背景</h3>
 <p>两个实际痛点：</p>
@@ -116,10 +113,3 @@ SagePilot 面向深度学习负载资源预测和 Agentic 工作流编排问题�
 <div class="qa-a"><p>自动化采集 pipeline：(1) 从 HuggingFace 和 ONNX Model Zoo 拉取开源模型（约 500 个不同架构）；(2) 在多个 GPU（V100/A100/H100）上用 ONNX Runtime 插桩运行，记录每个配置（batch size、seq_len、precision）的真实性能；(3) 每个模型跑多个配置组合，生成约 10W+ 条 (graph, config) → (latency, memory, util) 样本。覆盖 CNN（ResNet/EfficientNet/MobileNet）、Transformer（BERT/GPT-2/BART/LLaMA）、推荐（DLRM/Wide&Deep）、RNN（LSTM/GRU）等主流模型族。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `性能预测与建模`：树模型、特征工程、回归指标基础。
-- `GPU 硬件与资源共享`：GPU 硬件指标（SM、带宽、显存）用于 global feature。
-- `论文工作 / Maestro`：请求级预测，与 SagePilot 的模型级预测互补。
-- `AI Agent`：Agentic 工作流编排的应用场景。

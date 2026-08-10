@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 慢不能只说“利用率低”或“显存满”，要先分类：计算瓶颈看 Tensor Core/CUDA Core 是否打满，显存瓶颈看 HBM 带宽和访存 stall，通信瓶颈看 NCCL/memcpy/拓扑等待。分类决定优化方向，方向错了会越调越慢。
-
 ## 诊断入口
 
 ```flow
@@ -129,10 +125,3 @@ GPU 慢不能只说“利用率低”或“显存满”，要先分类：计算�
 <div class="qa-q">Q: 计算瓶颈和显存瓶颈能同时存在吗？</div>
 <div class="qa-a"><p>在同一个 kernel 上通常不会——Roofline 模型里一个点要么在斜线区域（memory-bound），要么在水平区域（compute-bound）。但在端到端场景中，不同 kernel 可以是不同瓶颈：prefill 阶段 compute-bound，decode 阶段 memory-bound，某些小算子 launch-bound。所以优化时需要针对不同阶段不同策略，这也是为什么推理引擎会把 prefill 和 decode 分开调度。</p></div>
 </div>
-
-## 关联模块
-
-- `性能指标`：Roofline、TFLOPS、HBM 带宽是分类基础。
-- `利用率诊断`：从 GPU-Util 继续深入到 SM Active、Occupancy、Warp Stall。
-- `GPU 互联与数据路径`：通信瓶颈必须结合 PCIe/NVLink/RDMA/NUMA。
-- `LLM 推理系统`：prefill/decode 的瓶颈类型不同。

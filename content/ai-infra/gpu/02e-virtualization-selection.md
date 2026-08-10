@@ -1,7 +1,3 @@
-## 一句话结论
-
-生产选型不能从“MIG、MPS、HAMi 哪个更先进”开始，而要从 workload 的 **SLA、信任边界、显存峰值、计算/带宽特征和故障恢复要求**开始。论文项目只负责说明这些机制如何组合解决具体问题，不再重复基础定义。
-
 ## 一条生产决策链
 
 ```flow
@@ -99,10 +95,3 @@
 | 一个集群只能选一种 GPU 虚拟化 | 可以按节点池组合，但同一节点/设备的管理插件和 sharing method 要避免冲突。 |
 | 论文机制可以替代底层 GPU 共享 | 论文策略建立在 MIG/MPS/VMM 等执行原语上，解决的是准入、调度和保障。 |
 | 有显存配额就不会干扰 | SM、HBM、cache、PCIe、CPU/IO 仍可能竞争。 |
-
-## 关联模块
-
-- <a href="../papers/index.html">论文工作</a>：DeepShare、ElastiCo、Maestro 的完整设计和实验。
-- <a href="../kubernetes/index.html">Kubernetes 面试学习</a>：Device Plugin、GPU Operator 与 DRA。
-- `利用率诊断与瓶颈分析`：共享上线后的监控和排障。
-- `CFS vs CUDA 调度`：区分 Pod、进程、kernel、warp 的调度层次。

@@ -12,6 +12,34 @@ CONTENT = ROOT / "content"
 TEMPLATES = ROOT / "templates"
 SITE = json.loads((CONTENT / "site.json").read_text(encoding="utf-8"))
 
+FORBIDDEN_LAYOUT_TYPES = {"overview", "path"}
+FORBIDDEN_META_TITLE_RE = re.compile(
+    r"(?:知识(?:依赖)?路径|知识地图|知识导航|学习建议|学习路径|推荐学习路径|"
+    r"阅读路径|阅读顺序|本页重点|本页边界|页面边界|应该看哪里|"
+    r"关联模块|关联页面|跨模块关联|知识边界|指标归属边界)",
+    re.IGNORECASE,
+)
+FORBIDDEN_MARKDOWN_META_RES = [
+    re.compile(
+        r"^#{1,6}\s*(?:知识(?:依赖)?路径|知识地图|知识导航|学习建议|学习路径|"
+        r"推荐学习路径|阅读路径|阅读顺序|本页重点|本页边界|页面边界|应该看哪里|"
+        r"关联模块|关联页面|跨模块关联|知识边界|指标归属边界)(?:[：:].*)?$",
+        re.IGNORECASE | re.MULTILINE,
+    ),
+    re.compile(
+        r"<h[1-6][^>]*>\s*(?:🔗\s*)?(?:知识(?:依赖)?路径|知识地图|知识导航|"
+        r"学习建议|学习路径|推荐学习路径|阅读路径|阅读顺序|本页重点|本页边界|"
+        r"页面边界|应该看哪里|关联模块|关联页面|跨模块关联|知识边界|指标归属边界)"
+        r"(?:[：:].*?)?</h[1-6]>",
+        re.IGNORECASE,
+    ),
+    re.compile(r"阅读顺序建议\s*[：:]", re.IGNORECASE),
+    re.compile(r"<h[1-6][^>]*>\s*读(?:这一页|这个模块|本模块)的顺序\s*</h[1-6]>", re.IGNORECASE),
+    re.compile(r"一句话"),
+    re.compile(r"^(?:#{1,6}\s*)?(?:第一|第二|第三)部分[：:]", re.MULTILINE),
+    re.compile(r"<h[1-6][^>]*>\s*(?:第一|第二|第三)部分[：:].*?</h[1-6]>", re.IGNORECASE),
+]
+
 # 单一分类数据源：首页 Track、顶部导航、侧栏「学习主题」三处共用，避免分类逻辑漂移。
 TRACKS = [
     {
@@ -635,6 +663,13 @@ def _stable_mid(item: dict, group_id: str, idx: int) -> str:
     if not src:
         files = item.get("files") or []
         src = files[0] if files else None
+    if not src:
+        subtabs = item.get("subtabs") or []
+        if subtabs:
+            src = subtabs[0].get("file")
+            if not src:
+                files = subtabs[0].get("files") or []
+                src = files[0] if files else None
     if src:
         slug = re.sub(r"[^a-z0-9]+", "-", src.lower()).strip("-")
         return f"{group_id}::{slug}"
@@ -642,19 +677,53 @@ def _stable_mid(item: dict, group_id: str, idx: int) -> str:
 
 
 def _normalize_groups(block: dict) -> list[dict]:
-    """统一返回 groups 结构。旧的扁平 items 包成单一隐式 group。"""
-    if block.get("groups"):
-        return [
-            {
-                "title": grp.get("title", ""),
-                "items": grp.get("items", []),
-                "open": grp.get("open", True),
+    """左侧只保留粗粒度主题；组内知识点统一变成正文顶部二级 tab。"""
+    def as_subtabs(items: list[dict]) -> list[dict]:
+        subtabs: list[dict] = []
+        for item in items:
+            nested = item.get("subtabs") or []
+            if nested:
+                subtabs.extend(nested)
+                continue
+            subtab = {
+                key: item[key]
+                for key in ("title", "description", "file", "files", "text")
+                if item.get(key) is not None
             }
-            for grp in block["groups"]
-            if grp.get("items")
-        ]
+            if subtab:
+                subtabs.append(subtab)
+        return subtabs
+
+    if block.get("groups"):
+        parent_items: list[dict] = []
+        for group in block["groups"]:
+            items = group.get("items") or []
+            if not items:
+                continue
+            if len(items) == 1:
+                parent_items.append(items[0])
+                continue
+            item_titles = [item.get("title", "") for item in items if item.get("title")]
+            auto_description = " · ".join(item_titles[:3])
+            if len(item_titles) > 3:
+                auto_description += f" 等 {len(item_titles)} 项"
+            parent = {
+                "title": group.get("title", "知识模块"),
+                "description": group.get("description") or auto_description,
+                "subtabs": as_subtabs(items),
+            }
+            parent_items.append(parent)
+        return [{"title": "", "items": parent_items}]
     if block.get("items"):
-        return [{"title": "", "items": block["items"]}]
+        items = block["items"]
+        if len(items) == 1:
+            return [{"title": "", "items": items}]
+        parent = {
+            "title": block.get("title", "知识模块"),
+            "description": "",
+            "subtabs": as_subtabs(items),
+        }
+        return [{"title": "", "items": [parent]}]
     return []
 
 
@@ -681,9 +750,16 @@ def _render_item_chips(item: dict) -> str:
     return f'<span class="tab-chips">{"".join(chips)}</span>'
 
 
-def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str, output: Path) -> str:
+def _item_search_text(item: dict) -> str:
+    parts = [item.get("title", ""), item.get("description", "")]
+    for subtab in item.get("subtabs") or []:
+        parts.extend((subtab.get("title", ""), subtab.get("description", "")))
+    return " ".join(part for part in parts if part)
+
+
+def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str, output: Path) -> tuple[str, str]:
     if not subtabs:
-        return ""
+        return "", ""
     nav_buttons: list[str] = []
     panels: list[str] = []
     for idx, sub in enumerate(subtabs):
@@ -728,12 +804,11 @@ def _render_subtabs(subtabs: list, topic_path: Path, parent_id: str, output: Pat
                 body=body,
             )
         )
-    return (
-        '<div class="subtabs" data-subtabs>'
-        '<div class="subtabs-nav" role="tablist" aria-label="子模块">{buttons}</div>'
-        '<div class="subtabs-panels">{panels}</div>'
-        '</div>'
-    ).format(buttons="".join(nav_buttons), panels="".join(panels))
+    nav = '<div class="subtabs-nav" role="tablist" aria-label="相关知识点">{buttons}</div>'.format(
+        buttons="".join(nav_buttons)
+    )
+    panels_html = '<div class="subtabs-panels">{panels}</div>'.format(panels="".join(panels))
+    return nav, panels_html
 
 
 def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
@@ -764,8 +839,9 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
             desc = item.get("description", "")
             initial = f"{index + 1:02d}"
             body = ""
+            subtab_nav = ""
             if item.get("subtabs"):
-                body = _render_subtabs(item["subtabs"], topic_path, panel_id, output)
+                subtab_nav, body = _render_subtabs(item["subtabs"], topic_path, panel_id, output)
             elif item.get("file"):
                 body = markdown_to_html(read_md(topic_path.parent / item["file"], output))
             elif item.get("files"):
@@ -782,7 +858,7 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
 
             nav_buttons.append(
                 '<button class="tab-button{active}" type="button" role="tab" id="{tab_id}" '
-                'data-initial="{initial}" data-mid="{mid}"{level_attr} title="{title}" '
+                'data-initial="{initial}" data-mid="{mid}" data-search="{search}"{level_attr} title="{title}" '
                 'aria-controls="{panel_id}" aria-selected="{selected}">'
                 '<span class="tab-progress" aria-hidden="true"></span>'
                 '<span class="tab-text">'
@@ -798,6 +874,7 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
                     level_attr=level_attr,
                     selected="true" if active else "false",
                     initial=html.escape(initial),
+                    search=html.escape(_item_search_text(item)),
                     title=html.escape(title),
                     desc=html.escape(desc),
                     chip_html=chip_html,
@@ -836,14 +913,16 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
                 '</div>'.format(mid=html.escape(mid))
             )
             chip_panel = chip_html.replace('class="tab-chips"', 'class="tab-panel-chips"', 1) if chip_html else ""
+            subtabs_attr = " data-subtabs" if subtab_nav else ""
 
             panels.append(
                 '<article class="tab-panel{active}" role="tabpanel" id="{panel_id}" '
-                'aria-labelledby="{tab_id}" data-mid="{mid}" {hidden}>'
+                'aria-labelledby="{tab_id}" data-mid="{mid}"{subtabs_attr} {hidden}>'
                 '<div class="tab-panel-head">'
                 '<div class="tab-panel-kicker">内容模块</div>'
                 '<h2>{title}</h2>'
                 '{chip_panel}'
+                '{subtab_nav}'
                 '</div>'
                 '<div class="tab-panel-body">{body}</div>'
                 '<div class="tab-panel-footer">'
@@ -856,9 +935,11 @@ def render_tabs(block: dict, topic_path: Path, output: Path) -> str:
                     panel_id=panel_id,
                     tab_id=tab_id,
                     mid=html.escape(mid),
+                    subtabs_attr=subtabs_attr,
                     hidden="" if active else "hidden",
                     title=html.escape(title),
                     chip_panel=chip_panel,
+                    subtab_nav=subtab_nav,
                     body=body,
                     done_btn=done_btn,
                     last_seen=last_seen,
@@ -971,9 +1052,7 @@ def _topic_progress_meta(topic: dict) -> tuple[str, int]:
             continue
         if not tabs_id:
             tabs_id = block.get("id", "topic-tabs")
-        for grp in (block.get("groups") or []):
-            total += len(grp.get("items") or [])
-        total += len(block.get("items") or [])
+        total += sum(len(group.get("items") or []) for group in _normalize_groups(block))
     output = topic.get("output", "")
     pathname = "/" + output if output and not output.startswith("/") else output
     progress_key = f"doctor-study-progress::{pathname}#{tabs_id or 'tabs'}"
@@ -1079,6 +1158,36 @@ def render_topic(topic_path: Path) -> Path:
     return output
 
 
+def validate_site_content() -> None:
+    """Reject page-level meta navigation so generated pages stay content-first."""
+    errors: list[str] = []
+    for topic in SITE.get("topics", []):
+        topic_path = ROOT / topic["source"]
+        data = json.loads(topic_path.read_text(encoding="utf-8"))
+        for index, block in enumerate(data.get("layout") or [], 1):
+            block_type = block.get("type", "section")
+            if block_type in FORBIDDEN_LAYOUT_TYPES:
+                errors.append(f"{topic_path.relative_to(ROOT)} layout[{index}]: 禁止使用 {block_type}")
+            title = str(block.get("title", ""))
+            if block_type == "callout" and FORBIDDEN_META_TITLE_RE.search(title):
+                errors.append(f"{topic_path.relative_to(ROOT)} layout[{index}]: callout 标题属于冗余元内容：{title}")
+
+    for md_path in CONTENT.rglob("*.md"):
+        if md_path.name == "STYLE_GUIDE.md":
+            continue
+        text = md_path.read_text(encoding="utf-8")
+        for pattern in FORBIDDEN_MARKDOWN_META_RES:
+            match = pattern.search(text)
+            if match:
+                line = text.count("\n", 0, match.start()) + 1
+                snippet = re.sub(r"\s+", " ", match.group(0)).strip()
+                errors.append(f"{md_path.relative_to(ROOT)}:{line}: 禁止页面元内容：{snippet}")
+                break
+
+    if errors:
+        raise ValueError("发现冗余的页面导航/边界内容：\n" + "\n".join(errors))
+
+
 def _count_qa_blocks() -> int:
     """统计所有 Markdown 内容文件中的 QA 问答块数量。"""
     count = 0
@@ -1129,6 +1238,7 @@ def render_index() -> Path:
 
 
 def main() -> None:
+    validate_site_content()
     generated = [render_index()]
     for topic in SITE.get("topics", []):
         generated.append(render_topic(ROOT / topic["source"]))

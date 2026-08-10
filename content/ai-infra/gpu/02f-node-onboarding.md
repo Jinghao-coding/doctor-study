@@ -1,9 +1,3 @@
-## 一句话结论
-
-新 GPU 节点接入不是“装一个 Device Plugin”就结束，而是一条逐层打通的资源链路：**PCIe 硬件 → Host Driver → 容器运行时与 NVIDIA Container Toolkit/CDI → Device Plugin → kubelet Extended Resource → 调度与 Allocate → 容器内 CUDA → 监控与健康检查**。
-
-生产上优先让 **NVIDIA GPU Operator** 管理这套软件栈；如果集群采用预装驱动的不可变镜像，也可以手工管理 Driver、Toolkit 和 Device Plugin，但同一节点池必须坚持一种版本和责任边界。只有全链路验证通过，才能移除接入隔离 taint，让业务任务进入节点。
-
 ## 先把四个“Runtime”概念分开
 
 <table>
@@ -387,11 +381,3 @@ kubectl get node "$NODE" --show-labels
 - [NVIDIA Kubernetes Device Plugin](https://github.com/NVIDIA/k8s-device-plugin)
 - [Kubernetes Device Plugin Framework](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)
 - [Kubernetes Schedule GPUs](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
-
-## 关联模块
-
-- `机制总览`：整卡、MIG、MPS、Time-Slicing、HAMi 的隔离边界。
-- `MIG 实战`：节点基础栈就绪后的 MIG 配置与 profile 验收。
-- `Time-Slicing 实战` / `MPS 实战`：Device Plugin 共享策略的配置分叉。
-- `HAMi 开源方案`：替换默认 GPU 调度与 Device Plugin 链路后的接入方式。
-- `Kubernetes / DRA`：从传统 Device Plugin 扩展资源模型到 DRA 的演进。

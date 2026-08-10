@@ -1,6 +1,3 @@
-## 一句话结论
-
-数据并行每卡保存完整模型、处理不同数据，并通过 AllReduce 同步梯度。
 <div class="card card-m">
 <h3>数据并行：最常见、也最容易被低估的并行方式</h3>
 <p>数据并行（Data Parallelism, DP）的核心是：每张 GPU 持有一份完整模型，处理不同数据分片，每个 step 后同步梯度，保证所有副本参数一致。它的优点是实现简单、扩展直观；缺点是模型和优化器状态仍然需要每卡完整保存，通信瓶颈集中在梯度同步。</p>
@@ -71,10 +68,3 @@
 <div class="qa-summary">面试口径：7B FP32 梯度约 28GB，8 卡 Ring AllReduce 每卡约 49GB 收发量。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

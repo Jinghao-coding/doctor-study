@@ -1,10 +1,6 @@
-## 一句话结论
-
-CUDA stream 是 GPU 侧的异步任务队列，同一个 stream 内顺序执行，不同 stream 在资源允许时可以并行。优化目标是用 pinned memory、`cudaMemcpyAsync`、event 和多缓冲，把 CPU 准备、H2D/D2H 拷贝和 kernel 计算流水线化。
-
 ## 核心概念
 
-本节关注“如何用 stream/event 把拷贝、kernel 和 CPU 准备组织成异步流水线”。H2D/D2H 的触发场景和 DataLoader 诊断见 `Host-Device 数据拷贝`。
+Stream 和 Event 用来把 H2D/D2H 拷贝、kernel 与 CPU 准备组织成异步流水线。
 
 GPU 有自己的显存（HBM），CPU 也有自己的内存（DDR）。数据在两者之间搬运，就是 H2D（Host to Device）和 D2H（Device to Host）拷贝。
 
@@ -104,9 +100,3 @@ Buffer C: CPU 正在准备再下一批数据
 <div class="qa-q">Q: 两个 stream 一定能并行吗？</div>
 <div class="qa-a"><p>不一定。并行取决于硬件资源是否足够。如果两个 stream 的 kernel 都需要全部 SM，它们会被串行执行；如果一个在拷贝（使用 DMA engine / copy engine），一个在计算（使用 SM），它们可以并行，因为用的是不同硬件单元。这也是为什么计算+拷贝重叠比计算+计算重叠更容易实现——DMA engine 和 SM 是独立的硬件资源。</p></div>
 </div>
-
-## 关联模块
-
-- `Host-Device 数据拷贝`：定位 H2D/D2H 触发点和 DataLoader 问题。
-- `CUDA 执行模型`：理解 stream、kernel、block/warp 的层级差异。
-- `利用率诊断`：在 Nsight Systems timeline 中识别 memcpy、空洞和同步。

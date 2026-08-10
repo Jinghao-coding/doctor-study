@@ -1,6 +1,3 @@
-## 一句话结论
-
-ReAct 只是 Agent 范式的起点：Reflexion 用语言反思实现试错学习，Self-Ask 显式分解问题，ToT/LATS 用搜索探索多条推理路径，Plan-and-Execute 适合长周期任务。选择范式的核心是问题结构——简单任务用 ReAct，需要搜索/规划/迭代的任务用更复杂的范式。
 <div class="card card-m">
 <h3>ReAct 基线回顾</h3>
 <p>ReAct（Reasoning + Acting）将推理和行动交错进行：Thought → Action → Observation 循环，直到任务完成。这是当前 Agent 的基础范式，但它有明显局限：线性推理不回溯、每步决策短视、缺乏自我纠错能力。</p>
@@ -179,10 +176,3 @@ ReAct 只是 Agent 范式的起点：Reflexion 用语言反思实现试错学习
 <div class="qa-summary">简单动态探索任务用 ReAct；长周期结构化工作流用 Plan-and-Execute；复杂系统可外层 Plan 内层 ReAct + 失败重规划。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-agent-concepts.md`：Agent 基础概念与 ReAct 入门
-- `02-agent-components.md`：Agent 记忆、工具、规划组件详解
-- `03-agent-engineering.md`：Agent 工程化实践
-- `07-function-calling-api.md`：Function Calling 底层机制

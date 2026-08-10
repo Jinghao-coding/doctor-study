@@ -1,6 +1,3 @@
-## 一句话结论
-
-Infra 面试里的容器运行时问题，重点不是“Docker 命令怎么用”，而是要讲清 **Kubelet 如何通过 CRI 调 containerd，containerd 如何管理镜像、snapshot、sandbox 和 task，runc 如何按 OCI spec 创建 Linux 容器，containerd-shim 为什么要把容器进程和 containerd daemon 解耦**。排障时要能沿着 `Pod Event -> kubelet -> CRI -> containerd -> shim/runc -> CNI/CSI/kernel` 这条链路定位。
 ## 先把概念说清楚
 
 <div class="card card-m">
@@ -125,7 +122,7 @@ ls /etc/cni/net.d/
 <div class="qa-q">Q: containerd、runc、containerd-shim 分别负责什么？</div>
 <div class="qa-a">
 <p><code>containerd</code> 是高层 runtime daemon，负责镜像拉取、content store、snapshot、容器元数据、task 生命周期和 CRI 服务。<code>runc</code> 是 OCI low-level runtime，负责根据 OCI spec 调 Linux kernel 创建容器。<code>containerd-shim</code> 位于 containerd 和容器进程之间，负责托管容器进程、转发 stdio、收集 exit status 和上报事件。</p>
-<div class="qa-summary">一句话：containerd 管生命周期和镜像，runc 创建容器，shim 托管进程并解耦 daemon。</div>
+<div class="qa-summary">containerd 管生命周期和镜像，runc 创建容器，shim 托管进程并解耦 daemon。</div>
 </div>
 </div>
 

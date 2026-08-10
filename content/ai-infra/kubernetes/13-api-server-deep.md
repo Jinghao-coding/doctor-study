@@ -1,7 +1,3 @@
-## 一句话结论
-
-API Server 是 K8s 的统一网关，每个请求严格经过 Authentication → Authorization → Admission Control → Validation → Storage 五步链路：认证确认"你是谁"、鉴权确认"你能干什么"、准入控制修改或拒绝请求、校验确保对象合法、最终写入 etcd；理解 Mutating/Validating Webhook 执行顺序、乐观并发和 watch 实现是面试高频考点。
-
 ## 请求处理全链路
 
 <div class="card card-m">
@@ -398,10 +394,3 @@ retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 <div class="qa-summary">面试口径：webhook 挂了的行为由 failurePolicy 决定（Fail=拒绝/Ignore=放行）；关键策略 Fail 但要保证 webhook HA，否则 webhook 故障会导致对应资源类型操作全部失败。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `10-etcd-internals`：API Server 的 storage 层直接操作 etcd，resourceVersion/optimistic concurrency/watch 底层依赖 etcd revision 和 MVCC。
-- `11-informer-workqueue`：Informer 的 ListAndWatch 就是 API Server LIST + WATCH 接口的客户端实现。
-- `05-security-admission-multitenancy`：认证鉴权、准入控制和多租户安全的概览。
-- `08-extension-engineering`：CRD admission webhook、Operator 开发中的 webhook 使用。

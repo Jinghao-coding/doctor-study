@@ -40,6 +40,8 @@ source .venv/bin/activate
 6. 不要提交 `.venv/`、`__pycache__/`、`*.pyc` 等本地环境文件。
 7. 每次实质性修改完成并通过验证后，必须将变更 commit 并 push 到远程 GitHub（`main` 分支），保持远程仓库始终是最新状态。commit message 使用中文，简要概括本次改动内容。
 8. **图片使用优先级**：优先使用网络上或公司内开源文档中的原图（如 NVIDIA 官方博客、vLLM/TensorRT-LLM 文档、论文原文 figure、知名技术博客的架构图）；只有在确实找不到合适的官方/外部原图时，才自己生成 SVG 示意图。引用外部图片时，下载到 `resources/images/` 对应子目录（不要用外部 URL 热链接，避免 404），并在图片下方注明来源。
+9. **正文只讲知识本身**：全站禁止“知识地图/依赖路径”“学习或阅读顺序”“本页重点/本页边界”“应该看哪里”“关联模块/跨模块关联”等元内容。相关知识点应通过正文标题区的二级 tab 组织，不在正文里重复导航和页面分工。
+10. **正文直接进入知识**：禁止“一句话结论”“一句话：…”“本节讲什么”“第一部分/第二部分”等摘要标签或重复开场；第一屏直接给概念、机制、数据、代码或问答。
 
 ## 当前架构
 
@@ -222,14 +224,13 @@ resources/
 可用组件：
 
 - **`tabs`**：标签页工作台，大主题的主内容组织方式。一次只展示一个内容模块，支持进度追踪（localStorage）、模块搜索、难度/耗时标签、上一个/下一个导航、标记已完成。
+  - `tabs.groups[]`：左侧粗粒度主题；每个 group 在左侧只占一个入口，组内知识点标题会自动汇总为左侧内容摘要，也可用 `groups[].description` 覆盖。
+  - `tabs.groups[].items[]`：同组相关知识点，自动渲染到正文标题区的二级 tab。
   - `tabs.items[].file`：当前主题目录下的 Markdown 文件。
   - `tabs.items[].level`：难度标签，可选 `"基础"`、`"进阶"`、`"精通"`。
   - `tabs.items[].priority`：重要程度星级（1-3）。
   - `tabs.items[].time`：预计阅读时间（分钟）。
-  - `tabs.items[].subtabs`：可选二级标签页，在一个模块内再做分组（如"核心概念"、"面试题"）。
-  - `tabs.groups`：可选分组信息，按组将模块归类显示。
-- **`overview`**：概览卡片区，适合核心概念、面试重点、易错点、关联页面。
-- **`path`**：学习路径，适合展示推荐阅读顺序。
+  - `tabs.items[].subtabs`：兼容已有配置；生成时会并入所在 group 的正文二级 tab。
 - **`grid`**：模块网格，适合把多个 Markdown 内容块并排展示。
 - **`section`**：普通章节，适合完整长文内容。
 - **`callout`**：提示块，适合面试建议、注意事项、风险点。`tone` 可选 `note`、`warn`、`danger`。
@@ -240,7 +241,9 @@ resources/
 - `tabs.items[].file` 和 `grid.items[].file` 都指向当前主题目录下的 Markdown 文件。
 - `grid.items[].card` 可使用 `card-m`、`card-d`、`card-s`、`card-w`、`card-r`。
 - 如果 `layout` 存在，生成器不会自动渲染 `sections`；`sections` 可保留作为兼容索引。
-- 不要为了凑页面效果默认添加"本页重点""推荐学习路径"等摘要块；只有用户明确需要时再加。
+- `overview` 和 `path` 已禁用；构建脚本发现后会直接失败。
+- `callout` 只能承载技术警告、风险或关键结论，不能承载知识导航、学习建议、页面边界或页面分工。
+- 左侧不得逐项堆放同一机制域下的细章节；同组内容必须在正文标题区通过二级 tab 切换。
 
 ### tabs 模块进度追踪
 
@@ -308,9 +311,14 @@ content/ai-infra/networking/
     {
       "type": "tabs",
       "title": "网络基础模块",
-      "items": [
-        {"title": "网络基础总览", "file": "01-overview.md", "level": "基础"},
-        {"title": "RDMA 与 NCCL", "file": "02-rdma.md", "level": "进阶"}
+      "groups": [
+        {
+          "title": "网络传输机制",
+          "items": [
+            {"title": "网络基础总览", "file": "01-overview.md", "level": "基础"},
+            {"title": "RDMA 与 NCCL", "file": "02-rdma.md", "level": "进阶"}
+          ]
+        }
       ]
     }
   ]
@@ -360,7 +368,7 @@ content/ai-infra/gpu/03-topology.md
 {"title": "GPU 拓扑", "file": "03-topology.md", "card": "card-s"}
 ```
 
-3. 如果使用 `layout` + `tabs` 模式，在 `tabs.items` 数组中追加模块。
+3. 如果使用 `layout` + `tabs` 模式，在语义对应的 `tabs.groups[].items` 中追加知识点；同组知识点会显示在正文标题区的二级 tab。
 
 4. 运行构建：
 
@@ -554,7 +562,7 @@ git diff --stat
 1. 先读 `AGENTS.md` 和 `content/site.json`。
 2. 涉及内容新增、重写、重组或 Markdown 格式统一时，先读 `content/STYLE_GUIDE.md`。
 3. 判断需求属于新增主题、新增章节、修改内容、删除内容、样式调整还是构建发布。
-4. 定位并编辑 `content/`、`templates/`、`assets/` 或 `tools/` 中的最小必要文件。
+4. 定位并编辑 `content/`、`templates/`、`assets/` 或 `tools/` 中的最小必要文件；新增内容先检查是否混入阅读顺序、页面边界、知识导航或关联模块等元说明。
 5. 运行 `uv run python tools/build_site.py` 重新生成。
 6. 运行 Python 语法检查和内部链接检查。
 7. 检查生成页面、预览效果和 `git status --short`。

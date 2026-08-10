@@ -1,6 +1,3 @@
-## 一句话结论
-
-安全和多租户要从身份、授权、准入、隔离、配额和审计六层看。
 <div class="card card-m">
 <h3>安全、准入与多租户：请求能不能进入，资源能不能隔离</h3>
 <p>Kubernetes 安全链路可以概括为：<strong>Authentication 识别你是谁，Authorization 判断你能做什么，Admission 决定这个请求是否符合集群策略，Persistence 才会写入 etcd。</strong>多租户治理则在此基础上叠加 namespace、RBAC、Quota、LimitRange、Pod Security、PriorityClass 和队列配额。</p>
@@ -221,7 +218,7 @@ spec:
 
 <h3>安全、准入与多租户高频问答</h3>
 
-<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
 
 </div>
 
@@ -313,10 +310,3 @@ spec:
 <div class="qa-summary">面试口径：能用 CEL 表达的策略优先 VAP，需要外部数据或复杂逻辑才上 Kyverno/Gatekeeper；新策略上线一律先 Audit/Warn，再切 Deny。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

@@ -1,9 +1,6 @@
-## 一句话结论
-
-GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语义、多资源公平、拓扑质量、GPU 碎片、抢占代价和可观测之间做权衡；一个完整调度器要回答五个决策点：谁先调度（QueueSort）、能不能启动（Admit）、放到哪里（Placement）、是否抢占（Preemption）、运行后如何回收重试（运行时控制）。
 <div class="card card-m">
 <h3>调度面试题精讲：直接回答问题，不讲路线图</h3>
-<p>这一页只解决一个问题：面试官问到 AI Infra / GPU 集群调度时，应该怎么理解、怎么回答、怎么展开。每个问题都按“核心概念 → 标准回答 → 设计落点 → 常见追问”的方式组织。</p>
+<p>AI Infra / GPU 集群调度问题按“核心概念 → 标准回答 → 设计落点 → 常见追问”组织。</p>
 <div class="qa-summary">总口径：GPU 集群调度不是“找一台有空 GPU 的机器”，而是在 workload 语义、多资源公平、拓扑质量、GPU 碎片、抢占代价和系统可观测之间做权衡。</div>
 </div>
 
@@ -33,7 +30,7 @@ GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语�
 <li><strong>运行时控制：</strong>支持重试、checkpoint 恢复、elastic training 扩缩容、节点/GPU 健康检查。</li>
 <li><strong>观测层：</strong>暴露 pending 原因、等待时间、JCT、利用率、公平性、抢占损失、失败率和拓扑命中率。</li>
 </ol>
-<div class="qa-summary">一句话答案：先做多租户队列和 gang 准入，再做拓扑感知 placement，最后用 backfill、抢占和 elastic training 提高利用率。</div>
+<div class="qa-summary">核心回答：先做多租户队列和 gang 准入，再做拓扑感知 placement，最后用 backfill、抢占和 elastic training 提高利用率。</div>
 </div>
 
 <div class="card card-w">
@@ -122,7 +119,7 @@ GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语�
 <tr><td>Quota</td><td>保证长任务也有资源份额</td><td>过硬会降低利用率</td></tr>
 <tr><td>Preemption</td><td>高优短任务快速启动</td><td>要考虑 checkpoint 和重启成本</td></tr>
 </table>
-<div class="qa-summary">一句话：短任务要低等待，长任务要不饥饿；用 backfill 提高利用率，用 aging/quota 保证长期公平。</div>
+<div class="qa-summary">短任务要低等待，长任务要不饥饿；用 backfill 提高利用率，用 aging/quota 保证长期公平。</div>
 </div>
 
 <div class="card card-d">
@@ -155,7 +152,7 @@ GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语�
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 面试官让你一句话总结 GPU 调度难点，怎么说？</div>
+<div class="qa-q">Q: 面试官让你概括 GPU 调度难点，怎么说？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">推荐回答</div><p>GPU 调度难在它同时是多资源、多租户、强拓扑、强同步、抢占代价高的问题。CPU 调度主要分配时间片，而 GPU 训练调度要分配一组满足拓扑和 gang 语义的设备，并且要在公平性、利用率、等待时间和训练效率之间权衡。</p></div>
 <div class="qa-section"><div class="qa-section-title">展开顺序</div><p>先说 gang：多 worker 必须一起启动；再说拓扑：不同 placement 训练性能差异大；再说碎片：总卡数够不代表可调度；再说公平：多团队共享要有 quota；最后说抢占：训练任务被打断有 checkpoint 和重启代价。</p></div>
@@ -171,10 +168,3 @@ GPU 集群调度不是"找一台有空 GPU 的机器"，而是在 workload 语�
 <div class="qa-summary">架构图要体现“队列公平 + gang 准入 + 拓扑放置 + 运行时恢复”，不要只画一个 scheduler 方框。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

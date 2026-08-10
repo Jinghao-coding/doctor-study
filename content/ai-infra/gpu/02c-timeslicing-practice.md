@@ -1,7 +1,3 @@
-## 一句话结论
-
-Time-Slicing 的作用是让多个 Pod 获得同一张物理 GPU 的共享访问权。它最容易部署，但也最容易被误解：**`replicas: 4` 只把每张 GPU 注册为 4 个逻辑访问名额，不保证每个 Pod 固定获得 25% 算力、25% 显存或独立故障域。**
-
 ## 系统链路
 
 ```flow
@@ -152,9 +148,3 @@ nvidia-smi pmon -s um -c 10
 ## 资料来源
 
 - [NVIDIA Kubernetes Device Plugin：CUDA Time-Slicing](https://github.com/NVIDIA/k8s-device-plugin#with-cuda-time-slicing)
-
-## 关联模块
-
-- `MPS 实战`：需要并发执行和等份显存/执行资源限制时的官方方案。
-- `HAMi 开源方案`：需要任意显存/算力配比和设备感知调度时的开源方案。
-- `利用率诊断链路`：确认提高的是有效吞吐，而不是无效竞争。

@@ -1,9 +1,6 @@
-## 一句话结论
+## 来源
 
-读 kube-scheduler 源码不要从插件细节开始，而要先抓住启动链路、Informer/Cache、调度循环、过滤打分、绑定循环这五条主线。Lark 文档提供的是源码阅读视角，适合作为 Scheduler 主链路和插件扩展内容的补充。
-## 来源与使用方式
-
-本页整理自 Lark 文档《万字长文详解 Kubernetes 调度器：kube-scheduler 实现》，重点吸收其源码阅读顺序和函数链路。原文更偏长篇源码剖析；本站保留面试复习需要的主线，不复制长代码。
+内容整理自 Lark 文档《万字长文详解 Kubernetes 调度器：kube-scheduler 实现》，按运行时函数链路提炼启动、缓存、调度与绑定机制。
 
 ## 源码阅读主线
 
@@ -87,15 +84,8 @@ QueueingHint | 后续事件是否应该唤醒这个 Pod，依赖失败 plugin �
 
 | 你想解决的问题 | 应该看 |
 |---|---|
-| Pod 为什么 Pending | `调度与资源模型` + 本页的 `Diagnosis / FitError` |
+| Pod 为什么 Pending | Events、`Diagnosis` 与 `FitError` |
 | 调度队列怎么流转 | `Scheduler 主链路 / 调度路径与三个队列` |
 | PreFilter/Filter/Score 为什么这么拆 | `Scheduler 插件与扩展 / 扩展点设计差异` |
 | 写自定义 GPU 拓扑插件 | `Scheduler 插件与扩展 / 自定义 Plugin 实战` |
 | 如何观测哪个 plugin 卡住 | `Scheduler 插件与扩展 / Scheduler 可观测性` |
-
-## 关联模块
-
-- `调度与资源模型`：理解 Pod 需求和 Node 资源/约束。
-- `Scheduler 主链路`：理解队列、cache、assume、抢占和 HA。
-- `Scheduler 插件与扩展`：理解 Framework 扩展点和插件开发。
-- `任务调度理论`：理解 Gang、Backfill、抢占代价这些策略为什么需要挂到 scheduler 上。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-排队论（Queueing Theory）是容量规划和延迟分析的数学基础：Little's Law 给了"到达率 × 停留时间 = 平均队列长度"的普适关系；M/M/1 和 M/G/1 模型揭示了"利用率接近 1 时等待时间指数增长"和"服务时间方差会放大排队"这两个关键直觉，直接指导 GPU 集群目标利用率设定和工作负载隔离策略。
 <div class="card card-m">
 <h3>Little's Law：排队论的基础恒等式</h3>
 <p>Little's Law 是排队论中最普适、最有用的公式，<strong>不需要任何假设</strong>，适用于任何稳定的排队系统：</p>
@@ -216,10 +213,3 @@ W = 1 / (μ - λ)    # 系统总时间 = 等待 + 服务</code></pre>
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- `经典调度算法`：FIFO/SJF/SRTF 的排序逻辑，与 SRPT 最优性对应
-- `Kubernetes 调度器扩展`：调度器队列设计、Preemption、调度性能调优
-- `多租户 GPU 调度`：DRF 公平性、多队列设计、配额保障
-- `LLM 推理系统`：Prefill/Decode 分离、batching、SLO 保证

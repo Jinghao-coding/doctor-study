@@ -1,7 +1,3 @@
-## 一句话结论
-
-DeepShare 的关键实现链路是：Scheduler Plugin 从 informer cache 计算租户保障状态，在内部做两级队列排序，再按“独占放置 → 安全合用 → CPU/Memory 回收 → GPU 抢占”的干扰递增顺序尝试落点。
-
 ## 一次调度周期怎么走
 
 ```flow
@@ -87,9 +83,3 @@ $$</div>
 <div class="qa-q">Q: 面试官问“两级队列和 QAD 到底怎么连起来”，怎么回答？</div>
 <div class="qa-a"><p>每个租户先在自己的 Guaranteed / Best-effort 队列做 quota admission；通过后进入对应的集群级队列。集群级排序先保证 Guaranteed 优先，再用平滑 QAD 让欠保障租户先恢复，只有在保障程度相近时才用预测剩余时间做短作业优化。QAD 因此负责跨租户公平，runtime prediction 只负责局部效率。</p></div>
 </div>
-
-## 关联模块
-
-- `DeepShare / QAD 记忆模型`：分子、分母、特殊分支和 EMA。
-- `DeepShare / 总体架构`：Controller、Scheduler Plugin、DaemonSet 的边界。
-- `DeepShare / 论文延伸问答`：抢占效率、动态 retention 门槛和过载降级。

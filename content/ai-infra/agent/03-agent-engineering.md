@@ -1,6 +1,3 @@
-## 一句话结论
-
-Agent 工程重点是可靠性、状态、权限、观测、评测和失败恢复。
 <div class="card card-m">
 <h3>主流 Agent 框架对比</h3>
 <p>面试中经常被问到"你用过哪些 Agent 框架，有什么区别"。以下是当前主流框架的对比。</p>
@@ -59,10 +56,3 @@ Agent 工程重点是可靠性、状态、权限、观测、评测和失败恢�
 <div class="qa-section"><div class="qa-section-title">安全防护</div><ul><li><strong>Prompt Injection 防护：</strong>用户输入可能包含恶意指令，需要输入过滤和指令隔离。</li><li><strong>工具调用权限控制：</strong>限制 Agent 可以调用的工具范围，敏感操作需要人工确认。</li><li><strong>输出审核：</strong>对 Agent 的输出做内容安全检查，防止泄露敏感信息。</li><li><strong>沙箱执行：</strong>代码执行、文件操作等高风险操作在隔离环境中运行。</li><li><strong>速率限制：</strong>防止 Agent 过度调用 API 或消耗过多资源。</li></ul></div>
 <div class="qa-section"><div class="qa-section-title">可观测性</div><ul><li><strong>链路追踪：</strong>记录每一步的 Thought、Action、Observation，方便调试。</li><li><strong>成本监控：</strong>统计每次任务的 Token 消耗和 API 调用费用。</li><li><strong>质量监控：</strong>自动检测任务成功率、工具调用准确率等指标。</li></ul></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-一次 read 的路径是：进入内核查 fd 和 page cache，命中就拷给用户 buffer，未命中就发起磁盘或网络存储 I/O 读入 cache 再拷贝。AI Infra 里这条路径决定训练数据加载、checkpoint 和权重加载吞吐，排障要拆到系统调用、page cache miss、磁盘/网络存储延迟、小文件 metadata 和解码这几层。
 ## AI Infra 面试模块：文件系统与 I/O
 
 文件系统与 I/O 直接影响训练数据加载、checkpoint 保存、模型权重加载和推理服务吞吐。面试中要能从文件抽象讲到内核路径，再落到性能瓶颈定位。

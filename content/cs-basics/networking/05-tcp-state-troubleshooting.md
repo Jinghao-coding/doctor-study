@@ -1,6 +1,3 @@
-## 一句话结论
-
-TCP 共 11 个状态，客户端主动关闭走 FIN_WAIT_1→FIN_WAIT_2→TIME_WAIT 路径，服务端被动关闭走 CLOSE_WAIT→LAST_ACK 路径。TIME_WAIT 过多主要用连接池解决（而非 tcp_tw_reuse），大量 CLOSE_WAIT 永远是应用 bug（没调 close），不是内核问题。排查 TCP 问题用 ss（比 netstat 快）+ tcpdump + ss -ti 看 RTT/cwnd，理解每个状态的根因才能快速定位连接问题。
 <div class="card card-m">
 <h3>TCP 状态机总览</h3>
 <p>TCP 连接从建立到关闭共 11 个状态，理解状态机是排查网络问题的基础。</p>

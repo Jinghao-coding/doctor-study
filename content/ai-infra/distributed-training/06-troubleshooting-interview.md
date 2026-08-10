@@ -1,6 +1,3 @@
-## 一句话结论
-
-分布式训练排障先分层：数据、单卡算子、通信、并行策略、存储、调度和故障恢复。
 <div class="card card-m">
 <h3>分布式训练排障：先定位瓶颈属于哪一层</h3>
 <p>分布式训练慢或失败，不能只盯 GPU 利用率。应按链路拆分：数据加载 → CPU 预处理 → GPU 计算 → 显存/激活 → NCCL 通信 → checkpoint/存储 → 调度和拓扑。</p>
@@ -72,10 +69,3 @@
 <div class="qa-summary">面试口径：状态 OOM 用 ZeRO/FSDP，activation OOM 用 checkpointing/减 batch，偶发 OOM 要看碎片和临时峰值。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

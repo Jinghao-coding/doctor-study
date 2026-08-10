@@ -1,6 +1,3 @@
-## 一句话结论
-
-现代 C++（C++11/14/17/20）核心能力包括：lambda（C++11 起支持 init capture）、智能指针（shared_ptr 控制块 + make_shared 单次分配优化 + weak_ptr 打破循环引用）、C++17 的 optional/variant/string_view/structured bindings/if constexpr、C++20 的 Concepts/Ranges/Coroutines/format、以及 variadic templates/SFINAE/constexpr 等模板元编程基础；C++ 演进方向是"让写正确的代码更容易"，面试重点是 shared_ptr 线程安全、string_view 生命周期坑、enable_shared_from_this 场景。
 <div class="card card-m">
 <h3>Lambda 表达式详解</h3>
 <p>lambda 是编译器生成的匿名闭包类（closure type）的实例，可以捕获局部变量：</p>

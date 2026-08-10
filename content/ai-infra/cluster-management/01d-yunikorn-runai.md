@@ -1,7 +1,3 @@
-## 一句话结论
-
-YuniKorn 更像大组织的层级资源管理器，Run:ai 更像商业 GPU 虚拟化和配额平台。它们解决的不是同一个层面的问题。
-
 <div class="card card-s">
 <h3>YuniKorn：层级队列和 Application 级调度</h3>
 <p>YuniKorn 源自 YARN 的资源管理思想，核心优势是层级队列。它适合公司 / 部门 / 团队 / 项目多层资源治理场景。</p>

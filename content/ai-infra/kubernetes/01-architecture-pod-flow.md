@@ -1,6 +1,3 @@
-## 一句话结论
-
-Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller/Scheduler/kubelet 协同把 Pod 跑起来。
 <div class="card card-s">
 <h3>Kubernetes 架构图</h3>
 <div class="figure">
@@ -23,21 +20,29 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 <tr><td>控制器处理</td><td>Controller Manager</td><td>Deployment 创建 ReplicaSet，ReplicaSet 创建 Pod</td><td>Reconcile、OwnerReference、Finalizer</td></tr>
 <tr><td>调度决策</td><td>kube-scheduler</td><td>监听未绑定 Pod，经过 Filter / Score / Reserve / Bind 选择节点</td><td>Scheduling Framework、requests、亲和性、污点容忍</td></tr>
 <tr><td>节点执行</td><td>kubelet</td><td>目标节点 kubelet watch 到 Pod，准备 volume、网络、容器</td><td>Pod Worker、PLEG、CNI、CSI、CRI</td></tr>
-<tr><td>运行容器</td><td>containerd / CRI-O</td><td>拉镜像、创建 sandbox、启动容器并持续上报状态</td><td>Pause 容器、Pod IP、探针、状态回写</td></tr>
+<tr><td>运行容器</td><td>containerd / CRI-O</td><td>按 kubelet 的 CRI 请求拉镜像、创建 sandbox 并管理容器进程</td><td>Pause 容器、Pod IP、容器状态</td></tr>
 </table>
 </div>
 
 <div class="card card-w">
 <h3>回答结构：Pod 是怎么跑起来的？</h3>
-<p>可以按“四段式”回答，主线是：<strong>所有控制面和节点组件都围绕 API Server 协作，etcd 只负责保存状态，真正执行发生在目标节点的 kubelet 上。</strong></p>
-<ol>
-<li><strong>入口：</strong>用户通过 <code>kubectl</code> 或 <code>client-go</code> 把 YAML 提交到 API Server。API Server 负责认证、鉴权、准入控制、对象校验和默认值填充；合法对象会<strong>通过 API Server</strong> 持久化到 etcd。这里要强调：通常只有 API Server 直接读写 etcd，其他组件通过 API Server watch 和更新对象。</li>
-<li><strong>控制：</strong>如果提交的是 Deployment，Deployment Controller 会 watch API Server 中的对象变化，创建或维护 ReplicaSet；ReplicaSet Controller 再根据期望副本数创建、删除或修复 Pod。这个阶段体现的是 Kubernetes 的声明式 reconcile：用户写期望状态，controller 持续把实际状态逼近期望状态。</li>
-<li><strong>调度：</strong>scheduler watch 到未调度、未绑定节点的 Pod 后，经过 Filter、Score、Reserve、Permit、Bind 等流程选择合适 Node。调度器不会直接通知 kubelet，而是把绑定结果写回 API Server，例如设置 Pod 的 <code>spec.nodeName</code> 或创建 Binding。后续 kubelet 是通过 watch API Server 才知道这个 Pod 归自己执行。</li>
-<li><strong>执行：</strong>目标节点上的 kubelet watch 到绑定到本节点的 Pod 后，进入 Pod 生命周期执行流程：先准备 volume（CSI）、创建 Pod sandbox，再由网络插件（CNI）配置 Pod 网络，随后通过 CRI 调用 containerd / CRI-O 拉镜像、创建并启动业务容器。容器启动后，kubelet 继续执行探针、重启策略、资源状态采集，并把 Pod phase、container status、Node status 等状态回写到 API Server。</li>
-</ol>
-<div class="qa-summary">一句话总结：用户提交期望状态到 API Server，controller 负责创建和维护 Pod，scheduler 负责选 Node 并写回绑定结果，kubelet 在目标节点通过 CSI/CNI/CRI 把 Pod 真正跑起来，并持续向 API Server 上报状态。</div>
-<p>追问时可以展开：etcd 一致性与 watch、Informer 缓存机制、scheduler 插件链路、绑定与抢占、kubelet Pod Worker、CSI/CNI/CRI 边界、探针和容器运行时。</p>
+<p><strong>API Server 是协作中心，etcd 是状态存储，kubelet 是节点执行者。</strong>控制面负责把“要运行什么、放到哪里”写成资源状态，目标节点负责把状态变成真正运行的 Pod。</p>
+
+<div class="flow" role="list" aria-label="Pod 从提交到运行的四阶段主链路">
+<div class="flow-step" role="listitem"><div class="flow-index">01</div><div class="flow-title">提交期望状态</div><div class="flow-desc"><code>kubectl</code> → API Server → etcd</div></div>
+<div class="flow-step" role="listitem"><div class="flow-index">02</div><div class="flow-title">创建 Pod 对象</div><div class="flow-desc">Deployment → ReplicaSet → Pod</div></div>
+<div class="flow-step" role="listitem"><div class="flow-index">03</div><div class="flow-title">绑定目标节点</div><div class="flow-desc">Filter / Score → Binding</div></div>
+<div class="flow-step" role="listitem"><div class="flow-index">04</div><div class="flow-title">节点落地执行</div><div class="flow-desc">kubelet → CSI / CNI / CRI</div></div>
+</div>
+
+<div class="qa-grid">
+<div class="qa-mini"><strong>① 入口｜API Server</strong>完成认证、鉴权、准入、校验和默认值填充；合法对象由 API Server 持久化到 etcd。</div>
+<div class="qa-mini"><strong>② 控制｜Controller</strong>通过 watch 获取变化并持续 reconcile：Deployment Controller 维护 ReplicaSet，ReplicaSet Controller 维护 Pod。</div>
+<div class="qa-mini"><strong>③ 调度｜Scheduler</strong>监听尚未绑定节点的 Pod，经 Filter、Score、Reserve、Permit、Bind 选出 Node，并把绑定结果写回 API Server。</div>
+<div class="qa-mini"><strong>④ 执行｜kubelet</strong>监听分配到本节点的 Pod，准备 CSI volume、创建 sandbox、配置 CNI 网络，再通过 CRI 启动容器并回写状态。</div>
+</div>
+
+<div class="qa-summary">抓住三条边界：<strong>etcd 只保存状态</strong>；<strong>scheduler 只写回绑定结果，不直接通知 kubelet</strong>；<strong>kubelet 编排节点执行，CRI / CNI / CSI 分别负责容器、网络和存储</strong>。</div>
 </div>
 
 <div class="card card-d">
@@ -45,7 +50,7 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 <table>
 <tr><th>组件</th><th>职责</th><th>常见追问</th></tr>
 <tr><td>API Server</td><td>所有资源操作入口，负责认证、鉴权、准入、聚合 API、watch</td><td>为什么它是唯一直接访问 etcd 的组件？</td></tr>
-<tr><td>etcd</td><td>保存集群期望状态和关键元数据</td><td>备份恢复、watch、resourceVersion、压缩与碎片整理</td></tr>
+<tr><td>etcd</td><td>保存经 API Server 持久化的集群对象，包括 spec、status 和元数据</td><td>备份恢复、watch、resourceVersion、压缩与碎片整理</td></tr>
 <tr><td>Scheduler</td><td>为未绑定 Pod 选择节点</td><td>Filter / Score / Reserve / Permit / Bind 的区别</td></tr>
 <tr><td>Controller Manager</td><td>运行 Deployment、ReplicaSet、Node、Job 等控制循环</td><td>什么是 reconcile？如何处理最终一致性？</td></tr>
 <tr><td>kubelet</td><td>节点代理，负责 Pod 生命周期和状态上报</td><td>kubelet 如何调用 CRI / CNI / CSI？</td></tr>
@@ -59,8 +64,8 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 <table>
 <tr><th>组件</th><th>面试官问法</th><th>回答抓手</th></tr>
 <tr><td>API Server</td><td>为什么它是唯一直接访问 etcd 的组件？</td><td>统一认证鉴权、准入、版本转换、乐观并发和 watch 分发；其他组件通过 API Server 解耦。</td></tr>
-<tr><td>etcd</td><td>resourceVersion 和 watch 有什么关系？</td><td>resourceVersion 是对象版本和 watch 起点；watch 太旧会遇到 compacted，需要重新 list。</td></tr>
-<tr><td>Scheduler</td><td>Filter / Score / Reserve / Permit / Bind 怎么区分？</td><td>Filter 判断能不能放，Score 判断放哪里更好，Reserve 本地预留，Permit 等待或拒绝，Bind 写回 API Server。</td></tr>
+<tr><td>etcd</td><td>resourceVersion 和 watch 有什么关系？</td><td><code>resourceVersion</code> 是客户端必须视为不透明值的对象版本标识，也可作为 watch 起点；版本过旧时可能收到 410 Gone，需要重新 List 建立当前视图。</td></tr>
+<tr><td>Scheduler</td><td>Filter / Score / Reserve / Permit / Bind 怎么区分？</td><td>Filter 判断能不能放，Score 判断放哪里更好；Reserve 通知有状态插件维护临时账本，Permit 等待或拒绝，Bind 把选点结果写回 API Server。</td></tr>
 <tr><td>Controller Manager</td><td>什么是 reconcile？</td><td>比较期望状态和实际状态，持续创建、更新、删除对象，让系统最终一致。</td></tr>
 <tr><td>kubelet</td><td>kubelet 如何调用 CRI / CNI / CSI？</td><td>CRI 管容器运行时，CNI 配 Pod 网络，CSI / volume manager 挂载存储；kubelet 编排本节点执行。</td></tr>
 <tr><td>containerd</td><td>containerd、runc、shim、pause 容器分别是什么？</td><td>containerd 是高层 runtime，runc 创建 OCI 容器，shim 托管容器进程，pause 持有 Pod 共享 namespace。</td></tr>
@@ -71,7 +76,7 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 <h3>Container Runtime / containerd 面试速查</h3>
 <p>containerd 相关问题通常不是问“会不会用 Docker”，而是问清 <strong>kubelet → CRI → containerd → shim → runc</strong> 这条节点侧执行链路，以及 Pod sandbox / pause 容器为什么存在。</p>
 <table>
-<tr><th>问题</th><th>一句话答案</th><th>排障关键词</th></tr>
+<tr><th>问题</th><th>核心回答</th><th>排障关键词</th></tr>
 <tr><td>CRI 是什么？</td><td>Kubernetes 定义的容器运行时接口，kubelet 通过 CRI gRPC 调用运行时。</td><td><code>crictl</code>、runtime endpoint</td></tr>
 <tr><td>containerd 和 runc 区别？</td><td>containerd 管镜像、快照、容器生命周期；runc 是 OCI low-level runtime，真正创建 Linux 容器。</td><td>OCI bundle、snapshotter</td></tr>
 <tr><td>pause 容器是什么？</td><td>Pod sandbox 的基础容器，先启动并持有 Pod 的 network / IPC 等共享 namespace。</td><td>Pod IP、sandbox</td></tr>
@@ -86,7 +91,7 @@ Kubernetes 是声明式控制系统：API Server 接收期望状态，Controller
 
 <h3>架构与 Pod 主链路高频问答</h3>
 
-<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
 
 </div>
 
@@ -152,7 +157,7 @@ journalctl -u containerd</code></pre>
 <div class="qa-q">Q: ContainerCreating 卡住通常看哪里？</div>
 <div class="qa-a">
 <p>ContainerCreating 表示已经调度到节点，但节点侧执行还没完成。排查顺序是：Pod Events → kubelet 日志 → containerd 日志 → CNI 日志 / 配置 → CSI mount → 镜像拉取。常见原因包括 CNI 分配 IP 失败、CSI 挂载超时、sandbox 创建失败、镜像拉取慢、节点磁盘压力。</p>
-<div class="qa-summary">面试口径：Pending 偏调度侧，ContainerCreating 偏节点执行侧；重点看 kubelet、runtime、CNI、CSI。</div>
+<div class="qa-summary">面试口径：Pod 完成调度后 phase 仍可能是 Pending，而 <code>kubectl</code> 的 STATUS 显示 ContainerCreating；此时重点看 kubelet、runtime、CNI、CSI 和镜像路径。</div>
 </div>
 </div>
 
@@ -187,10 +192,3 @@ journalctl -u containerd</code></pre>
 <div class="qa-summary">面试口径：watch 机制让组件通过 API Server 解耦协作，Controller 管期望状态，Scheduler 管放置决策，kubelet 管节点执行。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

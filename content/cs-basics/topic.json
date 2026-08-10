@@ -11,12 +11,6 @@
   ],
   "layout": [
     {
-      "type": "callout",
-      "tone": "note",
-      "title": "知识地图",
-      "text": "计算机与系统基础已拆分为以下 **8 个独立主题**，点击卡片进入对应模块："
-    },
-    {
       "type": "resources",
       "title": "基础知识模块",
       "items": [
@@ -68,17 +62,6 @@
           "desc": "Role/Replica/Rank · NCCL/RPC通信链路 · 存储数据面 · GPU/NPU观测",
           "href": "pages/cs-basics/distributed-ai/index.html"
         }
-      ]
-    },
-    {
-      "type": "callout",
-      "tone": "warn",
-      "title": "学习建议",
-      "items": [
-        "推荐按 **操作系统 → 组成原理 → 网络 → 容器/内核** 的顺序系统复习",
-        "编程语言（C++/Go）可结合自身技术栈选择重点，两者均在后端面试中高频出现",
-        "每个主题的最后一个模块通常为「面试收束/复习清单」，建议最后集中回顾",
-        "Linux内核与大模型系统是CS基础与AI Infra的交叉地带，建议在掌握OS基础后再深入"
       ]
     }
   ]

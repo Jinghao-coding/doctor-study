@@ -1,10 +1,6 @@
-## 一句话结论
-
-Cache 和 TLB 都是"用空间换时间"：Cache 缓存数据/指令，TLB 缓存虚拟地址→物理地址的翻译结果。两者都依赖程序的局部性（时间局部性+空间局部性），高性能代码的本质是写出对 Cache 和 TLB 友好的访问模式。
-
 <div class="card card-m">
 <h3>Cache 工作机制</h3>
-<table><tr><th>概念</th><th>一句话</th><th>面试关键词</th></tr>
+<table><tr><th>概念</th><th>核心含义</th><th>面试关键词</th></tr>
 <tr><td>Cache Line</td><td>缓存的最小单位，x86 典型 64 字节</td><td>64B、spatial locality、对齐</td></tr>
 <tr><td>映射方式</td><td>直接映射 / N 路组相联 / 全相联</td><td>现代 CPU 多为 N-way set associative</td></tr>
 <tr><td>写策略</td><td>Write-through（直写）vs Write-back（回写）</td><td>现代 L1/L2/L3 多用 write-back + write-allocate</td></tr>

@@ -1,7 +1,3 @@
-## 一句话结论
-
-HAMi 是面向 Kubernetes 的开源异构加速器虚拟化中间件。它不是简单把 `nvidia.com/gpu` 数量乘大，而是通过 **Mutating Webhook + Scheduler Extender + Device Plugin + HAMi-Core**，同时完成细粒度资源声明、物理设备选择、容器注入以及显存/算力限制。
-
 ## HAMi 解决什么问题
 
 官方 NVIDIA Device Plugin 的 Time-Slicing/MPS 主要按 `replicas` 做等份共享。平台如果希望用户声明“我要一张物理 GPU 上的 3GiB 显存和 30% 算力”，默认 kube-scheduler 无法理解这种二维设备容量。
@@ -186,10 +182,3 @@ Pod 卡在 ContainerCreating | 看 Device Plugin Allocate、runtime、libvgpu �
 - [HAMi Architecture](https://project-hami.io/docs/v2.7.0/core-concepts/architecture)
 - [HAMi GPU Virtualization Principles](https://project-hami.io/docs/core-concepts/gpu-virtualization)
 - [HAMi Helm Deployment](https://project-hami.io/docs/v2.8.0/get-started/deploy-with-helm)
-
-## 关联模块
-
-- `Time-Slicing 实战`：最轻量的共享访问方案。
-- `MPS 实战`：NVIDIA 官方并发共享和等份限制方案。
-- `Kubernetes / DRA`：HAMi 当前 Device Plugin/Extender 路径与未来 DRA 设备模型的区别。
-- `生产选型与论文映射`：决定何时值得引入 HAMi 的额外控制面复杂度。

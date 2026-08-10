@@ -1,17 +1,7 @@
-## 一句话结论
-
-Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β** 和模型的**计算强度 I** 三个量，给出模型在某硬件平台上的**理论性能上限** $P = \min(\pi, \beta \cdot I)$。
-## 阅读路径
-
-1. 先记住一句话结论：**Roofline 给的是性能上界，不是实际表现**。
-2. 看两组指标：平台侧（π、β、I_max）和模型侧（计算量、访存量、I）。
-3. 用 VGG16 / MobileNet 在 1080Ti 上的对比，把"为什么小模型在大卡上跑不出加速比"这个反直觉结论建起来。
-4. 最后看常见误区，避免把 Roofline 当成实际性能。
-
 <div class="card card-m">
 <h3>① 计算平台的两个指标：算力 π 与带宽 β</h3>
 <table>
-<tr><th>指标</th><th>含义</th><th>单位</th><th>面试一句话</th></tr>
+<tr><th>指标</th><th>含义</th><th>单位</th><th>面试回答</th></tr>
 <tr><td>算力 π</td><td>计算平台每秒能做的浮点运算数（性能上限）</td><td><code>FLOP/s</code></td><td>"屋顶的高度"</td></tr>
 <tr><td>带宽 β</td><td>计算平台每秒能完成的内存交换量（带宽上限）</td><td><code>Byte/s</code></td><td>"房檐的斜率"</td></tr>
 <tr><td>计算强度上限 I<sub>max</sub></td><td>π / β，单位内存交换最多能撑多少次计算</td><td><code>FLOPs/Byte</code></td><td>"屋顶和房檐的交点"</td></tr>
@@ -130,7 +120,7 @@ Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β**
 <tr><th>场景</th><th>平台特征</th><th>合适的模型</th><th>原因</th></tr>
 <tr><td>大卡训练（A100/H100/1080Ti）</td><td>π 高、β 高，I<sub>max</sub> 通常 10-100</td><td>VGG / 大型 Transformer</td><td>计算强度高，能站到屋顶；MobileNet 这种放上来反而是浪费带宽</td></tr>
 <tr><td>嵌入式 / 端侧 (TPU Edge / 手机 NPU)</td><td>π 低、β 也低，I<sub>max</sub> 通常 &lt; 5</td><td>MobileNet / 量化小模型</td><td>I<sub>M</sub> = 7 在端侧已经能站到屋顶，反而能吃满算力，准确率只下降 1%</td></tr>
-<tr><td>大模型推理 decode 阶段</td><td>每 step 只生成 1 token，访存大但计算少</td><td>—</td><td>天然 Memory-Bound；优化方向是 KV cache 压缩、PagedAttention、batching；详见 LLM 推理章节</td></tr>
+<tr><td>大模型推理 decode 阶段</td><td>每 step 只生成 1 token，访存大但计算少</td><td>—</td><td>天然 Memory-Bound；优化方向是 KV cache 压缩、PagedAttention、batching</td></tr>
 </table>
 <p><strong>"屠龙时用屠龙刀，日常吃鸡用小刀"</strong>——选模型不能只看 FLOPs，要看模型的 I 和目标平台的 I<sub>max</sub> 是否匹配。</p>
 </div>
@@ -161,7 +151,7 @@ Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β**
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 训练和推理的 Roofline 一样吗？</div>
 <div class="qa-a">
-<p>不一样。前向传播的 FLOPs 和访存量本文已经给出。训练还要算<strong>反向传播</strong>（FLOPs 翻倍，访存量也涨）和<strong>梯度更新</strong>（Momentum、Adam 这些优化器还要存额外状态，访存量再涨），所以训练的 I 通常比推理小，更容易 Memory-Bound。</p>
+<p>不一样。训练除了前向传播，还要算<strong>反向传播</strong>（FLOPs 翻倍，访存量也涨）和<strong>梯度更新</strong>（Momentum、Adam 这些优化器还要存额外状态，访存量再涨），所以训练的 I 通常比推理小，更容易 Memory-Bound。</p>
 </div>
 </div>
 
@@ -172,10 +162,3 @@ Roofline Model 是性能预测的理论基线：用**算力 π**、**带宽 β**
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- [`Transformer 与大模型基础 / 07-roofline-analysis`](../../transformer/07-roofline-analysis.md)：把 Roofline 用在 Transformer 算子分类上。
-- [`LLM 推理 / Decode Memory-bound`](../llm-inference/10-decode-memory-bound.md)、[`逐算子 Bound 分类`](../llm-inference/11-operator-bound-classification.md)：LLM Decode 为何受显存带宽限制的具体推导。
-- [`GPU / 03-performance-metrics`](../../gpu/03-performance-metrics.md)、[`09-bottleneck-classification`](../../gpu/09-bottleneck-classification.md)：从 GPU 视角看算力 / 带宽 / 利用率诊断。
-- [`性能预测与建模 / 01-examples`](01-examples.md)：把 Roofline 这种"白盒上界"和 ML 树模型的"黑盒回归"放在一起对比，理解何时该用哪种预测方法。

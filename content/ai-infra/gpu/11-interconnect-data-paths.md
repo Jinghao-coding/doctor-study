@@ -1,7 +1,3 @@
-## 一句话结论
-
-在 8 卡 H100/A100 训练服务器里，**单机内 GPU-GPU 通信优先走 NVLink/NVSwitch，跨机优先走 GPUDirect RDMA，PCIe 则承担 CPU、GPU、NIC、NVMe 之间的通用 I/O**。这三者不是孤立的硬件名词，而是回答一个 AI Infra 核心问题：**同样是「8 张 GPU」，放置位置、拓扑和通信路径不同，训练吞吐可能差数倍。**
-
 <img src="../../../resources/images/gpu/interconnect-bandwidth-comparison.svg" alt="GPU 三大互联带宽对比" style="width:100%;max-width:900px;margin:16px 0 8px 0;border-radius:8px;border:1px solid var(--border);" loading="lazy"/>
 <p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 16px 0;">图 1：NVLink、PCIe、RDMA 三大互联技术带宽量级对比。NVLink 4.0 单卡聚合带宽 900 GB/s，约为 PCIe Gen5 x16 的 7 倍，约为单口 400G RDMA NIC 的 18 倍。</p>
 
@@ -270,7 +266,7 @@ Legend 中关键缩写：
 - **NODE**：跨 PCIe Host Bridge，同一 NUMA 节点内。
 - **SYS**：跨 NUMA 节点（经过 UPI/Infinity Fabric，最慢）。
 
-## 一句话面试版回答
+## 面试回答
 
 NVLink/NVSwitch 是 8 卡 H100/A100 服务器内 GPU-GPU 通信的主路径，H100 SXM 单卡聚合带宽 900 GB/s（18 条 NVLink 4.0 × 50 GB/s），约为 PCIe Gen5 x16（128 GB/s）的 7 倍；PCIe 是 CPU、GPU、NIC、NVMe 间的通用 I/O 总线，带宽低但通用性强；RDMA（InfiniBand/RoCE）是跨服务器通信机制，单口 400G NIC 约 50 GB/s 线速，配合 GPUDirect RDMA 让 NIC 直接读写 GPU HBM、绕过 CPU 内存中转，比传统 host staging 路径延迟低 30%~50%。单机内训练通信应优先走 NVLink/NVSwitch（NCCL 会做 topology-aware 分层 reduce），跨机时使用 GPUDirect RDMA 并保证 GPU-NIC 同 Socket 亲和，避免跨 UPI/Infinity Fabric 导致的带宽下降和抖动。
 

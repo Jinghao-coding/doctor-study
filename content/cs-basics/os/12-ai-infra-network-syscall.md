@@ -1,6 +1,3 @@
-## 一句话结论
-
-网络基础要能从 socket API 讲到 TCP 状态机，再落到连接池、超时、反压和 RDMA/NCCL 为什么存在。三次握手确认双方收发能力和初始序列号，TIME_WAIT 保证可靠关闭。AI Infra 里分布式训练通信慢要分应用、GPU 拓扑、网络和系统四层排查；RDMA/InfiniBand/NCCL 的存在就是为了绕过传统 TCP/IP 的内核协议栈、CPU copy 和延迟瓶颈。
 ## AI Infra 面试模块：网络基础与系统调用
 
 网络基础连接分布式训练、推理服务、RPC、存储访问和控制面组件。面试回答要能从 socket API 讲到 TCP 状态，再扩展到连接池、超时、重试、反压和 RDMA/NCCL 为什么存在。

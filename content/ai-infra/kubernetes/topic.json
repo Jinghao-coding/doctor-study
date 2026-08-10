@@ -17,56 +17,13 @@
   "output": "pages/ai-infra/kubernetes/index.html",
   "layout": [
     {
-      "type": "path",
-      "title": "知识依赖路径",
-      "items": [
-        {
-          "title": "核心对象与 Pod 生命周期",
-          "desc": "先理解声明式 API、控制面与节点面的职责，以及 Pod 从提交到 Ready 的完整链路。"
-        },
-        {
-          "title": "工作负载与控制循环",
-          "desc": "再学习 Workload、Informer、WorkQueue、Reconcile 与 Operator，建立最终一致性的系统视角。"
-        },
-        {
-          "title": "资源模型与调度系统",
-          "desc": "从 requests/limits 和放置约束进入 Scheduler 队列、Cache、抢占、插件与源码。"
-        },
-        {
-          "title": "网络、存储与节点运行",
-          "desc": "串起 Service、CNI、CSI、DNS、Node 生命周期、扩缩容和节点侧排障。"
-        },
-        {
-          "title": "安全、交付与生产稳定性",
-          "desc": "补齐认证授权、准入、多租户、GitOps、升级、容量与故障治理。"
-        },
-        {
-          "title": "AI Infra 与 Kubernetes 扩展",
-          "desc": "理解 GPU Device Plugin、DRA、训练 Operator、拓扑调度和平台职责边界。"
-        },
-        {
-          "title": "面试检验与系统设计",
-          "desc": "最后通过核心机制、Scheduler、GPU、排障和平台设计题检查能否完整复述与连续追问。"
-        }
-      ]
-    },
-    {
-      "type": "callout",
-      "tone": "note",
-      "title": "学习与面试题库的分工",
-      "items": [
-        "知识模块用于首次学习和建立机制链路；按组顺序阅读，同组内从基础到精通。",
-        "面试题库用于闭卷复述和查漏补缺；先回答问题，再展开答案，并回到关联知识模块补机制。",
-        "Scheduler 源码、插件开发和深度原理属于进阶路径，不是理解 Kubernetes 基础概念的前置条件。"
-      ]
-    },
-    {
       "type": "tabs",
       "id": "kubernetes-tabs",
       "title": "Kubernetes 知识工作台",
       "groups": [
         {
-          "title": "01 核心模型与工作负载",
+          "title": "01 核心对象与工作负载",
+          "description": "集群架构、Pod 启动与生命周期、五类常用 Workload 控制器",
           "open": true,
           "items": [
             {
@@ -78,35 +35,44 @@
               "time": 20
             },
             {
-              "title": "调度与资源模型",
-              "description": "requests/limits、QoS、放置约束与 Pending 的调度侧入口",
-              "file": "02-scheduling-resource-model.md",
+              "title": "Pod 生命周期与探针",
+              "description": "Pod phase、容器状态、Conditions、重启策略、探针与优雅终止",
+              "file": "03-workload-controller.md",
               "level": "基础",
               "priority": 3,
               "time": 20
             },
             {
-              "title": "Workload 与 Controller",
-              "description": "Pod 生命周期、Deployment、StatefulSet、Job 与声明式控制循环",
-              "file": "03-workload-controller.md",
+              "title": "Deployment 与 ReplicaSet",
+              "description": "控制关系、RollingUpdate、maxSurge/maxUnavailable、暂停、回滚与排障",
+              "file": "03a-deployment-replicaset.md",
               "level": "基础",
               "priority": 3,
-              "time": 35
+              "time": 20
+            },
+            {
+              "title": "StatefulSet 与 DaemonSet",
+              "description": "稳定身份、有序生命周期、PVC、节点覆盖、更新策略与故障边界",
+              "file": "03b-statefulset-daemonset.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 20
+            },
+            {
+              "title": "Job 与 CronJob",
+              "description": "完成语义、并行模式、重试与失败策略、周期调度和并发控制",
+              "file": "03c-job-cronjob.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 20
             }
           ]
         },
         {
           "title": "02 控制循环与 API 控制面",
+          "description": "Informer/WorkQueue/Reconcile、API Server 请求链路与 etcd",
           "open": false,
           "items": [
-            {
-              "title": "Operator 与 CRD",
-              "description": "CRD、controller-runtime、幂等 Reconcile、Finalizer、OwnerReference 与 Status",
-              "file": "08a-operator-crd.md",
-              "level": "进阶",
-              "priority": 2,
-              "time": 20
-            },
             {
               "title": "Informer 与 WorkQueue",
               "description": "Reflector、DeltaFIFO、Indexer、RateLimitingQueue 与 Reconcile 全链路",
@@ -134,9 +100,18 @@
           ]
         },
         {
-          "title": "03 Scheduler 核心机制",
+          "title": "03 资源模型与 Scheduler",
+          "description": "资源与放置约束、队列/Cache/抢占、Framework 插件与源码",
           "open": false,
           "items": [
+            {
+              "title": "资源需求与放置约束",
+              "description": "requests/limits、QoS、Node allocatable、Affinity、Taint 与 Pending 入口",
+              "file": "02-scheduling-resource-model.md",
+              "level": "基础",
+              "priority": 3,
+              "time": 20
+            },
             {
               "title": "调度路径与三个队列",
               "description": "一次 Pod 调度路径以及 ActiveQ、BackoffQ、UnschedulablePods 的状态流转",
@@ -168,13 +143,7 @@
               "level": "精通",
               "priority": 2,
               "time": 25
-            }
-          ]
-        },
-        {
-          "title": "04 Scheduler 扩展与源码",
-          "open": false,
-          "items": [
+            },
             {
               "title": "扩展点设计差异",
               "description": "PreFilter、Filter、PreScore、Score 等 Hook 的职责、状态与选型",
@@ -208,7 +177,7 @@
               "time": 18
             },
             {
-              "title": "Scheduler 源码阅读路径",
+              "title": "Scheduler 源码主链路",
               "description": "Run、scheduleOne、schedulePod、findNodesThatFitPod 与 bindingCycle",
               "file": "09i-scheduler-source-reading.md",
               "level": "精通",
@@ -218,7 +187,8 @@
           ]
         },
         {
-          "title": "05 网络、存储与节点",
+          "title": "04 网络、存储与节点",
+          "description": "Service/CNI/CSI、kube-proxy、Node 生命周期与自动扩缩容",
           "open": false,
           "items": [
             {
@@ -256,7 +226,8 @@
           ]
         },
         {
-          "title": "06 安全、交付与稳定性",
+          "title": "05 安全、交付与稳定性",
+          "description": "RBAC/准入/多租户、故障排查、Helm/Kustomize/GitOps",
           "open": false,
           "items": [
             {
@@ -286,9 +257,26 @@
           ]
         },
         {
-          "title": "07 AI Infra 与设备管理",
+          "title": "06 Kubernetes 扩展与 AI Infra",
+          "description": "CRD/Operator/Kubebuilder、Device Plugin、DRA 与 GPU 设备共享",
           "open": false,
           "items": [
+            {
+              "title": "CRD 与 Operator",
+              "description": "自定义 API、controller-runtime、幂等 Reconcile、Finalizer、OwnerReference 与 Status",
+              "file": "08a-operator-crd.md",
+              "level": "进阶",
+              "priority": 2,
+              "time": 20
+            },
+            {
+              "title": "Kubebuilder 工程实战",
+              "description": "GVK/GVR、Reconcile 代码骨架、Webhook、RBAC、升级与可观测性",
+              "file": "08b-operator-engineering.md",
+              "level": "精通",
+              "priority": 2,
+              "time": 25
+            },
             {
               "title": "Device Plugin 与 DRA",
               "description": "GPU 注册、Extended Resource、Allocate、ResourceClaim、共享机制与调度边界",
@@ -300,7 +288,8 @@
           ]
         },
         {
-          "title": "08 面试检验：机制与组件",
+          "title": "07 面试检验：机制与组件",
+          "description": "核心机制、Workload/网络/存储、Scheduler 与 GPU 高频题",
           "open": false,
           "items": [
             {
@@ -338,7 +327,8 @@
           ]
         },
         {
-          "title": "09 面试检验：场景与设计",
+          "title": "08 面试检验：场景与设计",
+          "description": "故障诊断树与多租户 GPU 平台系统设计",
           "open": false,
           "items": [
             {

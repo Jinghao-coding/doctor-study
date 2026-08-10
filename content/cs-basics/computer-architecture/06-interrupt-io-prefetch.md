@@ -1,7 +1,3 @@
-## 一句话结论
-
-CPU 和外设（磁盘、网卡、GPU）的交互方式经历了从轮询→中断→DMA 的演进，核心目标是让 CPU 少等 I/O。AI 训练/推理中 GPU 通过 DMA（PCIe）直接访问 Host 内存，NIC 通过 RDMA 直接写 GPU 显存（GPUDirect RDMA），都是为了绕开 CPU 减少数据拷贝。
-
 <div class="card card-m">
 <h3>I/O 方式演进</h3>
 <table><tr><th>方式</th><th>原理</th><th>CPU 参与</th><th>适用场景</th></tr>

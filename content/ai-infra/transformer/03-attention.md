@@ -1,6 +1,3 @@
-## 一句话结论
-
-Self-Attention 用 Q/K/V 计算 token 间相关性，Multi-Head 则让不同 head 学不同关系子空间。
 <div class="card card-m">
 <h3>Self-Attention：核心三步</h3>
 <p>注意力的本质是<strong>「加权求和」</strong>：每个 token 输出 = 其它所有 token 的 value 的加权平均，权重由「我和你有多相关」决定。</p>
@@ -107,16 +104,9 @@ class MultiHeadAttention(nn.Module):
 <div class="card card-d">
 <h3>Attention vs Feed Forward：各自的作用</h3>
 <table>
-<tr><th>模块</th><th>作用</th><th>一句话</th></tr>
+<tr><th>模块</th><th>作用</th><th>核心含义</th></tr>
 <tr><td>Attention</td><td>在 <strong>token 之间</strong>做信息交互，捕获序列依赖关系</td><td>「谁该关注谁」——做<strong>混合/通信</strong></td></tr>
 <tr><td>Feed Forward (FFN)</td><td>对<strong>每个 token 独立</strong>做非线性变换，提升表达能力</td><td>承担<strong>「知识存储」</strong>，做<strong>加工/记忆</strong></td></tr>
 </table>
 <p>形象比喻：Attention 是「开会，大家交换信息」；FFN 是「会后各自回去消化、加工」。一层 Transformer 就是「交流一次 + 各自加工一次」。研究还发现大模型的事实知识大量存储在 FFN 层里。</p>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

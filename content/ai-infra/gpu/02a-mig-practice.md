@@ -1,7 +1,3 @@
-## 一句话结论
-
-MIG 的正确使用流程不是“打开一个开关”，而是：**确认硬件支持 → 清空 GPU workload → 启用 MIG mode → 创建 GPU Instance 和 Compute Instance → 让 Device Plugin 上报资源 → Pod 申请具体 profile → 用 DCGM 和业务指标验证。**MIG profile 重配会中断节点上的 GPU workload，生产上必须先 cordon/drain。
-
 ## MIG 到底切了什么
 
 MIG 把一张支持该能力的 GPU 划分为若干 GPU Instance（GI），每个 GI 再包含可运行 CUDA workload 的 Compute Instance（CI）。profile 名称中的两部分分别表达计算切片和显存规格，例如 `1g.10gb`；具体 profile、数量和名称取决于 GPU 型号。
@@ -169,9 +165,3 @@ GPU Operator 环境优先让 MIG Manager 管理，不要一边手工执行 `nvid
 
 - [NVIDIA MIG Getting Started](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/getting-started-with-mig.html)
 - [NVIDIA GPU Operator with MIG](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-operator-mig.html)
-
-## 关联模块
-
-- `机制总览`：MIG 与其他共享方案的边界。
-- `生产选型与论文映射`：什么业务值得为强隔离付出 profile 碎片代价。
-- `利用率诊断链路`：MIG 环境下如何避免“看起来忙但吞吐低”的误判。

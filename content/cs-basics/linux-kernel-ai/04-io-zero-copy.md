@@ -1,6 +1,3 @@
-## 一句话结论
-
-大模型权重加载是典型系统瓶颈：权重几十到几百 GB 要穿过磁盘、page cache、用户态 buffer、反序列化、CPU 内存、pinned memory 再到 GPU HBM，路径不合理 GPU 就一直空等。优化围绕减少拷贝展开——mmap 省掉 page cache 到用户态的拷贝、Direct I/O 绕过 page cache 避免污染、sendfile 做文件到网络的零拷贝，落地还要叠加并行 shard、pinned memory 和 NUMA-aware 加载。
 ## 大模型权重加载为什么是系统瓶颈？
 
 大模型权重可能是几十 GB、几百 GB，甚至 TB 级分片。加载路径涉及：

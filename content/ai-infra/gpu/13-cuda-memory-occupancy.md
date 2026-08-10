@@ -1,7 +1,3 @@
-## 一句话结论
-
-CUDA 内存和 occupancy 要一起看：register/shared memory/global memory 决定数据访问成本，block size、寄存器和 shared memory 用量决定一个 SM 能挂多少 warp。Occupancy 是隐藏延迟的条件，不是最终性能目标。
-
 ## 系统链路
 
 **硬件视角**：基本单位是 SP（Streaming Processor，也叫 CUDA Core），每个 SP 有自己的 register 和 local memory（片下内存，应对寄存器不足），只能被自己访问；多个 SP 和一块 shared memory 构成一个 SM，shared memory 被 SM 内线程共享；多个 SM 和一块全局内存构成 GPU，global memory 被所有线程访问。
@@ -15,7 +11,7 @@ CUDA 内存和 occupancy 要一起看：register/shared memory/global memory 决
 <tr><td>grid（device）</td><td>GPU</td><td>所有 thread 共享 global memory</td></tr>
 </table>
 
-一句话：register/local 私有，shared memory 是 block 内协作的关键，global memory 全局共享但最慢；不同 block 的线程不能直接协作。
+register/local 私有，shared memory 是 block 内协作的关键，global memory 全局共享但最慢；不同 block 的线程不能直接协作。
 
 ## 关键机制
 
@@ -88,9 +84,3 @@ Tensor Core 是专门做矩阵乘加（GEMM、卷积、Attention）的硬件单�
 <div class="qa-q">Q: 什么是内存墙，CUDA 里怎么缓解？</div>
 <div class="qa-a"><p>内存墙是处理器算力增长远快于内存访问速度造成的瓶颈。CUDA 里 global memory 延迟高、带宽相对有限，容易成为瓶颈。缓解办法是把频繁复用的数据搬到 shared memory（片上）做缓存复用，减少 global memory 访问次数，例如矩阵乘 tiling 和 FlashAttention 的分块计算。</p></div>
 </div>
-
-## 关联模块
-
-- `CUDA 执行模型`：block、warp、SM 是 occupancy 的前置概念。
-- `性能指标`：Roofline 和 arithmetic intensity 判断是否被内存墙限制。
-- `利用率诊断`：用 achieved occupancy、eligible warps、stall reason 做实证判断。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-MPS 适合“多个可信 CUDA workload 单独跑都打不满 GPU，但希望 kernel 真正并发”的场景。使用时必须同时配置 **MPS server、client 可见设备、SM 执行资源上限、显存上限和运行时监控**；只启动 daemon 而不做资源治理，仍然可能互相 OOM 或产生严重干扰。
-
 ## MPS 执行链路
 
 ```flow
@@ -182,9 +178,3 @@ kubectl exec mps-demo -- nvidia-smi
 - [NVIDIA MPS：When to Use MPS](https://docs.nvidia.com/deploy/mps/when-to-use-mps.html)
 - [NVIDIA MPS Tools and Interface](https://docs.nvidia.com/deploy/mps/610/appendix-tools-and-interface-reference.html)
 - [NVIDIA Kubernetes Device Plugin](https://github.com/NVIDIA/k8s-device-plugin)
-
-## 关联模块
-
-- `DeepShare`：用 MPS 共置，并用 DCGM 干扰预测和在线降级保护 Guaranteed workload。
-- `ElastiCo`：进一步把 MPS 执行资源调整与 CUDA VMM 显存弹性组合。
-- `利用率诊断链路`：MPS 环境必须看 workload 吞吐和 DCGM 指标，而不只是 GPU-Util。

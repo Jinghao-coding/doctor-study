@@ -1,7 +1,3 @@
-## 一句话结论
-
-QAD 不是“这个租户用了多少资源”，而是“这个租户当前**应被保障的 Guaranteed GPU 中，已经兑现了多少**”。最稳的记忆方式只有一句：**分子是已兑现，分母是该兑现，QAD 是兑现率。**
-
 <div class="card card-m">
 <h3>先把完整公式记对</h3>
 <div class="formula">$$
@@ -107,9 +103,3 @@ EMA 平滑 | 得到控制信号 Q̃_i(t)
 <tr><td>运行时间短的作业永远优先</td><td>先按平滑 QAD 恢复欠保障租户，再用预测时间优化局部顺序</td></tr>
 </tbody>
 </table>
-
-## 关联模块
-
-- `DeepShare / 概述与设计`：QAD 为什么能统一 DRA、预测调度与干扰感知合用。
-- `DeepShare / K8S 实现细节`：QAD 在 Scheduler Plugin 的实时控制环中如何维护和消费。
-- `DeepShare / 论文延伸问答`：EMA、过载恢复和动态 colocation 门槛的论文级追问。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-**QueueingHint** 是 K8s 1.28 引入、1.32 GA 的能力，让 Plugin 可以基于具体的集群事件（增删 Pod / Node 标签变更等）告诉 scheduler「这次事件能不能让我之前调度失败的 Pod 重新有机会」，避免**惊群式重新入队**导致 scheduler 反复扫描节点却仍然失败。
 ## 三个队列再回顾
 
 <div class="figure">
@@ -136,9 +133,3 @@ func (pl *NodeAffinity) isSchedulableAfterNodeChange(
 <p><strong>只要有一个 Plugin 返回 Queue，就搬移。</strong>原因是 scheduler 没法证明"NodeResourcesFit 满足但 NodeAffinity 不满足 = 一定调度不了"，必须重新跑一遍 Filter 才知道。这是设计上的"宁可错放，不可漏放"。</p>
 </div>
 </div>
-
-## 关联模块
-
-- `调度路径与三个队列`（09a）：三队列基础和入队出队主流程。
-- `Cache、扩展点与抢占`（09b）：CycleState 与 scheduler cache 的关系。
-- `Scheduler 可观测性`（09g）：QueueingHint 命中率的 metrics 监控。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-原生 Kubernetes 的 ResourceQuota 是“超额即拒绝”语义，满足不了“用户照常提交、超额任务排队、有资源自动顶上”的诉求。生产做法是**两级队列**：自己实现一级业务队列（TrainingJob + 配额账本 + 准入策略），只把拿到 quota token 的任务下发给 Volcano；Volcano 作为二级调度器只负责 gang、PodGroup、放置和抢占执行。配额账本和任务状态存在 CRD 的 `spec` / `status`，由 etcd 持久化，不另起数据库。
 <div class="card card-w">
 <h3>面试场景题（面试官口吻）</h3>
 <p>这类题面试官不会直接说“设计一个 CRD”，而是给业务场景让你识别原生能力缺口：</p>
@@ -189,11 +186,3 @@ status:
 <tr><td>完全相信 Volcano Queue capability</td><td>它只能当底线 guardrail，不能当唯一账本——pending 统计、队列位置、用户级公平、单任务合法性、业务优先级、审计计费都还得平台层做</td></tr>
 </table>
 </div>
-
-## 关联模块
-
-- `Volcano`：PodGroup、Gang、Queue、Priority、Preempt、Reclaim 等二级调度能力细节。
-- `Kueue`：LocalQueue / ClusterQueue / ResourceFlavor / Workload 准入排队，是“准入队列”的官方实现参照。
-- `多租户管理`：配额、隔离、公平性与资源治理的总论。
-- `GPU 拓扑与通信`：二级调度里 topology-aware 放置和 NCCL 通信背景。
-- `故障处理与弹性`：抢占 victim 选择依赖的 checkpoint 策略。

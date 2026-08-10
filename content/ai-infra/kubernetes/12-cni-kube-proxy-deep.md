@@ -1,6 +1,3 @@
-## 一句话结论
-
-K8s 网络数据面由 CNI 插件负责 Pod 网络配置（IP 分配、veth/bridge/路由）、kube-proxy 或 eBPF 负责 Service 负载均衡；Pod 跨节点通信依赖-underlay/overlay 网络打通，Service 转发经历 DNAT/路由/后端选择，理解 CNI 接口规范、kube-proxy 三种模式差异和主流 CNI 实现（Calico/Cilium/Flannel）是网络面试的核心。
 <div class="card card-s">
 <h3>Pod 网络数据路径图</h3>
 <div class="figure">
@@ -350,10 +347,3 @@ endpoints:
 <div class="qa-summary">面试口径：ExternalName = DNS CNAME 别名，不分配 ClusterIP，不经过 kube-proxy，流量直接到外部服务，仅在 DNS 层面做映射。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `04-networking-storage`：网络基础概念（Service 类型、CNI 简介、存储概览）。
-- `01-architecture-pod-flow`：kubelet 创建 Pod 时调用 CNI 的时机在 RunPodSandbox 阶段。
-- `10-etcd-internals`：Endpoints 对象过大是 etcd 大 value 问题的常见来源，EndpointSlices 是重要缓解措施。
-- `07-ai-infra-gpu-dra`：AI 训练/推理大规模集群对网络性能要求高，Cilium eBPF + RDMA/SR-IOV 是高性能方案。

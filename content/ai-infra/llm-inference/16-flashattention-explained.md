@@ -1,8 +1,5 @@
-## 一句话结论
-
-FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩阵不落 HBM。
 <div class="card card-m">
-<h3>一句话先抓住本质</h3>
+<h3>核心机制</h3>
 <p>FlashAttention <strong>不减少 attention 的计算量（FLOPs 一点没少，甚至略增）</strong>，它减少的是 GPU 显存（HBM）的读写次数。因为标准 attention 是 <strong>memory-bound</strong>——瓶颈在搬数据而不是算数据，所以“少搬数据”比“少算”更能加速。它是<strong>精确</strong>的，结果和标准 attention 完全一致，不是近似。</p>
 <div class="qa-summary">记忆口径：不省计算、只省 HBM 读写；精确而非近似；手段是 tiling + online softmax + kernel fusion。</div>
 </div>
@@ -78,7 +75,7 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 <text x="500" y="210" text-anchor="middle" class="pa-sub">每个小块单独装进 SRAM，算完只保留累加结果，再换下一块</text>
 </svg>
 </div>
-<div class="qa-summary">一句话：tiling = 把装不下的大矩阵乘法，拆成一格一格装得下的小块，逐块算、累加。它是几乎所有 GPU 高性能 kernel（不只 attention）的通用手段。</div>
+<div class="qa-summary">tiling = 把装不下的大矩阵乘法，拆成一格一格装得下的小块，逐块算、累加。它是几乎所有 GPU 高性能 kernel（不只 attention）的通用手段。</div>
 </div>
 
 <div class="card card-d">
@@ -148,7 +145,7 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 <li><strong>增加并行维度</strong>：在 seq_len 维度上也做并行，让 SM（流多处理器）利用率打满，不只在 batch×head 上并行。</li>
 <li><strong>优化 warp 级工作划分</strong>：减少 warp 之间的通信和对 shared memory 的读写次数。</li>
 </ul>
-<p>一句话：V1 解决“要不要落 HBM”，V2 在“怎么把 GPU 算得更满”上继续抠。</p>
+<p>V1 解决“要不要落 HBM”，V2 在“怎么把 GPU 算得更满”上继续抠。</p>
 </div>
 
 <div class="card card-d">
@@ -163,7 +160,7 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 用一句话讲 FlashAttention 的原理，以及它为什么能加速。</div>
+<div class="qa-q">Q: 简要说明 FlashAttention 的原理，以及它为什么能加速。</div>
 <div class="qa-a"><p>标准 attention 要把巨大的 QKᵀ 中间矩阵反复写读 HBM，而 attention 是 memory-bound 的，瓶颈在搬数据。FlashAttention 用 tiling 把 Q/K/V 分块加载进 SRAM，靠 online softmax 增量计算，让中间矩阵永不落 HBM，从而把 HBM 读写从 O(seq²) 级降下来。它没减少 FLOPs（甚至略增），但大幅减少了 HBM 访问，所以在 memory-bound 场景下更快；并且结果精确，不是近似。</p></div>
 </div>
 
@@ -176,10 +173,3 @@ FlashAttention 的本质是 tiling + online softmax，让 attention 中间大矩
 <div class="qa-q">Q: online softmax 为什么能让 attention 增量计算？</div>
 <div class="qa-a"><p>普通 softmax 要先看到一整行分数才能算分母（所有 exp 之和）和最大值。online softmax 维护“当前见过的最大值”和“当前累计分母”，每来一个新块就按数值稳定的方式更新这两个量，并对已累加的输出做相应 rescale。这样不需要先凑齐整行，就能一块一块累加出和标准 softmax 完全相同的结果——这是中间矩阵不必落 HBM 的数学前提。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

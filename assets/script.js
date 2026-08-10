@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function(){
       filter.addEventListener('input', function(){
         var query = filter.value.trim().toLowerCase();
         buttons.forEach(function(button){
-          var text = button.textContent.replace(/\s+/g, ' ').toLowerCase();
+          var text = (button.textContent + ' ' + (button.dataset.search || '')).replace(/\s+/g, ' ').toLowerCase();
           var match = !query || text.indexOf(query) !== -1;
           button.dataset.queryHidden = match ? '' : '1';
           button.hidden = !!button.dataset.queryHidden || !!button.dataset.levelHidden;
@@ -681,11 +681,10 @@ document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('[data-subtabs]').forEach(function(box){
     var nav = box.querySelector('.subtabs-nav');
     if(!nav) return;
-    nav.addEventListener('click', function(e){
-      var btn = e.target.closest('.subtab-button');
-      if(!btn) return;
+    var buttons = Array.from(nav.querySelectorAll('.subtab-button'));
+    function activateSubtab(btn){
       var pid = btn.getAttribute('aria-controls');
-      box.querySelectorAll('.subtab-button').forEach(function(b){
+      buttons.forEach(function(b){
         var on = b === btn;
         b.classList.toggle('active', on);
         b.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -696,6 +695,22 @@ document.addEventListener('DOMContentLoaded', function(){
         if(on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
       });
       document.dispatchEvent(new CustomEvent('tab:activated', {detail: {group: box}}));
+    }
+    nav.addEventListener('click', function(e){
+      var btn = e.target.closest('.subtab-button');
+      if(!btn) return;
+      activateSubtab(btn);
+    });
+    buttons.forEach(function(btn, index){
+      btn.addEventListener('keydown', function(e){
+        if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        var next = e.key === 'ArrowRight' ? index + 1 : index - 1;
+        if(next < 0) next = buttons.length - 1;
+        if(next >= buttons.length) next = 0;
+        buttons[next].focus();
+        activateSubtab(buttons[next]);
+      });
     });
   });
 });

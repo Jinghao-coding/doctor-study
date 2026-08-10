@@ -1,6 +1,3 @@
-## 一句话结论
-
-STL 容器各有底层实现：vector 是连续动态数组按 1.5x/2x 倍增扩容、string 有 SSO 小字符串栈上优化、deque 是分段连续数组、list 是双向链表、set/map 基于红黑树有序 O(log n)、unordered_map 是哈希表平均 O(1)；vector 迭代器在 reallocation 后全部失效，list 只失效被删元素，unordered_map rehash 后全部失效；容器选择按"是否需要有序/是否需要随机访问/是否频繁中间插入"三维度决策。
 <div class="card card-m">
 <h3>vector：连续动态数组</h3>
 <p>vector 在堆上分配一块连续内存，用三个指针管理：<code>start</code>（起始）、<code>finish</code>（已用末尾）、<code>end_of_storage</code>（容量末尾）。</p>

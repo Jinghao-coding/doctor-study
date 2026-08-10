@@ -1,10 +1,7 @@
-## 一句话结论
-
-PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核心价值是减少碎片和支持 continuous batching。
 <div class="card card-m">
-<h3>一句话先抓住本质</h3>
+<h3>核心机制</h3>
 <p>PagedAttention <strong>不是一种 attention 算法</strong>，而是 vLLM 给 KV Cache 设计的一套<strong>“虚拟内存”管理系统</strong>。它把 KV Cache 切成固定大小的小块（block），让一个请求逻辑上看到连续的 token 序列，物理显存里却可以散落在任意位置——和操作系统用分页管理内存是同一个思路。</p>
-<div class="qa-summary">类比一句话：PagedAttention 之于 KV Cache，就像操作系统分页之于进程内存。</div>
+<div class="qa-summary">类比PagedAttention 之于 KV Cache，就像操作系统分页之于进程内存。</div>
 </div>
 
 <div class="card card-r">
@@ -143,7 +140,7 @@ PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 用一句话解释 PagedAttention，再说它解决什么问题。</div>
+<div class="qa-q">Q: 简要解释 PagedAttention，再说它解决什么问题。</div>
 <div class="qa-a"><p>PagedAttention 是 vLLM 借鉴操作系统分页、给 KV Cache 做的虚拟内存管理：把 KV Cache 切成固定大小的 block，逻辑连续、物理可不连续，用 block table 维护映射。它解决两件事——预分配按最大长度预留造成的<strong>内部浪费</strong>，以及请求进出留下空洞造成的<strong>外部碎片</strong>，从而提升显存利用率和并发数，并支撑 continuous batching 和前缀共享。</p></div>
 </div>
 
@@ -156,10 +153,3 @@ PagedAttention 把 KV cache 从连续大块分配变成 block table 映射，核
 <div class="qa-q">Q: 物理 block 不连续，attention 计算会不会变慢或出错？</div>
 <div class="qa-a"><p>不会出错：kernel 读 KV 时先查 block table 找到每个逻辑块对应的物理 block，再去取数，逻辑顺序由映射保证。性能上确实多了查表和非连续访问的开销，但服务场景的瓶颈通常是 KV Cache 容量和调度空洞，而不是单次 attention 的极限带宽，所以换来更高并发和吞吐是划算的。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

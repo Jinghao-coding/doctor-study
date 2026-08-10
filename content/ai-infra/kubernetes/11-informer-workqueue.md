@@ -1,6 +1,3 @@
-## 一句话结论
-
-client-go 的 Informer 机制是 K8s Controller/Operator 的核心基础设施：Reflector 通过 ListAndWatch 从 API Server 获取资源变更，经 DeltaFIFO 队列去重后写入 Indexer 本地缓存并触发事件，Controller 从 RateLimitingQueue 取 key 执行 Reconcile，最终实现"watch 变化 → 本地缓存同步 → 异步 reconcile → 失败退避重试"的声明式控制循环。
 <div class="card card-s">
 <h3>Informer 完整链路图</h3>
 <div class="figure">
@@ -413,10 +410,3 @@ func (c *Controller) handleErr(err error, key interface{}) {
 <div class="qa-summary">面试口径：Watch resourceVersion 续传 + 过期全量 relist + FIFO 去重 + WorkQueue at-least-once + 幂等 Reconcile + 失败重试，多层机制共同保证事件最终被处理。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `10-etcd-internals`：Informer 的 Watch 机制底层是 etcd watch + resourceVersion（revision），理解 etcd MVCC 才能理解"too old resource version"和 relist。
-- `08a-operator-crd`：Operator 开发的核心就是写自定义 Controller，Informer/WorkQueue 是 client-go 提供的标准框架。
-- `03-workload-controller`：Deployment/ReplicaSet/Job 等内置 Controller 都使用相同的 Informer 机制。
-- `13-api-server-deep`：API Server 的 chunked watch、bookmark 事件是 Informer 高效率的服务端配合。

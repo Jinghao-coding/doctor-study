@@ -1,6 +1,3 @@
-## 一句话结论
-
-一次 Pod 调度要按端到端链路讲：API Server 保存未绑定 Pod，scheduler 通过队列和插件链选择 Node 并写回绑定结果，目标 Node 的 kubelet 再真正启动容器。队列机制解释 Pod 为什么会在 ActiveQ、BackoffQ、UnschedulableQ 之间流转。
 <div class="card card-m">
 <h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
 <p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
@@ -11,8 +8,8 @@
 <p>复习时不要按文件顺序硬背。面试官通常按问题追问，先定位问题类型，再展开对应链路。</p>
 <table>
 <tr><th>面试官问法</th><th>先答什么</th><th>深挖入口</th></tr>
-<tr><td>一个 Pod 如何被调度到 Node？</td><td>Watch Pod → Queue → Filter → Score → Bind → Kubelet Run</td><td>本节端到端路径</td></tr>
-<tr><td>Pod 一定会进入 ActiveQ 吗？</td><td>不一定，SchedulingGates / PreEnqueue 可能在入队前挡住</td><td>本节 PreEnqueue 补充</td></tr>
+<tr><td>一个 Pod 如何被调度到 Node？</td><td>Watch Pod → Queue → Filter → Score → Bind → Kubelet Run</td><td>端到端调度路径</td></tr>
+<tr><td>Pod 一定会进入 ActiveQ 吗？</td><td>不一定，SchedulingGates / PreEnqueue 可能在入队前挡住</td><td>PreEnqueue 入队门控</td></tr>
 <tr><td>Pod 为什么 Pending？</td><td>先看 FailedScheduling，再按 Filter 失败插件分类</td><td>资源模型 + Diagnosis / FitError</td></tr>
 <tr><td>scheduler 为什么需要 cache？</td><td>避免每次调度访问 API Server，并支持 Assume 防止过度分配</td><td>Cache、扩展点与抢占</td></tr>
 <tr><td>高优 Pod 调度不上怎么办？</td><td>没有 feasible node 时 PostFilter 触发抢占，但抢占不等于立刻运行</td><td>Preemption 深入</td></tr>
@@ -71,7 +68,7 @@ kubelet 拉镜像、创建容器、启动 Pod</code></pre>
 <h3>2. Scheduler 发现 Pod 并进入队列</h3>
 <p><code>kube-scheduler</code> 通过 informer / watch 机制监听 API Server，重点关注 <code>Pod.spec.nodeName</code> 为空的 Pod。它们会进入 scheduler 内部的调度队列。</p>
 <table>
-<tr><th>队列</th><th>作用</th><th>一句话</th></tr>
+<tr><th>队列</th><th>作用</th><th>核心含义</th></tr>
 <tr><td><code>activeQ</code></td><td>当前可以尝试调度的 Pod</td><td>现在试试</td></tr>
 <tr><td><code>backoffQ</code></td><td>之前失败，等待退避时间结束的 Pod</td><td>过会儿再试</td></tr>
 <tr><td><code>unschedulableQ</code></td><td>当前没有可行节点，等待集群状态变化的 Pod</td><td>等条件变了再试</td></tr>
@@ -203,7 +200,7 @@ kubelet 拉镜像、创建容器、启动 Pod</code></pre>
 <tr><td>CNI</td><td>配置 Pod 网络</td></tr>
 <tr><td>CSI / volume plugin</td><td>挂载存储</td></tr>
 </table>
-<div class="qa-summary">一句话：Scheduler 只负责“选机器”，不负责“起容器”；容器真正启动是在 kubelet 侧完成的。</div>
+<div class="qa-summary">Scheduler 只负责“选机器”，不负责“起容器”；容器真正启动是在 kubelet 侧完成的。</div>
 </div>
 
 <div class="card card-d">
@@ -342,7 +339,7 @@ PostBind</code></pre>
 <tr><th>维度</th><th class="q-active">ActiveQ</th><th class="q-backoff">BackoffQ</th><th class="q-unsched">UnschedulableQ</th></tr>
 </thead>
 <tbody>
-<tr><td class="q-dim">一句话</td><td>现在试试</td><td>过会儿再试</td><td>等条件变了再试</td></tr>
+<tr><td class="q-dim">核心区别</td><td>现在试试</td><td>过会儿再试</td><td>等条件变了再试</td></tr>
 <tr><td class="q-dim">进入条件</td><td>新 Pod 创建、BackoffQ 到期、事件触发 Move request</td><td>调度失败且失败原因不是“永久不可调度”</td><td>调度失败且当前没有任何节点满足条件</td></tr>
 <tr><td class="q-dim">退出条件</td><td>被调度器取出尝试调度</td><td>退避时间到期后移回 ActiveQ</td><td>集群事件（Node/Pod/PVC 变化）触发 Move request</td></tr>
 <tr><td class="q-dim">排序策略</td><td>QueueSort 插件：默认按 priority 降序 + 入队时间</td><td>按退避到期时间排序（FIFO）</td><td>不排序，等待事件驱动唤醒</td></tr>
@@ -352,7 +349,7 @@ PostBind</code></pre>
 </tbody>
 </table>
 </div>
-<div class="qa-summary">一句话记住：ActiveQ 管“谁先上”，BackoffQ 管“别太急”，UnschedulableQ 管“等时机”。三个队列的流转策略直接影响调度器的吞吐、延迟和公平性。</div>
+<div class="qa-summary">ActiveQ 管“谁先上”，BackoffQ 管“别太急”，UnschedulableQ 管“等时机”。三个队列的流转策略直接影响调度器的吞吐、延迟和公平性。</div>
 </div>
 
 <div class="card card-w">
@@ -368,10 +365,3 @@ PostBind</code></pre>
 </table>
 <div class="qa-summary">队列性能优化不是“多重试几次”，而是“在正确事件发生后，只唤醒可能变得可调度的 Pod”。</div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

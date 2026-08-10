@@ -1,6 +1,3 @@
-## 一句话结论
-
-Scheduler 性能调优关注候选节点比例、打分插件、profile、并发和 HA。
 <div class="card card-m">
 <h3>Scheduler 性能与扩展性</h3>
 <p>大规模集群（数千节点、数万 Pod）中，scheduler 的性能直接决定 Pod 启动延迟。面试中要能说清楚关键性能参数和优化手段。</p>
@@ -69,10 +66,3 @@ Scheduler 性能调优关注候选节点比例、打分插件、profile、并发
 <div class="qa-q">Q: LeastAllocated 和 MostAllocated 分别适合什么场景？</div>
 <div class="qa-a"><p>LeastAllocated 把 Pod 分散到不同节点，资源使用率更均匀，适合在线服务（需要 buffer 应对流量波动）。MostAllocated 把 Pod 集中到少数节点，装箱率更高，适合批处理任务（可以腾出整机做下线维护）。可以通过 <code>NodeResourcesFit</code> 插件的 <code>scoringStrategy.type</code> 切换。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 面试回答要围绕四条链路：硬件如何提供并行吞吐、CUDA 如何组织执行、数据如何在内存与互联之间流动、资源如何共享并被诊断。只背显卡参数和 `nvidia-smi` 不足以说明系统能力。
-
 ## 高频追问压缩表
 
 | 问题 | 回答主线 | 易错点 |
@@ -42,10 +38,3 @@ Warp 发射指令 | 分支、依赖、访存导致 Stall
 <div class="qa-q">Q: MIG、MPS、Time-Slicing 和 HAMi 的本质区别？</div>
 <div class="qa-a"><p>MIG 在支持的 GPU 上做硬件级实例切分，隔离最强但形状固定、重配有成本；MPS 让多个 CUDA 进程共享执行上下文并并发提交，利用率高但故障和性能隔离弱；Time-Slicing 主要轮转上下文并扩大 Kubernetes 可调度份额，不提供显存或固定算力隔离；HAMi 在 Kubernetes 层增加显存/算力感知的调度与容器侧限制，工程灵活但需要额外组件和验证。</p></div>
 </div>
-
-## 跨模块关联
-
-- LLM 推理：HBM、KV Cache、Prefill/Decode 与 Continuous Batching。
-- 分布式训练：NCCL、拓扑、通信计算重叠和 MFU。
-- Kubernetes：Device Plugin、Extended Resource、DRA 与节点接入。
-- 调度与集群：共享、干扰、碎片、拓扑和多租户治理。

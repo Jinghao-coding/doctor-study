@@ -1,6 +1,3 @@
-## 一句话结论
-
-调度本质是多目标优化问题，学算法前要先想清楚优化什么：Waiting Time、JCT、Makespan、Throughput、Utilization、Fairness、SLO violation、Preemption Cost 各代表不同视角，而且互相冲突（公平 vs 利用率、短作业优先 vs 长作业饥饿、拓扑最优 vs 调度延迟），所以要按场景先定硬约束再定优化目标——在线推理把 SLO 当硬约束，离线训练优化 JCT 和利用率。
 <div class="card card-m">
 <h3>为什么调度要先定目标函数</h3>
 <p>很多人学调度会直接跳到算法——"怎么排序、怎么打分、怎么抢占"。但调度本质上是一个<strong>多目标优化问题</strong>：你在优化某个指标的同时，必然在牺牲另一个指标。如果不确定优化什么，算法就无从谈起。</p>
@@ -200,10 +197,3 @@
 <div class="qa-section"><div class="qa-section-title">什么时候用哪个</div><p>批处理和数据 Pipeline 关心 makespan；交互式训练和实验平台关心平均 JCT；多租户平台还要看公平性。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

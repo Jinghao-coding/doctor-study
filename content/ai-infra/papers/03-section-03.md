@@ -1,6 +1,3 @@
-## 一句话结论
-
-Maestro 与 DeepShare 互补——前者解决推理侧多 agent 调度、后者解决训练侧多租户管理，两者共享预测驱动调度、代价感知抢占、弹性资源管理和分层架构四个理念，可串成"用轻量预测为调度器提供前瞻信号"的统一研究叙事。
 <div class="card card-s">
 <h3>互补关系</h3>
 <p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
@@ -30,10 +27,3 @@ Maestro 与 DeepShare 互补——前者解决推理侧多 agent 调度、后者
 <tr><td>Orca / FastServe</td><td>它们关注单模型的迭代级调度，Maestro 关注多模型多 agent 的工作流级调度</td></tr>
 </table>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

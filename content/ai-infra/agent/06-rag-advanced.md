@@ -1,6 +1,3 @@
-## 一句话结论
-
-基础 RAG（切块→嵌入→向量检索→塞进 prompt）只是起点。高质量 RAG 需要在分块策略、检索方法（混合检索 + Rerank）、查询变换（HyDE/多查询/Step-back）、Graph RAG 多个维度同时优化；评估要用 RAGAS 等工具度量检索质量和生成忠实度。
 <div class="card card-m">
 <h3>基础 RAG Pipeline 回顾</h3>
 <p>RAG（Retrieval-Augmented Generation）通过「检索相关知识 + 生成回答」让 LLM 回答有事实依据，减少幻觉。基础 pipeline 分为两个阶段：</p>
@@ -195,10 +192,3 @@
 <div class="qa-summary">分两层评估：检索看 Recall@K（漏召回是最大杀手），生成看 Faithfulness（幻觉率）和 Relevance（答非所问率）；工具用 RAGAS 离线评测，在线用 TruLens/LangSmith 监控。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-agent-concepts.md`：Agent 基础概念
-- `02-agent-components.md`：Agent 记忆与工具组件
-- `05-agent-paradigms-deep.md`：高级 Agent 范式（IR-CoT 结合 ReAct）
-- `07-function-calling-api.md`：Function Calling 机制

@@ -1,6 +1,3 @@
-## 一句话结论
-
-LoRA 通过低秩矩阵分解 BA（r ≪ d）以 ~0.1%~1% 的参数量高效微调模型；多 LoRA Serving 的核心是让所有请求共享一份 base model 权重，在 GPU 显存中同时驻留多个适配器，用 Batched GEMV/GEMM 高效计算 LoRA 增量 Y = X·B·A，S-LoRA/Punica 通过异构批处理、Tucker 分解、分层存储和专用 BGMV kernel 实现数百个 LoRA 的高效并发服务。
 <div class="card card-m">
 <h3>LoRA 基础：低秩适配的原理</h3>
 <p>全参数微调需要更新模型的所有参数，代价高昂。LoRA（Low-Rank Adaptation）基于一个关键假设：<strong>模型微调前后的权重变化是低秩的</strong>——即 ΔW = W_finetuned - W_pretrained 可以用低秩矩阵乘积很好地近似。</p>
@@ -251,11 +248,3 @@ response = client.chat.completions.create(
 <div class="qa-q">Q: vLLM 怎么管理多个 LoRA 适配器的显存？</div>
 <div class="qa-a"><p>vLLM 通过 LoRA Manager 实现分层管理，核心机制：(1) 显存预留：启动时根据 --max-lora-rank 和 --max-loras 在 GPU 上预分配一块 LoRA 权重池（workspace），避免运行时动态分配导致碎片；(2) 热 LoRA 驻留 GPU：当前 batch 中正在使用的 LoRA 权重必须在 GPU 显存中，直接参与 BGMV 计算；(3) 冷 LoRA 在 CPU：不在使用的 LoRA 权重保存在 CPU RAM（--max-cpu-loras 控制数量），使用 LRU 策略驱逐；(4) 预取（Prefetching）：当等待队列中出现某个 CPU 上的 LoRA 请求时，在 GPU 处理当前 batch 的同时通过 PCIe 异步将该 LoRA 传输到 GPU workspace，隐藏传输延迟；(5) LRU 驱逐：GPU workspace 满了之后，驱逐最久未使用的 LoRA 权重释放空间；(6) KV cache 不区分 LoRA：所有 LoRA 请求的 KV cache 统一用 PagedAttention 管理，在同一个 block pool 中分配。这种分层管理让 vLLM 可以在有限 GPU 显存下同时服务数十到上百个不同的 LoRA 适配器。</p></div>
 </div>
-
-## 关联模块
-
-- `02-request-lifecycle.md`：请求在推理引擎中的完整生命周期，LoRA 选择发生在请求进入时。
-- `05-kv-cache-attention.md`：S-LoRA 的 unified paging 建立在 PagedAttention 之上。
-- `08-serving-engines.md`：vLLM、TensorRT-LLM 对多 LoRA 的支持情况。
-- `design/10-multi-model-llm-serving.md`：多模型服务是更广义的问题，多 LoRA 是其中多租户的一个子场景。
-- `design/11-kv-cache-system.md`：KV cache 管理策略，LoRA 请求共享 KV cache pool。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-Spot/抢占式实例是云 GPU 成本优化的核心手段（便宜 60-80%），但会被随时回收（30s-2min 警告）。关键模式是"Checkpoint-on-Revocation"：检测回收信号 → 快速保存 checkpoint → 优雅终止 → 自动重新提交。分布式训练需要协调所有 Worker 同时 checkpoint，配合 Spot+On-Demand 混合部署、跨 AZ/实例类型分散来降低回收相关性，最终算清"Spot 便宜价格 - 重算浪费"是否真的划算。
 <div class="card card-m">
 <h3>云 GPU 经济学：为什么 Spot 便宜？</h3>
 <p>云厂商的 IDC 里总有大量空闲计算资源（用户的 On-Demand 实例没跑满、预留实例没卖完、新购机器还没上架等），与其让这些资源空着耗电，不如便宜卖出去——但有个条件：<strong>当 On-Demand 用户需要资源时，Spot 实例可以被随时回收</strong>。这就是 Spot/Preemptible/抢占式实例的本质：<strong>用可被中断换取低价</strong>。</p>
@@ -366,10 +363,3 @@ containers:
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- `批处理与 Gang 调度`：Gang Scheduling、Backfill，分布式作业调度
-- `Kubernetes 调度器扩展`：Preemption、PriorityClass、调度框架，K8s 抢占与驱逐
-- `分布式训练容错`：Checkpoint、弹性训练、故障恢复
-- `集群管理：容错`：更广泛的容错机制设计

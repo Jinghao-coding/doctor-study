@@ -1,7 +1,3 @@
-## 一句话结论
-
-TCP 是面向连接、可靠、有序、字节流协议，通过三次握手建连、四次挥手断连、滑动窗口+拥塞控制保证可靠传输；UDP 是无连接、不可靠、数据报协议，开销低、延迟小，适合实时/广播场景。AI 训练集群通信（NCCL）底层优先用 RDMA（RoCE/InfiniBand）绕开 TCP 栈，但 fallback 时用 TCP。
-
 <div class="card card-m">
 <h3>TCP vs UDP 核心对比</h3>
 <table><tr><th>维度</th><th>TCP</th><th>UDP</th></tr>

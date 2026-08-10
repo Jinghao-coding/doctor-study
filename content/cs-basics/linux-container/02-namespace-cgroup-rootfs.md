@@ -1,10 +1,6 @@
-## 一句话结论
-
-容器本质是"受限制的进程"：Linux Namespace 做<strong>视图隔离</strong>（让进程看到独立的系统资源），Cgroups 做<strong>资源限制</strong>（限制进程能用多少 CPU/内存/IO），rootfs（UnionFS/OverlayFS）做<strong>文件系统隔离</strong>（让进程有自己独立的根目录）。三者组合就是一个"看起来像独立机器"的容器运行环境。
-
 <div class="card card-m">
 <h3>容器隔离三件套全景</h3>
-<table><tr><th>技术</th><th>内核版本</th><th>作用</th><th>一句话</th></tr>
+<table><tr><th>技术</th><th>内核版本</th><th>作用</th><th>核心含义</th></tr>
 <tr><td><strong>Namespace</strong></td><td>2.6+（逐步加全）</td><td>视图隔离</td><td>"你看不到外面的世界"——PID、网络、挂载点等资源各 namespace 独立</td></tr>
 <tr><td><strong>Cgroups</strong></td><td>2.6.24（v1）/ 4.5（v2）</td><td>资源限制</td><td>"你只能用这么多"——限制 CPU/内存/IO/进程数等配额</td></tr>
 <tr><td><strong>rootfs / UnionFS</strong></td><td>—</td><td>文件系统隔离</td><td>"你有自己的根目录"——独立文件系统视图，镜像分层+CoW</td></tr>

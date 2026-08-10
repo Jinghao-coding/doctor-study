@@ -1,6 +1,3 @@
-## 一句话结论
-
-DMA、PCIe 和 NUMA 共同决定了数据在 CPU、GPU、NIC、NVMe 之间「怎么走、走多快」：DMA 让设备绕过 CPU 搬数据，PCIe 是设备互联的带宽上限，NUMA 决定设备和内存的亲和距离——AI Infra 里大量性能问题不是 GPU 不够快，而是数据到 GPU 的路径太差。
 <div class="card card-m"><h3>DMA、PCIe 与 NUMA 拓扑</h3><p>DMA 允许设备绕过 CPU 直接读写内存；PCIe 是 CPU、GPU、NIC、NVMe 等设备的主要互联；NUMA 决定 CPU、内存、GPU、NIC 之间的亲和关系。</p></div>
 <div class="card card-d"><h3>AI Infra 为什么关心这些</h3><table><tr><th>概念</th><th>影响</th><th>典型场景</th></tr><tr><td>DMA</td><td>降低 CPU copy 开销</td><td>GPU copy、RDMA、NVMe 数据加载</td></tr><tr><td>PCIe</td><td>限制 host-device 带宽</td><td>CPU 到 GPU 数据搬运</td></tr><tr><td>NUMA locality</td><td>影响 CPU-GPU/NIC 距离</td><td>数据加载线程应靠近目标 GPU/NIC</td></tr><tr><td>GPU-NIC affinity</td><td>影响 RDMA/NCCL 性能</td><td>跨节点 AllReduce</td></tr></table></div>
 <div class="card card-s">

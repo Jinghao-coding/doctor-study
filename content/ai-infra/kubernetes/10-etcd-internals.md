@@ -1,7 +1,3 @@
-## 一句话结论
-
-etcd 是 Kubernetes 唯一的持久化状态存储，基于 Raft 一致性协议提供强一致的 KV 读写，通过 MVCC + watch 机制支撑 API Server 的声明式控制循环；理解 etcd 的 Raft、MVCC、compaction 和 resourceVersion 映射，是排查 K8s 控制面性能与可用性问题的基础。
-
 ## 核心概念
 
 <div class="card card-m">
@@ -338,10 +334,3 @@ etcdctl endpoint status --write-out=json | jq -r '.[] | "\(.Endpoint): \(.Status
 <div class="qa-summary">面试口径：Raft 通过多数派投票、term 机制和日志匹配保证不会发生脑裂数据不一致；少数派分区的旧 Leader 无法提交新日志，分区恢复后自动收敛。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-architecture-pod-flow`：etcd 是 K8s 架构图中唯一的持久化状态层，理解 etcd 才能理解 API Server 为什么是唯一入口。
-- `11-informer-workqueue`：Informer 的 ListAndWatch 底层依赖 etcd watch + revision，理解 MVCC 才能理解 watch 断点续传和 relist 机制。
-- `13-api-server-deep`：API Server 的乐观并发控制、watch 实现、分页 continue token 都直接依赖 etcd 的 revision 和 MVCC 能力。
-- `06-troubleshooting-stability`：etcd 故障（Leader 选举、DB 满、磁盘慢）是 K8s 控制面故障的首要排查方向。

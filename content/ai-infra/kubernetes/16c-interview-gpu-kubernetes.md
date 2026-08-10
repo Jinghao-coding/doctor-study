@@ -1,7 +1,3 @@
-## 一句话结论
-
-Kubernetes 不直接执行 CUDA，也不天然理解 GPU 拓扑和共享隔离。GPU 面试题要沿 `Driver → Container Toolkit/CDI → Device Plugin/DRA → kubelet → scheduler → Runtime → DCGM` 分层回答。
-
 ## GPU 资源注册与分配
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -85,10 +81,3 @@ Kubernetes 不直接执行 CUDA，也不天然理解 GPU 拓扑和共享隔离�
 <div class="qa-section"><div class="qa-section-title">展开</div><p>Device Plugin 可通过 ListAndWatch 把设备标记 Unhealthy；平台还应给节点加 taint/cordon，触发训练 Checkpoint 或任务重试，保存 Xid、ECC、温度和 PCIe/NVLink 证据。恢复后必须跑 CUDA/NCCL Canary，不能仅以 <code>nvidia-smi</code> 恢复为准。</p></div>
 <div class="qa-section"><div class="qa-section-title">易错点</div><p>直接删除 Pod 可能把任务再次调度回故障节点；先隔离资源，再恢复工作负载。</p></div>
 </div></div>
-
-## 关联模块
-
-- `GPU / 新 GPU 节点接入`：完整部署命令、验收清单和故障定位表。
-- `GPU / MIG、MPS、Time-Slicing、HAMi`：各共享方案实战。
-- `Kubernetes / Device Plugin 与 DRA`：接口、资源模型和调度边界。
-- `GPU 平台系统设计`：多租户、拓扑、监控和故障治理。

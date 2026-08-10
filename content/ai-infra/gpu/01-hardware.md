@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 硬件要从三类资源理解：SM/Tensor Core 决定计算吞吐，HBM 决定显存容量和带宽，NVLink/NVSwitch/PCIe 决定数据在 GPU、CPU 和网卡之间怎么流动。面试里不要只背型号参数，要能把“算力、显存、互联”对应到训练和推理瓶颈。
-
 ## 核心概念
 
 | 概念 | 作用 | 面试抓手 |
@@ -44,10 +40,3 @@ GPU 性能通常由下面几类资源共同决定：
 | 显存越大就是性能越强 | 容量解决“放不放得下”，带宽和算子效率决定“跑得快不快”。 |
 | CUDA Core 数量可以直接比较 GPU 性能 | 深度学习更要看 SM、Tensor Core、HBM、互联和实际 kernel 效率。 |
 | 单卡强就代表多卡也强 | 多卡性能还受 NVLink/NVSwitch、PCIe、RDMA、NCCL 拓扑影响。 |
-
-## 关联模块
-
-- `CPU vs GPU`：先理解 GPU 为什么为吞吐而设计。
-- `CUDA 执行模型`：把 SM、warp、block 和 kernel 执行关系串起来。
-- `性能指标`：用 TFLOPS、HBM 带宽、Roofline 判断硬件上限。
-- `GPU 互联与数据路径`：继续看 PCIe、NVLink、NVSwitch、RDMA 的真实数据流。

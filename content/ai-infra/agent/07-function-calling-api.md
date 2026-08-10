@@ -1,6 +1,3 @@
-## 一句话结论
-
-Function Calling 是 LLM 原生支持的结构化工具调用能力：模型根据用户查询自主决定是否/何时调用哪些工具，输出符合 JSON Schema 的参数，开发者执行后将结果作为 tool message 返回，模型基于结果继续推理。关键参数是 tool_choice 和 parallel_tool_calls，最佳实践是写好工具描述、优雅处理错误、防止无限循环。
 <div class="card card-m">
 <h3>Function Calling 是什么</h3>
 <p>Function Calling（Tool Calling）是 LLM 的一种能力：模型在对话过程中<strong>自主判断是否需要调用外部工具/函数</strong>，并输出结构化的 JSON 参数。开发者负责执行函数，将结果返回给模型，模型再基于工具结果继续推理或生成最终回答。</p>
@@ -280,10 +277,3 @@ for i in range(max_iterations):
 <div class="qa-summary">Structured Output 是格式约束（输出合规 JSON 到 content，不执行），Function Calling 是决策+执行（模型决定调工具，输出到 tool_calls，开发者执行后返回 tool message）。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-agent-concepts.md`：Agent 基础概念与 ReAct
-- `02-agent-components.md`：Agent 工具系统组件
-- `05-agent-paradigms-deep.md`：高级 Agent 范式（ReAct/Reflexion 依赖 tool calling）
-- `03-agent-engineering.md`：Agent 工程化与错误处理

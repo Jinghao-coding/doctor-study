@@ -1,6 +1,3 @@
-## 一句话结论
-
-K8s 弹性伸缩分为节点层（Cluster Autoscaler 扩节点组、Karpenter 直接按需配实例）和 Pod 层（HPA 水平扩副本、VPA 垂直调资源、KEDA 事件驱动）；AI/GPU 场景下 Karpenter 凭借 Pod 级装箱、快速供给和 consolidation 相比 CA 更适合异构 GPU 和突发推理负载，PDB 保护自愿中断下的分布式训练/推理服务可用性。
 ## Cluster Autoscaler（CA）
 
 <div class="card card-m">
@@ -382,10 +379,3 @@ spec:
 <div class="qa-summary">面试口径：GPU 伸缩要关注实例供给风险、拓扑约束、启动后就绪延迟（驱动+device plugin+镜像）、taint 隔离防 CPU Pod 抢占、consolidation 保护训练任务不中断。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `02-scheduling-resource-model`：资源模型（requests/limits）是 HPA 和 Karpenter 调度决策的基础。
-- `07-ai-infra-gpu-dra`：Device Plugin、DRA 资源声明如何影响 GPU 节点伸缩；MIG/MPS 机制转到 GPU 专题。
-- `15-node-lifecycle`：Node 注册、NotReady 处理、drain 流程和 PDB 紧密相关。
-- `05-fault-tolerance`：分布式训练容错、checkpoint、PDB 对训练任务保护。

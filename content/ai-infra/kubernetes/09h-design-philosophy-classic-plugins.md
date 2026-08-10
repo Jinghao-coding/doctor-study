@@ -1,6 +1,3 @@
-## 一句话结论
-
-kube-scheduler 的设计理念是**可扩展性 + 效率优先 + 声明式 API + 公平性 + HA + 用户可配置性**六维平衡；NodeAffinity / TaintToleration / NodeResourcesFit 这些经典插件都是这套设计哲学的具体落地；Extender 是上一代的扩展方式，主要用 HTTP 通信。
 ## K8s 整体架构定位
 
 <div class="figure">
@@ -28,7 +25,7 @@ kube-scheduler 的设计理念是**可扩展性 + 效率优先 + 声明式 API +
 
 <div class="card card-m">
 <h3>Node Affinity / Anti-Affinity 与 Pod Affinity / Anti-Affinity</h3>
-<p>这里有三组概念容易混：<strong>Node Affinity、Node Anti-Affinity、Pod Affinity / Pod Anti-Affinity</strong>。一句话区分：</p>
+<p>这里有三组概念容易混：<strong>Node Affinity、Node Anti-Affinity、Pod Affinity / Pod Anti-Affinity</strong>。核心区别：</p>
 <p><strong>Node Affinity / Anti-Affinity：Pod 和节点之间的关系。Pod Affinity / Anti-Affinity：Pod 和 Pod 之间的关系。</strong></p>
 </div>
 
@@ -117,7 +114,7 @@ $$\text{Score}_{norm}(n) = \frac{\text{NodeAffinityScore}(n)}{\max_n \text{NodeA
 <tr><td>Pod Affinity</td><td>已有 Pod 的标签</td><td>我要靠近 redis Pod</td></tr>
 <tr><td>Pod Anti-Affinity</td><td>已有 Pod 的标签</td><td>我不要和同服务副本在同一节点</td></tr>
 </table>
-<p>一句话：<strong>Node Affinity 看节点标签，Pod Affinity 看已有 Pod 标签。</strong>硬约束（required）主要在 Filter 阶段起作用，不满足就直接过滤掉节点；软偏好（preferred）主要在 Score 阶段起作用，满足偏好的节点得分更高。</p>
+<p><strong>Node Affinity 看节点标签，Pod Affinity 看已有 Pod 标签。</strong>硬约束（required）主要在 Filter 阶段起作用，不满足就直接过滤掉节点；软偏好（preferred）主要在 Score 阶段起作用，满足偏好的节点得分更高。</p>
 </div>
 
 ## 经典插件二：TaintToleration（三种 Effect 的语义差异）
@@ -291,10 +288,3 @@ extenders:
 <li><strong>可扩展性：</strong>抢占决策在 <code>PostFilter</code> 扩展点，自定义 Plugin 可以替换默认抢占逻辑（例如考虑 GPU checkpoint 新鲜度）。</li>
 </ul>
 </div>
-
-## 关联模块
-
-- `Scheduler 内部机制 · 调度路径与队列`（09a）：六维矩阵中"效率优先"的具体落地。
-- `Cache、扩展点与抢占`（09b）：抢占的扩展点位置（PostFilter）。
-- `自定义 Plugin 实战`（09d）：Plugin 接口与 Extender 的对比。
-- `扩展点设计差异`（09e）：PreFilter/Filter/PreScore/Score 的设计哲学。

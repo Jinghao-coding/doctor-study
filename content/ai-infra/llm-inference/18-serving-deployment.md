@@ -1,7 +1,3 @@
-## 一句话结论
-
-推理服务部署的核心是把 GPU 算力转化为可预测的 SLO——TTFT 和 TPOT 是两个独立指标，弹性扩缩容要基于 KV 占用率和队列深度而非 GPU-Util，CUDA Graph 在 decode 阶段能省 10-15% 延迟但前提是 shape 稳定。
-
 <div class="card card-m">
 <h3>SLO 指标体系：TTFT、TPOT 与延迟分位数</h3>
 <p>推理服务不是"吞吐越高越好"，而是要在 SLO 约束下最大化吞吐。面试官常考的 SLO 指标有明确的物理含义和优化方向。</p>
@@ -224,15 +220,4 @@
 <div class="qa-section"><div class="qa-section-title">生态</div><p>vLLM：社区活跃、模型支持最快、与 LangChain/vLLM Production Stack/K8s 集成好。TRT-LLM：NVIDIA 官方支持、与 Triton Inference Server 深度集成、企业级 SLA。</p></div>
 <div class="qa-summary">快速上线/研究/多样模型选 vLLM；NVIDIA 全栈、极致性能、大厂核心业务选 TRT-LLM + Triton。</div>
 </div>
-</div>
-
-<div class="card card-s">
-<h3>🔗 关联模块</h3>
-<ul>
-<li><strong>端到端链路</strong>：6 阶段 pipeline 中本页对应"调度→输出"的服务化部分。</li>
-<li><strong>Prefill/Decode</strong>：解释了两阶段为何瓶颈不同，直接影响 SLO 指标分解。</li>
-<li><strong>推理引擎对比</strong>：vLLM/TRT-LLM/SGLang 引擎内核对比，本页补充部署运维视角。</li>
-<li><strong>性能瓶颈</strong>：本页 SLO 指标是瓶颈分析的观测入口。</li>
-<li><strong>集群管理</strong>：GPU 监控（DCGM）、弹性扩缩容在 K8s 上的落地。</li>
-</ul>
 </div>

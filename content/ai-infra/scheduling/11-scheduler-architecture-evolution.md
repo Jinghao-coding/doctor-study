@@ -1,6 +1,3 @@
-## 一句话结论
-
-集群调度器架构经历了"集中式（Borg/K8s）→ 两级调度（Mesos/YARN）→ 共享状态（Omega）→ 混合/分布式（Firmament）"的演进，核心矛盾是"全局最优决策 vs 可扩展性 vs 并行调度"。AI 训练集群（万卡规模、Gang 调度、拓扑感知）更适合集中式 + 缓存 + 乐观并发的 Borg 风格架构，而不是纯分布式调度。
 <div class="card card-m">
 <h3>为什么调度器架构重要？</h3>
 <p>调度器的架构决定了三个核心问题：</p>
@@ -292,10 +289,3 @@
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- `Kubernetes 调度器扩展`：Scheduler Framework、插件机制、队列设计，K8s 调度器实现细节
-- `批处理与 Gang 调度`：Gang Scheduling 机制、Backfill 算法、资源回收
-- `拓扑感知调度`：NVLink/NVSwitch/机架拓扑、网络拓扑感知
-- `多租户 GPU 调度`：DRF 公平性、多队列、配额管理

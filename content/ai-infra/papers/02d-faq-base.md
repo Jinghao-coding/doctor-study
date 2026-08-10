@@ -1,6 +1,3 @@
-## 一句话结论
-
-这一节用高频问答澄清 DeepShare 的关键设计点：QAD 与 DRF 的本质区别、为何 JCT 仅改善 6.3% 而排队延迟降 46%、GPU 共享靠 NVIDIA MPS 而非改 Extended Resource、干扰模型选 RF 的延迟与泛化考量，以及 Controller 与 Scheduler Plugin 的职责切分。
 <div class="card card-d">
 <h3>DeepShare 高频问答</h3>
 
@@ -58,10 +55,3 @@
 <div class="qa-a"><p>不需要讲 PodGroup、minAvailable、等待全部 worker 到齐或整组回滚。论文的五个扩展点是 <strong>Filter / Score / Reserve / PostFilter / Permit</strong>；其中 Permit 只在 CPU/Memory in-place resize 发起后等待 Pod 状态更新，不用于 Gang Scheduling。如果以后支持多 worker 训练，才需要给 Permit 增加 PodGroup 级等待语义。</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

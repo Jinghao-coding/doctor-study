@@ -1,6 +1,3 @@
-## 一句话结论
-
-Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层：Gang Scheduling 是 all-or-nothing 准入语义（防 partial allocation 导致 GPU 空转），Backfill 是队列利用率优化（保护队头大任务 reservation 的前提下让短任务插空），Bin Packing 是节点放置策略，Checkpoint-aware Preemption 是代价感知的运行时回收，配合 Elastic Training 还能用缩容代替杀任务。
 <div class="card card-m">
 <h3>批调度：训练任务和普通在线服务的分水岭</h3>
 <p>分布式训练、HPC 和大规模批任务通常不是单 Pod 独立运行，而是一组进程共同完成一个 job。批调度关注的不只是单个 Pod 能否放下，还包括一组 Pod 是否能同时启动、是否会造成资源碎片、是否会让大作业长期排队。</p>
@@ -8,7 +5,7 @@ Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层�
 </div>
 
 <div class="card card-d">
-<h3>本页问题归类：Gang、Backfill、Bin Packing 分别解决什么</h3>
+<h3>Gang、Backfill、Bin Packing 分别解决什么</h3>
 <p>这几个词经常被一起问，但它们不是同一层问题。Gang Scheduling 是<strong>准入/启动语义</strong>，Backfill 是<strong>队列利用率优化</strong>，Bin Packing 是<strong>节点放置策略</strong>。三者可以组合在同一个调度系统里。</p>
 <table>
 <tr><th>概念</th><th>所在决策层</th><th>回答的问题</th><th>典型场景</th><th>主要风险</th></tr>
@@ -71,7 +68,7 @@ Gang、Backfill、Bin Packing、Preemption 是批调度的四个不同决策层�
 <tr><td>Job-C</td><td>4 GPU</td><td>20 分钟</td><td>可以</td><td>能在队头任务启动前释放资源</td></tr>
 <tr><td>Job-D</td><td>8 GPU</td><td>2 小时</td><td>不适合</td><td>会占用队头任务 30 分钟后的资源</td></tr>
 </table>
-<div class="qa-summary">一句话：回填不是让小任务无条件插队，而是在保护队头任务 reservation 的前提下利用碎片资源。</div>
+<div class="qa-summary">回填不是让小任务无条件插队，而是在保护队头任务 reservation 的前提下利用碎片资源。</div>
 </div>
 
 <div class="card card-s">
@@ -434,10 +431,3 @@ for job in queue.after(head):
 <div class="qa-section"><div class="qa-section-title">面试金句</div><p>"训练任务的抢占不是简单的优先级排序，而是代价优化问题。好的抢占策略选择'最值得杀'的牺牲者——释放资源多、进度损失少、重启成本低。"</p></div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

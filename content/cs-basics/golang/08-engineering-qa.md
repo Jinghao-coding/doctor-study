@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 工程核心是 go modules 依赖管理、标准项目结构、table-driven 测试、benchmark + pprof 性能分析；面试高频零散考点包括 make vs new、slice 扩容机制、map 无序原因、sync.Map 适用场景、context.WithValue 设计哲学、程序启动流程。
-
 <div class="card card-m">
 <h3>Go Modules 依赖管理</h3>
 <p>Go 1.11+ 引入 go modules 作为官方依赖管理方案，告别 GOPATH 时代。</p>

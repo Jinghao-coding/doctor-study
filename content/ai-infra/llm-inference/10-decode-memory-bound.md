@@ -1,7 +1,3 @@
-## 一句话结论
-
-单请求、小 Batch 的 LLM Decode 通常是显存带宽瓶颈：每生成一个 Token 都要读取大量权重和历史 KV Cache，但能做的计算相对少。判断依据不是“Decode 天生慢”，而是算术强度远低于 GPU 的机器平衡点。
-
 ## 70B FP16 实算
 
 以 70B、FP16、Batch=1、生成一个 Token 为例，先忽略 KV Cache 和其他中间结果，只看权重：
@@ -44,12 +40,6 @@ Batch 增大后，同一份权重能服务多个请求。权重读取量不会�
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 这道题面试中如何一句话收束？</div>
+<div class="qa-q">Q: 这道题面试中如何概括？</div>
 <div class="qa-a"><p>70B FP16、Batch=1 每生成一个 Token 约做 140 GFLOPs，却要读约 140 GB 权重，算术强度只有约 1 FLOP/Byte，远低于 GPU 的机器平衡点，所以 Decode 主要受 HBM 带宽限制；增大 Batch、量化权重和压缩 KV Cache都是在提高复用或减少搬运。</p></div>
 </div>
-
-## 关联模块
-
-- `Transformer / FLOPs 逐步推导`：解释为什么参数参与矩阵乘约对应 `2 FLOPs`。
-- `性能预测与建模 / Roofline Model`：提供通用上界模型。
-- `GPU / 性能指标与瓶颈`：提供 HBM、SM Active 与 Warp Stall 的诊断方法。

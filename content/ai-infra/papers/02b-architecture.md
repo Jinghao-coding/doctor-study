@@ -1,7 +1,3 @@
-## 一句话结论
-
-DeepShare 的实现不是“Controller 算好 QAD 再通知 Scheduler”。论文里的真实分工是：**轻量 quota Controller 整理配置元数据，Scheduler Plugin 维护实时 QAD 控制环并完成所有放置决策。**
-
 <div class="card card-s">
 <h3>总体架构</h3>
 
@@ -84,9 +80,3 @@ spec:
 <div class="qa-q">Q: 为什么 QAD 不放在 Controller 里周期性写 CRD？</div>
 <div class="qa-a"><p>QAD 是 50ms 调度周期内持续变化的热状态，排序、共享和抢占都要同步消费。若 Controller 计算后再写 CRD，既增加 API Server 写压力，也引入控制环延迟和一致性窗口。放在 Scheduler Plugin 内存里能直接复用 informer cache，并在 leader 切换后重建。</p></div>
 </div>
-
-## 关联模块
-
-- `DeepShare / QAD 记忆模型`：先掌握实时状态的输入和含义。
-- `DeepShare / K8S 实现细节`：沿一次调度周期看 QAD 如何被消费。
-- `Kubernetes 核心 / Scheduling Framework`：补齐 Filter、Score、Reserve、PostFilter、Permit 的通用语义。

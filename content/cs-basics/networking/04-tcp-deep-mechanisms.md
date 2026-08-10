@@ -1,6 +1,3 @@
-## 一句话结论
-
-TCP 性能核心由滑动窗口（流控 rwnd + 拥塞控制 cwnd，实际发送窗口 swnd = min(rwnd, cwnd)）和拥塞控制算法决定。经典算法从 Tahoe（丢包回退到 1）到 Reno（快重传快恢复），现代 Linux 默认 CUBIC（基于时间的三次函数增长，RTT 公平），长肥管道/数据中心常用 BBR（基于带宽和 RTT 建模而非丢包）。Nagle 合并小包但与延迟 ACK 组合会产生死锁，实时系统通常开 TCP_NODELAY。
 <div class="card card-m">
 <h3>滑动窗口详解</h3>
 <p>滑动窗口是 TCP 可靠性和流控的核心机制，同时也是发送速率的根本限制。发送窗口由<strong>接收方的流控窗口（rwnd）</strong>和<strong>发送方的拥塞窗口（cwnd）</strong>共同决定。</p>

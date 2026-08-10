@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 并发哲学是 **CSP（Communicating Sequential Processes）**：「Don't communicate by sharing memory; share memory by communicating」；核心工具是 goroutine + channel + select + sync 包 + context，面试必考点是 channel 语义（unbuffered vs buffered、close 后行为）、select 随机选择、Mutex vs channel 选型、context 取消传播。
-
 <div class="card card-m">
 <h3>CSP 并发模型</h3>
 <p>传统并发编程是「共享内存 + 锁」：多个线程访问共享变量，用互斥锁保证原子性，容易出 data race、死锁。Go 推崇 CSP 模型：goroutine 之间通过 channel 通信，不共享内存，数据的所有权通过 channel 传递。</p>
@@ -10,7 +6,7 @@ Go 并发哲学是 **CSP（Communicating Sequential Processes）**：「Don't co
 <tr><td>共享内存</td><td>共享变量 + Mutex/RWMutex</td><td>性能好，但容易出 data race、死锁，需要仔细设计锁粒度</td><td>sync.Mutex、sync.RWMutex</td></tr>
 <tr><td>CSP</td><td>channel 传递数据</td><td>代码清晰，数据所有权明确，goroutine 之间解耦</td><td>chan T、select</td></tr>
 </table>
-<div class="qa-summary">一句话：Go 不是不让用锁，而是推荐优先用 channel 做 goroutine 间协作；保护共享状态临界区小的时候用 Mutex 更简单，传递数据所有权的时候用 channel 更清晰。</div>
+<div class="qa-summary">Go 不是不让用锁，而是推荐优先用 channel 做 goroutine 间协作；保护共享状态临界区小的时候用 Mutex 更简单，传递数据所有权的时候用 channel 更清晰。</div>
 </div>
 
 <div class="card card-s">
@@ -213,11 +209,11 @@ func main() {
 <p><strong>回答思路：</strong>不是非此即彼，Go 社区有明确的经验法则。</p>
 <div class="qa-section">
 <div class="qa-section-title">用 channel 的场景</div>
-<p>① 传递数据所有权（把数据从一个 goroutine 交给另一个）；② 异步分发任务（worker pool 用 channel 传任务）；③ 多路复用等待多个事件（select 监听多个信号）；④ 协调 goroutine 生命周期（done channel 通知退出）。一句话：「通过通信来共享内存」的时候用 channel。</p>
+<p>① 传递数据所有权（把数据从一个 goroutine 交给另一个）；② 异步分发任务（worker pool 用 channel 传任务）；③ 多路复用等待多个事件（select 监听多个信号）；④ 协调 goroutine 生命周期（done channel 通知退出）。「通过通信来共享内存」的时候用 channel。</p>
 </div>
 <div class="qa-section">
 <div class="qa-section-title">用 Mutex 的场景</div>
-<p>① 保护共享状态的临界区（比如一个 map、一个计数器，多 goroutine 读写）；② 临界区很小、很简单（increment 一个计数器、读写一个字段）；③ 性能关键路径，channel 有额外的调度开销。一句话：「共享内存来通信」的时候，也就是单纯保护共享数据，用 Mutex 更简单直接。</p>
+<p>① 保护共享状态的临界区（比如一个 map、一个计数器，多 goroutine 读写）；② 临界区很小、很简单（increment 一个计数器、读写一个字段）；③ 性能关键路径，channel 有额外的调度开销。「共享内存来通信」的时候，也就是单纯保护共享数据，用 Mutex 更简单直接。</p>
 </div>
 <div class="qa-section">
 <div class="qa-section-title">社区经验（Go Wiki）</div>

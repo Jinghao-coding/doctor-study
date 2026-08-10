@@ -1,6 +1,3 @@
-## 一句话结论
-
-GPU 不是可互换的——同样数量的卡在不同拓扑下通信性能差 3-5 倍，所以调度必须感知拓扑：TP 通信频率高必须放进同节点 NVLink，DP/PP 频率低可跨节点走 InfiniBand；NCCL 据此自动选最优通信路径，拓扑错配是 NCCL 超时和训练慢的常见根因。
 <div class="card card-m">
 <h3>GPU 拓扑与通信：为什么"同是 8 卡"性能可以差 3 倍？</h3>
 <p>两个训练任务都用了 8 张 A100，一个跑 AllReduce 需要 50ms，另一个需要 150ms。差异来自<strong>拓扑</strong>——8 张 GPU 在物理上怎么连接的。同一节点内 NVLink 互联的 8 卡，和跨两个节点 InfiniBand 互联的 8 卡，通信性能差 3-5 倍。</p>
@@ -209,10 +206,3 @@ DP group 0: Pipeline 0 和 Pipeline 1 之间 AllReduce 梯度 (DP=2, over IB)
 </div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

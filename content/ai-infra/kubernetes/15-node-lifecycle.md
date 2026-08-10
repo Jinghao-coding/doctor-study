@@ -1,7 +1,3 @@
-## 一句话结论
-
-Kubernetes 节点生命周期从 kubelet TLS Bootstrap 注册开始，通过 Lease 对象快速检测节点健康，Node Controller 在节点 NotReady 超时后驱逐 Pod；节点维护通过 cordon（标记不可调度）+ drain（驱逐 Pod）完成，Pod 终止经历 preStop → SIGTERM → grace period → SIGKILL 的优雅关闭流程，probe 机制（liveness/readiness/startup）决定容器何时重启、何时接收流量。
-
 ## Node 注册与 Bootstrap
 
 <div class="card card-m">
@@ -422,10 +418,3 @@ startupProbe:
 <div class="qa-summary">面试口径：cordon = 只挡新 Pod（打 NoSchedule taint），现有 Pod 不动；drain = cordon + 驱逐所有 Pod（节点清空，可以安全维护）。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `01-architecture-pod-flow`：Pod 从调度到 kubelet 执行的完整链路，pause container、CRI/CNI/CSI 调用时机。
-- `12-cni-kube-proxy-deep`：CNI 调用时机（RunPodSandbox 阶段）和 kube-proxy 在节点 NotReady 后的摘流动作。
-- `14-karpenter-autoscaling`：Karpenter/CA 自动添加/移除节点，依赖节点生命周期机制（drain、PDB、NotReady 检测）。
-- `06-troubleshooting-stability`：Node NotReady、DiskPressure、CrashLoopBackOff 是排障高频场景。

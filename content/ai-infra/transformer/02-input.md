@@ -1,6 +1,3 @@
-## 一句话结论
-
-输入侧要把文本变成 token id，再映射为 embedding，并叠加位置信息。
 <div class="card card-m">
 <h3>输入处理三件套：从文字到向量</h3>
 <p>模型不能直接吃文字，必须先把文字变成数字向量。整条链路是：</p>
@@ -28,7 +25,7 @@
 <li><strong>本质：</strong>就是一次查表（lookup），不是矩阵乘法。把离散的整数 id 变成稠密的连续向量。</li>
 <li><strong>可学习：</strong>这个矩阵是模型参数，训练中会被反向传播更新，语义相近的词向量会逐渐靠近。</li>
 </ul>
-<div class="qa-summary">一句话：Embedding = 一张可训练的查找表，把 token id 翻译成模型能理解的向量。</div>
+<div class="qa-summary">Embedding = 一张可训练的查找表，把 token id 翻译成模型能理解的向量。</div>
 </div>
 
 <div class="card card-w">
@@ -47,10 +44,3 @@
 </table>
 <div class="qa-summary">面试答法：因为 Transformer 用全局并行计算、没有 RNN 的天然顺序，Attention 本身对位置不敏感，所以要用位置编码把顺序信息补回来。</div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供硬件、显存、互联和利用率诊断基础。
-- `LLM 推理系统 / 分布式训练`：提供大模型系统中的实际落点。
-- `Kubernetes / 调度与集群`：提供平台、资源和多租户治理语境。
-- `专题综合题 / 论文工作`：把基础知识组织成可复述的方案和项目叙事。

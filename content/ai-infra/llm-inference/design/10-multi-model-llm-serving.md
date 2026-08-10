@@ -1,6 +1,3 @@
-## 一句话结论
-
-多模型 LLM 推理服务的设计主线是「在有限 GPU 上让尽可能多的模型既低延迟又高利用率」：靠层级化模型驻留（Running/Sleeping/CPU/Disk）解决放不下，靠显存超配和准入控制守住 OOM，靠适应度路由 + 分队列 + SRTF 排队解决调度，靠输出长度预测把这些串起来。
 <div class="card card-m">
 <h3>题目</h3>
 <p>设计一个支持多模型的 LLM 推理服务，要求低延迟高利用率，多个 agent 组成工作流协作。</p>
@@ -54,10 +51,3 @@
 </div>
 
 <hr class="div">
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

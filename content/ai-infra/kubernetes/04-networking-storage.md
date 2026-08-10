@@ -1,6 +1,3 @@
-## 一句话结论
-
-K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂载持久数据。
 <div class="card card-m">
 <h3>网络与存储：Pod 能不能被访问，数据能不能挂上</h3>
 <p>网络和存储经常一起出现在排障题里。Pod 启动不仅要调度成功，还要 CNI 分配网络、CSI 挂载卷；服务访问不仅要 Pod Running，还要 readiness、EndpointSlice、Service 转发和 DNS 都正常。</p>
@@ -179,7 +176,7 @@ K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂�
 
 <h3>网络与存储高频问答</h3>
 
-<p>本模块的问答按“概念 → 作用 → 链路/排查 → 面试口径”组织，避免只背一段结论。</p>
+
 
 </div>
 
@@ -292,10 +289,3 @@ K8S 网络和存储解决 Pod 如何被访问、如何发现服务、如何挂�
 <div class="qa-summary">面试口径：PVC Pending 按“PVC Events → StorageClass/CSI → WaitForFirstConsumer → Pod 调度拓扑 → 底层存储”排查。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

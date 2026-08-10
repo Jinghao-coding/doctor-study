@@ -1,6 +1,3 @@
-## 一句话结论
-
-拓扑感知调度优化的不是 GPU 数量，而是 rank 通信图到硬件数据路径图的映射代价：节点内 NVLink/NVSwitch 比跨机 InfiniBand 快 10-50 倍，而通信又占训练时间 30-50%，所以 Tensor Parallel/MoE 必须放进同一 NVLink 域、GPU 与 NIC 要做 NUMA 对齐，再用拓扑质量阈值在等待时间和训练性能之间权衡。
 <div class="card card-m">
 <h3>拓扑感知调度：GPU 集群调度的核心差异点</h3>
 <p>普通 CPU 调度通常只关心资源数量是否足够，而 GPU 训练调度必须关心"资源之间的连接关系"。同样是 8 张 GPU，同机 NVSwitch、同机 PCIe、跨机 RDMA、跨机柜网络，对训练吞吐的影响完全不同。</p>
@@ -226,10 +223,3 @@
 <li>AKS DRANET / DRA RDMA 资料：展示 GPU 与 RDMA NIC 同 NUMA 对齐对 GPUDirect RDMA 的重要性。</li>
 </ul>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

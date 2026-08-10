@@ -1,6 +1,3 @@
-## 一句话结论
-
-KV Cache、PagedAttention、FlashAttention 分别解决不同问题：缓存历史、管理显存、减少 HBM IO。
 ## KV Cache 的作用
 
 自回归生成时，模型每生成一个新 token 都需要关注历史上下文。如果每一步都重新计算全部历史 token 的 Key 和 Value，计算代价会非常高；KV Cache 的作用就是把历史 K/V 缓存下来，每步只计算新增 token 的 K/V。
@@ -88,10 +85,3 @@ PagedAttention 和 FlashAttention 不是同一类技术。PagedAttention 管 KV 
 
 - vLLM 官方 Anatomy 文章：系统性解释 scheduler、PagedAttention、continuous batching、chunked prefill、speculative decoding 和 disaggregated P/D。
 - vLLM internals 资料：从 block pool、KV cache manager 和 scheduler 角度解释 PagedAttention 的运行方式。
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

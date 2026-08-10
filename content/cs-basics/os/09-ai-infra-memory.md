@@ -1,6 +1,3 @@
-## 一句话结论
-
-看内存别只看占用大小，要分清 VIRT 只是承诺、RES 才是真实物理占用、SHR 是共享页、page cache 看似占满但可回收。AI Infra 排查 OOM 和加载慢，关键是区分进程 RSS、page cache、cgroup limit，以及 major fault 这种要走磁盘 I/O 的缺页信号。
 ## AI Infra 面试模块：内存管理
 
 AI Infra 的内存问题往往同时涉及虚拟内存、物理内存、page cache、cgroup limit、shared memory、NUMA locality 和 GPU pinned memory。面试回答要能把 Linux 内存机制和训练/推理场景联系起来。

@@ -1,6 +1,3 @@
-## 一句话结论
-
-scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性和抢占的关键。
 <div class="card card-m">
 <h3>调度问题定位：区分 Pod 属性、调度阶段和调度机制</h3>
 <p>在分析 Kubernetes Scheduler 时，需要区分三类概念，<strong>这三类概念不能混在一起</strong>：</p>
@@ -83,7 +80,7 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 <tr><td>Bind</td><td>API Server / etcd</td><td>把最终结果持久化为 <code>spec.nodeName</code> 或 Binding 对象</td><td>失败后走调度失败路径，已 Reserve 的状态要回滚</td></tr>
 <tr><td>PostBind</td><td>通常是事件、日志或外部通知</td><td>绑定成功后的通知，不再改变放置决策</td><td>一般不影响 Pod 已经绑定的事实</td></tr>
 </table>
-<div class="qa-summary">一句话：Assume 是 scheduler 本地先占位，Reserve 是插件状态先占位，Bind 是把结果写进 API Server。</div>
+<div class="qa-summary">Assume 是 scheduler 本地先占位，Reserve 是插件状态先占位，Bind 是把结果写进 API Server。</div>
 </div>
 
 <div class="card card-m">
@@ -136,10 +133,3 @@ scheduler cache、assume、binding cycle 和 preemption 是理解调度一致性
 <div class="qa-q">Q: Scheduler Extender、Scheduler Plugin、多个 scheduler 怎么选？</div>
 <div class="qa-a"><p>新能力优先用 Scheduling Framework Plugin，因为它能接入完整生命周期和 scheduler cache；Extender 更像外部 HTTP 过滤/打分，延迟和一致性控制较弱；多个 scheduler 适合业务强隔离，但要避免不同 scheduler 同时竞争同一批资源造成策略冲突。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

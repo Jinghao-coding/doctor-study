@@ -1,17 +1,8 @@
-## 一句话结论
-
-K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator 负责建模和控制循环，Helm / Kustomize / GitOps / 渐进式发布负责把这些对象安全、可审计地交付到集群。
-## 阅读路径
-
-1. 先看 Helm / Kustomize：解决 YAML 参数化和多环境差异。
-2. 再看 GitOps：解决集群状态审计、同步和漂移修复。
-3. 最后看扩展点选型：不同需求应该接 CRD、Webhook、Scheduler Plugin、DRA、CSI、CNI 还是 GitOps。
-
 <div class="card card-m">
-<h3>本 Tab 想说清楚什么</h3>
-<p>Kubernetes 平台工程不只是写 YAML，而是要把对象建模、配置渲染、环境差异、发布回滚、审计和漂移修复串起来。<strong>Operator 与 CRD 的设计细节已经拆到“Operator 与 CRD”章节</strong>；本节只保留工程化交付和扩展点选型。</p>
+<h3>Kubernetes 平台交付体系</h3>
+<p>Kubernetes 平台工程不只是写 YAML，而是要把对象建模、配置渲染、环境差异、发布回滚、审计和漂移修复串起来。</p>
 <table>
-<tr><th>主题</th><th>解决什么问题</th><th>本节重点</th></tr>
+<tr><th>主题</th><th>解决什么问题</th><th>核心机制</th></tr>
 <tr><td>Helm</td><td>如何把一组 YAML 参数化、版本化发布</td><td>Chart、values、release、upgrade / rollback</td></tr>
 <tr><td>Kustomize</td><td>如何维护 dev / staging / prod 的环境差异</td><td>base + overlay、patch、images、replicas</td></tr>
 <tr><td>GitOps</td><td>如何把集群状态纳入 Git 审计和自动同步</td><td>ArgoCD / Flux、pull 模型、drift correction</td></tr>
@@ -143,10 +134,3 @@ K8S 工程化要区分“扩展能力”和“交付能力”：CRD / Operator �
 </div>
 
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

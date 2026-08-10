@@ -1,6 +1,3 @@
-## 一句话结论
-
-单层 Transformer FLOPs 可以拆成线性层的 $nd^2$ 项和 attention 的 $n^2d$ 项。
 先不用一上来背公式，而是把单层 Transformer 的计算量理解成两类：一类是各种线性层带来的 $nd^2$ 项，另一类是 Attention 两次大矩阵乘带来的 $n^2d$ 项。最终结论是：
 
 $$ \text{总FLOPs} = 24nd^2 + 4n^2d $$
@@ -94,7 +91,7 @@ $$ \text{Attention} = 8nd^2 + 4n^2d,\qquad \text{FFN} = 16nd^2 $$
 
 $$ \text{总FLOPs} = 8nd^2 + 4n^2d + 16nd^2 = 24nd^2 + 4n^2d $$
 
-### 6. 一句话理解
+### 6. 结果含义
 
 > Transformer 单层的计算量由两部分组成：线性层带来的 $nd^2$，和 Attention 两次大矩阵乘带来的 $n^2d$。
 
@@ -113,10 +110,3 @@ $$ \text{总FLOPs} = 8nd^2 + 4n^2d + 16nd^2 = 24nd^2 + 4n^2d $$
 <div class="qa-q">Q: 现场默写单层 Transformer 的 FLOPs，你怎么快速推？</div>
 <div class="qa-a"><p>只记一个基本公式 $2MNK$，然后数有几个矩阵乘：QKV 三次投影 + 输出投影是 4 个 $n\times d$ 乘 $d\times d$，各 $2nd^2$，合 $8nd^2$；FFN 两层是 $8nd^2 \times 2 = 16nd^2$；这两类都是 $nd^2$，合 $24nd^2$。再加注意力两次大矩阵乘 $QK^\top$ 和权重乘 V，各 $2n^2d$，合 $4n^2d$。最终 $24nd^2 + 4n^2d$。整模型再乘层数，训练含反向约再 ×3。</p></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

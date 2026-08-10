@@ -1,17 +1,8 @@
-## 一句话结论
-
-Operator = CRD + Controller：CRD 负责把领域对象注册成 Kubernetes API，Operator 通过幂等 Reconcile 把对象的期望状态持续推进到实际状态。
-## 阅读路径
-
-1. 先区分 CRD 和 Operator：CRD 是对象，Operator 是行为。
-2. 再看 controller-runtime 如何组织 Reconcile、cache、client、watch 和 webhook。
-3. 最后用 TrainingJob / AIJob 这类场景说明如何设计领域对象和生命周期。
-
 <div class="card card-m">
-<h3>为什么 Operator 应该单独学</h3>
+<h3>Operator 适合的领域问题</h3>
 <p>Operator 是 Kubernetes 扩展体系里最常被深挖的一类问题。它不只是"写个 controller"，而是要把领域对象、状态机、失败恢复、升级回滚和可观测性都建模清楚。AI Infra 里的 TrainingJob、AIJob、RayCluster、InferenceService、GPU 资源画像，都很适合用 Operator 表达。</p>
 <table>
-<tr><th>概念</th><th>一句话</th><th>面试边界</th></tr>
+<tr><th>概念</th><th>核心含义</th><th>面试边界</th></tr>
 <tr><td>CRD</td><td>给 Kubernetes 增加一种新的 API 对象</td><td>只有数据和 schema，没有行为</td></tr>
 <tr><td>Controller</td><td>watch 对象变化并执行 reconcile</td><td>持续让实际状态逼近期望状态</td></tr>
 <tr><td>Operator</td><td>CRD + Controller + 运维知识</td><td>把业务生命周期和故障恢复代码化</td></tr>
@@ -67,7 +58,7 @@ Operator = CRD + Controller：CRD 负责把领域对象注册成 Kubernetes API�
     - name: v1
       served: false
       storage: false</code></pre>
-<div class="qa-summary">一句话：可以多个版本同时 served，但只能一个版本 storage；字段结构变化时用 conversion webhook 保护老对象和老客户端。</div>
+<div class="qa-summary">可以多个版本同时 served，但只能一个版本 storage；字段结构变化时用 conversion webhook 保护老对象和老客户端。</div>
 </div>
 
 <div class="card card-s">
@@ -157,6 +148,31 @@ spec:
 </table>
 </div>
 
+<div class="card card-s">
+<h3>TrainingJob 状态机</h3>
+<p>训练 Operator 管理的是可排队、可恢复、可观测的任务生命周期，不只是创建一组 Pod。</p>
+<table>
+<tr><th>状态</th><th>Operator 动作</th><th>关键观测</th></tr>
+<tr><td>Pending</td><td>创建准入对象并等待 quota / Gang 条件</td><td>队列、资源缺口、等待原因</td></tr>
+<tr><td>Admitted</td><td>创建 Pod、Service、ConfigMap、Secret</td><td>准入时间、资源版本</td></tr>
+<tr><td>WorkersReady</td><td>确认 rendezvous endpoint 和角色副本</td><td>ready worker 数、master endpoint</td></tr>
+<tr><td>Running</td><td>观察进程、退出码与 checkpoint 心跳</td><td>运行时长、重启次数、最近 checkpoint</td></tr>
+<tr><td>Restarting</td><td>重建失败副本，按策略恢复或弹性缩容</td><td>失败原因、恢复进度、retry count</td></tr>
+<tr><td>Succeeded / Failed</td><td>写入终态并按策略保留或清理资源</td><td>完成时间、输出路径、最终错误</td></tr>
+</table>
+</div>
+
+<div class="card card-d">
+<h3>训练扩展组件的职责</h3>
+<table>
+<tr><th>组件</th><th>负责什么</th><th>不负责什么</th></tr>
+<tr><td>TrainingJob Operator</td><td>任务状态机、子资源编排、失败恢复与清理</td><td>不决定 Pod 的具体目标节点</td></tr>
+<tr><td>Queue / Admission</td><td>判断任务是否获准消费配额和整体启动</td><td>不做单个节点过滤与打分</td></tr>
+<tr><td>Scheduler / Plugin</td><td>为 Pod 或 PodGroup 选择节点，处理拓扑、优先级和抢占</td><td>不管理完整训练生命周期</td></tr>
+<tr><td>Device Plugin / DRA</td><td>发现、上报、分配设备并交付给容器</td><td>不管理训练任务状态机</td></tr>
+</table>
+</div>
+
 <div class="card card-m">
 <h3>Operator 与 CRD 高频问答</h3>
 
@@ -197,10 +213,3 @@ spec:
 </div>
 
 </div>
-
-## 关联模块
-
-- `Workload 与 Controller`：理解 controller / reconcile 的基础。
-- `Scheduler 插件与扩展`：理解调度逻辑不应该塞进 Operator。
-- `AI Infra：Device Plugin 与 DRA`：理解设备注册、资源声明和容器交付；GPU 切分机制转到 GPU 专题。
-- `扩展与工程化`：理解 Operator 如何被 Helm、Kustomize、GitOps 部署和发布。

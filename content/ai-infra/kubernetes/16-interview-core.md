@@ -1,7 +1,3 @@
-## 一句话结论
-
-Kubernetes 高频面试不是背对象定义，而是解释声明式 API 如何通过控制循环收敛到真实状态。回答任何机制题都可以沿 `API Server → etcd → Watch/Informer → Controller/Scheduler → kubelet → Runtime` 这条链路展开。
-
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/kubernetes-components-official.svg" alt="Kubernetes 官方集群组件架构图" loading="lazy">
 <p class="caption">Kubernetes 官方组件图：控制面负责状态存储、控制与调度，节点侧由 kubelet、kube-proxy 和容器运行时承载 Pod。来源：<a href="https://kubernetes.io/docs/concepts/overview/components/">Kubernetes Components</a>。</p>

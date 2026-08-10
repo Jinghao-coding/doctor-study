@@ -1,6 +1,3 @@
-## 一句话结论
-
-NCCL 是 GPU 集合通信事实标准，训练慢或 hang 时必须看拓扑、算法、带宽和慢 rank。
 <div class="card card-m">
 <h3>NCCL：GPU 集合通信的事实标准</h3>
 <p>NCCL 负责 GPU 间高效集合通信，常见于 DDP 梯度同步、TP 层内通信、MoE expert routing 等场景。分布式训练排障里，NCCL 往往是最关键也最难定位的一层。</p>
@@ -71,10 +68,3 @@ export TORCH_DISTRIBUTED_DEBUG=DETAIL</code></pre></div>
 <div class="qa-summary">面试口径：NCCL 环境变量按日志、网卡选择、功能开关三类记，核心是帮助判断走了哪条通信路径。</div>
 </div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

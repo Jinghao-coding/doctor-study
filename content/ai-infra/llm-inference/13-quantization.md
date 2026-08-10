@@ -1,6 +1,3 @@
-## 一句话结论
-
-量化通过把浮点权重/激活/KV cache 映射到低比特整数（INT8/INT4/FP8）来降低显存占用和带宽压力：W4A16（weight-only）主要缓解 decode 阶段的 memory-bound，W8A8 利用 INT8 tensor core 获得实际算力加速，FP8 凭借 H100 原生支持成为当前最易用的部署方案，GPTQ/AWQ/SmoothQuant 分别用二阶信息/激活感知/scale 迁移解决精度损失问题。
 <div class="card card-m">
 <h3>为什么要量化：显存和带宽的双重压力</h3>
 <p>LLM 推理的显存消耗主要分三块：模型权重、KV cache、激活值。其中模型权重占据固定大头：</p>
@@ -60,7 +57,7 @@
 </ul>
 </div>
 
-<div class="qa-summary">一句话区别：W4A16/W8A16 省显存/带宽但不省算力，主要加速 decode；W8A8 用 INT8 算，既省带宽又省算力，prefill 也受益，但激活 outlier 是主要障碍。</div>
+<div class="qa-summary">核心区别：W4A16/W8A16 省显存/带宽但不省算力，主要加速 decode；W8A8 用 INT8 算，既省带宽又省算力，prefill 也受益，但激活 outlier 是主要障碍。</div>
 </div>
 
 <div class="card card-m">
@@ -203,11 +200,3 @@ for each column W[:, i]:
 <div class="qa-q">Q: 量化会影响 prefill 还是 decode 更多？</div>
 <div class="qa-a"><p>分情况：(1) Weight-only 量化（W4A16/W8A16）主要加速 decode，对 prefill 帮助很小甚至略慢。因为 decode 是 memory-bound，权重从 HBM 读取是瓶颈，权重变小直接加速；prefill 是 compute-bound，瓶颈在 GEMM 计算，W4A16 还需要实时反量化可能引入 overhead。(2) Weight-activation 量化（W8A8/FP8）对 prefill 和 decode 都加速，prefill 加速更明显。因为 W8A8 用 INT8/FP8 tensor core 实际做低精度矩阵乘，理论吞吐是 FP16 的 2 倍，对 compute-bound 的 prefill 直接翻倍；decode 阶段也受益于带宽减半。(3) KV cache 量化主要影响长上下文和高并发场景，对 prefill 和 decode 的影响相似（减少 KV 显存占用和读写带宽）。面试回答时要分清楚权重量化的类型，不能笼统说"量化加速推理"。</p></div>
 </div>
-
-## 关联模块
-
-- `03-prefill.md` / `04-decode.md`：Prefill 是 compute-bound（GEMM），decode 是 memory-bound（GEMV），决定了不同量化方案的收益场景。
-- `05-kv-cache-attention.md`：KV cache 量化直接作用于 KV cache 的显存占用。
-- `06-performance-bottlenecks.md`：Roofline 模型是理解"weight-only 省带宽 vs W8A8 省算力"的基础。
-- `08-serving-engines.md`：vLLM、TensorRT-LLM 对各量化方案的 kernel 支持程度。
-- `14-kv-cache-memory-budget.md`：KV cache 显存预算管理，量化是重要手段。

@@ -1,7 +1,3 @@
-## 一句话结论
-
-CPU 和 GPU 的根本区别不是“核心多少”，而是设计目标不同：CPU 追求单线程低延迟和复杂控制能力，GPU 追求大规模数据并行吞吐。深度学习的核心计算以矩阵乘法、批量并行和高带宽访存为主，所以天然更匹配 GPU。
-
 ## 核心概念
 
 - **CPU 定位**：低延迟 · 强控制流 · 通用计算 — 分支预测、乱序执行、大缓存，适合 OS 调度、业务逻辑、IO 编排、串行控制
@@ -48,10 +44,3 @@ CPU 和 GPU 的根本区别不是“核心多少”，而是设计目标不同�
 | GPU 可以替代 CPU | GPU 不擅长 OS 调度、复杂控制流、IO 编排和低延迟串行任务，仍需要 CPU 作为 Host。 |
 | 显存越大性能越强 | 显存容量决定能不能放下模型和数据，性能还要看带宽、SM、Tensor Core、互联和算子效率。 |
 | GPU 利用率高就代表训练快 | `GPU-Util` 只是粗指标，还要看 SM Active、Tensor Core 利用率、显存带宽、通信和数据加载。 |
-
-## 关联模块
-
-- `硬件基础`：继续看 SM、Tensor Core、HBM、NVLink/NVSwitch 等硬件组件。
-- `CUDA 执行模型`：理解 kernel launch、grid、block、thread、warp 和 SM 的执行关系。
-- `Host-Device 数据拷贝`：理解 CPU-GPU 数据路径、pinned memory 和 H2D/D2H 开销。
-- `性能指标`：用 TFLOPS、显存带宽、Roofline 和利用率指标判断 GPU 是否真的被用好。

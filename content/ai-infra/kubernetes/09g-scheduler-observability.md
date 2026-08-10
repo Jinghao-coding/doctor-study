@@ -1,6 +1,3 @@
-## 一句话结论
-
-排查 scheduler 问题的标准三件套：**kube-scheduler-simulator** 重放 + **Diagnosis / FitError** 数据结构看每个节点被哪个 Plugin 拦下来 + **Prometheus metrics** 看长期趋势和 SLO。
 ## 工具一：kube-scheduler-simulator
 
 <div class="card card-m">
@@ -156,10 +153,3 @@ topk(5, sum(scheduler_unschedulable_pods) by (plugin))</code></pre>
 <p><strong>第三招：和事件相关性。</strong> 看延迟跳升时间点和发布、节点变更、流量峰值是否对应。</p>
 </div>
 </div>
-
-## 关联模块
-
-- `调度路径与三个队列`（09a）：三队列流转。
-- `Cache、扩展点与抢占`（09b）：FailedScheduling 事件中 PreFilter / PostFilter 消息的来源。
-- `QueueingHint 与 Move Request`（09f）：unschedulable_pods 与 hint 命中率的关系。
-- `性能、打分与 HA`（09c）：percentageOfNodesToScore 和调度延迟的关系。

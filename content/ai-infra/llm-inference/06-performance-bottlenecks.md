@@ -1,6 +1,3 @@
-## 一句话结论
-
-LLM 推理性能不能只看 QPS，要同时看 TTFT、TPOT、tokens/s、显存、P99 和 GPU 利用效率。
 <div class="card card-m">
 <h3>性能指标与瓶颈：先分清 TTFT、TPOT 和吞吐</h3>
 <p>LLM 推理性能不能只看 QPS。在线服务通常同时关注首 token 延迟、每 token 延迟、端到端延迟、吞吐、显存占用和稳定性。不同指标对应不同瓶颈：prefill 更偏计算密集，decode 更偏访存和 KV cache 读取。</p>
@@ -28,10 +25,3 @@ LLM 推理性能不能只看 QPS，要同时看 TTFT、TPOT、tokens/s、显存�
 <div class="qa-q">Q: 为什么 prefill 和 decode 的瓶颈不同？</div>
 <div class="qa-a"><p><strong>回答思路：</strong>从计算形态和内存访问形态解释。</p><div class="qa-section"><div class="qa-section-title">Prefill</div><p>Prefill 一次处理整段 prompt，可以形成较大的矩阵乘，GPU 算力利用更高，通常偏 compute-bound。</p></div><div class="qa-section"><div class="qa-section-title">Decode</div><p>Decode 每次只生成一个 token，但要读取历史 KV cache，batch 小时矩阵规模小，常偏 memory-bound。</p></div><div class="qa-summary">面试口径：prefill 看首 token 和算力，decode 看逐 token 延迟和 KV cache 访存。</div></div>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

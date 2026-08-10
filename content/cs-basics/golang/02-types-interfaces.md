@@ -1,7 +1,3 @@
-## 一句话结论
-
-Go 类型系统核心是**值语义 + 组合 + 隐式 interface**：没有继承只用 struct embedding 组合，interface 是鸭式类型（实现方法即满足接口），面试高频坑是**nil pointer 赋值给 interface 后 interface != nil**。
-
 <div class="card card-m">
 <h3>值类型 vs 引用类型</h3>
 <p>Go 中所有赋值和参数传递默认都是值拷贝，但有些类型内部持有指针，表现得像引用。理解这点是写对 Go 代码的基础。</p>
@@ -16,7 +12,7 @@ Go 类型系统核心是**值语义 + 组合 + 隐式 interface**：没有继承
 <tr><td>channel</td><td>拷贝 header（指向队列指针）</td><td>修改会影响</td></tr>
 <tr><td>interface</td><td>拷贝（tab+data 两字）</td><td>如果 data 是指针则可能影响</td></tr>
 </table>
-<div class="qa-summary">一句话：Go 没有「引用类型」这个语法概念，但 slice/map/channel/interface 内部持有指针，有引用语义；想修改 struct 本身必须传 *T。</div>
+<div class="qa-summary">Go 没有「引用类型」这个语法概念，但 slice/map/channel/interface 内部持有指针，有引用语义；想修改 struct 本身必须传 *T。</div>
 </div>
 
 <div class="card card-s">
@@ -117,7 +113,7 @@ func main() {
     fmt.Println(err)        // <nil>  （打印看起来是 nil 但实际不是）
 }
 </code></pre>
-<div class="qa-summary">一句话总结：nil pointer 赋值给 interface 后，interface 的 type 字段不为 nil，所以 <code>interface != nil</code>。返回错误时，如果真的没有错误，必须显式返回 <code>nil</code>，而不是返回值为 nil 的指针。</div>
+<div class="qa-summary">nil pointer 赋值给 interface 后，interface 的 type 字段不为 nil，所以 <code>interface != nil</code>。返回错误时，如果真的没有错误，必须显式返回 <code>nil</code>，而不是返回值为 nil 的指针。</div>
 <div class="card-d">
 <h4>正确写法</h4>
 <pre><code class="language-go">func returnsError() error {

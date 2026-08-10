@@ -1,6 +1,3 @@
-## 一句话结论
-
-推理引擎选型要看调度、KV cache、batching、并行、量化、部署生态和可观测性，不是只比较吞吐。
 <div class="card card-m">
 <h3>AI Infra 视角：推理引擎 = 调度器 + 内存系统 + 计算后端 + 分布式策略 + Serving 工程</h3>
 <p>面向应用的人只需要会用 vLLM 启服务；做 AI Infra 必须能讲清楚引擎内部的请求调度、KV 内存管理、CUDA Kernel 选择、并行切分和容错。下面把推理引擎拆成 5 个子系统，每个子系统直接给出原理、关键数据结构、源码定位和实战要点。</p>
@@ -297,10 +294,3 @@
 <h3>面试自查清单</h3>
 <p>① PagedAttention 块管理与 CoW；② Continuous batching 状态机；③ Chunked prefill 与 PD 分离的取舍；④ Prefix cache / RadixAttention 命中机制；⑤ 投机解码原理与变体；⑥ TP/PP/EP/SP 切分与通信开销；⑦ KV 量化的精度风险；⑧ MoE 路由与 all-to-all 优化；⑨ vLLM scheduler 状态机与 preemption 策略；⑩ FlashAttention v3 在 H100 上的关键优化（warp specialization、TMA、async）；⑪ CUDA Graphs 在 decode step 的收益；⑫ 服务化指标体系与 SLO 分解；⑬ 千卡集群的请求路由、KV 迁移、容灾。</p>
 </div>
-
-## 关联模块
-
-- `GPU 硬件与资源共享`：提供 SM、HBM、NVLink、MIG/MPS、利用率诊断等底层直觉。
-- `LLM 推理系统`：提供 Prefill/Decode、KV Cache、Serving Engine 和推理优化语境。
-- `Kubernetes 核心`：提供调度、资源模型、控制器和扩展机制。
-- `分布式训练 / 调度与集群`：提供多卡通信、队列、公平性、拓扑和容错背景。

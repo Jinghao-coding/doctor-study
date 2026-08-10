@@ -1,6 +1,3 @@
-## 一句话结论
-
-`PreFilter / Filter / PreScore / Score` 看似只是流程拆分，背后是「**全局串行预处理 vs 节点级并行处理**」的架构选择，决定了一个插件应该把代码写到哪个 Hook 里。
 ## 调度框架全景图
 
 下面这张是 `kubernetes/enhancements/keps/sig-scheduling/624-scheduling-framework` 设计文档里给出的官方流程图。**先记图，再背扩展点**。
@@ -181,9 +178,3 @@ type Scheduler struct {
 //   ├── Framework.RunPreBind()
 //   └── Scheduler.bind() → Framework.RunBindPlugins() → Framework.RunPostBindPlugins()
 ```
-
-## 关联模块
-
-- 上一节：`Scheduler 内部机制 · 调度路径与队列`，理解 ActiveQ → Cycle → Bind 的整体流转。
-- 下一节：`QueueingHint 与 Move Request`，理解 Pod 失败后怎么回到 ActiveQ。
-- `自定义 Plugin 实战`：把这里讲的 Hook 设计落到代码里。

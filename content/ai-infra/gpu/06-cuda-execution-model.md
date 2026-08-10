@@ -1,7 +1,3 @@
-## 一句话结论
-
-CUDA 执行模型的核心链路是：CPU Host 发起 kernel launch，CUDA runtime 创建 grid，grid 拆成 block，block 被调度到 SM 上，block 内 thread 被组织成 warp，SM 以 warp 为单位发射指令并用多 warp 并发隐藏延迟。
-
 ## 系统链路
 
 ```flow
@@ -16,8 +12,8 @@ CPU Host
 
 <div class="card card-w">
 <h3>先建立一张脑图：从一次 kernel launch 到 GPU 硬件执行</h3>
-<p>这一页不要先背表格。你可以先记住一条主线：CPU 端发起一次 <code>kernel launch</code>，CUDA runtime 把它描述成一个 <code>grid</code>；grid 里面有很多 <code>block</code>；block 里面有很多 <code>thread</code>；GPU 硬件把 block 分配到不同的 <code>SM</code> 上执行；SM 内部再把 thread 按 <code>warp</code> 组织和调度。CUDA 官方文档把 CUDA 描述为 NVIDIA 的并行计算平台和编程模型，用来让程序利用 GPU 的计算能力[[CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html)]。</p>
-<div class="qa-summary">一句话：你写的是 kernel，启动的是 grid，组织单位是 block 和 thread，硬件执行单位是 SM 和 warp。</div>
+<p>CUDA 执行主线是：CPU 端发起一次 <code>kernel launch</code>，CUDA runtime 把它描述成一个 <code>grid</code>；grid 里面有很多 <code>block</code>；block 里面有很多 <code>thread</code>；GPU 硬件把 block 分配到不同的 <code>SM</code> 上执行；SM 内部再把 thread 按 <code>warp</code> 组织和调度。CUDA 官方文档把 CUDA 描述为 NVIDIA 的并行计算平台和编程模型，用来让程序利用 GPU 的计算能力[[CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html)]。</p>
+<div class="qa-summary">你写的是 kernel，启动的是 grid，组织单位是 block 和 thread，硬件执行单位是 SM 和 warp。</div>
 </div>
 
 <div class="card card-w">
@@ -242,7 +238,7 @@ thread31 -> a[99999]</code></pre>
 <tr><td>Warp</td><td>硬件执行单位</td><td>通常 32 个 thread 一组执行同一条指令</td><td>关注 warp divergence 和 memory coalescing</td></tr>
 <tr><td>SM</td><td>GPU 硬件执行单元</td><td>承载 block，调度 warp，提供 register/shared memory/CUDA Core/Tensor Core</td><td>关注 occupancy、warp stall、register pressure、shared memory</td></tr>
 </table>
-<div class="qa-summary">一句话背诵：Host 启动 kernel，kernel 形成 grid，grid 拆成 block，block 调度到 SM，block 内 thread 被组织成 warp，SM 以 warp 为单位执行并通过多 warp 并发隐藏内存延迟。</div>
+<div class="qa-summary">Host 启动 kernel，kernel 形成 grid，grid 拆成 block，block 调度到 SM，block 内 thread 被组织成 warp，SM 以 warp 为单位执行并通过多 warp 并发隐藏内存延迟。</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -313,9 +309,3 @@ thread31 -> a[99999]</code></pre>
 | thread 是硬件实际独立调度单位 | NVIDIA GPU 通常以 warp 为单位调度，warp 内 thread 分支不同会降低效率。 |
 | block 可以跨多个 SM 执行 | 一个 block 在运行期间通常驻留在一个 SM 上。 |
 | occupancy 越高越好 | occupancy 是诊断指标，不是最终性能目标。 |
-
-## 关联模块
-
-- `CUDA 内存模型与 Occupancy`：继续看 block size、register、shared memory 对 occupancy 的影响。
-- `利用率诊断`：用 SM Active、Occupancy、Warp Stall 验证执行模型是否高效。
-- `Stream 与异步流水线`：区分 kernel 内部调度和 kernel 之间的 stream 调度。

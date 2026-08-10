@@ -1,7 +1,3 @@
-## 一句话结论
-
-现代 CPU 通过指令级并行（ILP）提升单线程性能：流水线让多条指令重叠执行，多发射（superscalar）让每个 cycle 发射多条指令，SIMD 让一条指令处理多个数据。AI 推理/训练框架中的向量化算子（GEMM、Attention）本质是在充分利用 SIMD 和流水线。
-
 <div class="card card-m">
 <h3>指令集基础</h3>
 <table><tr><th>维度</th><th>CISC（x86）</th><th>RISC（ARM/RISC-V）</th></tr>

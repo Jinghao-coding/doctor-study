@@ -1,7 +1,3 @@
-## 一句话结论
-
-GPU 虚拟化不是单一技术，而是从“整卡直通”到“硬件切片、进程并发、时间片复用、软件配额”的一组方案。面试回答必须先说清楚：**切分发生在哪一层、隔离了什么、调度器看见什么、运行时如何执行、出错时会不会互相影响。**
-
 ## 一条完整主线
 
 ```flow
@@ -70,7 +66,7 @@ GPU 虚拟化不是单一技术，而是从“整卡直通”到“硬件切片�
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: MIG、MPS、Time-Slicing 和 HAMi 最本质的区别是什么？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">一句话</div><p>MIG 在硬件层切设备，MPS 在驱动层并发执行，Time-Slicing 在时间上共享访问，HAMi 在 Kubernetes 调度和容器运行时层做细粒度软件配额。</p></div>
+<div class="qa-section"><div class="qa-section-title">核心含义</div><p>MIG 在硬件层切设备，MPS 在驱动层并发执行，Time-Slicing 在时间上共享访问，HAMi 在 Kubernetes 调度和容器运行时层做细粒度软件配额。</p></div>
 <div class="qa-section"><div class="qa-section-title">判断标准</div><p>不要只背“隔离强弱”，还要追问隔离对象：MIG 能提供固定硬件实例；MPS 可以限制 client 的执行资源和显存但仍共享故障域；Time-Slicing 只提供共享访问；HAMi 的显存/算力限制依赖软件拦截或设备后端能力。</p></div>
 </div>
 </div>
@@ -96,12 +92,3 @@ GPU 虚拟化不是单一技术，而是从“整卡直通”到“硬件切片�
 - [NVIDIA Kubernetes Device Plugin](https://github.com/NVIDIA/k8s-device-plugin)
 - [NVIDIA CUDA MPS Documentation](https://docs.nvidia.com/deploy/mps/latest/)
 - [HAMi 官方文档](https://project-hami.io/docs/)
-
-## 关联模块
-
-- `新 GPU 节点接入`：从 Driver、Runtime、Device Plugin 到 `nvidia.com/gpu` 和 CUDA canary 的完整链路。
-- `MIG 实战`：从裸机启用到 GPU Operator 管理和 Pod 申请。
-- `MPS 实战`：从 MPS daemon 到 Kubernetes 共享配置和资源限制。
-- `Time-Slicing 实战`：配置 replicas、申请共享资源并验证真实边界。
-- `HAMi 开源方案`：细粒度显存/算力调度与容器内隔离。
-- `生产选型与论文映射`：把机制映射到真实工作负载和个人论文项目。
