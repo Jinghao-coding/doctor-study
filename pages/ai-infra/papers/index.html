@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
 <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
-<link rel="stylesheet" href="../../../assets/style.css?v=1786375493">
+<link rel="stylesheet" href="../../../assets/style.css?v=1786377253">
 </head>
 <body>
 <nav class="topnav">
@@ -215,7 +215,7 @@
 
 </div>
 <hr class="div"></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-1-subpanel-2" aria-labelledby="papers-tabs-panel-1-sub-2" hidden><div class="card card-s" style="margin-top:0.8rem">
-<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/IEEE_cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
+<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
 </div>
 <div class="card card-d">
 <h3>问题背景</h3>
@@ -579,7 +579,7 @@ $$&lt;/div&gt;
 <p>EMA 是为了过滤短作业完成和突发到达造成的亚秒级抖动。论文设置 50ms 调度周期和 <code>λ=0.3</code>，持续 deficit 大约 350ms 就能体现 90% 的稳态影响。</p>
 </div>
 <h2>QAD 怎么驱动 DeepShare</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">统计 Guaranteed demand 与 allocation</div><div class="flow-desc">得到瞬时 Q_i(t)</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到控制信号 Q̃_i(t)</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">租户恢复排序</div><div class="flow-desc">Q̃ 低的租户先恢复，预测运行时间只做第二排序键</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">资源回收</div><div class="flow-desc">Guaranteed 放置失败时，先回收可让渡资源，再做低代价 Best-effort 抢占</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">共享准入</div><div class="flow-desc">任一租户 Q̃ 低时提高 retention 门槛，必要时停止新 colocation</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">统计 Guaranteed demand 与 allocation</div><div class="flow-desc">得到瞬时 Q_i(t)</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到控制信号 Q̃_i(t)</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">租户恢复排序</div><div class="flow-desc">Q̃ 低的租户先恢复，预测运行时间只做第二排序键</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">资源回收</div><div class="flow-desc">Guaranteed 放置失败时，先回收可让渡资源，再做低代价 Best-effort 抢占</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">共享准入</div><div class="flow-desc">任一租户 Q̃ 低时提高 retention 门槛，必要时停止新 colocation</div></div></div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 面试官问“QAD 是什么”，怎么一口气讲清楚？</div>
 <div class="qa-a">
@@ -603,7 +603,7 @@ $$&lt;/div&gt;
 </table></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-1-subpanel-4" aria-labelledby="papers-tabs-panel-1-sub-4" hidden><div class="card card-s">
 <h3>总体架构</h3>
 
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">TenantQuota CRD + Job class annotation</div><div class="flow-desc">描述 quota、Best-effort 上限和作业类别</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Lightweight Quota Controller</div><div class="flow-desc">reconcile 配置，生成 per-tenant quota metadata</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Scheduler Plugin</div><div class="flow-desc">维护 Q / Q̃、两级队列、colocation 准入和抢占</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Informer Cache</div><div class="flow-desc">从运行 Pod 重建 Guaranteed allocation 与 demand</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">MPS + DCGM DaemonSet</div><div class="flow-desc">执行 GPU 共享、采样干扰并上报 degraded pair</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">Kubernetes API Server</div><div class="flow-desc">Bind、Pod resize、Pod deletion 与故障幂等恢复</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">TenantQuota CRD + Job class annotation</div><div class="flow-desc">描述 quota、Best-effort 上限和作业类别</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Lightweight Quota Controller</div><div class="flow-desc">reconcile 配置，生成 per-tenant quota metadata</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Scheduler Plugin</div><div class="flow-desc">维护 Q / Q̃、两级队列、colocation 准入和抢占</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Informer Cache</div><div class="flow-desc">从运行 Pod 重建 Guaranteed allocation 与 demand</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">MPS + DCGM DaemonSet</div><div class="flow-desc">执行 GPU 共享、采样干扰并上报 degraded pair</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">Kubernetes API Server</div><div class="flow-desc">Bind、Pod resize、Pod deletion 与故障幂等恢复</div></div></div>
 
 <div class="qa-summary">面试记忆：Controller 管“配置态”，Plugin 管“决策态”，DaemonSet 管“节点运行态”。</div>
 </div>
@@ -666,7 +666,7 @@ spec:
 <div class="qa-q">Q: 为什么 QAD 不放在 Controller 里周期性写 CRD？</div>
 <div class="qa-a"><p>QAD 是 50ms 调度周期内持续变化的热状态，排序、共享和抢占都要同步消费。若 Controller 计算后再写 CRD，既增加 API Server 写压力，也引入控制环延迟和一致性窗口。放在 Scheduler Plugin 内存里能直接复用 informer cache，并在 leader 切换后重建。</p></div>
 </div></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-1-subpanel-5" aria-labelledby="papers-tabs-panel-1-sub-5" hidden><h2>一次调度周期怎么走</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">读取租户 quota、作业 class 与运行 Pod</div><div class="flow-desc">Controller 提供配置元数据，informer 提供实时状态</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">计算瞬时 QAD</div><div class="flow-desc">A_i^G / min(q_i, D_i^G)，无 Guaranteed demand 时为 1</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到调度控制信号 Q̃_i</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">两级队列排序</div><div class="flow-desc">Guaranteed 先于 Best-effort，Q̃ 低优先，预测剩余时间短次优先</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">尝试独占 GPU</div><div class="flow-desc">无干扰，优先级最高</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">尝试安全 colocation</div><div class="flow-desc">RF retention 预测与 QAD 动态门槛同时通过</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">回收 CPU / Memory</div><div class="flow-desc">对 Best-effort Pod 发起 in-place resize</div></div><div class="flow-step"><div class="flow-index">08</div><div class="flow-title">选择 GPU victims</div><div class="flow-desc">PostFilter 按抢占效率贪心回收足够的完整 GPU</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">读取租户 quota、作业 class 与运行 Pod</div><div class="flow-desc">Controller 提供配置元数据，informer 提供实时状态</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">计算瞬时 QAD</div><div class="flow-desc">A_i^G / min(q_i, D_i^G)，无 Guaranteed demand 时为 1</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到调度控制信号 Q̃_i</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">两级队列排序</div><div class="flow-desc">Guaranteed 先于 Best-effort，Q̃ 低优先，预测剩余时间短次优先</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">尝试独占 GPU</div><div class="flow-desc">无干扰，优先级最高</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">尝试安全 colocation</div><div class="flow-desc">RF retention 预测与 QAD 动态门槛同时通过</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">回收 CPU / Memory</div><div class="flow-desc">对 Best-effort Pod 发起 in-place resize</div></div><div class="flow-step"><div class="flow-index">08</div><div class="flow-title">选择 GPU victims</div><div class="flow-desc">PostFilter 按抢占效率贪心回收足够的完整 GPU</div></div></div>
 <h2>两级队列不要记成两个 Controller</h2>
 <div class="card card-s">
 <h3>队列符号和职责</h3>
@@ -1547,7 +1547,7 @@ $$&lt;/div&gt;
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1786374226"></script>
+<script src="../../../assets/script.js?v=1786377329"></script>
 <script>
 (function(){
   function syncPrismTheme(){

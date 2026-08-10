@@ -1,5 +1,5 @@
 <div class="card card-s" style="margin-top:0.8rem">
-<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/IEEE_cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
+<p><strong>📄 论文原文：</strong><a href="../../../resources/papers/cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
 </div>
 
 <div class="card card-d">
