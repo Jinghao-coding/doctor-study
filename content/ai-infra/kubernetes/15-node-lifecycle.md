@@ -234,13 +234,13 @@ tolerations:
 <tr><td>Hard Eviction</td><td>达到阈值立即驱逐</td><td><code>evictionHard: memory.available<"100Mi", nodefs.available<"10%"</code></td></tr>
 <tr><td>Soft Eviction</td><td>达到阈值且持续 grace period 后才驱逐</td><td><code>evictionSoft: memory.available<"200Mi"</code> + <code>eviction-soft-grace-period: 1m30s</code></td></tr>
 </table>
-<p>驱逐顺序（从先到后）：</p>
+<p>kubelet 不直接按 QoS 类别做固定排序，而是针对发生压力的资源依次比较：是否超过 request、Pod Priority、使用量相对 request 的程度。对 CPU/内存这类有 request 的资源，结果通常表现为：</p>
 <ol>
-<li>BestEffort Pod（没有 request/limit）→ 首先被驱逐</li>
-<li>Burstable Pod（request &lt; limit），且资源使用超过 request → 按优先级/使用量排序</li>
-<li>Guaranteed Pod（request = limit）或使用量低于 request 的 Burstable Pod → 最后（基本不驱逐，除非节点压力极大）</li>
+<li>使用量超过 request 的 BestEffort 或 Burstable Pod 先进入候选，再按 Priority 和超过 request 的相对程度排序。</li>
+<li>Guaranteed Pod，以及使用量低于 request 的 Burstable Pod 最后考虑，主要按 Priority 排序；系统进程挤占预留资源时它们仍可能被驱逐。</li>
+<li>inode/PID 没有 request，DiskPressure 的统计口径也不同，因此不能把“BestEffort → Burstable → Guaranteed”套到所有节点压力场景。</li>
 </ol>
-<p>kubelet 通过内核 OOM score adjustment 辅助排序：BestEffort Pod 的进程 OOM score 最高（1000），Guaranteed 最低（-997），即使发生内核 OOM Killer 也会先杀 BestEffort Pod。</p>
+<p>节点压力驱逐与内核 OOM Killer 也不是同一条链路。发生节点 OOM 时，kubelet 设置的 <code>oom_score_adj</code> 会影响内核选择：BestEffort 通常为 1000，Guaranteed 通常为 -997，Burstable 根据 request 占节点内存比例计算。</p>
 </div>
 
 ## Container 与 Pod 生命周期

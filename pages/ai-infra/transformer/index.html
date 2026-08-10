@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
 <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
-<link rel="stylesheet" href="../../../assets/style.css?v=1786375493">
+<link rel="stylesheet" href="../../../assets/style.css?v=1786377253">
 </head>
 <body>
 <nav class="topnav">
@@ -30,7 +30,7 @@
 <p>Transformer 不是一个“Attention 模块”，而是一套可堆叠的序列建模骨架。它把每个 token 表示沿着两条路径推进：</p>
 <ul><li><strong>残差主干路径</strong>：保存并累积 token 表示，让深层网络仍然可训练。</li><li><strong>Attention 混合路径</strong>：让 token 之间交换信息，建立上下文依赖。</li><li><strong>FFN 变换路径</strong>：对每个 token 独立做非线性投影，提供容量和知识存储。</li><li><strong>归一化路径</strong>：控制激活尺度，稳定训练和长层数堆叠。</li></ul>
 <h2>系统链路</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">文本输入</div><div class="flow-desc">tokenizer 切分成 token id</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Embedding</div><div class="flow-desc">token id 查表得到向量，叠加位置或旋转位置信息</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Attention</div><div class="flow-desc">通过 Q/K/V 让 token 间交换信息</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Residual + Norm</div><div class="flow-desc">保持梯度通路并稳定激活分布</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">FFN</div><div class="flow-desc">对每个 token 独立扩维、激活、降维</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">LM Head</div><div class="flow-desc">Decoder-only 模型投影到词表并预测下一个 token</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">文本输入</div><div class="flow-desc">tokenizer 切分成 token id</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">Embedding</div><div class="flow-desc">token id 查表得到向量，叠加位置或旋转位置信息</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Attention</div><div class="flow-desc">通过 Q/K/V 让 token 间交换信息</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Residual + Norm</div><div class="flow-desc">保持梯度通路并稳定激活分布</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">FFN</div><div class="flow-desc">对每个 token 独立扩维、激活、降维</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">LM Head</div><div class="flow-desc">Decoder-only 模型投影到词表并预测下一个 token</div></div></div>
 <h2>关键机制</h2>
 <h3>Encoder、Decoder 和 Decoder-only 的边界</h3>
 <div class="table-scroll"><table>
@@ -467,7 +467,7 @@ class MultiHeadAttention(nn.Module):
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1786374226"></script>
+<script src="../../../assets/script.js?v=1786377329"></script>
 <script>
 (function(){
   function syncPrismTheme(){

@@ -100,18 +100,25 @@
           ]
         },
         {
-          "title": "03 资源模型与 Scheduler",
-          "description": "资源与放置约束、队列/Cache/抢占、Framework 插件与源码",
+          "title": "03 资源模型与放置约束",
+          "description": "requests/limits、QoS、Node Allocatable 与 Pod 放置约束",
           "open": false,
           "items": [
             {
-              "title": "资源需求与放置约束",
-              "description": "requests/limits、QoS、Node allocatable、Affinity、Taint 与 Pending 入口",
+              "title": "03 资源模型与放置约束",
+              "description": "requests/limits、QoS、Node Allocatable、Affinity、Taint、TopologySpread 与 Pending",
               "file": "02-scheduling-resource-model.md",
               "level": "基础",
               "priority": 3,
               "time": 20
-            },
+            }
+          ]
+        },
+        {
+          "title": "04 kube-scheduler 与 Scheduler Framework",
+          "description": "调度队列、Cache、扩展点、抢占、性能、HA、可观测性与源码主链路",
+          "open": false,
+          "items": [
             {
               "title": "调度路径与三个队列",
               "description": "一次 Pod 调度路径以及 ActiveQ、BackoffQ、UnschedulablePods 的状态流转",
@@ -187,7 +194,7 @@
           ]
         },
         {
-          "title": "04 网络、存储与节点",
+          "title": "05 网络、存储与节点",
           "description": "Service/CNI/CSI、kube-proxy、Node 生命周期与自动扩缩容",
           "open": false,
           "items": [
@@ -226,7 +233,7 @@
           ]
         },
         {
-          "title": "05 安全、交付与稳定性",
+          "title": "06 安全、交付与稳定性",
           "description": "RBAC/准入/多租户、故障排查、Helm/Kustomize/GitOps",
           "open": false,
           "items": [
@@ -257,7 +264,7 @@
           ]
         },
         {
-          "title": "06 Kubernetes 扩展与 AI Infra",
+          "title": "07 Kubernetes 扩展与 AI Infra",
           "description": "CRD/Operator/Kubebuilder、Device Plugin、DRA 与 GPU 设备共享",
           "open": false,
           "items": [
@@ -288,7 +295,7 @@
           ]
         },
         {
-          "title": "07 面试检验：机制与组件",
+          "title": "08 面试检验：机制与组件",
           "description": "核心机制、Workload/网络/存储、Scheduler 与 GPU 高频题",
           "open": false,
           "items": [
@@ -327,7 +334,7 @@
           ]
         },
         {
-          "title": "08 面试检验：场景与设计",
+          "title": "09 面试检验：场景与设计",
           "description": "故障诊断树与多租户 GPU 平台系统设计",
           "open": false,
           "items": [

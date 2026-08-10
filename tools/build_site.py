@@ -219,7 +219,8 @@ def render_flow(lines: list[str]) -> str:
         )
     if not steps:
         return ""
-    return '<div class="flow" role="list">' + "".join(steps) + "</div>"
+    flow_class = "flow flow-long" if len(steps) >= 5 else "flow"
+    return f'<div class="{flow_class}" role="list">' + "".join(steps) + "</div>"
 
 
 def render_code_block(lines: list[str], lang: str) -> str:

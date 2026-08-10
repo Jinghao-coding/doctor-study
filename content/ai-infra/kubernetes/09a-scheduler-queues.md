@@ -1,8 +1,3 @@
-<div class="card card-m">
-<h3>kube-scheduler 内部机制：为什么这部分放在 K8S</h3>
-<p>调度研究里有一类问题是通用算法问题，例如公平性、装箱、抢占和 backfill；另一类问题是 Kubernetes 运行时机制问题，例如调度队列、scheduler cache、assumed pod、plugin lifecycle、binding cycle。后者应该放在 K8S 模块，因为它回答的是：<strong>这些算法在 Kubernetes 里到底挂在哪个扩展点、读什么缓存、写什么状态、失败后如何恢复。</strong></p>
-</div>
-
 <div class="card card-d">
 <h3>Scheduler 主链路高频面试问题索引</h3>
 <p>复习时不要按文件顺序硬背。面试官通常按问题追问，先定位问题类型，再展开对应链路。</p>

@@ -1,3 +1,12 @@
+<div class="card card-s">
+<h3>Deployment 与 ReplicaSet 的官方定义</h3>
+<p><strong>Pod 是真正运行容器的实例，Deployment 不是容器，也不直接运行应用。</strong>Deployment 保存“要运行多少个副本、Pod 使用什么模板、如何更新”的期望状态，并通过控制器持续维持这个状态。</p>
+<p><strong>Deployment</strong> 是管理一组 Pod 的工作负载对象，用声明式方式控制 Pod 与 ReplicaSet 的创建、扩缩容和更新。它通常用于无状态应用：同一 Deployment 中的 Pod 应当可以相互替换，单个 Pod 消失后由控制器补出新副本。</p>
+<p><strong>ReplicaSet</strong> 的职责更窄：持续保证符合 selector 的 Pod 数量等于期望副本数。生产中通常不直接维护 ReplicaSet，而是让 Deployment 管理新旧 ReplicaSet，从而获得滚动发布、暂停和回滚能力。</p>
+<p><strong>控制边界：</strong>Deployment Controller 创建或调整 ReplicaSet，ReplicaSet Controller 再创建或删除 Pod；Controller 只向 API Server 写对象，不直接启动容器。</p>
+<p>官方文档：<a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment</a> · <a href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a> · <a href="https://kubernetes.io/docs/concepts/workloads/controllers/">Workload Management</a></p>
+</div>
+
 <div class="card card-m">
 <h3>Deployment、ReplicaSet 与 Pod 的控制关系</h3>
 <div class="flow" role="list" aria-label="Deployment 控制链路">
@@ -7,6 +16,23 @@
 </div>
 <p>Deployment Controller 管理 ReplicaSet 的版本与伸缩，ReplicaSet Controller 管理 Pod 数量。Pod template 的哈希写入 <code>pod-template-hash</code>，用于区分新旧 ReplicaSet。</p>
 <div class="qa-summary">只有 <code>.spec.template</code> 变化才触发新 rollout / revision；单纯修改 <code>.spec.replicas</code> 只做伸缩，不创建新版本。</div>
+</div>
+
+<div class="card card-d">
+<h3>Deployment 更新副本数以后，Pod 是谁创建的？</h3>
+<ol>
+<li>用户修改 <code>Deployment.spec.replicas</code>，API Server 保存新的期望副本数。</li>
+<li>Deployment Controller 发现期望状态变化，调整关联 ReplicaSet 的 <code>spec.replicas</code>。如果正在滚动发布，可能按比例调整多个活跃 ReplicaSet。</li>
+<li>ReplicaSet Controller 比较期望副本数和现有 Pod 数量，通过 API Server 创建或删除 Pod 对象。</li>
+<li>Scheduler 为新增的未绑定 Pod 选择 Node，并把绑定结果写回 API Server。</li>
+<li>目标 Node 上的 kubelet 发现分配给本节点的 Pod，准备存储、网络和容器运行时，最终启动容器。</li>
+</ol>
+<pre><code class="language-text">修改 Deployment.spec.replicas
+  → Deployment Controller 调整 ReplicaSet.spec.replicas
+  → ReplicaSet Controller 创建或删除 Pod
+  → Scheduler 选择 Node
+  → kubelet 启动容器</code></pre>
+<div class="qa-summary">ReplicaSet Controller 创建 Pod 对象；Deployment Controller 管理 ReplicaSet；Scheduler 只负责选节点；kubelet 才负责在节点上运行 Pod。</div>
 </div>
 
 <div class="card card-s">

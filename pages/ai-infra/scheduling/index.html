@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
 <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
-<link rel="stylesheet" href="../../../assets/style.css?v=1786375493">
+<link rel="stylesheet" href="../../../assets/style.css?v=1786377253">
 </head>
 <body>
 <nav class="topnav">
@@ -1249,7 +1249,7 @@ for job in queue.after(head):
 <h3>问题定义</h3>
 <p>集群同时存在不同型号、显存容量和互联能力的 GPU，任务有精度、显存、算力和拓扑需求。调度器需要避免高端卡被低需求任务长期占用，也不能把任务放到“数量够但跑不动”的节点。</p>
 <h3>回答框架</h3>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">资源画像</div><div class="flow-desc">型号、显存、精度能力、拓扑、健康、成本</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">任务画像</div><div class="flow-desc">最低显存、兼容型号、并行规模、SLO、预计时长</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Filter</div><div class="flow-desc">不兼容、容量不足、拓扑不满足直接排除</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Score</div><div class="flow-desc">碎片、性能匹配、数据位置、能耗与价格</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">运行时反馈</div><div class="flow-desc">实际吞吐、OOM、干扰、预测误差回写画像</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">资源画像</div><div class="flow-desc">型号、显存、精度能力、拓扑、健康、成本</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">任务画像</div><div class="flow-desc">最低显存、兼容型号、并行规模、SLO、预计时长</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Filter</div><div class="flow-desc">不兼容、容量不足、拓扑不满足直接排除</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Score</div><div class="flow-desc">碎片、性能匹配、数据位置、能耗与价格</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">运行时反馈</div><div class="flow-desc">实际吞吐、OOM、干扰、预测误差回写画像</div></div></div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不能统一换算成“标准 GPU 单位”？</div>
 <div class="qa-a"><p>不同模型对算力、带宽、显存容量和互联的敏感度不同，GPU 性能不是一个固定比例。统一单位可用于粗粒度配额计量，但放置仍应基于任务—硬件匹配或性能预测，并保留不可运行的硬约束。</p></div>
@@ -1275,7 +1275,7 @@ for job in queue.after(head):
 <h2>常见误区</h2>
 <ul><li>把公平等同于每个租户平均分卡。</li><li>只做 Bin Packing，不预留大规模 Gang 任务的成组资源。</li><li>共享 GPU 时只计算显存，不建模 SM、带宽和故障干扰。</li><li>性能预测结果没有置信区间却直接成为硬约束。</li></ul></div><div class="subtab-panel" role="tabpanel" id="scheduling-tabs-panel-3-subpanel-3" aria-labelledby="scheduling-tabs-panel-3-sub-3" hidden><h2>场景一：Gang Scheduling</h2>
 <p>分布式训练通常需要多个 Worker/Rank 同时启动；如果只调度了一部分，已占 GPU 的 Pod 也无法有效训练，形成资源死锁式浪费。</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">作业提交</div><div class="flow-desc">声明 minAvailable、角色和资源需求</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">队列准入</div><div class="flow-desc">判断配额、优先级和整组可用性</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">资源预留</div><div class="flow-desc">对候选节点执行原子 Reserve</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Permit</div><div class="flow-desc">等待所有成员满足条件</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Bind</div><div class="flow-desc">成组提交，失败时整体回滚</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">作业提交</div><div class="flow-desc">声明 minAvailable、角色和资源需求</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">队列准入</div><div class="flow-desc">判断配额、优先级和整组可用性</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">资源预留</div><div class="flow-desc">对候选节点执行原子 Reserve</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Permit</div><div class="flow-desc">等待所有成员满足条件</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Bind</div><div class="flow-desc">成组提交，失败时整体回滚</div></div></div>
 <p>Gang 不代表所有 Pod 同一时刻物理启动，而是避免“部分成员长期占着资源却无法形成可运行集合”。</p>
 <h2>场景二：Backfill</h2>
 <p>大任务等待成组资源时，可让预计运行时间较短的小任务填补空档，但必须保证不会推迟已承诺的大任务启动时间。</p>
@@ -1308,7 +1308,7 @@ for job in queue.after(head):
 <ul><li>Gang 只配置 <code>minAvailable</code>，却没有超时、回滚和队列准入。</li><li>Backfill 不估计运行时间，也没有终止边界。</li><li>把“Pod 能重启”误认为“训练状态能恢复”。</li><li>弹性扩容只看卡数，不重新评估通信和 Global Batch 语义。</li></ul></div><div class="subtab-panel" role="tabpanel" id="scheduling-tabs-panel-3-subpanel-4" aria-labelledby="scheduling-tabs-panel-3-sub-4" hidden><h2>场景一：拓扑感知放置</h2>
 <h3>硬约束与软目标</h3>
 <ul><li>硬约束：卡数、显存、型号、健康、同一故障域或指定互联能力。</li><li>软目标：优先同一 NVLink/NVSwitch 域、GPU 与 NIC 同 NUMA、减少跨 Socket/跨机通信。</li></ul>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">采集拓扑</div><div class="flow-desc">GPU-CPU-NIC、PCIe Root、NVLink/NVSwitch、网络域</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">映射并行策略</div><div class="flow-desc">TP 更敏感带宽，DP 更依赖跨机 Collective</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Filter</div><div class="flow-desc">排除不能形成所需拓扑集合的节点</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Score</div><div class="flow-desc">比较通信代价、碎片、数据位置与拥塞</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">运行时校准</div><div class="flow-desc">NCCL 时间、链路吞吐和 Step Time 回写</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">采集拓扑</div><div class="flow-desc">GPU-CPU-NIC、PCIe Root、NVLink/NVSwitch、网络域</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">映射并行策略</div><div class="flow-desc">TP 更敏感带宽，DP 更依赖跨机 Collective</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">Filter</div><div class="flow-desc">排除不能形成所需拓扑集合的节点</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">Score</div><div class="flow-desc">比较通信代价、碎片、数据位置与拥塞</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">运行时校准</div><div class="flow-desc">NCCL 时间、链路吞吐和 Step Time 回写</div></div></div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么 Node 上有 8 张空卡，8 卡训练仍可能很慢？</div>
 <div class="qa-a"><p>卡可能分属不同 PCIe Root 或 NUMA 域，GPU-NIC 路径也可能跨 Socket；调度数量满足但通信代价很高。还要检查进程 Rank 与拓扑映射、NCCL 选择的链路以及是否与其他任务争用互联。</p></div>
@@ -1678,7 +1678,7 @@ for job in queue.after(head):
 <tr><td>前提</td><td>平台已经存在</td><td>不是从零造平台，而是分阶段改造调度策略和观测闭环</td></tr>
 </table></div>
 <h2>总体思路</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">先建画像</div><div class="flow-desc">作业资源需求、运行时长、GPU 型号、机器 CPU/内存/GPU 配比</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">再分资源池</div><div class="flow-desc">按 GPU 型号/显存容量/机器配比拆池，避免强弱卡混用</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">做快速匹配</div><div class="flow-desc">维护每张卡剩余显存和机器剩余 CPU/内存的索引</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">在线装箱</div><div class="flow-desc">显存主导 best-fit，CPU/内存做硬约束，减少碎片</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">短作业回填</div><div class="flow-desc">用预计时长短的作业填碎片，避免大块资源空等</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">反馈校准</div><div class="flow-desc">采集实际显存峰值、CPU/内存、运行时长，修正画像</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">先建画像</div><div class="flow-desc">作业资源需求、运行时长、GPU 型号、机器 CPU/内存/GPU 配比</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">再分资源池</div><div class="flow-desc">按 GPU 型号/显存容量/机器配比拆池，避免强弱卡混用</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">做快速匹配</div><div class="flow-desc">维护每张卡剩余显存和机器剩余 CPU/内存的索引</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">在线装箱</div><div class="flow-desc">显存主导 best-fit，CPU/内存做硬约束，减少碎片</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">短作业回填</div><div class="flow-desc">用预计时长短的作业填碎片，避免大块资源空等</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">反馈校准</div><div class="flow-desc">采集实际显存峰值、CPU/内存、运行时长，修正画像</div></div></div>
 <h2>先做什么</h2>
 <div class="card card-m">
 <h3>第一步：把问题量化，而不是先改算法</h3>
@@ -1706,7 +1706,7 @@ for job in queue.after(head):
 <tr><td>interference</td><td>同卡多进程可能有 SM/HBM/PCIe 干扰</td><td>不能只按显存装满，还要监控性能退化</td></tr>
 </table></div>
 <h2>调度算法</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">入队</div><div class="flow-desc">校验资源画像，按 GPU flavor / 优先级 / 时长分队列</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">候选召回</div><div class="flow-desc">从索引里找剩余显存足够且 CPU/内存足够的机器和 GPU</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">硬约束过滤</div><div class="flow-desc">GPU 型号、显存、CPU、host memory、租户/故障域</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">打分排序</div><div class="flow-desc">best-fit 显存、减少机器残余碎片、保持负载均衡</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">绑定启动</div><div class="flow-desc">原子扣减资源，启动 C++ 进程，设置显存/CPU/内存限制</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">运行反馈</div><div class="flow-desc">采集峰值和时长，完成后释放资源并更新预测</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">入队</div><div class="flow-desc">校验资源画像，按 GPU flavor / 优先级 / 时长分队列</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">候选召回</div><div class="flow-desc">从索引里找剩余显存足够且 CPU/内存足够的机器和 GPU</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">硬约束过滤</div><div class="flow-desc">GPU 型号、显存、CPU、host memory、租户/故障域</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">打分排序</div><div class="flow-desc">best-fit 显存、减少机器残余碎片、保持负载均衡</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">绑定启动</div><div class="flow-desc">原子扣减资源，启动 C++ 进程，设置显存/CPU/内存限制</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">运行反馈</div><div class="flow-desc">采集峰值和时长，完成后释放资源并更新预测</div></div></div>
 <div class="card card-d">
 <h3>主策略：显存主导的 Best-Fit Decreasing</h3>
 <p>把等待队列中可调度的一批作业按显存需求从大到小处理；每个作业优先放到“刚好能容纳它”的 GPU 上，减少大卡被小作业打散。CPU/内存作为机器级硬约束，防止显存够但进程跑不起来。</p>
@@ -1735,7 +1735,7 @@ for job in queue.after(head):
 <tr><td>限流与降级</td><td>高峰期先用近似 best-fit，观测恢复后再做更精细 defrag</td></tr>
 </table></div>
 <h2>后做什么</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">阶段 1</div><div class="flow-desc">资源画像、峰值采集、队列等待和碎片指标</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">阶段 2</div><div class="flow-desc">GPU flavor 分池、显存 best-fit、多维硬约束过滤</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">阶段 3</div><div class="flow-desc">批量调度、短作业 backfill、运行时长估计</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">阶段 4</div><div class="flow-desc">预测 requested memory/duration，自动修正用户申报</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">阶段 5</div><div class="flow-desc">干扰感知、碎片整理、跨池迁移或重启策略</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">阶段 1</div><div class="flow-desc">资源画像、峰值采集、队列等待和碎片指标</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">阶段 2</div><div class="flow-desc">GPU flavor 分池、显存 best-fit、多维硬约束过滤</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">阶段 3</div><div class="flow-desc">批量调度、短作业 backfill、运行时长估计</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">阶段 4</div><div class="flow-desc">预测 requested memory/duration，自动修正用户申报</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">阶段 5</div><div class="flow-desc">干扰感知、碎片整理、跨池迁移或重启策略</div></div></div>
 <div class="table-scroll"><table>
 <tr><th>阶段</th><th>目标</th><th>产出</th></tr>
 <tr><td>1. Baseline</td><td>先知道浪费在哪里</td><td>GPU memory utilization、CPU/memory residual、queue time、失败原因</td></tr>
@@ -1754,7 +1754,7 @@ for job in queue.after(head):
 <tr><td>预测激进 vs OOM</td><td>预测可减少保守申报，但必须加安全余量和失败回退</td></tr>
 </table></div>
 <h2>图形化回答</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">作业队列</div><div class="flow-desc">job=(gpu_mem,cpu,mem,duration,flavor)</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">画像修正</div><div class="flow-desc">actual peak + runtime feedback</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">资源池索引</div><div class="flow-desc">flavor -&gt; remaining gpu memory buckets</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">多维过滤</div><div class="flow-desc">GPU memory + machine CPU/memory + policy</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Best-Fit 打分</div><div class="flow-desc">最小剩余显存 + 最少机器残余碎片</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">绑定执行</div><div class="flow-desc">reserve -&gt; launch process -&gt; monitor -&gt; release</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">作业队列</div><div class="flow-desc">job=(gpu_mem,cpu,mem,duration,flavor)</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">画像修正</div><div class="flow-desc">actual peak + runtime feedback</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">资源池索引</div><div class="flow-desc">flavor -&gt; remaining gpu memory buckets</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">多维过滤</div><div class="flow-desc">GPU memory + machine CPU/memory + policy</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">Best-Fit 打分</div><div class="flow-desc">最小剩余显存 + 最少机器残余碎片</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">绑定执行</div><div class="flow-desc">reserve -&gt; launch process -&gt; monitor -&gt; release</div></div></div>
 <h2>回答结构</h2>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 面试里如何回答这个场景题？</div>
@@ -2637,7 +2637,7 @@ containers:
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1786374226"></script>
+<script src="../../../assets/script.js?v=1786377329"></script>
 <script>
 (function(){
   function syncPrismTheme(){

@@ -82,17 +82,18 @@ Events:
 <div class="card card-m">
 <h3>scheduler 核心 metrics 全景</h3>
 <table>
-<tr><th>Metric</th><th>类型</th><th>含义</th><th>SLO 参考阈值</th></tr>
-<tr><td><code>scheduler_pending_pods</code></td><td>Gauge（按 queue 分类）</td><td>当前在 ActiveQ / BackoffQ / UnschedulableQ 的 Pod 数</td><td>UnschedulableQ &lt; 100；持续增长说明有"集体 Pending"</td></tr>
-<tr><td><code>scheduler_scheduling_duration_seconds</code></td><td>Histogram（按结果分类）</td><td>单个 Pod 调度周期耗时（含 Filter+Score+Bind）</td><td>P99 &lt; 100ms；P99 &gt; 1s 通常是 plugin 性能问题</td></tr>
-<tr><td><code>scheduler_schedule_attempts_total</code></td><td>Counter（result=scheduled/unschedulable/error）</td><td>调度尝试次数</td><td>unschedulable / total &lt; 1%</td></tr>
-<tr><td><code>scheduler_preemption_attempts_total</code></td><td>Counter</td><td>抢占尝试次数</td><td>持续增长说明高优 Pod 资源不足</td></tr>
-<tr><td><code>scheduler_pod_scheduling_attempts</code></td><td>Histogram</td><td>一个 Pod 从入队到最终调度成功经历了多少次尝试</td><td>P99 &lt; 5；说明 backoff/重试不健康</td></tr>
-<tr><td><code>scheduler_plugin_execution_duration_seconds</code></td><td>Histogram（按 plugin / extension_point 分类）</td><td>每个 Plugin 在每个扩展点的耗时</td><td>单个 Plugin P99 &lt; 10ms</td></tr>
-<tr><td><code>scheduler_queue_incoming_pods_total</code></td><td>Counter（按 event 分类）</td><td>各种事件触发了多少次 Pod 入队</td><td>用来定位"哪个事件源在制造惊群"</td></tr>
-<tr><td><code>scheduler_unschedulable_pods</code></td><td>Gauge（按 plugin 分类）</td><td>当前因哪个 Plugin 失败而 Pending 的 Pod 数</td><td>定位"是不是某个 Plugin 配置错"</td></tr>
-<tr><td><code>scheduler_pod_scheduling_duration_seconds</code></td><td>Histogram</td><td>Pod 创建 → 成功调度的端到端时间（含队列等待）</td><td>P99 &lt; 30s（一般业务）；GPU 大任务可能需要数分钟</td></tr>
+<tr><th>Metric</th><th>稳定性/类型</th><th>含义</th><th>诊断用途</th></tr>
+<tr><td><code>scheduler_pending_pods</code></td><td>Stable Gauge，按 queue 分类</td><td>ActiveQ / BackoffQ / Unschedulable / Gated 中的 Pod 数</td><td>区分处理能力不足、退避重试、硬约束失败和主动 gate</td></tr>
+<tr><td><code>scheduler_scheduling_attempt_duration_seconds</code></td><td>Stable Histogram，按 profile/result 分类</td><td>一次调度尝试耗时，包含调度算法与 binding</td><td>观察调度器单次处理 P50/P95/P99</td></tr>
+<tr><td><code>scheduler_schedule_attempts_total</code></td><td>Stable Counter，按 profile/result 分类</td><td>scheduled / unschedulable / error 尝试次数</td><td>计算吞吐、成功率并区分业务不可调度与内部错误</td></tr>
+<tr><td><code>scheduler_framework_extension_point_duration_seconds</code></td><td>Stable Histogram</td><td>某个 extension point 内全部插件的总耗时</td><td>先定位慢在 Filter、Score、Permit 还是 Bind</td></tr>
+<tr><td><code>scheduler_plugin_execution_duration_seconds</code></td><td>Alpha Histogram</td><td>单个 plugin / extension_point 的执行耗时</td><td>在版本允许时定位具体慢插件；升级时关注指标兼容性</td></tr>
+<tr><td><code>scheduler_pod_scheduling_attempts</code></td><td>Stable Histogram</td><td>一个成功调度的 Pod 经历多少次尝试</td><td>识别反复失败、Backoff 或无效重试</td></tr>
+<tr><td><code>scheduler_queue_incoming_pods_total</code></td><td>Stable Counter，按 event/queue 分类</td><td>各种事件向各队列加入了多少 Pod</td><td>定位哪个事件源在制造队列惊群</td></tr>
+<tr><td><code>scheduler_unschedulable_pods</code></td><td>Alpha Gauge，按 plugin/profile 分类</td><td>当前被各插件判定不可调度的 Pod 数</td><td>定位共同失败插件；同一 Pod 可能计入多个插件</td></tr>
+<tr><td><code>scheduler_pod_scheduled_after_flush_total</code></td><td>Alpha Counter</td><td>因超时从 UnschedulablePods flush 后才调度成功的 Pod 数</td><td>持续增长提示 QueueingHint 或事件注册可能漏唤醒</td></tr>
 </table>
+<p>固定阈值不能跨集群照搬。在线服务、批任务和稀缺 GPU 队列的正常等待时间差异很大，应以目标集群基线、业务启动 SLO、profile 和 PriorityClass 分层告警。</p>
 </div>
 
 <div class="card card-w">
@@ -103,7 +104,7 @@ sum(rate(scheduler_schedule_attempts_total{result="scheduled"}[5m]))
 
 # 2. P99 调度延迟
 histogram_quantile(0.99,
-  sum(rate(scheduler_scheduling_duration_seconds_bucket[5m])) by (le))
+  sum(rate(scheduler_scheduling_attempt_duration_seconds_bucket[5m])) by (le, profile, result))
 
 # 3. 找出"卡得最久"的 Plugin
 topk(5,
@@ -125,7 +126,7 @@ topk(5, sum(scheduler_unschedulable_pods) by (plugin))</code></pre>
 <li><strong>第一步：单 Pod 现场。</strong> <code>kubectl describe pod &lt;name&gt;</code> 看 FailedScheduling 事件，按 Plugin 分类拆解。</li>
 <li><strong>第二步：确认共性。</strong> 看 <code>scheduler_unschedulable_pods{plugin=...}</code>，判断是单个 Pod 配置问题还是多个 Pod 同时被某 Plugin 拦下。</li>
 <li><strong>第三步：本地复现。</strong> 如果是共性问题，用 simulator 拉快照本地重放，验证假设。</li>
-<li><strong>第四步：长期趋势。</strong> 看 <code>scheduler_scheduling_duration_seconds</code> P99 + <code>scheduler_plugin_execution_duration_seconds</code>，确认是不是新部署的 Plugin 引入的性能回退。</li>
+<li><strong>第四步：长期趋势。</strong> 看 <code>scheduler_scheduling_attempt_duration_seconds</code> P99，先用 <code>scheduler_framework_extension_point_duration_seconds</code> 定位阶段，再在可用版本中用 plugin 指标定位具体插件。</li>
 <li><strong>第五步：修正反馈。</strong> 修配置 / 加节点 / 调 Plugin 顺序，再用 simulator 验证一次。</li>
 </ol>
 <div class="qa-summary">面试加分项：能给出具体的 metric 名和阈值，比"我会看监控"具体得多。</div>
@@ -148,8 +149,8 @@ topk(5, sum(scheduler_unschedulable_pods) by (plugin))</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: P99 调度延迟从 50ms 突然涨到 800ms，怎么定位？</div>
 <div class="qa-a">
-<p><strong>第一招：按扩展点拆。</strong> <code>scheduler_plugin_execution_duration_seconds</code> 带 <code>extension_point</code> label，分别看 Filter / Score / PreFilter 的 P99，看延迟卡在哪个阶段。</p>
-<p><strong>第二招：按 plugin 拆。</strong> 同一个 metric 带 <code>plugin</code> label，topk 找出最慢的 Plugin。常见嫌疑：自定义插件没有缓存、PodAffinity 在大集群上 O(n²) 扫描、外部 Extender HTTP 调用超时。</p>
+<p><strong>第一招：按扩展点拆。</strong> 先看稳定指标 <code>scheduler_framework_extension_point_duration_seconds</code> 的 Filter / Score / PreFilter / Bind P99，确定延迟卡在哪个阶段。</p>
+<p><strong>第二招：按 plugin 拆。</strong> 如果当前版本暴露 alpha 指标 <code>scheduler_plugin_execution_duration_seconds</code>，再按 plugin/extension_point topk 找最慢插件。常见嫌疑：自定义插件没有缓存、亲和性规则扫描大量 Pod、Filter/Score 发外部 RPC、Extender HTTP 超时或锁竞争。</p>
 <p><strong>第三招：和事件相关性。</strong> 看延迟跳升时间点和发布、节点变更、流量峰值是否对应。</p>
 </div>
 </div>

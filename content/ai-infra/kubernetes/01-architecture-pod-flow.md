@@ -25,7 +25,7 @@
 </div>
 
 <div class="card card-w">
-<h3>回答结构：Pod 是怎么跑起来的？</h3>
+<h3>Pod 启动链路的职责边界</h3>
 <p><strong>API Server 是协作中心，etcd 是状态存储，kubelet 是节点执行者。</strong>控制面负责把“要运行什么、放到哪里”写成资源状态，目标节点负责把状态变成真正运行的 Pod。</p>
 
 <div class="flow" role="list" aria-label="Pod 从提交到运行的四阶段主链路">
@@ -172,7 +172,6 @@ journalctl -u containerd</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么说 Kubernetes 是声明式系统？</div>
 <div class="qa-a">
-<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
 <div class="qa-section"><div class="qa-section-title">1. 概念</div><p>声明式系统的核心是用户提交“期望状态”，例如 Deployment 期望 3 个副本，而不是一步步命令系统创建哪几个容器。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. 作用</div><p>声明式 API 让系统可以容错和自愈：Pod 被删、节点故障、实际副本数不匹配时，controller 会重新 reconcile。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 实现方式</div><p>API Server 保存 spec，controller 通过 Informer watch 对象变化，比较期望状态和实际状态，再创建、更新或删除相关对象。</p></div>
@@ -184,7 +183,6 @@ journalctl -u containerd</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: API Server、Controller、Scheduler、kubelet 都在 watch 什么？</div>
 <div class="qa-a">
-<p><strong>回答思路：</strong>先说概念和作用，再按链路或排查维度展开，最后给一句面试总结。</p>
 <div class="qa-section"><div class="qa-section-title">1. API Server 的位置</div><p>API Server 不只是被 watch 的对象入口，也是认证、鉴权、准入、版本转换和 watch 分发中心，其他组件基本都围绕它协作。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. Controller watch 什么</div><p>Controller watch 自己关心的资源，例如 Deployment、ReplicaSet、Pod、Node，并根据 spec/status 差异执行 reconcile。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. Scheduler watch 什么</div><p>Scheduler 主要 watch 未绑定节点的 Pod，以及 Node、PVC、ResourceClaim 等会影响调度结果的对象。</p></div>

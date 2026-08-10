@@ -1,12 +1,11 @@
 ## Workload 与发布
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Deployment、StatefulSet、DaemonSet、Job 怎么选？</div>
+<div class="qa-q">Q: Deployment、StatefulSet、DaemonSet、Job、CronJob 有什么区别？</div>
 <div class="qa-a">
-<div class="qa-summary">Deployment 管可替换的无状态副本；StatefulSet 管有稳定身份和独立存储的副本；DaemonSet 管每个符合条件的节点一个 Pod；Job 管运行到完成的任务。</div>
+<div class="qa-summary">Deployment 管可替换副本，StatefulSet 管稳定身份，DaemonSet 管节点覆盖，Job 管一次任务的完成条件，CronJob 按时间表创建 Job。</div>
 <div class="qa-section"><div class="qa-section-title">展开</div><p>在线无状态服务通常用 Deployment；数据库、协调组件等需要固定 ordinal、稳定 DNS 或 PVC 模板时用 StatefulSet；CNI、日志 Agent、Device Plugin 用 DaemonSet；数据预处理和模型转换用 Job。CronJob 只负责按时间创建 Job。</p></div>
-<div class="qa-section"><div class="qa-section-title">追问</div><p>StatefulSet 不自动解决数据一致性，DaemonSet 也只覆盖满足 selector、affinity 和 toleration 的节点。</p></div>
-<div class="qa-section"><div class="qa-section-title">关联章节</div><p><code>Workload 与 Controller</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">边界</div><p>Deployment 也能挂 PVC，但不提供每副本稳定身份/PVC 对应；StatefulSet 不自动解决数据一致性；DaemonSet 只覆盖满足 selector/affinity 的节点；Job/CronJob 都可能重复执行，业务必须幂等，CronJob 也不是精确到秒且 exactly-once 的调度器。</p></div>
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

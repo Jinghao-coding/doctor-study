@@ -1,3 +1,46 @@
+<div class="card card-m">
+<h3>Controller 为什么需要 Informer 和 WorkQueue</h3>
+<p>Kubernetes Controller 是持续运行的控制循环：读取对象声明的<strong>期望状态</strong>，观察集群或外部系统的<strong>实际状态</strong>，再创建、更新或删除资源，让两者逐步收敛。Controller 不应把某次事件当成必须执行一次的命令，而应随时能够根据当前状态重新计算。</p>
+<p>直接让每个 Controller 高频轮询 API Server 会产生大量重复读取；把耗时逻辑直接写在 Watch 回调中，又会阻塞后续事件分发。Informer 负责高效维护本地对象视图，WorkQueue 负责把“哪个对象需要重新检查”交给可重试的 worker。</p>
+<p>官方资料：<a href="https://kubernetes.io/docs/concepts/architecture/controller/">Kubernetes Controllers</a> · <a href="https://pkg.go.dev/k8s.io/client-go/tools/cache">client-go cache / SharedInformer</a> · <a href="https://pkg.go.dev/k8s.io/client-go/util/workqueue">client-go workqueue</a></p>
+</div>
+
+<div class="card card-d">
+<h3>副本数从 2 改成 3 时发生什么</h3>
+<ol>
+<li>用户更新 Deployment，API Server 保存新对象；与之相关的 Watch 流出现更新通知。</li>
+<li>Informer 接收通知，先更新本地 Cache，再让事件处理器把 Deployment 的 <code>namespace/name</code> 放进 WorkQueue。</li>
+<li>Controller worker 从 WorkQueue 取出这个 key，通过 Lister 读取 Cache 中的最新 Deployment，而不是依赖事件里那份可能已经过时的对象。</li>
+<li>Reconcile 比较期望副本数 3 与当前副本数 2，通过 API Server 调整下游 ReplicaSet。</li>
+<li>处理失败就限速重试；处理期间对象再次变化，同一个 key 会在本轮结束后重新入队，下一轮读取更新后的状态。</li>
+</ol>
+<div class="qa-summary">Informer 回答“现在有哪些对象、哪些对象变了”，WorkQueue 回答“哪些 key 等待处理”，Reconcile 回答“当前状态与期望状态差多少、要采取什么动作”。</div>
+</div>
+
+<div class="card card-s">
+<h3>先分清七个名字</h3>
+<table>
+<tr><th>名字</th><th>直观作用</th><th>关键边界</th></tr>
+<tr><td>Controller</td><td>持续比较期望状态与实际状态并执行修正</td><td>目标是最终收敛，不是逐条消费业务事件</td></tr>
+<tr><td>Informer</td><td>封装 List/Watch、本地 Cache 和事件通知</td><td>Cache 最终一致，API Server 才是权威来源</td></tr>
+<tr><td>Reflector</td><td>先 List 建初始视图，再 Watch 后续变化</td><td>Watch 中断或版本过旧时会重连或重新 List</td></tr>
+<tr><td>DeltaFIFO</td><td>暂存 Informer 收到的对象变化，驱动 Cache 与 handler 更新</td><td>是 Informer 内部队列，不直接承载业务 Reconcile</td></tr>
+<tr><td>Indexer / Lister</td><td>按 key 或索引快速读取本地 Cache</td><td>返回对象应视为只读；读取结果可能短暂滞后</td></tr>
+<tr><td>WorkQueue</td><td>保存待处理 key，去重、延迟并限制失败重试</td><td>保存的是 <code>namespace/name</code> 等 key，不是完整事件日志</td></tr>
+<tr><td>Reconcile / syncHandler</td><td>拿 key 读取当前状态，执行一次幂等修正</td><td>同一 key 可能执行多次，外部副作用必须可重试</td></tr>
+</table>
+</div>
+
+<div class="card card-w">
+<h3>DeltaFIFO 和 WorkQueue 不是同一个队列</h3>
+<table>
+<tr><th>队列</th><th>位于哪里</th><th>里面放什么</th><th>消费者</th></tr>
+<tr><td>DeltaFIFO</td><td>Informer 内部</td><td>某个对象 key 的 Added / Updated / Deleted / Sync 变化</td><td>Informer 的处理逻辑：更新 Indexer 并调用 EventHandler</td></tr>
+<tr><td>WorkQueue</td><td>Controller 业务侧</td><td>需要重新 Reconcile 的对象 key</td><td>一个或多个 Controller worker</td></tr>
+</table>
+<p>EventHandler 是两者之间的桥：它应该快速提取 key 并入 WorkQueue，不在回调中执行远程调用或复杂业务逻辑。</p>
+</div>
+
 <div class="card card-s">
 <h3>Informer 完整链路图</h3>
 <div class="figure">
@@ -12,7 +55,7 @@
 <h3>Reflector 职责</h3>
 <p>Reflector 是 Informer 和 API Server 之间的数据同步器，核心逻辑是 <strong>List + Watch</strong> 循环：</p>
 <ol>
-<li><strong>首次 List（全量同步）：</strong>启动时先调用 List API 获取该资源类型的全量对象列表（支持分页），得到最新的 resourceVersion，将所有对象替换到 DeltaFIFO 中（Sync 类型 delta）。</li>
+<li><strong>首次 List（全量同步）：</strong>启动时先调用 List API 获取该资源类型的一致对象快照（支持分页），记录返回的 resourceVersion，再通过 <code>Replace</code> 把列表交给 DeltaFIFO；当前 client-go 通常使用 <code>Replaced</code> delta 表达这次全量替换。</li>
 <li><strong>持续 Watch（增量监听）：</strong>从 List 返回的 resourceVersion 开始调用 Watch API，接收 ADD/UPDATE/DELETE 事件，每个事件作为一个 Delta 推入 DeltaFIFO。</li>
 <li><strong>断线重连：</strong>Watch 连接断开（网络错误、服务端超时）后，用最后一次收到的 resourceVersion 重新 Watch。如果 resourceVersion 太旧已被 etcd compact（"too old resource version"），则重新执行 List 全量同步。</li>
 <li><strong>定期 Resync：</strong>按 <code>resyncPeriod</code> 周期将 Indexer 中的所有对象重新放入 DeltaFIFO（Sync delta），触发 ResourceEventHandler 的 OnUpdate 回调，让 Controller 有机会重新 reconcile 即使没有发生实际变化。</li>
@@ -24,7 +67,7 @@ func (r *Reflector) ListAndWatch(stopCh &lt;-chan struct{}) error {
     if err != nil { return err }
     listMeta, _ := meta.ListAccessor(list)
     resourceVersion = listMeta.GetResourceVersion()
-    r.replace(takeItems(list), resourceVersion) // Sync delta 入队
+    r.replace(takeItems(list), resourceVersion) // 全量 Replace，通常产生 Replaced delta
 
     // 2. Watch：持续增量
     for {
@@ -40,9 +83,9 @@ func (r *Reflector) ListAndWatch(stopCh &lt;-chan struct{}) error {
 <div class="card card-w">
 <h3>List 和 Watch 的版本语义</h3>
 <ul>
-<li><code>resourceVersion=""</code>：从 etcd 最新版本读（quorum read），用于首次 List。</li>
-<li><code>resourceVersion="0"</code>：从 API Server 缓存读（任意版本，可能稍有延迟），性能更好但不保证最新。</li>
-<li><code>resourceVersion="&lt;specific&gt;"</code>：从指定版本开始 watch，断线重连用这个。</li>
+<li><code>resourceVersion=""</code>：请求 Most Recent 语义的一致视图，常用于首次 List；API Server 可能由底层存储或支持一致读的 Watch Cache 提供，不能简单等同为“必定直读 etcd”。</li>
+<li><code>resourceVersion="0"</code>：请求 Any 语义，允许返回任意可用版本，通常更快但可能稍旧。</li>
+<li><code>resourceVersion="&lt;specific&gt;"</code>：语义还取决于请求类型和 <code>resourceVersionMatch</code>；Watch 会从该版本之后继续事件流，断线恢复常使用最后观察到的版本。</li>
 <li>Watch 响应中每个事件都带有对象的 resourceVersion，Reflector 持续更新 lastSyncResourceVersion。</li>
 </ul>
 </div>
@@ -70,7 +113,8 @@ type DeltaFIFO struct {
 <tr><td>Added</td><td>首次 List 到新对象、Watch 到新创建的对象</td></tr>
 <tr><td>Updated</td><td>Watch 到对象更新事件</td></tr>
 <tr><td>Deleted</td><td>Watch 到对象删除事件</td></tr>
-<tr><td>Sync</td><td>首次 List 的全量替换、周期性 Resync</td></tr>
+<tr><td>Replaced</td><td>List / relist 后用新快照执行 <code>Replace</code></td></tr>
+<tr><td>Sync</td><td>周期性 Resync；对象不一定发生了实际变化</td></tr>
 </table>
 </div>
 
@@ -79,7 +123,7 @@ type DeltaFIFO struct {
 <ol>
 <li><strong>Per-key 去重（dedup）：</strong>队列里每个 key 只出现一次。如果队列中已有 key "ns/pod-a"，再次收到该 key 的事件时，不是追加到队列尾部，而是把新的 Delta append 到该 key 的 Deltas 列表尾部。消费者 Pop 时一次性拿到该 key 的所有未处理 Delta。</li>
 <li><strong>删除事件的 tombstone 处理：</strong>对象被删除后，本地缓存（Indexer）已删除该对象，但 DeltaFIFO 需要保留最后一个已知状态（DeletedFinalStateUnknown），因为 Controller 需要知道哪个对象被删了。如果 Watch 到 DELETE 事件时对象还在队列中（可能有 Added/Updated 未处理），会用最后一个状态作为 tombstone，保证 Controller 能拿到删除前的对象信息。</li>
-<li><strong>Replace（全量替换）：</strong>List 完成或 relist 时调用 Replace，传入全量新列表。FIFO 会对比已有 items：新列表中没有的 key 会产生 Deleted Delta，新列表中有但旧的没有的产生 Added/Updated Delta。这保证了即使 Watch 丢事件（如重连窗口），全量 Replace 也能修复状态。</li>
+<li><strong>Replace（全量替换）：</strong>List 完成或 relist 时调用 Replace，传入全量新列表。当前快照中的对象通常产生 Replaced Delta；已知对象中不再出现在新列表里的 key 会产生 Deleted Delta。这保证了即使 Watch 重连窗口没有连续交付全部事件，全量快照也能修复本地视图。</li>
 <li><strong>Resync：</strong>定期将 Indexer 中所有对象重新以 Sync Delta 入队，让 Controller 有机会重新校验。Resync 不访问 API Server。</li>
 </ol>
 </div>
@@ -302,12 +346,13 @@ func (c *Controller) handleErr(err error, key interface{}) {
 
 <div class="card card-d">
 <h3>HA Controller 与 Leader Election</h3>
-<p>当 Controller Manager 以多副本部署时（HA），同一时刻只能有一个副本在执行 reconcile，否则会重复处理事件和写冲突。client-go 提供 <strong>Leader Election</strong> 机制：</p>
+<p>同一组 Controller 多副本运行时，每个进程都有独立的 Cache 和 WorkQueue，因而可能同时 reconcile 同一对象。很多 Controller Manager 使用 <strong>Leader Election</strong> 简化协调，但“只能单副本工作”不是普遍正确性前提：无论是否选主，Reconcile 都必须幂等并处理乐观并发冲突。</p>
 <ul>
 <li>基于 Lease 对象（旧版用 ConfigMap/Endpoints）实现分布式锁。</li>
 <li>Leader 定期续租（Renew），如果 Leader 故障超时，其他副本竞选新 Leader。</li>
-<li>只有 Leader 运行 worker 池；非 Leader 等待成为 Leader。</li>
+<li>采用单活模式时，只有 Leader 运行 worker 池；非 Leader 等待成为 Leader。</li>
 <li><code>NewLeaderElector</code> + <code>OnStartedLeading</code> 回调启动 Controller。</li>
+<li>Leader Election 只减少常态重复执行并提供故障切换，不提供 exactly-once、事务或 fencing；外部副作用仍要使用幂等键或 fencing token。</li>
 </ul>
 <pre><code class="language-go">leaderelection.RunOrDie(ctx, leaderelection.LeaderElectionConfig{
     Lock:          rl, // Lease lock
@@ -399,14 +444,13 @@ func (c *Controller) handleErr(err error, key interface{}) {
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Controller 怎么保证不丢事件？</div>
+<div class="qa-q">Q: Informer、WorkQueue、Reconcile 怎么配合？事件重复、乱序或 Watch 中断时怎么办？</div>
 <div class="qa-a">
-<p>Informer + WorkQueue 机制通过多层设计保证事件不丢：</p>
-<div class="qa-section"><div class="qa-section-title">1. Watch 断点续传</div><p>Reflector 用最后收到的 resourceVersion 重连 Watch，只要该 revision 还在 etcd watch history 中（通常 5 分钟窗口），就能从中断点继续接收事件，不丢增量。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 全量 List 修复（relist）</div><p>如果 resourceVersion 太旧已被 compact，Reflector 会重新全量 List，通过 Replace 对比 Indexer 和新列表，发现缺失/多余的对象并产生相应 Delta（Deleted/Added），修复 Watch 断线期间的状态漂移。这是最终一致性的安全网。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. DeltaFIFO per-key 去重</div><p>FIFO 中每个 key 只在队列中出现一次，多个事件合并为 Deltas 列表。Pop 时按顺序处理所有 Delta，不会因为事件密集而丢失——只是可能合并处理。</p></div>
-<div class="qa-section"><div class="qa-section-title">4. WorkQueue 的 at-least-once 语义</div><p>key 从 Get 到 Done 之间，如果 worker panic 或进程崩溃，key 仍在 processing 中（因为没 Done）。重启后 WaitForCacheSync 完成后，这些对象会通过 Resync 或新的事件重新入队。Controller 本身应该实现幂等 reconcile——同一 key 处理多次结果相同。</p></div>
-<div class="qa-section"><div class="qa-section-title">5. 失败重试</div><p>处理失败的 key 会通过 AddRateLimited 重新入队重试，不会因为临时错误（如 API Server 超时、网络抖动）永久丢失。最终一致（eventual consistency）+ 幂等 Reconcile 是关键保证。</p></div>
-<div class="qa-summary">面试口径：Watch resourceVersion 续传 + 过期全量 relist + FIFO 去重 + WorkQueue at-least-once + 幂等 Reconcile + 失败重试，多层机制共同保证事件最终被处理。</div>
+<div class="qa-section"><div class="qa-section-title">1. Informer 维护当前视图</div><p>Reflector 先 List 建立初始状态，再从返回的 <code>resourceVersion</code> 开始 Watch；事件经 DeltaFIFO 更新 Indexer，并由 EventHandler 把对象 key 入 WorkQueue。Controller 读本地 Cache，不在每次 Reconcile 时全量请求 API Server。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. WorkQueue 合并触发并控制重试</div><p>队列按 key 去重，不承诺保存完整业务事件日志。若 key 正在处理时又被 Add，它会被标记 dirty，并在 <code>Done</code> 后再次入队；临时失败使用 <code>AddRateLimited</code> 退避重试，成功后 <code>Forget</code>。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. Reconcile 读取现在而不是重放过去</div><p>worker 取出 key 后，从 Cache/API 读取对象及其依赖的当前状态，计算期望与实际的差异并执行幂等修正。事件可以重复、合并或看起来乱序，因此不能把 Update 事件当成必须逐条执行的命令。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. Watch 中断与版本过旧</div><p>连接中断时 Reflector 尝试从可用的 <code>resourceVersion</code> 继续 Watch；若版本已被 compact 或服务端要求重建视图，则重新 List/Replace，再从新的版本继续。etcd 可保留多久由集群 compaction 配置决定，不应假设固定窗口。</p></div>
+<div class="qa-section"><div class="qa-section-title">5. 进程崩溃的边界</div><p>WorkQueue 是内存结构，进程崩溃后 processing 状态不会持久化。Controller 重启后靠重新 List/Watch、Cache 同步、相关对象事件以及必要的周期性重排队恢复当前状态；因此正确性来自声明式状态和幂等收敛，不是“每条事件都持久化并 exactly-once 消费”。</p></div>
+<div class="qa-summary">面试口径：Informer 提供最终同步的当前视图，WorkQueue 合并 key 并限速重试，Reconcile 以当前状态做幂等收敛；系统容忍丢失某个瞬时通知，但不能依赖逐事件语义。</div>
 </div>
 </div>

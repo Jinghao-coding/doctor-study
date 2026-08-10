@@ -46,12 +46,14 @@ Probe 与状态回报 | EndpointSlice 根据 Ready 状态接入流量
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 一个 Pod 从提交到 Running/Ready 的完整流程是什么？</div>
+<div class="qa-q">Q: 执行 kubectl apply -f pod.yaml 后，Pod 到容器 Running 的完整链路是什么？为什么完成调度后仍可能长时间不 Running？</div>
 <div class="qa-a">
-<div class="qa-summary">请求经过 API Server 写入 etcd，Controller 补齐对象，Scheduler 绑定节点，kubelet 再调用 CSI、CRI 和 CNI 创建运行环境，最后由 Probe 决定是否 Ready。</div>
-<div class="qa-section"><div class="qa-section-title">展开</div><p>API Server 依次执行认证、授权、准入、默认值和校验；Deployment/ReplicaSet Controller 创建 Pod；Scheduler Filter/Score 后写入 NodeName；kubelet Watch 到 Pod，准备 Volume、创建 Sandbox、配置网络、拉镜像并启动容器，随后回写状态。Readiness 成功后 EndpointSlice 才接入流量。</p></div>
-<div class="qa-section"><div class="qa-section-title">追问</div><p>API 返回创建成功只是对象已持久化，不表示 Pod 已经运行；整个过程是多个异步控制循环。</p></div>
-<div class="qa-section"><div class="qa-section-title">易错点</div><p>CNI 通常在 RunPodSandbox 路径由 Runtime 侧调用，CSI 挂载和镜像拉取的先后可能并行或受实现影响，不要背成绝对同步脚本。</p></div>
+<div class="qa-summary"><code>kubectl</code> 只提交对象；API Server 持久化，Scheduler 写绑定，目标节点 kubelet 才把声明转换成 sandbox、网络、卷和容器进程。</div>
+<div class="qa-section"><div class="qa-section-title">1. API Server 与 etcd</div><p><code>kubectl</code> 读取 YAML 并向 API Server 发请求。API Server 完成认证、鉴权、准入、默认值、版本转换和校验，再把 Pod 对象持久化到 etcd 并返回；etcd 只保存经 API Server 写入的对象状态，不向节点发命令。若提交的是 Deployment，Deployment/ReplicaSet Controller 会先创建真正待调度的 Pod。</p></div>
+<div class="qa-section"><div class="qa-section-title">2. Scheduler</div><p>Scheduler 从队列取出 <code>spec.nodeName</code> 为空的 Pod，基于 requests、Node 状态、亲和性、taint、存储和插件执行 Filter、Score 等流程，选出 Node，并通过 Binding/API 更新把决定写回 API Server；它不直接通知 kubelet，也不创建容器。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. kubelet、Runtime 与 CNI</div><p>目标节点 kubelet watch 到分配给本节点的 Pod，准备 Secret/ConfigMap 和 volume，通过 CRI 请求 containerd/CRI-O 拉镜像并执行 <code>RunPodSandbox</code>。Runtime 的 CRI 实现通常在 sandbox 路径调用 CNI，创建网络命名空间、分配 Pod IP 和配置路由；随后 Runtime 创建并启动 init container、sidecar 和业务容器。kubelet 查询 Runtime 状态并回写 Pod status。</p></div>
+<div class="qa-section"><div class="qa-section-title">4. 已调度但不 Running</div><p><code>PodScheduled=True</code> 只代表选点完成。Pod 仍可能卡在 PVC attach/mount、Secret/ConfigMap 获取、sandbox 创建、CNI/IPAM、镜像拉取、Runtime/磁盘异常、init container 未完成或设备准备。先用 Events 区分 <code>FailedMount</code>、<code>FailedCreatePodSandBox</code>、<code>ErrImagePull</code> 等，再查目标节点 kubelet、Runtime、CNI/CSI。容器进入 Running 后也可能因 readiness 失败而长期不 Ready。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>Pod phase 在完成调度后仍可保持 <code>Pending</code>，而 <code>kubectl</code> 的 STATUS 显示 <code>ContainerCreating</code>；CNI 通常由 Runtime 的 CRI 实现调用，卷准备与镜像拉取也不要背成所有实现都完全相同的串行步骤。</p></div>
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -71,10 +73,10 @@ Probe 与状态回报 | EndpointSlice 根据 Ready 状态接入流量
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: requests、limits 和 QoS 的关系是什么？</div>
+<div class="qa-q">Q: requests 和 limits 分别在哪里生效？它们与 QoS 有什么关系？</div>
 <div class="qa-a">
-<div class="qa-summary">requests 参与调度和资源保障，limits 约束运行上限；Pod 的 CPU/内存配置共同决定 Guaranteed、Burstable 或 BestEffort QoS。</div>
-<div class="qa-section"><div class="qa-section-title">展开</div><p>Scheduler 按 requests 判断节点是否可行；CPU limit 通常由 CFS bandwidth 控制，内存超过 limit 可能 OOM。所有容器 CPU/内存 request 等于 limit 且都设置时为 Guaranteed；完全不设置为 BestEffort，其余为 Burstable。</p></div>
+<div class="qa-summary">requests 主要在调度、节点资源记账和竞争保障中生效；limits 主要由 kubelet/Runtime 写入 Linux cgroup，约束容器运行时上限。</div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>Scheduler 用各容器 requests 的合计而不是实时使用量做放置；kubelet 将 CPU request 转为相对 CPU 权重，并把内存 request 用于 QoS 与节点压力驱逐判断。CPU limit 通过 cgroup CPU bandwidth（cgroup v2 常见为 <code>cpu.max</code>）节流，内存 limit 通过 cgroup 内存上限约束，超限分配可能触发 OOM kill。所有容器 CPU/内存 request 与 limit 均设置且逐项相等时为 Guaranteed；完全不设置为 BestEffort，其余通常为 Burstable。</p></div>
 <div class="qa-section"><div class="qa-section-title">追问</div><p>GPU Extended Resource 通常只允许整数 request/limit，资源语义不同于可压缩的 CPU。</p></div>
 <div class="qa-section"><div class="qa-section-title">易错点</div><p>QoS 不等于 PriorityClass；一个 Guaranteed Pod 也不一定比高优 Burstable Pod 更先调度。</p></div>
 </div></div>
@@ -102,9 +104,11 @@ Probe 与状态回报 | EndpointSlice 根据 Ready 状态接入流量
 <div class="qa-a"><p>Watch 事件可能重复、合并或丢失，控制器也会因失败重试和定期 Resync 再次处理同一对象。Reconcile 应根据当前状态计算下一步，使执行一次和多次得到相同结果，而不是依赖“事件只来一次”。</p></div>
 </div>
 
-## 回答原则
-
-- 先说组件职责，再讲数据流或控制流。
-- 明确 API 写成功和资源真正 Ready 是两个时间点。
-- 涉及故障时说明缓存、重试、幂等和最终一致性。
-- 涉及资源时区分调度请求、运行限制和业务实际消耗。
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 多副本 Controller 如何避免重复处理？Leader Election 解决了什么，又没解决什么？</div>
+<div class="qa-a">
+<div class="qa-summary">WorkQueue 只在单进程内按 key 合并并发；多副本通常用 API Server 中的 Lease 选出一个活跃实例，但最终正确性仍必须依赖幂等、乐观并发和外部副作用去重。</div>
+<div class="qa-section"><div class="qa-section-title">进程内</div><p>WorkQueue 的 dirty/processing 集合避免同一个 key 被多个 worker 同时重复消费；处理期间再来的更新把 key 标记为 dirty，<code>Done</code> 后重新入队，从而不会漏掉“处理期间又变了”。</p></div>
+<div class="qa-section"><div class="qa-section-title">多副本</div><p>不同 Controller 副本有独立 Cache 和 WorkQueue，天然可能同时处理同一对象。controller-runtime Manager 常通过 <code>coordination.k8s.io/v1 Lease</code> 进行 Leader Election，让通常只有 leader 启动需要选主的 controller。</p></div>
+<div class="qa-section"><div class="qa-section-title">边界</div><p>Leader Election 提供故障切换并减少常态重复执行，不提供 exactly-once、事务或 fencing，也不会自动分片来提升吞吐。旧 leader 在失联/暂停窗口中的外部调用与新 leader 接管可能重叠，因此创建子资源要用稳定名称和 OwnerReference，更新对象要处理 <code>resourceVersion</code> 冲突，调用云 API 等外部系统要使用幂等键或 fencing token。</p></div>
+</div></div>

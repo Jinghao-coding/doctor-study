@@ -70,15 +70,17 @@
 </div>
 
 <div class="card card-d">
-<h3>常用 Workload 语义压缩</h3>
+<h3>Deployment、StatefulSet、DaemonSet、Job、CronJob 分别适合什么场景？</h3>
+<p><strong>Pod 是真正运行容器的实例</strong>，Workload 对象则负责按照不同规则创建、替换和回收 Pod。选择对象时，先判断任务要长期运行还是执行完成后退出，再判断 Pod 是否可以相互替换、是否必须贴着节点运行。</p>
 <table>
-<tr><th>对象</th><th>控制目标</th><th>最关键的身份/完成语义</th></tr>
-<tr><td>Deployment</td><td>维持可替换副本并滚动发布</td><td>Pod 可互换；通过 ReplicaSet 管副本</td></tr>
-<tr><td>StatefulSet</td><td>维持有序且身份稳定的副本集合</td><td>ordinal、稳定网络身份、可选的每副本 PVC</td></tr>
-<tr><td>DaemonSet</td><td>覆盖所有或部分符合条件的 Node</td><td>控制目标是 Node 覆盖率，不是固定副本数</td></tr>
-<tr><td>Job</td><td>达到成功完成条件后停止</td><td>completion、失败重试、可重复执行容忍</td></tr>
-<tr><td>CronJob</td><td>按近似时间表创建 Job</td><td>并发策略、错过调度、幂等性</td></tr>
+<tr><th>对象</th><th>管理关系</th><th>适用场景</th><th>典型例子</th></tr>
+<tr><td>Deployment</td><td>Deployment → ReplicaSet → Pod</td><td>长期运行、Pod 可相互替换的无状态服务</td><td>Web、API Server、普通推理服务</td></tr>
+<tr><td>StatefulSet</td><td>StatefulSet → Pod</td><td>需要稳定名称、网络身份、启动顺序或每副本独立存储</td><td>etcd、Kafka、ZooKeeper</td></tr>
+<tr><td>DaemonSet</td><td>DaemonSet → Pod</td><td>所有或部分目标 Node 都要运行一份节点组件</td><td>GPU Device Plugin、日志 Agent、CNI 节点组件</td></tr>
+<tr><td>Job</td><td>Job → Pod</td><td>执行成功后结束的一次性或批处理任务</td><td>数据处理、数据库迁移、单次训练</td></tr>
+<tr><td>CronJob</td><td>CronJob → Job → Pod</td><td>按照时间计划周期执行的任务</td><td>定时备份、数据清理、报表生成</td></tr>
 </table>
+<div class="qa-summary">无状态常驻用 Deployment；身份稳定用 StatefulSet；每个节点一份用 DaemonSet；跑完结束用 Job；定时创建 Job 用 CronJob。</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

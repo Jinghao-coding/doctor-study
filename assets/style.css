@@ -1729,6 +1729,17 @@ body.toc-open .toc-backdrop { opacity: 1; pointer-events: auto; }
   transform: translateY(-50%);
   box-shadow: var(--shadow-sm);
 }
+.flow.flow-long {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  overflow-x: visible;
+}
+.flow.flow-long .flow-step {
+  min-width: 0;
+}
+.flow.flow-long .flow-step:not(:last-child)::after {
+  display: none;
+}
 .flow-index {
   display: inline-grid;
   place-items: center;
@@ -2839,12 +2850,30 @@ body.resizing-module {
     overflow-y: auto;
   }
   .module-current { display: none; }
+  .app-sidebar { display: none; }
   .tabs-toolbar {
+    display: flex;
+    flex-wrap: wrap;
     top: 4rem;
     padding: 0.55rem;
   }
-  .tabs-nav,
-  .app-sidebar { top: 4rem; }
+  .tabs-shell {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .tabs-nav {
+    position: static;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: min(70vh, 36rem);
+    margin-bottom: 1rem;
+  }
+  .tabs-shell.module-collapsed .tabs-nav { display: none; }
+  .tabs-panels,
+  .tab-panel,
+  .subtabs-nav { width: 100%; min-width: 0; }
   .module-resizer,
   .side-resizer { display: none; }
   .app-shell { padding: 0 0.75rem; }

@@ -158,11 +158,11 @@ roleRef:
 <li><strong>Mutating Admission（变更准入）：</strong>可以修改请求中的对象（添加默认值、注入 sidecar、设置 label 等）。</li>
 <li><strong>Validating Admission（验证准入）：</strong>只能批准或拒绝请求，不能修改对象。</li>
 </ol>
-<pre><code>请求对象 → [Mutating Webhooks 链（按配置顺序）] → 对象可能已被修改
+<pre><code>请求对象 → [Mutating Webhooks（顺序调用，顺序不应作为契约依赖）] → 对象可能已被修改
          → [内置 Validating Admission]
-         → [Validating Webhooks 链（按配置顺序）] → 通过/拒绝
+         → [Validating Webhooks（并行调用）] → 汇总为通过/拒绝
 </code></pre>
-<p><strong>重要：Mutating Webhook 在 Validating Webhook 之前执行</strong>。Mutating 修改过的对象会被 Validating 再次校验，防止无效对象通过。K8s 1.15+ 支持 reinvocation：如果后续 Mutating Webhook 修改了对象，已执行过的 Mutating Webhook 可能被重新调用（由 <code>reinvocationPolicy: IfNeeded</code> 控制）。</p>
+<p><strong>重要：Mutating Webhook 在 Validating Webhook 之前执行</strong>。Mutating 修改过的最终对象会再进入验证阶段。Mutating Webhook 顺序调用，但官方明确建议不要依赖固定调用顺序；启用 <code>reinvocationPolicy: IfNeeded</code> 后，已经执行过的 Mutating Webhook 还可能被重新调用。Validating Webhook 不修改对象，因此可以并行调用，只要任意一个拒绝，请求就不能持久化。</p>
 </div>
 
 <div class="card card-s">
@@ -356,9 +356,9 @@ retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Mutating 和 Validating Webhook 执行顺序？</div>
 <div class="qa-a">
-<p>执行顺序严格为：<strong>所有 Mutating Webhooks（按配置顺序串行执行）→ 对象 Schema 校验 → 所有 Validating Webhooks（按配置顺序串行执行）</strong>。</p>
-<div class="qa-section"><div class="qa-section-title">关键细节</div><p>1. Mutating Webhook 可以修改对象（如注入 sidecar 容器、添加 label/annotation、设置默认值），修改后的对象传给后续的 Webhook。</p><p>2. 因为 Mutating 可以修改对象，所以 Validating 必须在所有 Mutating 完成后执行，以校验最终的对象是否合法。</p><p>3. 如果某个 Mutating Webhook 修改了对象，且后续的 Mutating Webhook 配置了 <code>reinvocationPolicy: IfNeeded</code>，前面已经执行过的 Mutating Webhook 可能被再次调用，以确认它们是否需要对新修改的对象再做调整。</p><p>4. Validating Webhook 只能返回 allow/deny，不能修改对象。如果多个 Validating Webhook 中有一个拒绝，请求立即被拒绝。</p><p>5. 内置 Admission Plugin（如 LimitRanger、ResourceQuota）的执行时机在 Mutating 和 Validating 之间，内置插件也可能修改对象（如 LimitRanger 注入默认 request/limit）。</p></div>
-<div class="qa-summary">面试口径：Mutating 先执行（可以改对象）→ 内置校验 → Validating 后执行（不能改，只能通过/拒绝）；Mutating 串行、Validating 串行，失败受 failurePolicy 控制。</div>
+<p>阶段顺序是：<strong>Mutating Admission → 对象 Schema/内置校验 → Validating Admission</strong>。匹配的 Mutating Webhook 顺序调用且可能被重新调用；匹配的 Validating Webhook 并行调用，不能依赖配置列表形成串行顺序。</p>
+<div class="qa-section"><div class="qa-section-title">关键细节</div><p>1. Mutating Webhook 可以修改对象（如注入 sidecar 容器、添加 label/annotation、设置默认值），后续阶段看到的是修改后的对象。</p><p>2. Mutating Webhook 顺序调用，但调用顺序可能受配置和重新调用影响，业务不能把某个固定顺序当作契约。</p><p>3. 如果后续变更使已执行的 Mutating Webhook 需要再次处理对象，<code>reinvocationPolicy: IfNeeded</code> 允许 API Server 重新调用它，因此 mutation 必须幂等。</p><p>4. Validating Webhook 只能返回 allow/deny，不能修改对象；多个匹配的 Validating Webhook 并行调用，最终只要一个拒绝，请求就会被拒绝。</p><p>5. <code>failurePolicy</code> 处理的是 webhook 调用超时、网络错误等调用失败，不是业务规则返回 deny 的行为。</p></div>
+<div class="qa-summary">面试口径：先完成可能改对象的 Mutating 阶段，再校验最终对象；Mutating 顺序调用但不要依赖固定顺序，Validating 并行调用，失败行为由各 webhook 的 failurePolicy 决定。</div>
 </div>
 </div>
 

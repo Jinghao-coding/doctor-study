@@ -1,3 +1,11 @@
+<div class="card card-s">
+<h3>StatefulSet 与 DaemonSet 的官方定义</h3>
+<p><strong>StatefulSet</strong> 用于管理有状态应用的一组 Pod。Pod 可以来自相同模板，但不是可互换副本；每个 Pod 都有稳定标识，这个标识会跨重新调度保留。它还为部署、伸缩和更新提供顺序与唯一性保证。</p>
+<p><strong>DaemonSet</strong> 用于提供节点本地能力，确保所有或部分符合条件的 Node 各运行一份 Pod。Node 加入时补建对应 Pod，Node 移除时清理对应 Pod，因此它控制的是“目标节点覆盖”，不是固定副本数。</p>
+<p><strong>选择标准：</strong>成员需要稳定网络身份或独立持久卷时考虑 StatefulSet；功能必须贴着每个目标节点运行时使用 DaemonSet。两者都不替代应用自身的数据复制、选主或故障恢复协议。</p>
+<p>官方文档：<a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a> · <a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a></p>
+</div>
+
 <div class="card card-m">
 <h3>StatefulSet 与 DaemonSet 解决不同的“不互换”问题</h3>
 <table>

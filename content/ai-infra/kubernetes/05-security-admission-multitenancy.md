@@ -305,7 +305,7 @@ spec:
 <p><strong>回答思路：</strong>从部署成本、表达力、稳定性影响、动态数据需求四个维度比。</p>
 <div class="qa-section"><div class="qa-section-title">1. 静态最小权限基线</div><p>"禁止特权容器""强制带 owner label""限制镜像仓库前缀"这类规则，用 VAP 最合适，零部署，毫秒级，写路径无远程调用。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. 复杂或动态策略</div><p>需要查外部数据（IAM、CMDB）、跨集群同步、做 mutation 或全量审计的，仍要靠 OPA/Gatekeeper 或 Kyverno，因为它们能跑任意逻辑。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. 稳定性</div><p>Webhook 挂了可能阻塞 API Server 写路径，必须配超时和 failurePolicy=Ignore；VAP 没这个问题。</p></div>
+<div class="qa-section"><div class="qa-section-title">3. 稳定性</div><p>Webhook 必须设置短超时、高可用后端和窄匹配范围。<code>failurePolicy</code> 要按策略后果选择：非关键 mutation 可用 <code>Ignore</code> 并由后续验证/控制器对账；安全、租户隔离等不可绕过的验证通常用 <code>Fail</code>，同时必须避免 webhook 拦截自身依赖而形成启动死锁。不能把所有 webhook 一律配置成 <code>Ignore</code>。</p></div>
 <div class="qa-section"><div class="qa-section-title">4. 治理</div><p>真实集群往往是混合：80% 静态规则用 VAP，20% 复杂策略用 Kyverno/Gatekeeper；都要做策略灰度（先 Audit/Warn 再 Deny）。</p></div>
 <div class="qa-summary">面试口径：能用 CEL 表达的策略优先 VAP，需要外部数据或复杂逻辑才上 Kyverno/Gatekeeper；新策略上线一律先 Audit/Warn，再切 Deny。</div>
 </div>

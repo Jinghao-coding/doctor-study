@@ -99,7 +99,7 @@ spec:
 <tr><td>Owner Reference</td><td>子对象指向父 CR</td><td>父 CR 删除时级联删除子对象（GC）</td></tr>
 <tr><td>Finalizer</td><td>删除前的 cleanup hook</td><td>常见用法：先回收云资源再让对象真正删除</td></tr>
 <tr><td>Status conditions</td><td>多维度状态（Ready / Progressing / Degraded）</td><td>不要把所有状态压成一个 phase 字符串</td></tr>
-<tr><td>Leader election</td><td>多副本只让一个 reconcile</td><td>用 Lease 对象</td></tr>
+<tr><td>Leader election</td><td>多副本通常只让一个 Manager 运行需选主的 Controller</td><td>用 Lease 对象；正确性仍依赖幂等与并发控制</td></tr>
 <tr><td>事件 record</td><td>给用户可见的反馈</td><td><code>kubectl describe</code> 能看到</td></tr>
 </table>
 <table>
@@ -179,7 +179,6 @@ spec:
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: CRD 和 ConfigMap 都能存配置，为什么还要 CRD？</div>
 <div class="qa-a">
-<p><strong>回答思路：</strong>从校验、RBAC、watch、语义四个维度比较。</p>
 <div class="qa-section"><div class="qa-section-title">1. 类型校验</div><p>ConfigMap 没有 schema，错字段悄悄过；CRD 有 OpenAPI schema，错字段直接被拒。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. RBAC 粒度</div><p>所有 ConfigMap 是一种资源，难做"只允许改训练任务但不能改其他配置"；CRD 每种是独立资源，可以单独授权。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. watch 与扩展性</div><p>所有 ConfigMap 在同一个 informer，对象多了相互干扰；CRD 每种独立 watch、独立 cache，扩展性更好。</p></div>
@@ -189,9 +188,27 @@ spec:
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: CRD 和 Operator 分别是什么？spec 与 status 应该如何划分？</div>
+<div class="qa-a">
+<div class="qa-summary">CRD 扩展 Kubernetes API 的对象类型，Operator 用 Controller 把领域运维逻辑实现为持续 Reconcile；spec 表达用户期望，status 报告系统观察到的事实。</div>
+<div class="qa-section"><div class="qa-section-title">CRD 与 Operator</div><p>CRD 定义 group/version/kind、schema、作用域和子资源，让 API Server 能校验、存储、授权并 watch 自定义资源，但 CRD 自身不会执行任何动作。Operator 监听 CR 及其相关对象，根据领域规则创建、更新、删除子资源并处理升级、恢复与清理。</p></div>
+<div class="qa-section"><div class="qa-section-title">spec</div><p><code>spec</code> 放用户希望长期成立的声明，例如 replicas、镜像、资源、队列、升级或容错策略。Controller 不应把运行结果反写进 spec，否则会争夺用户所有权并制造更新循环。</p></div>
+<div class="qa-section"><div class="qa-section-title">status</div><p><code>status</code> 放 Controller 当前观察到的状态，例如 <code>observedGeneration</code>、Ready/Progressing/Degraded Conditions、实际副本、reason/message 和时间戳。启用 <code>/status</code> 子资源后可分离写权限，更新 status 也不会改动 spec 的 generation。</p></div>
+<div class="qa-section"><div class="qa-section-title">判断标准</div><p>删除 status 后用户声明仍应完整；删除 spec 后 Controller 不知道应该把系统收敛到哪里。Conditions 应描述多个可独立判断的事实，不要只用一个含义不断膨胀的 phase 字符串。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Finalizer 和 OwnerReference 分别解决什么问题？</div>
+<div class="qa-a">
+<div class="qa-summary">OwnerReference 把 Kubernetes 对象之间的所有权交给垃圾回收器；Finalizer 把对象的最终删除推迟到清理逻辑完成。前者管理依赖关系，后者管理删除前动作。</div>
+<div class="qa-section"><div class="qa-section-title">OwnerReference</div><p>子对象在 <code>metadata.ownerReferences</code> 中记录父对象 UID。父对象删除时，Garbage Collector 可按传播策略级联清理子对象；<code>controller=true</code> 还表明管理它的控制器。它只适用于 Kubernetes 对象，并受 namespaced/cluster-scoped 所有权规则约束。</p></div>
+<div class="qa-section"><div class="qa-section-title">Finalizer</div><p>对象收到删除请求后先写入 <code>deletionTimestamp</code>，只要 finalizer 仍存在，对象就不会从 API 中最终消失。Controller 应幂等地释放云盘、负载均衡器、队列配额等 API 外部资源，成功后再移除自己的 finalizer。</p></div>
+<div class="qa-section"><div class="qa-section-title">易错点</div><p>Finalizer 不是同步回调，也不等于 GC；清理失败必须重试并暴露 Condition/Event，否则对象会长期 Terminating。不要依赖 OwnerReference 清理云资源，也不要用 Finalizer 替代子对象的所有权关系。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Operator 的 Reconcile 为什么必须幂等？</div>
 <div class="qa-a">
-<p><strong>回答思路：</strong>从触发模型反推。</p>
 <div class="qa-section"><div class="qa-section-title">1. 重复触发是常态</div><p>Reconcile 由 watch 事件、resync 周期、自身 update、错误重入队等触发，同一个对象会被反复 reconcile。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. 幂等的含义</div><p>同一 spec + 同一现状跑一次和跑十次结果一致；不能"已经创建子对象了再创建一次会冲突"。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 实现要点</div><p>用 GET + 比较 + Update/Patch；创建子对象时用 controllerutil.CreateOrUpdate；写状态前看是否真的变了再写。</p></div>
@@ -203,7 +220,6 @@ spec:
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 什么时候不该用 Operator？</div>
 <div class="qa-a">
-<p><strong>回答思路：</strong>避免"什么都包成 Operator"的过度工程化。</p>
 <div class="qa-section"><div class="qa-section-title">1. 一次性脚本</div><p>就是初始化建几个对象，写个 Helm hook 或 Job 即可，不需要长期 reconcile。</p></div>
 <div class="qa-section"><div class="qa-section-title">2. 没有持续运维语义</div><p>对象创建后不需要持续守护、不需要根据外部状态调节，CRD 没意义。</p></div>
 <div class="qa-section"><div class="qa-section-title">3. 跨集群编排</div><p>跨集群编排是 Fleet / ApplicationSet 的职责，不是单集群 Operator 的舞台。</p></div>

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
 <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
-<link rel="stylesheet" href="../../../assets/style.css?v=1786375493">
+<link rel="stylesheet" href="../../../assets/style.css?v=1786377253">
 </head>
 <body>
 <nav class="topnav">
@@ -581,7 +581,7 @@ void consumer() {
 (gdb) info locals</code></pre>
 <p>Attach 会暂停进程，生产环境必须先确认影响；如果不能暂停，可先使用 <code>gcore</code>、Core Dump、采样 Profiler 或受控副本保存现场。</p>
 <h2>排查路径</h2>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">确认现象</div><div class="flow-desc">CPU 忙循环、阻塞、死锁还是进程崩溃</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">保存现场</div><div class="flow-desc">PID、日志、线程数、Core、构建版本和符号</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">查看所有线程栈</div><div class="flow-desc">寻找 futex、mutex、condition_variable、join、I/O</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">重建等待关系</div><div class="flow-desc">谁持锁、谁等锁、锁顺序是否反转</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">结合源码验证</div><div class="flow-desc">生命周期、异常路径、遗漏 notify、数据竞争</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">最小化复现</div><div class="flow-desc">Sanitizer、压力测试、故障注入</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">确认现象</div><div class="flow-desc">CPU 忙循环、阻塞、死锁还是进程崩溃</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">保存现场</div><div class="flow-desc">PID、日志、线程数、Core、构建版本和符号</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">查看所有线程栈</div><div class="flow-desc">寻找 futex、mutex、condition_variable、join、I/O</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">重建等待关系</div><div class="flow-desc">谁持锁、谁等锁、锁顺序是否反转</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">结合源码验证</div><div class="flow-desc">生命周期、异常路径、遗漏 notify、数据竞争</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">最小化复现</div><div class="flow-desc">Sanitizer、压力测试、故障注入</div></div></div>
 <h2>典型现象</h2>
 <div class="table-scroll"><table>
 <tr><th>现场</th><th>可能原因</th><th>下一步</th></tr>
@@ -830,7 +830,7 @@ unique_ptr&lt;int[]&gt; arr(new int[100]);  // 自动用 delete[]</code></pre>
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1786374226"></script>
+<script src="../../../assets/script.js?v=1786377329"></script>
 <script>
 (function(){
   function syncPrismTheme(){

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
 <link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
-<link rel="stylesheet" href="../../../assets/style.css?v=1786375493">
+<link rel="stylesheet" href="../../../assets/style.css?v=1786377253">
 </head>
 <body>
 <nav class="topnav">
@@ -534,7 +534,7 @@ if errors.As(err, &apiErr) {
 <div class="card card-m">
 <h3>调度流程：找 G 来执行</h3>
 <p>M 需要找到可运行的 G 才能执行，调度器按以下优先级找 G：</p>
-<div class="flow" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">1. P本地队列</div><div class="flow-desc">每61次调度从全局队列取一批，避免全局队列饿死</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">2. 全局队列</div><div class="flow-desc">本地队列空了，从全局队列取</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">3. work-stealing</div><div class="flow-desc">从其他P的本地队列偷一半G过来</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">4. 网络轮询器netpoll</div><div class="flow-desc">检查有没有I/O就绪的G</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">5. 空闲回收</div><div class="flow-desc">实在找不到G，M进入睡眠，放回M空闲列表</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">1. P本地队列</div><div class="flow-desc">每61次调度从全局队列取一批，避免全局队列饿死</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">2. 全局队列</div><div class="flow-desc">本地队列空了，从全局队列取</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">3. work-stealing</div><div class="flow-desc">从其他P的本地队列偷一半G过来</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">4. 网络轮询器netpoll</div><div class="flow-desc">检查有没有I/O就绪的G</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">5. 空闲回收</div><div class="flow-desc">实在找不到G，M进入睡眠，放回M空闲列表</div></div></div>
 <div class="card-d">
 <h4>Work-Stealing 工作窃取算法</h4>
 <p>当 P 的本地队列为空时，它会随机选另一个 P，从其本地队列<strong>偷一半的 G</strong>过来。这是 Go 调度器负载均衡的核心：没有中心调度器，各 P 自己干活，没活了就去别人那里偷，去中心化设计避免了全局锁竞争。</p>
@@ -1754,7 +1754,7 @@ ctx = context.WithValue(ctx, "user_id", 123)
     <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
   </div>
 </footer>
-<script src="../../../assets/script.js?v=1786374226"></script>
+<script src="../../../assets/script.js?v=1786377329"></script>
 <script>
 (function(){
   function syncPrismTheme(){

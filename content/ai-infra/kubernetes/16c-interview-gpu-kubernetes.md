@@ -28,7 +28,7 @@
 <div class="qa-q">Q: ListAndWatch 和 Allocate 的职责有什么区别？</div>
 <div class="qa-a">
 <div class="qa-summary">ListAndWatch 回答“节点现在有哪些健康设备”；Allocate 回答“给这个已选定容器暴露哪些设备和配置”。</div>
-<div class="qa-section"><div class="qa-section-title">展开</div><p>ListAndWatch 是持续流，设备变成 Unhealthy 后 kubelet 会减少可分配资源；Allocate 发生在 Pod 已经落到节点、容器创建之前。传统路径中 Scheduler 通常只根据资源数量选节点，不直接调用 Allocate，也不直接决定 GPU UUID。</p></div>
+<div class="qa-section"><div class="qa-section-title">展开</div><p>ListAndWatch 是持续流；设备变成 Unhealthy 后，kubelet 会减少 Node 的 Allocatable，但 Capacity 保持不变，只阻止新 Pod 调度到该故障设备。已经分配到故障设备的 Pod 仍保持原分配，不会由 Kubernetes 自动迁移，业务可能失败或进入 CrashLoop。Allocate 发生在 Pod 已经落到节点、容器创建之前。传统路径中 Scheduler 通常只根据资源数量选节点，不直接调用 Allocate，也不直接决定 GPU UUID。</p></div>
 <div class="qa-section"><div class="qa-section-title">易错点</div><p>Allocate 不负责集群级排队和节点选择。</p></div>
 </div></div>
 

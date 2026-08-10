@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var moduleCollapse = group.querySelector('.module-collapse');
     var moduleResizer = group.querySelector('.module-resizer');
     var currentTitle = group.querySelector('.module-current strong');
+    var mobileModuleQuery = window.matchMedia('(max-width: 720px)');
     if(!buttons.length || !panels.length) return;
     var widthKey = 'doctor-study-module-width';
 
@@ -220,6 +221,9 @@ document.addEventListener('DOMContentLoaded', function(){
     buttons.forEach(function(button, index){
       button.addEventListener('click', function(){
         activate(index);
+        if(mobileModuleQuery.matches){
+          setModuleCollapsed(true);
+        }
       });
       button.addEventListener('keydown', function(e){
         if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -512,7 +516,12 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     });
 
-    setModuleCollapsed(false);
+    setModuleCollapsed(mobileModuleQuery.matches);
+    if(typeof mobileModuleQuery.addEventListener === 'function'){
+      mobileModuleQuery.addEventListener('change', function(e){
+        setModuleCollapsed(e.matches);
+      });
+    }
     updateCurrentTitle();
     syncProgress();
     var savedLevel = localStorage.getItem(levelKey);

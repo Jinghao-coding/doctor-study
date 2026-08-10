@@ -1,3 +1,11 @@
+<div class="card card-s">
+<h3>Job 与 CronJob 的官方定义</h3>
+<p><strong>Job</strong> 表示一次性、运行到完成后停止的任务。Job 会创建一个或多个 Pod，并在失败时按策略重试，直到达到要求的成功完成数或命中失败终止条件。</p>
+<p><strong>CronJob</strong> 按重复时间表创建 Job，角色类似 Unix 的一条 crontab 记录。CronJob 只负责“何时创建 Job”，实际 Pod 的创建、重试和完成仍由每次生成的 Job 负责。</p>
+<p><strong>可靠性边界：</strong>CronJob 的触发是近似调度，特定情况下可能重复创建或漏建 Job；批任务必须能安全重试，并通过业务键、幂等写入或 fencing 防止重复副作用。</p>
+<p>官方文档：<a href="https://kubernetes.io/docs/concepts/workloads/controllers/job/">Job</a> · <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a></p>
+</div>
+
 <div class="card card-m">
 <h3>Job 的目标是“满足完成条件”，不是“保持 Pod 常驻”</h3>
 <div class="flow" role="list" aria-label="Job 控制链路">
