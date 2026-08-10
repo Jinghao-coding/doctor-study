@@ -19,6 +19,7 @@ __pycache__/
 # Local resources / drafts (按需调整)
 resources/private/
 *.tmp
+tmp/
 
 .mcp.json
 
