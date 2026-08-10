@@ -30,6 +30,11 @@ http://localhost:8000/
 source .venv/bin/activate
 ```
 
+## 浏览器验收约定
+
+- 需要检查页面视觉效果或交互时，优先复用用户已经打开的 Microsoft Edge，不要每次额外启动 Chrome 或新的浏览器实例。
+- 内容覆盖、配置结构和生成结果可以通过源文件或生成 HTML 判断时，直接检查文件；只有视觉布局或真实交互无法从文件确认时才操作浏览器。
+
 ## 核心原则
 
 1. 优先编辑 `content/`，不要直接编辑生成后的 `pages/**/*.html` 或 `index.html`。

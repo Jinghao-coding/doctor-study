@@ -218,6 +218,41 @@ spec:
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Controller 的期望状态和实际状态分别在哪里？缓存滞后时为什么还能最终正确？</div>
+<div class="qa-a">
+<div class="qa-summary">期望状态通常是 API 对象的 spec/metadata；实际状态来自子对象、status 和外部系统。Informer Cache 只是可能滞后的观察视图，正确性来自反复观察与幂等收敛。</div>
+<div class="qa-section"><div class="qa-section-title">状态位置</div><p>用户期望经 API Server 持久化到 etcd，通常表达在 <code>spec</code>。Controller 观察 Pod、Deployment 等对象的当前字段和 status，也可能查询云 API、队列或存储系统。父对象 <code>status</code> 是 Controller 对实际状态的报告，不应被当成外部系统本身。</p></div>
+<div class="qa-section"><div class="qa-section-title">缓存一致性</div><p>Lister 读取的 Cache 可能落后于 API Server，所以 Reconcile 不能假设一次读写就是事务。重复事件、周期重排队、Watch 断线重建和依赖对象事件会再次触发收敛；创建使用稳定名称，更新前比较差异，遇到冲突重新读取最新对象。</p></div>
+<div class="qa-section"><div class="qa-section-title">强一致边界</div><p>需要基于最新版本做关键写入时可以直接读 API Server，或让写请求携带当前 <code>resourceVersion</code> 接受冲突保护；不能通过绕过并发控制来“修复”缓存滞后。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Reconcile 调用外部系统成功，但更新 Status 失败，下一次重试怎么办？</div>
+<div class="qa-a">
+<div class="qa-summary">Kubernetes 与外部系统之间没有分布式事务；外部副作用必须可查询、可认领且幂等，重试时先确认结果，不能无条件再创建一次。</div>
+<div class="qa-section"><div class="qa-section-title">幂等协议</div><p>用 CR 的 UID、generation 和操作类型生成稳定 idempotency key；外部系统支持幂等请求键时直接使用，不支持时给外部资源写入 owner UID/tag/name，使 Controller 能按键查询并认领已成功的结果。</p></div>
+<div class="qa-section"><div class="qa-section-title">重试路径</div><p>下一次 Reconcile 先读取 CR 和外部状态：若外部资源已存在且配置正确，只补写 external ID、observedGeneration 和 Condition；若不存在才创建；若状态不确定则进入查询/对账，而不是把网络超时等同于失败。</p></div>
+<div class="qa-section"><div class="qa-section-title">工程边界</div><p>复杂操作可把 intent/operation ID 持久化到独立 CR 或外部任务表，再异步推进状态机。Status 更新失败不应回滚已经不可逆的外部成功；应通过最终对账恢复记录。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: resourceVersion 和乐观并发控制是什么？更新冲突如何处理？</div>
+<div class="qa-a">
+<div class="qa-summary"><code>resourceVersion</code> 是 API Server 生成的不透明对象版本；更新携带旧版本时，API Server 返回 409 Conflict，避免用陈旧对象覆盖并发修改。</div>
+<div class="qa-section"><div class="qa-section-title">正确重试</div><p>收到 Conflict 后重新 Get 最新对象，重新计算本控制器应负责字段的差异，再 Update/Patch；可使用 <code>RetryOnConflict</code>，但回调内部必须每次重新读取，不能反复提交同一个旧对象。</p></div>
+<div class="qa-section"><div class="qa-section-title">缩小冲突面</div><p>spec 与 status 使用不同子资源；只 patch 自己负责的字段；避免多个 Controller 共同写同一字段；使用 Server-Side Apply 时明确 field manager。不要手工递增或比较 <code>resourceVersion</code> 数值，它只能原样传回 API Server。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Finalizer 卡死导致对象长期 Terminating，应该怎么处理？</div>
+<div class="qa-a">
+<div class="qa-summary">先恢复或替代负责 finalizer 的清理逻辑，确认外部资源已经清理；手工移除 finalizer 是最后的有损操作，不是常规修复。</div>
+<div class="qa-section"><div class="qa-section-title">诊断</div><p>检查 <code>deletionTimestamp</code> 和剩余 finalizer，定位对应 Controller 的日志、RBAC、网络、外部 API、超时和重试；同时检查 dependent 对象的 OwnerReference/finalizer 是否形成等待链。</p></div>
+<div class="qa-section"><div class="qa-section-title">恢复</div><p>优先修复 Controller 或手工完成它本应执行的外部清理，再让 Controller 幂等地移除自己的 key。Controller 应对删除路径设置超时、Condition/Event 和告警，避免无期限静默卡住。</p></div>
+<div class="qa-section"><div class="qa-section-title">强制移除</div><p>只有明确理解该 finalizer 的目的、已完成等价清理或接受资源泄漏/一致性风险时，才备份对象并 patch 掉对应 key；不要直接清空未知 finalizers。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 什么时候不该用 Operator？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">1. 一次性脚本</div><p>就是初始化建几个对象，写个 Helm hook 或 Job 即可，不需要长期 reconcile。</p></div>

@@ -70,9 +70,17 @@
         },
         {
           "title": "02 控制循环与 API 控制面",
-          "description": "Informer/WorkQueue/Reconcile、API Server 请求链路与 etcd",
+          "description": "Controller/Reconcile、Informer/WorkQueue、API Server 请求链路与 etcd",
           "open": false,
           "items": [
+            {
+              "title": "Controller 控制循环",
+              "description": "期望状态、实际状态、Reconcile、幂等收敛与失败模型",
+              "file": "11a-controller-control-loop.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 18
+            },
             {
               "title": "Informer 与 WorkQueue",
               "description": "Reflector、DeltaFIFO、Indexer、RateLimitingQueue 与 Reconcile 全链路",

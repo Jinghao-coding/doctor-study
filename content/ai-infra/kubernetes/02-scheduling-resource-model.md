@@ -23,16 +23,38 @@
 <div class="qa-summary">面试口径：调度看 requests，不是看实时使用量；limits 主要管运行时上限，CPU 超限是 throttling，内存超限通常是 OOMKilled。</div>
 </div>
 
+<div class="card card-s">
+<h3>CPU、内存与 GPU 的资源模型不同</h3>
+<table>
+<tr><th>资源</th><th>调度与计量</th><th>运行时超限</th><th>共享/超卖边界</th></tr>
+<tr><td>CPU</td><td>按 requests 记账，可用毫核表达</td><td>limit 通常转为 cgroup CPU bandwidth，超限被节流</td><td>可压缩资源；多个容器可以时间复用 CPU，requests 总量也可低于节点实际峰值需求</td></tr>
+<tr><td>内存</td><td>按 requests 记账，以字节容量表达</td><td>不可压缩；达到 cgroup 上限或节点 OOM 时进程可能被杀</td><td>可以 overcommit，但压力下靠回收、驱逐和 OOM 处理，风险高于 CPU</td></tr>
+<tr><td>GPU Extended Resource</td><td>通常按整数设备份数过滤节点；只写 limit 时 request 默认等于 limit</td><td>原生 GPU limit 不是 cgroup 算力/显存上限，具体设备由 kubelet Device Manager 与 Device Plugin 交付</td><td>原生扩展资源不可超卖；MIG、MPS、Time-Slicing、vGPU 或 DRA 需要额外实现共享语义</td></tr>
+</table>
+<div class="qa-summary">CPU 是可压缩的时间份额，内存是不可压缩容量，普通 GPU 是离散且不可超卖的扩展资源；三者不能只用同一套 requests/limits 口径解释。</div>
+</div>
+
 <div class="card card-w">
 <h3>QoS：由 requests / limits 推导出的驱逐等级</h3>
-<p>QoS 不是一个用户随便填写的字段，而是 kubelet 根据 CPU / Memory 的 requests 和 limits 推导出的等级。它主要影响节点资源压力下的<strong>驱逐优先级</strong>，而不是决定调度器能不能把 Pod 放到节点上。</p>
+<p>QoS 不是用户直接填写的字段，而是 kubelet 根据 CPU / Memory 的 requests 和 limits 推导出的类别。它可以帮助估计节点压力下谁更容易被驱逐，但 kubelet 的实际排序不是简单的 QoS 固定顺序。</p>
 <table>
-<tr><th>QoS 等级</th><th>判定条件</th><th>驱逐倾向</th><th>典型场景</th></tr>
-<tr><td>Guaranteed</td><td>每个容器 CPU/Memory requests 等于 limits 且都设置</td><td>驱逐优先级最低</td><td>核心在线服务、强 SLO 服务</td></tr>
-<tr><td>Burstable</td><td>至少设置了一个 CPU/Memory request，但不完全满足 Guaranteed</td><td>中等驱逐优先级</td><td>大多数普通服务</td></tr>
-<tr><td>BestEffort</td><td>没有设置 CPU/Memory requests 和 limits</td><td>最先被驱逐</td><td>临时任务、低优实验、开发测试</td></tr>
+<tr><th>QoS 等级</th><th>判定条件</th><th>节点压力下的常见表现</th><th>典型场景</th></tr>
+<tr><td>Guaranteed</td><td>每个容器都设置 CPU 和 Memory request/limit，且对应 request 等于 limit</td><td>通常不超过 request，因而常较晚被考虑；资源压力严重时仍不是绝对不可驱逐</td><td>核心在线服务、强 SLO 服务</td></tr>
+<tr><td>Burstable</td><td>不满足 Guaranteed，且至少一个容器设置了 CPU 或 Memory request/limit</td><td>是否超过发生压力资源的 request、Priority 和相对使用量共同决定次序</td><td>大多数普通服务</td></tr>
+<tr><td>BestEffort</td><td>所有容器都没有设置 CPU/Memory requests 和 limits</td><td>对 CPU/内存可视为 request 为零，产生实际使用后通常属于“超过 request”的候选</td><td>临时任务、低优实验、开发测试</td></tr>
 </table>
-<div class="qa-summary">面试口径：QoS 看的是 CPU/Memory requests/limits 组合；驱逐还会结合 PriorityClass、资源压力和实际使用量。</div>
+<div class="qa-summary">面试口径：QoS 由 CPU/Memory requests/limits 推导；kubelet 针对发生压力的资源依次比较是否超过 request、Pod Priority 和使用量相对 request 的程度，不是机械地按 BestEffort → Burstable → Guaranteed 排队。</div>
+</div>
+
+<div class="card card-w">
+<h3>Pod Priority、QoS 与节点压力驱逐</h3>
+<table>
+<tr><th>机制</th><th>主要执行者/时机</th><th>是否关注另一机制</th></tr>
+<tr><td>调度顺序与抢占</td><td>scheduler 根据 PriorityClass 排队，并在需要时选择低优先级 victims</td><td>默认抢占不使用 QoS 选择 victims</td></tr>
+<tr><td>节点压力驱逐</td><td>kubelet 在 MemoryPressure、DiskPressure、PIDPressure 等场景回收节点资源</td><td>先看是否超过对应资源 request，再看 Priority，再看相对使用量；QoS 只是间接反映 requests 配置</td></tr>
+<tr><td>内核 OOM</td><td>Linux OOM Killer 在 kubelet 来不及回收时选择进程</td><td>kubelet 根据 QoS/request 设置 <code>oom_score_adj</code>，但这不是 scheduler 抢占</td></tr>
+</table>
+<div class="qa-summary">Priority 是业务重要性，QoS 是资源声明推导结果，节点压力驱逐是 kubelet 的本地稳定性机制；三者相关但不能互相替代。</div>
 </div>
 
 <div class="card card-s">
@@ -106,6 +128,15 @@
 <div class="qa-summary">面试口径：Pending 先看 Events，再按资源、约束、存储、配额、GPU/DRA、调度器插件逐层排查。</div>
 </div>
 </div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Pod 已经设置 spec.nodeName，为什么仍可能长时间 Pending？</div>
+<div class="qa-a">
+<div class="qa-summary"><code>spec.nodeName</code> 只说明 Pod 已指定目标节点，并不表示 kubelet 已完成节点侧准入、卷、网络、镜像、设备和容器创建。</div>
+<div class="qa-section"><div class="qa-section-title">绕过了什么</div><p>直接设置 <code>nodeName</code> 会绕过 scheduler 的正常选点流程，所以不会再等待 Filter/Score；这也意味着原本由 scheduler 检查的资源和部分约束可能没有机会提前拒绝。</p></div>
+<div class="qa-section"><div class="qa-section-title">仍要完成什么</div><p>目标 kubelet 仍要看到对象并通过本地 admission，准备 Secret/ConfigMap、PVC/CSI、Device Plugin/DRA、Pod Sandbox、CNI、镜像和容器。节点 NotReady、kubelet/Runtime 异常、卷挂载失败、CNI/IPAM 失败、镜像拉取失败、设备不可用或 init container 未完成，都会让 Pod 继续处于 Pending。</p></div>
+<div class="qa-section"><div class="qa-section-title">排查</div><p>先看 <code>PodScheduled</code> Condition 与 Events，再查目标 Node Ready/Lease、kubelet、container runtime、CNI/CSI 和设备插件日志；不要看到 <code>nodeName</code> 就断言调度与节点执行都已成功。</p></div>
+</div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: requests 和 limits 有什么区别？</div>

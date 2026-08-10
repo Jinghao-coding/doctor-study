@@ -1,7 +1,7 @@
 <div class="card card-m">
-<h3>Controller 为什么需要 Informer 和 WorkQueue</h3>
-<p>Kubernetes Controller 是持续运行的控制循环：读取对象声明的<strong>期望状态</strong>，观察集群或外部系统的<strong>实际状态</strong>，再创建、更新或删除资源，让两者逐步收敛。Controller 不应把某次事件当成必须执行一次的命令，而应随时能够根据当前状态重新计算。</p>
-<p>直接让每个 Controller 高频轮询 API Server 会产生大量重复读取；把耗时逻辑直接写在 Watch 回调中，又会阻塞后续事件分发。Informer 负责高效维护本地对象视图，WorkQueue 负责把“哪个对象需要重新检查”交给可重试的 worker。</p>
+<h3>Informer 和 WorkQueue 解决哪两个工程问题</h3>
+<p>Controller 每次 Reconcile 都要读取当前的期望状态和实际状态，但不能因此为每个对象高频轮询 API Server；对象变化也不能直接在 Watch 回调中执行耗时业务，否则一个慢操作会阻塞后续事件分发。</p>
+<p><strong>Informer</strong> 负责通过 List/Watch 维护本地对象视图并发出轻量通知；<strong>WorkQueue</strong> 负责保存待处理对象的 key，由 worker 控制并发、失败重试和退避。Reconcile 再根据 key 读取当前状态并执行真正的业务逻辑。</p>
 <p>官方资料：<a href="https://kubernetes.io/docs/concepts/architecture/controller/">Kubernetes Controllers</a> · <a href="https://pkg.go.dev/k8s.io/client-go/tools/cache">client-go cache / SharedInformer</a> · <a href="https://pkg.go.dev/k8s.io/client-go/util/workqueue">client-go workqueue</a></p>
 </div>
 

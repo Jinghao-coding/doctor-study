@@ -31,8 +31,35 @@
 <tr><td>Permit</td><td>批准、拒绝或限时等待绑定</td><td>常用于 Gang/配额等协调</td></tr>
 <tr><td>PreBind</td><td>绑定前完成必须成功的准备动作</td><td>失败会阻止 Bind 并触发回滚</td></tr>
 <tr><td>Bind</td><td>提交 Pod→Node 绑定</td><td>某个 Bind 插件成功即结束该扩展点；常用 DefaultBinder</td></tr>
+<tr><td>PostBind</td><td>绑定成功后的通知、指标或轻量清理</td><td>信息型扩展点；此时绑定已经完成，不能再用失败回滚选点</td></tr>
 </table>
 <div class="qa-summary">硬约束放 Filter，偏好放 Score，状态占用放 Reserve/Unreserve，跨 Pod 等待放 Permit，提交前置动作放 PreBind；不要把远程慢调用塞进每节点 Filter/Score 热路径。</div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么把预计算放 PreFilter/PreScore？CycleState 怎样传递信息？</div>
+<div class="qa-a">
+<div class="qa-summary">与 Pod 或候选集合相关、可复用的计算应只做一次并写入 CycleState，避免在每个 Node 的 Filter/Score 中重复扫描。</div>
+<div class="qa-section"><div class="qa-section-title">调用粒度</div><p>PreFilter 每个调度周期调用一次，适合解析配额、亲和项、GPU 数量或任务 CR；Filter 对每个候选 Node 调用且节点可并行评估。PreScore 在可行节点集合确定后调用一次，适合构建归一化基线或拓扑统计。</p></div>
+<div class="qa-section"><div class="qa-section-title">CycleState</div><p>CycleState 的生命周期仅限一个 Pod 的 scheduling context，可在扩展点之间传递预计算结果。写入的数据要实现框架要求的状态接口并正确 Clone；它不是跨 Pod 共享缓存，也不能在周期结束后继续持有引用。</p></div>
+<div class="qa-section"><div class="qa-section-title">性能</div><p>把一次 O(P) 聚合放进 PreFilter，能避免 Filter 退化为 O(N×P)；跨周期且由集群事件更新的数据则应放插件自己的线程安全缓存/Informer，而不是塞进 CycleState。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 一个 Filter 插件判定节点不可行后，后续插件还会执行吗？</div>
+<div class="qa-a">
+<div class="qa-summary">对当前 Node 不会继续执行后续 Filter 插件；Scheduler 会保留失败插件与原因，并继续并行评估其他 Node。</div>
+<div class="qa-section"><div class="qa-section-title">短路语义</div><p>Filter 插件按配置顺序调用。某插件返回 Unschedulable/UnschedulableAndUnresolvable 后，当前 Node 已经不能运行该 Pod，继续执行后续插件只会增加延迟，因此按 Node 短路。</p></div>
+<div class="qa-section"><div class="qa-section-title">错误边界</div><p>“某个节点不可行”与插件内部 Error 不同：前者只淘汰该 Node，后者可能中止本次 scheduling cycle。由于不同 Node 可以并行过滤，日志和插件内部状态必须并发安全。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: QueueSort 如何决定顺序？为什么只能启用一个实现？</div>
+<div class="qa-a">
+<div class="qa-summary">QueueSort 提供 <code>Less(podA, podB)</code>，为共享调度队列定义唯一的全序；一个队列无法同时服从两套互相冲突的比较器。</div>
+<div class="qa-section"><div class="qa-section-title">排序键</div><p>默认 PrioritySort 先比较 Priority，再结合入队时间等信息稳定排序。自定义实现可以加入租户公平、QAD、作业年龄等，但比较函数必须确定、传递且执行极快，因为堆维护会高频并发调用它。</p></div>
+<div class="qa-section"><div class="qa-section-title">唯一性</div><p>Framework 同一时间只允许一个 QueueSort 插件；多个 scheduler profile 共享 pending queue 时也必须使用兼容的 QueueSort 配置。若想组合多个策略，应在一个 Less 函数中明确主键、次键和最终稳定 tie-breaker。</p></div>
+<div class="qa-section"><div class="qa-section-title">边界</div><p>QueueSort 只决定“先尝试哪个 Pod”，不保证该 Pod 一定可调度，也不能替代 Queue/Gang 的资源准入。</p></div>
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -153,12 +180,35 @@
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Scheduler Framework Plugin 如何编译、注册和启用？</div>
+<div class="qa-a">
+<div class="qa-summary">Framework Plugin 是编译时扩展：实现接口与构造函数，用 kube-scheduler 的 app 入口注册到 registry，构建自定义 scheduler 镜像，再在 KubeSchedulerConfiguration profile 中启用。</div>
+<pre><code class="language-go">func main() {
+    cmd := scheduler.NewSchedulerCommand(
+        scheduler.WithPlugin(myplugin.Name, myplugin.New),
+    )
+    if err := cmd.Execute(); err != nil { os.Exit(1) }
+}</code></pre>
+<div class="qa-section"><div class="qa-section-title">启用链路</div><p>插件实现 <code>Name()</code> 及 Filter/Score/Reserve 等接口，构造函数接收插件参数和 FrameworkHandle。编译自定义二进制/镜像后，在 <code>KubeSchedulerConfiguration.profiles[].plugins</code> 对相应扩展点 enabled，并在 <code>pluginConfig</code> 提供参数；Pod 通过 profile 的 <code>schedulerName</code> 选择它。</p></div>
+<div class="qa-section"><div class="qa-section-title">版本与测试</div><p>插件直接依赖 Kubernetes 内部调度包，必须固定与目标 kube-scheduler 兼容的 Kubernetes minor 版本；升级要重新编译并跑单元、Framework 集成、调度回放和端到端测试。只改 YAML 不能把一个未编译进二进制的插件动态加载进来。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Scheduler 如何做 HA？为什么多副本不等于并行调度？</div>
 <div class="qa-a">
 <div class="qa-summary">相同职责的 kube-scheduler 副本通过 API Server 中的 Lease 做 Leader Election，通常只有 leader 调度、其他副本热备；它提升故障可用性，不增加正常时吞吐。</div>
 <div class="qa-section"><div class="qa-section-title">故障切换</div><p>Leader 按 leaseDuration/renewDeadline/retryPeriod 续约，失联后 standby 竞争 Lease 并从 API 对象和 Informer Cache 恢复工作。参数过小会因控制面抖动频繁切主，过大则延长调度停顿。</p></div>
 <div class="qa-section"><div class="qa-section-title">为什么不是多活</div><p>各副本有独立队列、Cache 和 Assumed Pod 状态；若同时处理同一批未绑定 Pod，会竞争 Binding 并造成重复计算。默认调度的 Scheduling Cycle 按 Pod 串行，配置中的 <code>parallelism</code> 主要并行节点级 Filter/Score 工作，不是让多个副本并行取同一队列。</p></div>
 <div class="qa-section"><div class="qa-section-title">真正的并行边界</div><p>Binding Cycle 可并发；若运行多个不同 <code>schedulerName</code> 的调度器，可处理明确分流的 Pod，但它们不共享 Cache，对共享 Node/设备仍可能竞争，必须接受放置质量、抢占和运维复杂度。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 多个 Scheduler 如何避免抢同一 Pod 或同一份节点资源？Leader 切换会不会重复调度？</div>
+<div class="qa-a">
+<div class="qa-summary">同一职责的副本用同一 Lease 单活；不同调度器用 schedulerName 分流 Pod。API 绑定能阻止同一 Pod 最终绑定两次，但不能让独立调度器共享尚未持久化的资源假设。</div>
+<div class="qa-section"><div class="qa-section-title">同一 Pod</div><p>Pod 只由匹配 <code>spec.schedulerName</code> 的调度器处理；同一调度器的 HA 副本通过 Leader Election 降低并发处理。切主窗口可能产生重复计算或旧/新 leader 的外部调用重叠，但 Bind 会校验 Pod UID/当前绑定状态；新 leader 看到已有 <code>spec.nodeName</code> 后不再重新选点。</p></div>
+<div class="qa-section"><div class="qa-section-title">同一节点资源</div><p>两个独立 Scheduler 的 Cache 与 Assumed Pod 账本互不可见，可能分别认为同一剩余资源可用。安全做法是划分独立节点池/资源类，或通过一个共享的准入、配额和原子 reservation 系统协调；仅设置不同 schedulerName 不能解决共享资源竞争。</p></div>
+<div class="qa-section"><div class="qa-section-title">插件副作用</div><p>Leader Election 不提供 exactly-once 或 fencing。Reserve/PreBind 的外部操作仍要用 Pod UID/attempt 作为幂等键，并在接管后从 API 与外部系统重建账本。</p></div>
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -178,6 +228,24 @@
 <div class="qa-section"><div class="qa-section-title">扩展点与插件</div><p>用稳定指标 <code>scheduler_framework_extension_point_duration_seconds</code> 先定位 Filter、Score、Permit 或 Bind 阶段，再用 alpha 指标 <code>scheduler_plugin_execution_duration_seconds</code> 按 plugin/extension_point 看调用次数与 P95/P99。Filter/Score 是节点级热路径，要把单次耗时乘实际候选节点数；排查外部 RPC、锁竞争、全量扫描、Cache miss、日志过量和 GC。</p></div>
 <div class="qa-section"><div class="qa-section-title">队列抖动</div><p>用 <code>scheduler_queue_incoming_pods_total</code> 找出高频入队事件，检查失败插件是否注册过宽的事件与 QueueingHint；<code>scheduler_pod_scheduled_after_flush_total</code> 持续增长则提示 Hint/事件注册可能漏唤醒。修复方式包括更精确的 Hint、正确 backoff、SchedulingGates/队列准入、减少无意义对象更新，并先解决大批 Pod 的共同硬约束。</p></div>
 <div class="qa-section"><div class="qa-section-title">验证</div><p>用 scheduler simulator 或生产快照回放相同 Pod，比较插件启停、节点采样比例和候选节点规模；同时确认 API Server/etcd 与 Bind 请求延迟，避免把控制面写瓶颈误判成 Score 慢。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 如何同时评价调度器吞吐、调度延迟和放置质量？</div>
+<div class="qa-a">
+<div class="qa-summary">吞吐和延迟衡量“排得多快”，放置质量衡量“排得是否值得”；优化任何一项都必须同时看另外两项的回归。</div>
+<div class="qa-section"><div class="qa-section-title">性能指标</div><p>吞吐看每秒成功/失败 attempts 和绑定数；延迟分 Pod 入队到绑定的端到端等待、单次 scheduling attempt、各 extension point/plugin P50/P95/P99，并按可调度与不可调度 Pod 分组。</p></div>
+<div class="qa-section"><div class="qa-section-title">质量指标</div><p>硬约束成功率必须为 100%；软目标根据业务看 GPU/CPU 碎片、装箱率、跨机/跨 NUMA 通信代价、拓扑违背、能耗、队列公平、Job 等待时间/JCT、抢占浪费和后续大任务可调度率。</p></div>
+<div class="qa-section"><div class="qa-section-title">实验方法</div><p>固定 API/Cache 快照和 Pod trace 做离线回放，对比基线插件、采样比例与权重；再小流量 Canary/A-B，验证峰值队列和故障场景。只用“平均调度耗时下降”无法证明新策略更好。</p></div>
+</div></div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 插件访问 DCGM 或外部预测服务有什么风险？怎样避免慢插件阻塞调度主循环？</div>
+<div class="qa-a">
+<div class="qa-summary">Filter/Score 是节点级热路径，而 Scheduling Cycle 到 Permit 前按 Pod 串行；远程 RPC 的延迟、抖动和故障会被候选节点数放大，直接拖住后续 Pod。</div>
+<div class="qa-section"><div class="qa-section-title">风险</div><p>网络超时、服务雪崩、API 限流、指标滞后、结果版本不一致、每 Node RPC 放大、锁竞争和重试风暴都会降低吞吐；<code>parallelism</code> 只能并行节点算法，不能把慢远程依赖变成免费。</p></div>
+<div class="qa-section"><div class="qa-section-title">热路径设计</div><p>由独立 Controller/Daemon 预取 DCGM 与预测结果，写入受控 CRD/ResourceSlice 或插件线程安全缓存；Filter/Score 只做本地 O(1) 读取。数据携带采样时间、模型版本和置信度，并设置 TTL、安全裕度和 stale fallback。</p></div>
+<div class="qa-section"><div class="qa-section-title">故障控制</div><p>远程调用若不可避免，要限制为每 Pod 一次而非每 Node 一次，使用毫秒级超时、context 取消、并发上限、熔断和有界重试；失败时按业务选择保守拒绝、降级分数或回退原生策略，并对超时/降级计数告警。</p></div>
 </div></div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
