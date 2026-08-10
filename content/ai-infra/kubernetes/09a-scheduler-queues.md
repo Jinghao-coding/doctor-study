@@ -1,21 +1,6 @@
-<div class="card card-d">
-<h3>Scheduler 主链路高频面试问题索引</h3>
-<p>复习时不要按文件顺序硬背。面试官通常按问题追问，先定位问题类型，再展开对应链路。</p>
-<table>
-<tr><th>面试官问法</th><th>先答什么</th><th>深挖入口</th></tr>
-<tr><td>一个 Pod 如何被调度到 Node？</td><td>Watch Pod → Queue → Filter → Score → Bind → Kubelet Run</td><td>端到端调度路径</td></tr>
-<tr><td>Pod 一定会进入 ActiveQ 吗？</td><td>不一定，SchedulingGates / PreEnqueue 可能在入队前挡住</td><td>PreEnqueue 入队门控</td></tr>
-<tr><td>Pod 为什么 Pending？</td><td>先看 FailedScheduling，再按 Filter 失败插件分类</td><td>资源模型 + Diagnosis / FitError</td></tr>
-<tr><td>scheduler 为什么需要 cache？</td><td>避免每次调度访问 API Server，并支持 Assume 防止过度分配</td><td>Cache、扩展点与抢占</td></tr>
-<tr><td>高优 Pod 调度不上怎么办？</td><td>没有 feasible node 时 PostFilter 触发抢占，但抢占不等于立刻运行</td><td>Preemption 深入</td></tr>
-<tr><td>大集群 scheduler 怎么优化？</td><td>减少候选节点、控制重试、优化插件耗时、用 QueueingHint 精确唤醒</td><td>性能、打分与 HA + QueueingHint</td></tr>
-<tr><td>自定义调度逻辑写哪里？</td><td>先判断是排序、过滤、打分、预留还是绑定前等待</td><td>Scheduler 插件与扩展</td></tr>
-</table>
-</div>
-
 <div class="card card-s">
 <h3>一次 Pod 调度的端到端路径</h3>
-<p>这部分不要只背“Filter、Score、Bind”三个词。面试官如果继续追问，会看你是否知道 <strong>Pod 创建、scheduler 决策、API Server 持久化、kubelet 执行</strong> 是四段不同职责。</p>
+<p><strong>Pod 创建、scheduler 决策、API Server 持久化、kubelet 执行</strong> 是异步衔接的四段职责。Scheduler 只完成选点与绑定，不负责创建容器。</p>
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/09-pod-scheduling-e2e.svg" alt="Kubernetes 一次 Pod 调度端到端路径" loading="lazy">
 <p class="caption">从 Pod 创建到 kubelet 启动容器：scheduler 负责选 Node 并写回绑定结果，kubelet 负责在目标 Node 上真正创建 Pod。</p>
@@ -155,6 +140,7 @@ kubelet 拉镜像、创建容器、启动 Pod</code></pre>
 <tr><td>PostBind</td><td>绑定成功后的通知型动作，例如记录事件、异步上报</td><td>通常不影响 Pod 已经绑定的事实</td></tr>
 </table>
 <p>关键点：<strong>Reserve / Assume 解决 scheduler 本地并发一致性，Bind 解决 API Server 中的持久化状态。</strong></p>
+<p>多个 Reserve 插件按配置顺序执行；某个 Reserve 失败后，后续 Reserve 不再执行，已经执行过的插件按反向顺序调用 <code>Unreserve</code>。<code>Unreserve</code> 必须幂等且不能返回错误，因为 Permit 拒绝/超时、PreBind 失败、Bind 失败都可能触发回滚。Permit 返回 Wait 时，Pod 进入 waiting Pods 集合，binding cycle 等待批准；超时会转为拒绝并触发 Unreserve，这使它适合表达 Gang 成员“先占位、凑齐后一起放行”的语义。</p>
 </div>
 
 <div class="card card-m">
@@ -268,7 +254,7 @@ PostBind</code></pre>
 
 <rect x="310" y="295" width="230" height="112" class="sched-node sched-note"></rect>
 <text x="335" y="330" class="sched-label">BackoffQ</text>
-<text x="335" y="355" class="sched-desc">刚调度失败，进入指数退避</text>
+<text x="335" y="355" class="sched-desc">已被唤醒，但退避尚未结束</text>
 <text x="335" y="374" class="sched-desc">避免 CPU tight loop</text>
 <text x="335" y="393" class="sched-desc">到期后回到 ActiveQ</text>
 
@@ -280,19 +266,19 @@ PostBind</code></pre>
 
 <rect x="645" y="485" width="250" height="78" class="sched-node sched-api"></rect>
 <text x="670" y="518" class="sched-label">Move request</text>
-<text x="670" y="542" class="sched-desc">Node / Pod / PVC / ResourceClaim 等事件触发</text>
+<text x="670" y="542" class="sched-desc">相关事件决定进入 ActiveQ 或 BackoffQ</text>
 
 <path d="M220 148 C255 148 275 146 310 146" class="sched-arrow"></path>
 <path d="M540 146 C585 146 600 146 645 146" class="sched-arrow"></path>
 <path d="M855 146 C890 146 900 148 930 148" class="sched-arrow"></path>
 <path d="M760 202 C760 235 720 250 700 295" class="sched-arrow sched-dashed"></path>
-<path d="M640 202 C600 245 505 250 470 295" class="sched-arrow sched-dashed"></path>
 <path d="M425 295 C425 250 425 238 425 202" class="sched-arrow sched-dashed"></path>
-<path d="M770 485 C770 448 770 430 770 407" class="sched-arrow sched-dashed"></path>
+<path d="M770 407 C770 448 770 465 770 485" class="sched-arrow sched-dashed"></path>
 <path d="M645 525 C540 525 425 470 425 407" class="sched-arrow sched-dashed"></path>
+<path d="M700 485 C600 445 560 245 500 202" class="sched-arrow sched-dashed"></path>
 
 <rect x="40" y="485" width="500" height="78" class="sched-node sched-cache"></rect>
-<text x="64" y="518" class="sched-label">面试抓手</text>
+<text x="64" y="518" class="sched-label">队列职责</text>
 <text x="64" y="542" class="sched-desc">ActiveQ 控制机会分配；BackoffQ 控制失败重试节奏；UnschedulableQ 控制事件驱动唤醒；Move request 控制无效重试比例。</text>
 </svg>
 </div>
@@ -313,15 +299,15 @@ PostBind</code></pre>
     <span class="flow-arrow">↓</span>
     <span class="flow-split">├── 成功 ──→</span> <span class="flow-node success">进入绑定流程（Bind → PostBind）</span>
     <span class="flow-split">│</span>
-    <span class="flow-split">└── 失败 ──→</span> <span class="flow-branch">
-        <span class="flow-split">├──</span> <span class="flow-node backoff">放入 BackoffQ</span> <span class="flow-note">：等一段时间再试，避免 CPU tight loop</span>
-        <span class="flow-split">│</span>    <span class="flow-arrow">↓</span> <span class="flow-note">退避时间到期后回到 ActiveQ</span>
-        <span class="flow-split">│</span>
-        <span class="flow-split">└──</span> <span class="flow-node unsched">放入 UnschedulableQ</span> <span class="flow-note">：等集群状态变化再试</span>
-             <span class="flow-arrow">↓</span> <span class="flow-note">Node/Pod/PVC/ResourceClaim 事件触发 Move request 后回到 ActiveQ</span>
-</span>
+    <span class="flow-split">└── 失败 ──→</span> <span class="flow-node unsched">放入 UnschedulablePods</span> <span class="flow-note">：记录失败插件，等待相关状态变化</span>
+             <span class="flow-arrow">↓</span> <span class="flow-note">Node/Pod/PVC/ResourceClaim 等事件触发 QueueingHint / Move request</span>
+             <span class="flow-arrow">↓</span> <span class="flow-branch">
+                 <span class="flow-split">├── 退避已结束 ──→</span> <span class="flow-node active">ActiveQ</span>
+                 <span class="flow-split">└── 仍在退避 ───→</span> <span class="flow-node backoff">BackoffQ</span> <span class="flow-note">→ 到期后进入 ActiveQ</span>
+             </span>
 </pre>
 </div>
+<p>这是最常见路径。若 Pod 正在一次调度尝试中时已经发生了可能使它恢复的 move request，失败处理可以直接把它放入 BackoffQ，避免错过该事件；退避到期后再进入 ActiveQ。</p>
 <div class="qa-summary">核心记忆：ActiveQ 是"现在试试"，BackoffQ 是"过会儿再试"，UnschedulableQ 是"等条件变了再试"。调度器的吞吐和延迟很大程度上取决于这三个队列之间的流转策略。</div>
 </div>
 
@@ -335,12 +321,12 @@ PostBind</code></pre>
 </thead>
 <tbody>
 <tr><td class="q-dim">核心区别</td><td>现在试试</td><td>过会儿再试</td><td>等条件变了再试</td></tr>
-<tr><td class="q-dim">进入条件</td><td>新 Pod 创建、BackoffQ 到期、事件触发 Move request</td><td>调度失败且失败原因不是“永久不可调度”</td><td>调度失败且当前没有任何节点满足条件</td></tr>
+<tr><td class="q-dim">进入条件</td><td>新 Pod 通过 PreEnqueue、BackoffQ 到期，或 Move request 时退避已结束</td><td>不可调度 Pod 被相关事件唤醒，但当前退避期限尚未结束</td><td>PreEnqueue 拒绝，或一次调度失败后等待可能改变结论的事件</td></tr>
 <tr><td class="q-dim">退出条件</td><td>被调度器取出尝试调度</td><td>退避时间到期后移回 ActiveQ</td><td>集群事件（Node/Pod/PVC 变化）触发 Move request</td></tr>
 <tr><td class="q-dim">排序策略</td><td>QueueSort 插件：默认按 priority 降序 + 入队时间</td><td>按退避到期时间排序（FIFO）</td><td>不排序，等待事件驱动唤醒</td></tr>
 <tr><td class="q-dim">核心问题</td><td>谁先获得调度机会？队头阻塞、饥饿、公平性</td><td>失败后多久重试？退避过短浪费 CPU，过长增加延迟</td><td>什么时候唤醒？事件提示不精准会导致无效重试风暴</td></tr>
 <tr><td class="q-dim">AI 场景</td><td>小推理任务、交互式 Notebook 能否插队</td><td>GPU 大作业资源不够时避免频繁扫描节点</td><td>等待 GPU 释放、RDMA 节点加入、PVC 绑定、gang 资源凑齐</td></tr>
-<tr><td class="q-dim">面试表达</td><td>Filter/Score 再聪明也只能处理已出队的 Pod；队列排序决定谁先获得机会</td><td>调度器的“冷静期”，把失败重试从忙等变成有节奏的再尝试</td><td>“条件未满足”的等待区；只有相关事件才应触发唤醒</td></tr>
+<tr><td class="q-dim">机制影响</td><td>Filter/Score 只能处理已出队的 Pod；队列排序决定谁先获得机会</td><td>把失败重试从忙等变成有节奏的再尝试</td><td>保存暂不满足条件的 Pod；只让相关事件触发唤醒</td></tr>
 </tbody>
 </table>
 </div>
@@ -349,7 +335,7 @@ PostBind</code></pre>
 
 <div class="card card-w">
 <h3>Move request：为什么事件提示很关键</h3>
-<p>Move request 可以理解为“某个集群事件可能让一批不可调度 Pod 重新有机会”。调度器会根据失败原因和事件类型，决定是否把 Pod 从 UnschedulableQ 或 BackoffQ 移回 ActiveQ。</p>
+<p>Move request 可以理解为“某个集群事件可能让一批不可调度 Pod 重新有机会”。调度器结合上次失败插件、事件类型和 QueueingHint 判断是否唤醒；命中后，如果该 Pod 的退避已经结束就进入 ActiveQ，否则先进入 BackoffQ。除此之外，UnschedulablePods 中停留过久的 Pod 还会被周期性 flush，避免因漏事件而永久沉睡。</p>
 <table>
 <tr><th>事件</th><th>可能唤醒哪些 Pod</th><th>为什么</th><th>无效唤醒风险</th></tr>
 <tr><td>Node 新增或 Node label 变化</td><td>nodeSelector、nodeAffinity、拓扑约束失败的 Pod</td><td>节点集合或标签变了，Filter 结果可能改变</td><td>如果所有 Pod 都唤醒，会造成全量重试</td></tr>

@@ -40,7 +40,7 @@
 
 <div class="card card-w">
 <h3>Scheduler HA 与 Leader Election</h3>
-<p>生产环境中通常部署多个 scheduler 实例实现高可用，但同一时刻只有一个 active 实例在工作。</p>
+<p>同一套 scheduler 部署多个副本时，通常通过 Leader Election 做单活高可用；这与运行多个不同 <code>schedulerName</code> 的独立 scheduler 是两种架构。</p>
 <table>
 <tr><th>概念</th><th>说明</th><th>关键参数</th></tr>
 <tr><td>Leader Election</td><td>多个实例竞争 API Server 中的 <code>coordination.k8s.io/v1 Lease</code></td><td><code>leaderElection.leaseDuration</code>（默认 15s）</td></tr>
@@ -49,7 +49,20 @@
 <tr><td>非 Leader 行为</td><td>Standby 实例不执行调度，只等待成为 leader</td><td>不消耗调度计算资源</td></tr>
 </table>
 <div class="qa-section"><div class="qa-section-title">故障转移时间</div><p>Standby 需要观察现有 Lease 过期后再竞争，切换时间主要受 leaseDuration、API/网络抖动、retryPeriod 和新 leader Cache 同步影响，不能简单把三个配置相加得到固定最坏值。参数过小会造成误切主和更高控制面写压力，过大则延长调度停顿。</p></div>
-<div class="qa-section"><div class="qa-section-title">多 Scheduler 模式</div><p>除了 HA 部署，Kubernetes 还支持运行多个不同配置的 scheduler（通过 <code>schedulerName</code> 指定）。例如默认 scheduler 处理普通 Pod，GPU scheduler 处理 GPU Pod。注意：不同 scheduler 之间不共享 cache，可能产生资源竞争。</p></div>
+<div class="qa-section"><div class="qa-section-title">切主时的状态恢复</div><p>如果旧 Leader 已成功 Bind，绑定结果已经进入 API Server，新 Leader 同步 Cache 后会看到 Pod 的 <code>spec.nodeName</code>，不会再把它当成未调度 Pod。如果旧 Leader 只完成内存 Assume、尚未 Bind，Assume 状态会随进程丢失，Pod 仍保持未绑定并由新 Leader 重新调度。旧、新实例的 Bind 请求短暂重叠时，API Server 中同一个 Pod 最终只能形成一个持久绑定；但 Reserve 插件的外部副作用不会因此自动获得 exactly-once，仍需幂等、TTL 或对账恢复。</p></div>
+</div>
+
+<div class="card card-r">
+<h3>多个独立 Scheduler 如何避免争抢同一批节点资源</h3>
+<p><code>spec.schedulerName</code> 只划分“哪个 scheduler 处理哪个 Pod”，不会自动划分 Node。两个独立 scheduler 拥有各自的 Cache，可能同时基于稍旧视图判断同一节点还有资源；API Server 的 Bind 操作也不会重新执行整套 Filter 来替它们做跨 scheduler 资源预留。</p>
+<table>
+<tr><th>方案</th><th>一致性</th><th>代价与适用边界</th></tr>
+<tr><td>同一 kube-scheduler 的多个 Profile</td><td>共享 pending queue、Cache 和 Assume 账本</td><td>优先选择；适合策略不同但仍能运行在同一二进制中的工作负载</td></tr>
+<tr><td>用 taint/label/affinity 划分互斥 Node 池</td><td>从资源域上消除竞争</td><td>隔离明确，但降低跨池借用和整体利用率</td></tr>
+<tr><td>统一 Reservation/Claim 控制面</td><td>通过 API 对象的 resourceVersion、唯一约束或设备 Claim 串行化稀缺资源分配</td><td>实现复杂，适合 GPU slice、许可证等必须跨 scheduler 协调的资源</td></tr>
+<tr><td>仅依赖 ResourceQuota</td><td>限制租户总量，但不锁定某个 Node 的瞬时空闲资源</td><td>不能单独解决两个 scheduler 对同一节点的并发放置</td></tr>
+</table>
+<p>如果只是为了给 CPU Pod 和 GPU Pod 配置不同插件，多个 Profile 通常比两个完全独立的 scheduler 更容易维持一致的资源视图。只有确实需要版本、进程或故障域隔离时，才承担独立 Cache 和跨 scheduler 协调成本。</p>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

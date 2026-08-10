@@ -1,6 +1,6 @@
 <div class="card card-m">
 <h3>自定义 Scheduler Plugin 实战</h3>
-<p>面试中经常被问到"你有没有写过自定义调度插件"。回答时应该先讲清楚<strong>有哪些实现方式</strong>，再深入 Framework Plugin 的开发流程，最后给出具体代码示例。</p>
+<p>自定义调度逻辑可以运行在 kube-scheduler 进程内、进程外 Extender，或独立 scheduler 中。三种方式能接入的生命周期、状态视图和故障边界不同。</p>
 </div>
 
 <div class="card card-s">
@@ -11,13 +11,13 @@
 <tr><th style="width:140px">方式</th><th>原理</th><th>优点</th><th>缺点</th><th>适用场景</th></tr>
 </thead>
 <tbody>
-<tr><td class="q-dim">Scheduling Framework Plugin<br>(In-tree)</td><td>实现 Framework 扩展点接口，编译进 scheduler 二进制</td><td>性能最好，直接访问 scheduler cache 和 NodeInfo；可以接入完整生命周期（QueueSort 到 PostBind）</td><td>需要重新编译 scheduler；升级 K8s 版本时需要适配接口变化</td><td>性能敏感的调度逻辑（GPU 拓扑、NUMA、Gang）；需要访问 cache 或参与 Reserve/Permit 等状态阶段</td></tr>
+<tr><td class="q-dim">Scheduling Framework Plugin<br>（进程内）</td><td>实现 Framework 扩展点接口，并编译进自定义 kube-scheduler 二进制</td><td>性能最好，直接使用 FrameworkHandle、Lister 和 NodeInfo；可以接入完整生命周期（QueueSort 到 PostBind）</td><td>不是运行时动态加载；需要维护自定义镜像，并跟随 Kubernetes 版本适配内部接口</td><td>性能敏感的调度逻辑（GPU 拓扑、NUMA、Gang）；需要访问 scheduler 状态或参与 Reserve/Permit</td></tr>
 <tr><td class="q-dim">Scheduler Extender<br>(Out-of-tree HTTP)</td><td>独立 HTTP 服务，scheduler 通过 HTTP 调用 Filter / Prioritize / Bind 等接口</td><td>独立部署，不侵入 scheduler 代码；可以用任意语言开发</td><td>HTTP 调用延迟高（ms 级）；无法访问 scheduler cache；只能参与 Filter / Score / Bind 等有限阶段</td><td>简单过滤逻辑（如特殊 label 过滤）；非性能敏感的定制需求；多语言团队</td></tr>
 <tr><td class="q-dim">Multiple Scheduler<br>(独立 Scheduler)</td><td>部署另一个完整的 scheduler 实例，Pod 通过 <code>schedulerName</code> 指定</td><td>完全独立，策略隔离；可以用不同版本的 scheduler</td><td>不同 scheduler 之间不共享 cache，可能产生资源竞争；运维复杂（需要维护两套 scheduler）</td><td>业务强隔离（GPU 任务 vs CPU 任务）；需要完全不同的调度策略</td></tr>
 </tbody>
 </table>
 </div>
-<div class="qa-summary">面试要点：三种方式的本质区别是<strong>"调度逻辑跑在 scheduler 进程内还是进程外"</strong>。Framework Plugin 跑在进程内，性能最好、能力最强，是 K8s 官方推荐方式。Extender 和 Multiple Scheduler 是历史兼容方案，新功能应优先考虑 Framework Plugin。</div>
+<div class="qa-summary">三种方式的本质差异是调度逻辑运行位置和可参与的生命周期。需要 Cache、CycleState、Reserve/Permit 时使用进程内 Plugin；只做有限的远端过滤/打分且能接受网络故障时才考虑 Extender；策略与运维边界都必须隔离时再运行独立 Scheduler。</div>
 </div>
 
 <div class="card card-m">
@@ -40,7 +40,7 @@
 <tr><td class="q-dim">NormalizeScore</td><td>打分</td><td>Score 之后，归一化分数</td><td>将分数映射到统一范围</td></tr>
 <tr><td class="q-dim">Reserve</td><td>预留</td><td>选中节点后，Bind 之前</td><td>预留 GPU 设备、标记资源已占用</td></tr>
 <tr><td class="q-dim">Permit</td><td>许可</td><td>Reserve 之后，等待条件满足</td><td>Gang Scheduling 等待同组 Pod 凑齐</td></tr>
-<tr><td class="q-dim">PreBind</td><td>绑定</td><td>Bind 之前，执行绑定前操作</td><td>挂载 Volume、分配 IP</td></tr>
+<tr><td class="q-dim">PreBind</td><td>绑定</td><td>Bind 之前，执行必须先于绑定完成的准备</td><td>例如 VolumeBinding 完成 PVC 绑定；不负责 kubelet 侧 CNI 配网</td></tr>
 <tr><td class="q-dim">Bind</td><td>绑定</td><td>将 Pod 绑定到节点</td><td>自定义绑定逻辑（极少需要）</td></tr>
 <tr><td class="q-dim">PostBind</td><td>绑定</td><td>Bind 之后，通知型操作</td><td>记录调度事件、通知外部系统</td></tr>
 <tr><td class="q-dim">Unreserve</td><td>回滚</td><td>Reserve 之后失败时</td><td>释放预留的 GPU 设备、清理临时状态</td></tr>
@@ -49,15 +49,48 @@
 </div>
 </div>
 
-<div class="qa-section"><div class="qa-section-title">开发步骤（面试标准回答）</div>
+<div class="qa-section"><div class="qa-section-title">开发、注册与启用</div>
 <ol>
-<li><strong>创建 Go 项目：</strong>初始化 Go module，引入 <code>k8s.io/kubernetes</code> 依赖（或使用 <code>scheduler-plugins</code> 仓库作为模板）。</li>
+<li><strong>固定版本：</strong>插件会编译进 scheduler 进程，并依赖 Kubernetes Scheduler Framework 接口；插件依赖、构建源码和目标集群版本必须配套。</li>
 <li><strong>实现扩展点接口：</strong>根据需求选择实现 <code>FilterPlugin</code>、<code>ScorePlugin</code>、<code>ReservePlugin</code> 等接口。每个接口有固定的方法签名。</li>
-<li><strong>实现 <code>Name()</code> 方法：</strong>返回插件名称，用于在配置文件中引用。</li>
-<li><strong>注册插件：</strong>在 <code>main()</code> 中通过 <code>app.NewSchedulerCommand()</code> 注册自定义插件到 Framework。</li>
-<li><strong>编译部署：</strong>编译为自定义 scheduler 二进制或镜像，替换默认 scheduler。</li>
+<li><strong>实现工厂函数：</strong>构造函数接收 runtime 配置和 <code>framework.Handle</code>，解析参数并创建插件实例；<code>Name()</code> 返回配置中引用的稳定名称。</li>
+<li><strong>注册插件：</strong>自定义 scheduler 的 <code>main()</code> 调用 <code>app.NewSchedulerCommand(app.WithPlugin(name, factory))</code>，把工厂加入 Registry。</li>
+<li><strong>编译部署：</strong>编译自定义 scheduler 二进制和镜像；不能只把一个 <code>.so</code> 或配置文件挂进官方镜像就完成动态加载。</li>
 <li><strong>配置启用：</strong>在 <code>KubeSchedulerConfiguration</code> 的 <code>profiles[].plugins</code> 中启用插件，必要时在 <code>pluginConfig</code> 中传入参数。</li>
 </ol>
+<pre><code class="language-go">package main
+
+import (
+    "os"
+
+    "k8s.io/component-base/cli"
+    "k8s.io/kubernetes/cmd/kube-scheduler/app"
+    "example.com/scheduler/pkg/myplugin"
+)
+
+func main() {
+    cmd := app.NewSchedulerCommand(
+        app.WithPlugin(myplugin.Name, myplugin.New),
+    )
+    os.Exit(cli.Run(cmd))
+}</code></pre>
+<pre><code class="language-yaml">apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+- schedulerName: gpu-scheduler
+  plugins:
+    filter:
+      enabled:
+      - name: MyGPUPlugin
+    score:
+      enabled:
+      - name: MyGPUPlugin
+        weight: 5
+  pluginConfig:
+  - name: MyGPUPlugin
+    args:
+      maxMetricAgeSeconds: 15</code></pre>
+<p>Pod 只有在 <code>spec.schedulerName: gpu-scheduler</code> 时才会选择这个 Profile。部署后还应检查启动日志中的插件 Registry/Profile、配置版本、RBAC 和 leader election，而不是只确认进程存活。</p>
 </div>
 
 <div class="qa-section"><div class="qa-section-title">关键接口签名（面试要能写出）</div>
@@ -91,7 +124,7 @@
 <li><strong>PreFilter：</strong>从 Pod annotation 中解析 GPU 拓扑需求（如 <code>gpu-topology: nvlink-4</code>），写入 CycleState。</li>
 <li><strong>Filter：</strong>从 Node label 中读取 GPU 拓扑信息（如 <code>nvidia.com/gpu-topology: nvlink-8</code>），判断是否满足 Pod 需求。不满足则返回 <code>Unschedulable</code>。</li>
 <li><strong>Score：</strong>对满足条件的节点，根据 NVLink 域剩余 GPU 数量打分：刚好满足需求（如剩余 4 卡域）给高分，碎片化严重的给低分。</li>
-<li><strong>Reserve：</strong>在 scheduler cache 中标记具体哪些 GPU 被预留，防止后续 Pod 重复分配。</li>
+<li><strong>Reserve：</strong>在插件账本中记录所选 Node 的逻辑 GPU 拓扑名额，防止 Bind 完成前被后续调度周期重复使用。普通 <code>nvidia.com/gpu</code> 的具体 device ID 仍由节点侧 Device Plugin / kubelet Allocate 路径决定。</li>
 </ol>
 </div>
 
@@ -341,6 +374,20 @@ status:
 <div class="qa-summary">PredictionResult 在 AIJob 创建后的 Reconcile 中产生，运行中异步校准；用户用它排查预测状态，scheduler plugin 用它做本地查表决策。</div>
 </div>
 
+<div class="card card-w">
+<h3>外部指标与预测服务不能成为调度热路径依赖</h3>
+<p>Scheduling Cycle 对 Pod 串行推进。Filter/Score 虽然能并行处理 Node，但任何同步 DCGM 查询、Prometheus 查询或预测 RPC 都会把网络尾延迟、限流和故障传播到整个调度主循环；如果在每个 Node 的 Filter/Score 中调用一次，还会把请求量放大为“Pod 数 × Node 数”。</p>
+<table>
+<tr><th>风险</th><th>控制方式</th><th>降级语义</th></tr>
+<tr><td>RPC 慢、超时或服务不可用</td><td>Operator/collector 异步计算并写 CRD；Plugin 只读 Informer 本地缓存</td><td>按配置选择保守拒绝、回退默认分或进入可重试 Error，不能临时随机决定</td></tr>
+<tr><td>指标陈旧或抖动</td><td>状态携带 <code>observedAt</code>、模型版本、confidence 和 TTL；使用滑动窗口与安全余量</td><td>超过最大年龄后不把旧值当实时事实，低置信度禁止高风险共置</td></tr>
+<tr><td>缓存尚未同步</td><td>启动时等待 Informer <code>HasSynced</code>；缺失数据使用明确的 Status reason</td><td>避免把“未同步”误判为“节点满足条件”</td></tr>
+<tr><td>插件锁竞争或计算过重</td><td>不可变快照、读多写少索引、PreFilter/PreScore 预计算、限制候选节点</td><td>超预算时回退简单策略，并通过指标暴露降级次数</td></tr>
+<tr><td>模型判断错误</td><td>运行期用 DCGM/step time 对账，设置 SLO 阈值和解除共置动作</td><td>调度决策可重算，但已绑定 Pod 不会被 Score 自动迁移，需要 Controller 执行后续处置</td></tr>
+</table>
+<p>若确实必须远程调用，应使用严格的 context deadline、连接池、熔断、并发上限和结果缓存，并把调用次数控制在每个 scheduling cycle 一次，而不是每个候选 Node 一次。即使如此，它仍会降低可用性，异步物化状态通常更稳妥。</p>
+</div>
+
 <div class="card card-m">
 <h3>④ 各扩展点职责与 Go 骨架</h3>
 <p>下面代码只展示关键路径。真实实现中还需要错误处理、metrics、并发保护、feature gate 和配置化权重。</p>
@@ -477,18 +524,9 @@ func (pl *PredictivePlugin) Unreserve(
 </div>
 
 <div class="card card-w">
-<h3>⑥ 30 秒 / 2 分钟 / 追问应答</h3>
-<h4>30 秒</h4>
-<p>我会把预测调度器拆成 AIJob Operator 和 Scheduler Plugin 两部分。用户提交 <code>AIJob</code>，Operator 负责展开 PodGroup / Pods、管理 checkpoint 和任务状态，同时预测子控制器从 Prometheus / DCGM / 训练框架指标中训练 runtime 和 interference 模型，并把结果写入 <code>PredictionResult</code> 和 <code>NodeGpuProfile</code>。Scheduler Plugin 只用 Informer 把这些 CRD 缓存在本地：QueueSort 用预测运行时间做第三排序键，Filter 用共置 retention 做硬阈值，Score 在可行节点里选择干扰更小、装箱更好的节点，Reserve / Unreserve 维护插件自己的共置账本。</p>
-
-<h4>2 分钟</h4>
-<p>整体链路是：用户提交 AIJob；AIJob Operator 把它转换成 PodGroup / Pods，并维护任务状态；节点侧 DCGM Exporter 和训练框架暴露 GPU counters、step time、throughput；Operator 的预测子控制器周期拉取历史样本，训练运行时间模型和 job-signature 之间的 retention 矩阵；对每个 AIJob 生成 <code>PredictionResult</code>，对每个 GPU 节点维护 <code>NodeGpuProfile</code>。scheduler plugin 初始化时建立 Informer，把这些 CRD 放进本地 cache。</p>
-<p>调度时，QueueSort 先看 PriorityClass，再看租户公平性，最后才看 predicted runtime，避免短任务优先饿死长任务。PreFilter 从本地 cache 读取当前 Pod 所属 AIJob 的 PredictionResult 写入 CycleState。Filter 读取 NodeGpuProfile 和节点上已共置任务的 signature，预测 retention 低于阈值就返回 Unschedulable。Score 对可行节点综合 interference、bin packing 和 topology 打分。Reserve 把本次 Pod 的 signature 写入插件账本，Bind 失败通过 Unreserve 回滚。</p>
-<p>这套设计的核心是热路径隔离：模型训练、推理、样本回收全部在 Operator 异步做；scheduler 只做内存查表和轻量计算，因此不会把 Filter / Score 放大成 RPC 风暴。</p>
-
-<h4>面试官可能追问</h4>
+<h3>⑥ 设计边界与故障处理</h3>
 <table>
-<tr><th>追问</th><th>回答抓手</th></tr>
+<tr><th>设计问题</th><th>处理机制</th></tr>
 <tr><td>为什么用 AIJob，而不是只有 PredictionResult？</td><td>AIJob 表达训练任务语义：模型、batch size、replica、GPU、checkpoint、minAvailable、共置容忍度。PredictionResult 只是 AIJob 的调度辅助状态。</td></tr>
 <tr><td>为什么不用 Pod annotation？</td><td>预测结果是结构化状态，可能包含 runtime、confidence、干扰矩阵、版本和更新时间；CRD 可独立 watch、GC、鉴权和演进，不污染 Pod 对象。</td></tr>
 <tr><td>为什么不在 Filter 里直接 gRPC 调模型？</td><td>Filter 是节点级并行热路径，节点数越多 RPC 越多；scheduler P99 必须稳定，所以只读 Informer 本地 cache。</td></tr>
@@ -496,5 +534,5 @@ func (pl *PredictivePlugin) Unreserve(
 <tr><td>冷启动没有 PredictionResult 怎么办？</td><td>Guaranteed 任务保守拒绝高风险共置；BestEffort 可用 namespace / AIJob 类型历史中位数和默认 retention；同时 AIJob Operator 尽快补齐 CRD。</td></tr>
 <tr><td>怎么证明有效？</td><td>看调度延迟、JCT、waiting time、GPU 利用率、SLO violation、实际 retention；做 ablation：去掉 runtime 排序、去掉 interference Filter、去掉 interference Score。</td></tr>
 </table>
-<div class="qa-summary">收束：预测运行时间决定“先调谁”，共置干扰预测决定“能不能放和放哪里”；预测值统一由 Operator 写 CRD，scheduler plugin 只通过 Informer 本地缓存读取。</div>
+<div class="qa-summary">预测运行时间作用于“先调谁”，共置干扰预测作用于“能不能放和放哪里”；预测值由 Operator 异步写 CRD，scheduler plugin 通过 Informer 本地缓存读取。</div>
 </div>

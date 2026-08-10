@@ -57,6 +57,20 @@
 </table>
 </div>
 
+<div class="card card-m">
+<h3>Cache 与 API Server 暂时不一致时如何收敛</h3>
+<p>Scheduler Cache 是基于 Informer 事件维护的低延迟视图，不是跨 API Server、节点和外部 scheduler 的强一致事务。默认 scheduler 依靠单 Leader、Cache 顺序更新、Assume 提前记账和绑定结果回流，把常见竞态限制在可恢复范围内。</p>
+<table>
+<tr><th>时刻</th><th>内存与持久状态</th><th>恢复机制</th></tr>
+<tr><td>启动或切主</td><td>新进程没有旧 Cache 与 Assume 状态</td><td>先等待 Informer Cache 同步；已 Bind Pod 从 API 对象重建，未 Bind Pod 重新进入队列</td></tr>
+<tr><td>选中 Node、Bind 尚未完成</td><td>API 中仍未绑定，但 Cache 已计入 Assumed Pod</td><td>后续 scheduling cycle 先看到资源被占，避免同一 scheduler 过度分配</td></tr>
+<tr><td>Bind 成功</td><td>API Server 保存 <code>spec.nodeName</code></td><td>Informer 的 Add/Update 事件确认绑定，并把 assumed 状态转为普通已绑定状态</td></tr>
+<tr><td>Bind 失败或 assumed Pod 超时</td><td>API 中没有成功绑定</td><td>Forget assumed Pod、执行 Unreserve，并把 Pod 交回失败处理与队列重试</td></tr>
+<tr><td>Node/Pod/PVC 在调度中发生变化</td><td>当前 Snapshot 可能稍旧</td><td>相关 API 写入使用 resourceVersion/绑定语义保护；Informer 事件更新 Cache，失败 Pod 重试时基于新 Snapshot 重算</td></tr>
+</table>
+<p>这种设计保证的是在标准单活 scheduler 模型下最终收敛，不是任意并发写入下的全局串行化。如果多个独立 scheduler 或外部组件同时分配同一批 Node 资源，它们必须共享 Reservation/Claim 协议或划分互斥资源池，不能只依赖各自 Cache。</p>
+</div>
+
 <div class="card card-s">
 <h3>调度失败状态：不是所有 Pending 都一样</h3>
 <p>面试官问 Pod 为什么 Pending 时，不要只答“资源不够”。scheduler 内部会区分失败类型，这决定了后续是等待事件、退避重试、记录错误，还是进入抢占。</p>

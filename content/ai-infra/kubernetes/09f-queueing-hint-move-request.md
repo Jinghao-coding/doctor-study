@@ -1,4 +1,4 @@
-## 三个队列再回顾
+## QueueingHint 操作的三个队列
 
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/03-three-queues.png" alt="Scheduler 三队列流转图" loading="lazy">
@@ -10,13 +10,15 @@
 <table>
 <tr><th>队列</th><th>数据结构</th><th>语义</th><th>出队条件</th></tr>
 <tr><td>ActiveQ</td><td>堆（priority + timestamp）</td><td>等待立即调度的 Pod</td><td>scheduler 主循环 <code>Pop()</code></td></tr>
-<tr><td>BackoffQ</td><td>堆（backoff 到期时间）</td><td>调度刚失败、还在退避中的 Pod</td><td>backoff 时间到 → 自动迁移到 ActiveQ</td></tr>
+<tr><td>BackoffQ</td><td>堆（backoff 到期时间）</td><td>已经具备重试理由，但退避期限尚未结束的 Pod</td><td>backoff 时间到 → 自动迁移到 ActiveQ</td></tr>
 <tr><td>UnschedulableQ</td><td>map[uid]Pod</td><td>调度失败、需要事件唤醒的 Pod</td><td>QueueingHint 命中、定时刷盘（默认 5 分钟）</td></tr>
 </table>
-<div class="qa-summary">三个队列的关键是 UnschedulableQ：不被自动唤醒，必须靠"集群事件 + QueueingHint"主动捞回去。</div>
+<div class="qa-summary">UnschedulableQ 主要等待“集群事件 + QueueingHint”精确唤醒，同时保留周期 flush 兜底；被唤醒时再根据退避是否结束进入 ActiveQ 或 BackoffQ。</div>
 </div>
 
 ## QueueingHint：从惊群到精确唤醒
+
+官方资料：[Scheduling Framework / QueueingHint](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/#queueinghint) · [Kubernetes 1.32 QueueingHint](https://kubernetes.io/blog/2024/12/12/scheduler-queueinghint/)
 
 <div class="card card-w">
 <h3>没有 QueueingHint 时的"惊群"问题</h3>
@@ -39,7 +41,6 @@
 <tr><th>返回值</th><th>含义</th><th>scheduler 行为</th></tr>
 <tr><td><code>Queue</code></td><td>这个事件可能让 Pod 重新可调度</td><td>把 Pod 从 UnschedulableQ 移到 BackoffQ（或 ActiveQ）</td></tr>
 <tr><td><code>QueueSkip</code></td><td>这个事件和 Pod 失败原因无关</td><td>Pod 留在 UnschedulableQ</td></tr>
-<tr><td><code>QueueAfterBackoff</code></td><td>移动，但要走 backoff（已废弃，1.32 后等价于 Queue）</td><td>同 Queue</td></tr>
 </table>
 </div>
 
@@ -107,7 +108,7 @@ func (pl *NodeAffinity) isSchedulableAfterNodeChange(
 <li><strong>构造 ClusterEvent：</strong>把 informer event 翻译成 <code>{Resource, ActionType}</code> 二元组。</li>
 <li><strong>遍历 UnschedulableQ：</strong>对每个 Pending Pod，找到所有曾经失败的 Plugin。</li>
 <li><strong>调用 QueueingHintFn：</strong>对每个 Plugin 调用其注册的 hint 函数，传入 oldObj / newObj。</li>
-<li><strong>决策：</strong>只要有一个 Plugin 返回 <code>Queue</code>，就把 Pod 搬到 BackoffQ；全部返回 <code>QueueSkip</code> 则留在 UnschedulableQ。</li>
+<li><strong>决策：</strong>只要有一个 Plugin 返回 <code>Queue</code>，就唤醒 Pod；退避已结束时进入 ActiveQ，否则进入 BackoffQ。全部返回 <code>QueueSkip</code> 时留在 UnschedulableQ。</li>
 </ol>
 <div class="qa-summary">关键 trick：Plugin 返回 <code>QueueSkip</code> 不代表 Pod 永远不再被尝试 —— 5 分钟的 flush 定时器仍然会兜底，避免 hint 函数有 bug 时 Pod 永远卡死。</div>
 </div>
@@ -118,7 +119,7 @@ func (pl *NodeAffinity) isSchedulableAfterNodeChange(
 <p><strong>1.28 之前：</strong>每个 Plugin 通过 <code>EventsToRegister()</code> 注册关心的 ClusterEvent 类型，scheduler 一旦收到匹配类型的事件，就把 UnschedulableQ 里所有"失败 Plugin 包含这个 Plugin"的 Pod 一次性全搬走。</p>
 <p><strong>问题：</strong>事件粒度太粗。例如 NodeAffinity 注册了 <code>Node.UpdateLabel</code>，但任何一次 Node 标签变化都会唤醒所有因 NodeAffinity 失败的 Pod，而绝大多数 Pod 关心的标签和这次变化的标签根本不是同一个。</p>
 <p><strong>1.28 引入 QueueingHint：</strong>在原来的"事件类型匹配"基础上，加一层 Plugin 级别的精确判断函数，只有 Plugin 自己确认"这次事件可能让我成功"才搬移。</p>
-<p><strong>1.32 GA：</strong>默认开启，所有内置 Plugin 都已实现 hint 函数。</p>
+<p><strong>1.32：</strong>QueueingHint 以 Beta 状态默认开启；<strong>1.34：</strong>功能进入 Stable。版本演进不改变核心语义：插件结合具体对象变化判断这次事件是否值得触发重试。</p>
 </div>
 </div>
 

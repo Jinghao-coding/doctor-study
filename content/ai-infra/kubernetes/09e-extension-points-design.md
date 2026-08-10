@@ -1,10 +1,26 @@
 ## 调度框架全景图
 
-下面这张是 `kubernetes/enhancements/keps/sig-scheduling/624-scheduling-framework` 设计文档里给出的官方流程图。**先记图，再背扩展点**。
+下面这张是 `kubernetes/enhancements/keps/sig-scheduling/624-scheduling-framework` 设计文档给出的官方流程图。
+
+官方资料：[Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/) · [Scheduler Configuration](https://kubernetes.io/docs/reference/scheduling/config/)
 
 <div class="figure">
 <img src="../../../resources/images/k8s-scheduler/02-scheduling-framework.png" alt="Kubernetes Scheduling Framework 流程图" loading="lazy">
 <p class="caption">PreEnqueue → Scheduling Cycle（PreFilter / Filter / PreScore / Score / NormalizeScore / Reserve / Permit）→ Binding Cycle（WaitOnPermit / PreBind / Bind / PostBind）。Scheduling Cycle 串行，Binding Cycle 可与下一个 Pod 的 Scheduling Cycle 并发。</p>
+</div>
+
+## QueueSort：全局队列只能有一套顺序
+
+<div class="card card-s">
+<h3><code>Less(p1, p2)</code> 决定谁先获得调度机会</h3>
+<p>QueueSort 不选择节点，而是比较 ActiveQ 中两个 Pod 的先后顺序。默认 <code>PrioritySort</code> 先比较 Priority，优先级相同时再比较入队时间。自定义实现可以加入租户公平性、deadline 或预测运行时间，但必须保留确定的 tie-breaker，并满足传递性；否则优先队列可能出现不稳定顺序。</p>
+<table>
+<tr><th>规则</th><th>原因</th></tr>
+<tr><td>同一时刻只能启用一个 QueueSort Plugin</td><td>一个优先队列只能依赖一套比较关系维护堆序</td></tr>
+<tr><td>同一 kube-scheduler 的所有 Profile 必须使用相同插件和相同参数</td><td>多个 Profile 共享同一个 pending Pods queue，而不是各自维护 ActiveQ</td></tr>
+<tr><td>比较器必须有稳定的最终 tie-breaker</td><td>避免两个 Pod 在多次比较中前后关系漂移，并降低饥饿风险</td></tr>
+<tr><td>排序状态必须能低成本读取</td><td><code>Less</code> 位于队列热路径，外部 RPC 会直接放大入队和出队延迟</td></tr>
+</table>
 </div>
 
 ## PreFilter vs Filter：为什么必须拆开
@@ -15,7 +31,7 @@
 <tr><th>维度</th><th>PreFilter</th><th>Filter</th></tr>
 <tr><td>阶段目标</td><td><strong>数据预处理 + 全局状态检查</strong></td><td><strong>节点级过滤</strong>，逐节点检查条件</td></tr>
 <tr><td>数据流</td><td>写入共享数据到 <code>CycleState</code></td><td>从 <code>CycleState</code> 读取数据并过滤节点</td></tr>
-<tr><td>执行顺序</td><td>所有 PreFilter 插件 <strong>顺序执行（串行）</strong></td><td>Filter 插件 <strong>并行</strong>执行，多协程跨节点（默认 16 协程）</td></tr>
+<tr><td>执行顺序</td><td>所有 PreFilter 插件按配置顺序执行</td><td>候选 Node 可以并行评估；同一 Node 内的 Filter 插件按配置顺序执行</td></tr>
 <tr><td>终止能力</td><td>可以提前终止整个调度周期（如 Pod 不合法、PodGroup 不齐）</td><td>仅排除当前节点，不影响其它节点判断</td></tr>
 <tr><td>调用次数</td><td>每个调度周期调用一次</td><td>每个候选节点调用一次（节点数 × 插件数）</td></tr>
 <tr><td>典型工作</td><td>解析 Pod annotation、查 PodGroup 状态、构建拓扑索引、计算资源需求</td><td>检查节点资源、Taint、Affinity、Volume、自定义约束</td></tr>
@@ -30,7 +46,20 @@
 <li>查 PodGroup 当前已绑定到哪些 zone：<strong>这是一次集群级查询，所有节点都用同一个结果</strong>。如果放在 Filter 里，N 个节点会查 N 次，性能爆炸。</li>
 <li>正确做法：<code>PreFilter</code> 里查一次写入 <code>CycleState["targetZones"] = [...]</code>；<code>Filter</code> 里只做 <code>node.zone in targetZones</code> 这种 O(1) 判断。</li>
 </ul>
-<p>这同时解释了为什么 Filter 能并行：每个 goroutine 只读 <code>CycleState</code>（已经写完的不可变数据）+ 当前 NodeInfo，没有写竞争。</p>
+<p>这同时解释了为什么不同 Node 的 Filter 计算可以并行：每个 goroutine 只读本轮准备好的 <code>CycleState</code> 和当前 NodeInfo。插件若在 Filter 中修改共享状态，必须自行保证并发安全。</p>
+</div>
+
+<div class="card card-w">
+<h3>Filter 的短路与失败语义</h3>
+<p>对一个候选 Node，scheduler 按配置顺序调用 Filter 插件。只要某个插件把该 Node 判为 infeasible，后续 Filter 插件就不再为这个 Node 执行；其他 Node 的评估不受影响，并可继续并行。</p>
+<table>
+<tr><th>返回状态</th><th>含义</th><th>后续影响</th></tr>
+<tr><td><code>Success</code></td><td>当前插件允许该 Node</td><td>继续执行该 Node 的下一个 Filter 插件</td></tr>
+<tr><td><code>Unschedulable</code></td><td>当前条件下不可行，但状态变化后可能恢复</td><td>该 Node 短路；失败插件进入 Diagnosis，后续事件可通过 QueueingHint 唤醒 Pod</td></tr>
+<tr><td><code>UnschedulableAndUnresolvable</code></td><td>当前约束很难由普通集群事件解决</td><td>该 Node 短路，并减少无意义的抢占或重试</td></tr>
+<tr><td><code>Error</code></td><td>插件执行或依赖发生内部错误</td><td>不是普通“不满足约束”，本次调度按错误路径失败并重试</td></tr>
+</table>
+<p>短路意味着 FailedScheduling 事件不保证列出每个 Node 上所有潜在失败原因；它记录的是实际执行到的诊断结果。调整 Filter 插件顺序既影响性能，也可能影响首先暴露给用户的失败原因。</p>
 </div>
 
 ## PreScore vs Score：同样的设计套路
@@ -56,6 +85,14 @@
 | PreScore | 一次 | 全局 |
 | Score | 节点 | 单节点 |
 | NormalizeScore | 一次 | **本插件的所有节点分数列表** |
+
+每个 Score 插件先完成自己的节点打分和可选归一化，Framework 再校验分数范围并乘以该插件在 `KubeSchedulerConfiguration` 中配置的 weight，最后对同一 Node 求和：
+
+```text
+FinalScore(node) = Σ Normalize(pluginScore(node)) × pluginWeight
+```
+
+某个 Score 插件返回错误时，本次调度周期按错误处理，而不是忽略它后继续用不完整的总分选 Node。并列最高分节点由 scheduler 再做选择，不能假定总会固定命中同一个节点。
 
 ## Plugin 与 Hook 的多对多结构
 
@@ -124,11 +161,11 @@ var nodeResourceStrategyTypeMap = map[config.ScoringStrategyType]scorer{
 }
 ```
 
-<div class="qa-summary">三种策略对应三种调优目标：<strong>LeastAllocated 撒胡椒面、MostAllocated bin packing、RequestedToCapacityRatio 自定义曲线</strong>。具体公式见「设计理念与经典插件案例」一节的 NodeResources 部分。</div>
+<div class="qa-summary">三种策略对应三种目标：<strong>LeastAllocated 倾向分散、MostAllocated 倾向 bin packing、RequestedToCapacityRatio 使用自定义利用率—分数曲线</strong>。</div>
 
-## kube-scheduler 源码目录地图
+## kube-scheduler 源码目录职责
 
-读源码时不要从 `main.go` 入手。**先读 `framework/interface.go` 弄清接口定义，再看 `runtime/framework.go` 怎么把插件串起来，最后再追 `schedule_one.go` 主循环**。
+`framework/interface.go` 定义扩展点契约，`runtime/framework.go` 负责插件注册、配置与调用，`schedule_one.go` 把这些 Hook 串入单 Pod 调度和绑定主循环。
 
 ```
 kubernetes/pkg/scheduler/

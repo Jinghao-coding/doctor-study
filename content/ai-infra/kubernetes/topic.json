@@ -75,11 +75,11 @@
           "items": [
             {
               "title": "Controller 控制循环",
-              "description": "期望状态、实际状态、Reconcile、幂等收敛与失败模型",
+              "description": "期望与实际状态、幂等 Reconcile、外部副作用、Finalizer、并发冲突与多副本选主",
               "file": "11a-controller-control-loop.md",
               "level": "进阶",
               "priority": 3,
-              "time": 18
+              "time": 28
             },
             {
               "title": "Informer 与 WorkQueue",
@@ -137,19 +137,19 @@
             },
             {
               "title": "Cache、扩展点与抢占",
-              "description": "Scheduler Cache、Snapshot、Assumed Pod、Binding Cycle 与 Preemption",
+              "description": "Scheduler Cache、Snapshot、Assumed Pod、API 状态收敛、Binding Cycle 与 Preemption",
               "file": "09b-scheduler-cache-preemption.md",
               "level": "进阶",
               "priority": 3,
-              "time": 18
+              "time": 24
             },
             {
               "title": "性能、打分与 HA",
-              "description": "节点采样、Score 插件、多 Profile、Leader Election 与调度性能",
+              "description": "节点采样、Score 插件、多 Profile、Leader 切换与多 Scheduler 资源一致性",
               "file": "09c-scheduler-performance-tuning.md",
               "level": "精通",
               "priority": 2,
-              "time": 15
+              "time": 22
             },
             {
               "title": "设计理念与经典插件",
@@ -161,7 +161,7 @@
             },
             {
               "title": "扩展点设计差异",
-              "description": "PreFilter、Filter、PreScore、Score 等 Hook 的职责、状态与选型",
+              "description": "QueueSort、PreFilter、Filter、PreScore、Score 的职责、短路、并行与加权汇总",
               "file": "09e-extension-points-design.md",
               "level": "精通",
               "priority": 2,
@@ -169,11 +169,11 @@
             },
             {
               "title": "自定义 Plugin 实战",
-              "description": "Framework Plugin、Extender、独立 Scheduler 与 GPU 拓扑插件代码骨架",
+              "description": "Plugin/Extender/独立 Scheduler 选型、编译注册、GPU 拓扑代码与外部依赖降级",
               "file": "09d-scheduler-custom-plugin.md",
               "level": "精通",
               "priority": 2,
-              "time": 40
+              "time": 45
             },
             {
               "title": "QueueingHint 与 Move Request",
@@ -185,11 +185,11 @@
             },
             {
               "title": "Scheduler 可观测性",
-              "description": "Diagnosis、FitError、模拟器、Prometheus 指标与调度 SLO",
+              "description": "Diagnosis、FitError、模拟器、扩展点指标以及吞吐、延迟与放置质量评估",
               "file": "09g-scheduler-observability.md",
               "level": "精通",
               "priority": 2,
-              "time": 18
+              "time": 24
             },
             {
               "title": "Scheduler 源码主链路",

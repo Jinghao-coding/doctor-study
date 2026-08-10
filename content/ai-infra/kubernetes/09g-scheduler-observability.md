@@ -96,6 +96,30 @@ Events:
 <p>固定阈值不能跨集群照搬。在线服务、批任务和稀缺 GPU 队列的正常等待时间差异很大，应以目标集群基线、业务启动 SLO、profile 和 PriorityClass 分层告警。</p>
 </div>
 
+## 吞吐、延迟与放置质量
+
+<div class="card card-s">
+<h3>调度器评估必须同时观察三类结果</h3>
+<table>
+<tr><th>维度</th><th>代表指标</th><th>只能说明什么</th></tr>
+<tr><td>吞吐</td><td>单位时间 scheduled attempts、稳定可处理的 Pod/s、队列积压增长率</td><td>调度器能否跟上工作负载到达速度；不能证明节点放置合理</td></tr>
+<tr><td>调度延迟</td><td>Pod 从可调度到成功 Bind 的 P50/P95/P99、单次 scheduling attempt 延迟、重试次数</td><td>用户等待和控制面尾延迟；必须区分排队等待、不可调度等待和单次算法耗时</td></tr>
+<tr><td>放置质量</td><td>资源利用率、CPU/内存/GPU 碎片、拓扑本地性、跨机通信量、SLO violation、JCT、公平性与抢占代价</td><td>策略对业务和集群目标是否有效；不能只用 scheduler 自身延迟替代</td></tr>
+</table>
+</div>
+
+<div class="card card-d">
+<h3>可复现的评估方法</h3>
+<ol>
+<li><strong>固定输入：</strong>保存 Node、Pod、PVC、PriorityClass、队列和自定义 CRD 快照，使用相同到达序列比较基线与新策略。</li>
+<li><strong>先验证硬正确性：</strong>任何候选策略都不能违反 requests、taint、affinity、存储拓扑和设备约束；可行性不是用平均收益交换的指标。</li>
+<li><strong>分层测性能：</strong>分别测 scheduler 微基准、离线重放/模拟器，以及 staging 的端到端 Pod 启动；同时报告吞吐与 P99。</li>
+<li><strong>测业务目标：</strong>GPU 调度至少报告等待时间、JCT、GPU 利用率、碎片、拓扑命中率、SLO violation、抢占次数和 checkpoint 损失。</li>
+<li><strong>做消融与压力场景：</strong>去掉 QueueSort、干扰 Score 或节点采样分别比较；覆盖资源充足、资源紧张、大量不可调度 Pod、预测服务降级和 Leader 切换。</li>
+</ol>
+<p><code>percentageOfNodesToScore</code> 的收益也要按这套方法评估：降低采样比例可能改善调度延迟，却同时恶化装箱、拓扑选择或 GPU 碎片，不能只看 scheduler CPU 降低。</p>
+</div>
+
 <div class="card card-w">
 <h3>核心 PromQL 查询示例</h3>
 <pre><code># 1. 调度成功率（5 分钟窗口）

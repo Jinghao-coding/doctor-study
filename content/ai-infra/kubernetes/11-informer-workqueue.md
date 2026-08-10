@@ -344,29 +344,6 @@ func (c *Controller) handleErr(err error, key interface{}) {
 </code></pre>
 </div>
 
-<div class="card card-d">
-<h3>HA Controller 与 Leader Election</h3>
-<p>同一组 Controller 多副本运行时，每个进程都有独立的 Cache 和 WorkQueue，因而可能同时 reconcile 同一对象。很多 Controller Manager 使用 <strong>Leader Election</strong> 简化协调，但“只能单副本工作”不是普遍正确性前提：无论是否选主，Reconcile 都必须幂等并处理乐观并发冲突。</p>
-<ul>
-<li>基于 Lease 对象（旧版用 ConfigMap/Endpoints）实现分布式锁。</li>
-<li>Leader 定期续租（Renew），如果 Leader 故障超时，其他副本竞选新 Leader。</li>
-<li>采用单活模式时，只有 Leader 运行 worker 池；非 Leader 等待成为 Leader。</li>
-<li><code>NewLeaderElector</code> + <code>OnStartedLeading</code> 回调启动 Controller。</li>
-<li>Leader Election 只减少常态重复执行并提供故障切换，不提供 exactly-once、事务或 fencing；外部副作用仍要使用幂等键或 fencing token。</li>
-</ul>
-<pre><code class="language-go">leaderelection.RunOrDie(ctx, leaderelection.LeaderElectionConfig{
-    Lock:          rl, // Lease lock
-    LeaseDuration: 15 * time.Second,
-    RenewDeadline: 10 * time.Second,
-    RetryPeriod:   2 * time.Second,
-    Callbacks: leaderelection.LeaderCallbacks{
-        OnStartedLeading: c.Run, // 成为 Leader 时启动 Controller
-        OnStoppedLeading: func() { /* Leader 丢失 */ },
-    },
-})
-</code></pre>
-</div>
-
 <div class="card card-s">
 <h3>关键 Metrics</h3>
 <table>
