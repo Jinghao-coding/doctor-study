@@ -702,7 +702,12 @@ def _normalize_groups(block: dict) -> list[dict]:
             if not items:
                 continue
             if len(items) == 1:
-                parent_items.append(items[0])
+                # 左侧展示的是粗粒度模块。单知识点分组也应与多知识点分组
+                # 保持一致，避免难度、优先级和时长标签泄漏到一级导航。
+                parent = dict(items[0])
+                for key in ("level", "priority", "time"):
+                    parent.pop(key, None)
+                parent_items.append(parent)
                 continue
             item_titles = [item.get("title", "") for item in items if item.get("title")]
             auto_description = " · ".join(item_titles[:3])
