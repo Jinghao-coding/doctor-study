@@ -29,8 +29,8 @@
       "slug": "ai-infra/papers",
       "source": "content/ai-infra/papers/topic.json",
       "output": "pages/ai-infra/papers/index.html",
-      "description": "Maestro 与 DeepShare 两篇论文工作的背景、系统设计、实验结果和高频问答。",
-      "tags": ["papers", "maestro", "deepshare"],
+      "description": "Maestro、DeepShare、ElastiCo 与 SagePilot 的系统设计、实现细节、资源预测、调度机制和面试问答。",
+      "tags": ["papers", "maestro", "deepshare", "elastico", "sagepilot"],
       "color": "c1"
     },
     {

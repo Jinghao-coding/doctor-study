@@ -78,14 +78,60 @@
               "level": "精通",
               "priority": 1,
               "time": 20
-            },
+            }
+          ]
+        },
+        {
+          "title": "SagePilot",
+          "description": "资源预测、调用链融合、模型生命周期与调度实现",
+          "items": [
             {
-              "title": "SagePilot（撰写中）",
-              "description": "GNN 计算图表征、多目标性能预测、Agentic 工作流编排",
+              "title": "系统问题与设计",
+              "description": "工作流瓶颈、三模块链路、QMSum 例子与实现边界",
               "file": "05-sagepilot-gnn-prediction.md",
               "level": "进阶",
-              "priority": 2,
-              "time": 15
+              "priority": 1,
+              "time": 8
+            },
+            {
+              "title": "运行时间与显存预测",
+              "description": "算子图特征、九目标回归、时间分桶与显存准入上界",
+              "file": "05a-sagepilot-resource-prediction.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "加载时间怎么算",
+              "description": "warm reload 两层中位数算例、样本门槛与回退规则",
+              "file": "05b-sagepilot-load-time.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 8
+            },
+            {
+              "title": "SageGraph 链融合",
+              "description": "合法链条件、一次租约多次生成与上下文预算",
+              "file": "05c-sagepilot-graph-fusion.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 9
+            },
+            {
+              "title": "SageWeaver 调度",
+              "description": "准入、加载收益、扩副本、回收与预取的具体决策",
+              "file": "05d-sagepilot-scheduling.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 12
+            },
+            {
+              "title": "工程追问与实验证据",
+              "description": "预测归因、实测与模拟、并发正确性及扩展设计",
+              "file": "05e-sagepilot-interview-evidence.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 10
             }
           ]
         },
