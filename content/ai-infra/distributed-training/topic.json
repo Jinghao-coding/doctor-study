@@ -71,6 +71,13 @@
           "title": "面试与排障",
           "items": [
             {
+              "title": "分布式训练高频问答",
+              "description": "10 道并行语义、梯度累积、状态显存、通信计算与容错追问",
+              "file": "07-training-interview.md",
+              "level": "进阶",
+              "time": 20
+            },
+            {
               "title": "排障与面试计算题",
               "description": "GPU 利用率低、hang、OOM、慢训练、经典估算题",
               "file": "06-troubleshooting-interview.md",

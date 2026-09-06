@@ -45,14 +45,14 @@ PagedAttention 借鉴操作系统虚拟内存的分页思想，把 KV Cache 切�
 
 | 变化 | 传统方式 | PagedAttention 后 |
 |---|---|---|
-| 接纳新请求 | 需要判断是否有足够连续 KV 空间 | 只要有足够空闲 block 就可接纳 |
+| 接纳新请求 | 需要判断是否有足够连续 KV 空间 | 结合空闲 block、计算预算和运行时余量接纳 |
 | 释放请求 | 释放一大段连续 cache，容易形成洞 | 释放一组 block，直接回到 block pool |
 | 前缀复用 | 很难共享不同请求的公共 prompt | block 可以引用计数，支持 prefix cache 和 copy-on-write |
 | 调度粒度 | 多按请求级别粗粒度调度 | 可以按 token/block 预算做细粒度调度 |
 
-因此 vLLM 这类推理引擎可以把调度器从“静态 batch + 固定显存”推进到“iteration-level scheduling + block-level KV 管理”。这也是 Continuous Batching 能稳定工作的基础：每一轮 decode 后，完成的请求释放 block，新请求只要拿到 block 就能进入 running set。
+因此 vLLM 这类推理引擎可以把调度器从“静态 batch + 固定显存”推进到“iteration-level scheduling + block-level KV 管理”。这为 Continuous Batching 提供了更灵活的内存管理：每轮完成的请求释放 block，新请求在满足 KV、计算和运行时预算后进入 running set；连续批处理本身不以分页为必要条件。
 
-面试口径：**PagedAttention 不是一个 attention kernel，而是 KV Cache 的虚拟内存系统。它解决的是显存碎片和动态请求接纳问题，从而支撑 continuous batching。**
+**PagedAttention 是访问分页 KV 的 attention 算法，包含配套的 kernel；vLLM 在它之上实现 block 分配、共享、回收和调度。** 它借鉴分页思想，但不等同于 CUDA VMM 或硬件缺页机制。参见 [PagedAttention 原论文](https://arxiv.org/abs/2309.06180)。
 
 ## FlashAttention
 

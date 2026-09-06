@@ -2,7 +2,14 @@
   "title": "LLM 推理系统",
   "subtitle": "推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 量化 · 投机解码 · 多 LoRA · 性能优化 · 引擎选型 · 部署运维",
   "kicker": "Serving System",
-  "tags": ["llm", "inference", "kv-cache", "serving", "quantization", "speculative"],
+  "tags": [
+    "llm",
+    "inference",
+    "kv-cache",
+    "serving",
+    "quantization",
+    "speculative"
+  ],
   "output": "pages/ai-infra/llm-inference/index.html",
   "layout": [
     {
@@ -100,6 +107,20 @@
                   "file": "09-flashattention-vllm.md"
                 }
               ]
+            },
+            {
+              "title": "KV 面试：原理与计算",
+              "description": "8 道缓存机制、显存估算、并行分片与量化追问",
+              "file": "19-kv-interview-basics.md",
+              "level": "进阶",
+              "time": 15
+            },
+            {
+              "title": "KV 面试：系统设计",
+              "description": "8 道前缀复用、准入回收、VMM 与效果验证追问",
+              "file": "20-kv-interview-systems.md",
+              "level": "精通",
+              "time": 18
             }
           ]
         },
@@ -197,6 +218,13 @@
               "file": "18-serving-deployment.md",
               "level": "精通",
               "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "分布式推理与训推问答",
+              "description": "10 道副本选型、PD 分离、KV 传输、混部与版本切换题",
+              "file": "21-distributed-serving-interview.md",
+              "level": "精通",
               "time": 20
             }
           ]
