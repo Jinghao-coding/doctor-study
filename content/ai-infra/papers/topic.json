@@ -21,7 +21,13 @@
           "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM 弹性显存",
           "items": [
             {
-              "title": "ICDCS 2026 Maestro",
+              "title": "5 分钟叙述",
+              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "file": "01a-maestro-five-minute.md",
+              "time": 5
+            },
+            {
+              "title": "系统设计与问答",
               "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM 弹性显存",
               "file": "01-icdcs-2026-maestro-llm.md",
               "level": "精通",
@@ -34,6 +40,12 @@
           "title": "IEEE Cluster 2026 DeepShare",
           "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
           "items": [
+            {
+              "title": "5 分钟叙述",
+              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "file": "02g-deepshare-five-minute.md",
+              "time": 5
+            },
             {
               "title": "概述与设计",
               "description": "问题背景 / 系统设计 / 核心定位",
@@ -65,7 +77,7 @@
               "file": "02e-faq-paper.md"
             },
             {
-              "title": "面试主讲",
+              "title": "主讲展开与追问",
               "description": "背景动机 / 三个机制 / 两个预测模块 / 追问口径",
               "file": "02f-talk.md"
             }
@@ -76,7 +88,13 @@
           "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
           "items": [
             {
-              "title": "PE 2026 ElastiCo",
+              "title": "5 分钟叙述",
+              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "file": "04a-elastico-five-minute.md",
+              "time": 5
+            },
+            {
+              "title": "系统设计与问答",
               "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
               "file": "04-elastico-train-inference.md",
               "level": "精通",
@@ -89,6 +107,12 @@
           "title": "SagePilot",
           "description": "PPoPP 初稿设计、资源预测、链融合、调度实现与实验口径",
           "items": [
+            {
+              "title": "5 分钟叙述",
+              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "file": "05h-sagepilot-five-minute.md",
+              "time": 5
+            },
             {
               "title": "系统问题与设计",
               "description": "工作流瓶颈、三模块链路、QMSum 例子与实现边界",
