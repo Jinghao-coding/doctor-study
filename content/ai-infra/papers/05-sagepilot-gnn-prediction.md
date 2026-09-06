@@ -64,4 +64,4 @@ Agent 工作流 | 编译合法的同部署调用链
 
 </div>
 
-内容依据 2026-09-06 的论文问答及本地实现核对。个人分工和最终实验结果必须以真实记录为准。
+论文依据为用户提供的《SagePilot: Latency-Aware Orchestration for Multi-Agent LLM Workflows on Heterogeneous GPUs》初稿（PPoPP2027_sagepilot.pdf，第 1、4–7 页）；实现细节依据 2026-09-06 的本地代码核对。初稿 §3.5 也明确采用事件驱动启发式，不能把形式化约束误解为精确全局优化器。个人分工和最终实验结果必须以真实记录为准。

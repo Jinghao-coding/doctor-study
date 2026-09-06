@@ -6,7 +6,8 @@ Q_i(t)=
 1, & D_i^G(t)=0,\\
 \dfrac{A_i^G(t)}{\min\!\left(q_i, D_i^G(t)\right)}, & D_i^G(t)>0.
 \end{cases}
-$$</div>
+$$
+</div>
 
 <table>
 <thead><tr><th>符号</th><th>含义</th><th>记忆问题</th></tr></thead>
@@ -58,7 +59,8 @@ $$</div>
 
 <div class="card card-s">
 <h3>一个看快照，一个做控制</h3>
-<div class="formula">$$\tilde{Q}_i(t)=\lambda Q_i(t)+(1-\lambda)\tilde{Q}_i(t-1),\qquad \lambda=0.3$$</div>
+<div class="formula">$$\tilde{Q}_i(t)=\lambda Q_i(t)+(1-\lambda)\tilde{Q}_i(t-1),\qquad \lambda=0.3$$
+</div>
 <table>
 <thead><tr><th>量</th><th>回答的问题</th><th>用途</th></tr></thead>
 <tbody>

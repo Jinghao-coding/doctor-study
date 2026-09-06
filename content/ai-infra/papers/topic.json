@@ -17,7 +17,8 @@
       "title": "论文工作",
       "groups": [
         {
-          "title": "一作论文",
+          "title": "ICDCS 2026 Maestro",
+          "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM 弹性显存",
           "items": [
             {
               "title": "ICDCS 2026 Maestro",
@@ -26,51 +27,54 @@
               "level": "精通",
               "priority": 1,
               "time": 25
+            }
+          ]
+        },
+        {
+          "title": "IEEE Cluster 2026 DeepShare",
+          "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
+          "items": [
+            {
+              "title": "概述与设计",
+              "description": "问题背景 / 系统设计 / 核心定位",
+              "file": "02a-overview.md"
             },
             {
-              "title": "IEEE Cluster 2026 DeepShare",
-              "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
-              "level": "精通",
-              "priority": 1,
-              "time": 50,
-              "subtabs": [
-                {
-                  "title": "概述与设计",
-                  "description": "问题背景 / 系统设计 / 核心定位",
-                  "file": "02a-overview.md"
-                },
-                {
-                  "title": "QAD 记忆模型",
-                  "description": "逐项解释分子分母、边界例子、EMA 与三类控制决策",
-                  "file": "02a-qad-memory.md"
-                },
-                {
-                  "title": "总体架构",
-                  "description": "Controller + Plugin 架构 / K8S 对象设计",
-                  "file": "02b-architecture.md"
-                },
-                {
-                  "title": "K8S 实现细节",
-                  "description": "两级队列 / QAD 控制环 / Scheduler 五个扩展点",
-                  "file": "02c-impl-details.md"
-                },
-                {
-                  "title": "高频问答",
-                  "description": "DeepShare + 实现细节高频问题",
-                  "file": "02d-faq-base.md"
-                },
-                {
-                  "title": "论文延伸问答",
-                  "description": "EMA / RF / ablation / sensitivity / related work",
-                  "file": "02e-faq-paper.md"
-                },
-                {
-                  "title": "面试主讲",
-                  "description": "背景动机 / 三个机制 / 两个预测模块 / 追问口径",
-                  "file": "02f-talk.md"
-                }
-              ]
+              "title": "QAD 记忆模型",
+              "description": "逐项解释分子分母、边界例子、EMA 与三类控制决策",
+              "file": "02a-qad-memory.md"
             },
+            {
+              "title": "总体架构",
+              "description": "Controller + Plugin 架构 / K8S 对象设计",
+              "file": "02b-architecture.md"
+            },
+            {
+              "title": "K8S 实现细节",
+              "description": "两级队列 / QAD 控制环 / Scheduler 五个扩展点",
+              "file": "02c-impl-details.md"
+            },
+            {
+              "title": "高频问答",
+              "description": "DeepShare + 实现细节高频问题",
+              "file": "02d-faq-base.md"
+            },
+            {
+              "title": "论文延伸问答",
+              "description": "EMA / RF / ablation / sensitivity / related work",
+              "file": "02e-faq-paper.md"
+            },
+            {
+              "title": "面试主讲",
+              "description": "背景动机 / 三个机制 / 两个预测模块 / 追问口径",
+              "file": "02f-talk.md"
+            }
+          ]
+        },
+        {
+          "title": "PE 2026 ElastiCo",
+          "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
+          "items": [
             {
               "title": "PE 2026 ElastiCo",
               "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
@@ -83,7 +87,7 @@
         },
         {
           "title": "SagePilot",
-          "description": "资源预测、调用链融合、模型生命周期与调度实现",
+          "description": "PPoPP 初稿设计、资源预测、链融合、调度实现与实验口径",
           "items": [
             {
               "title": "系统问题与设计",
@@ -92,6 +96,13 @@
               "level": "进阶",
               "priority": 1,
               "time": 8
+            },
+            {
+              "title": "论文物理图与联合规划",
+              "description": "逻辑与物理执行、上下文包络、Algorithm 1 与字典序目标",
+              "file": "05f-sagepilot-physical-plan.md",
+              "level": "进阶",
+              "time": 12
             },
             {
               "title": "运行时间与显存预测",
@@ -124,6 +135,13 @@
               "level": "进阶",
               "priority": 1,
               "time": 12
+            },
+            {
+              "title": "初稿实验结果",
+              "description": "180 会话实验、预测精度、消融结果与证据限制",
+              "file": "05g-sagepilot-draft-results.md",
+              "level": "进阶",
+              "time": 10
             },
             {
               "title": "工程追问与实验证据",
