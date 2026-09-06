@@ -33,6 +33,20 @@
               "level": "精通",
               "priority": 1,
               "time": 25
+            },
+            {
+              "title": "两阶段预测实现",
+              "description": "输入特征、MiniLM 与双 PCA、分类回归训练、KV 预算与反馈链路",
+              "file": "01b-maestro-predictor.md",
+              "level": "进阶",
+              "time": 12
+            },
+            {
+              "title": "预测面试问答",
+              "description": "16 道设计动机、实现细节、预测误差与调度价值追问",
+              "file": "01c-maestro-predictor-interview.md",
+              "level": "进阶",
+              "time": 15
             }
           ]
         },
