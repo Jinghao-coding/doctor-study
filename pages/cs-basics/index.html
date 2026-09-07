@@ -6,9 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f172a'/><text x='50' y='66' font-size='52' font-weight='800' fill='%23f7f9fb' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif'>DS</text></svg>">
 <title>计算机与系统基础 · doctor-study</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-<link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
-<link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
 <link rel="stylesheet" href="../../assets/style.css?v=1786377253">
 </head>
 <body>
@@ -47,6 +44,10 @@
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncPrismTheme);
 })();
 </script>
+<template id="optional-page-assets">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
+<link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" crossorigin="anonymous"></script>
@@ -60,5 +61,32 @@
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
+</template>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var assets = document.getElementById('optional-page-assets').content;
+  assets.querySelectorAll('link').forEach(function(link){
+    var copy = link.cloneNode(true);
+    var theme = document.documentElement.getAttribute('data-theme');
+    var dark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if(copy.id === 'prism-light') copy.disabled = dark;
+    if(copy.id === 'prism-dark') copy.disabled = !dark;
+    document.head.appendChild(copy);
+  });
+  var scripts = Array.from(assets.querySelectorAll('script'));
+  function loadNext(){
+    var source = scripts.shift();
+    if(!source) return;
+    var script = document.createElement('script');
+    Array.from(source.attributes).forEach(function(attr){
+      if(attr.name !== 'defer') script.setAttribute(attr.name, attr.value);
+    });
+    script.addEventListener('load', loadNext);
+    script.addEventListener('error', loadNext);
+    document.body.appendChild(script);
+  }
+  loadNext();
+});
+</script>
 </body>
 </html>
