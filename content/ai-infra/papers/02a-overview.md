@@ -37,9 +37,9 @@
 <p>Per-tenant gradient boosting regressor 预测作业剩余运行时间（MAPE 31.84%，R² = 0.7286）。调度排序采用词典序：</p>
 <div class="formula">$$\big(\tilde{Q}_i(t)\uparrow,\; \hat{T}(j)\uparrow\big)$$</div>
 <p>先按 QAD 升序（优先欠缺的租户），再按预测运行时间升序（短作业优先）。</p>
-<p>抢占牺牲者选择：代价基抢占效率</p>
-<div class="formula">$$E_j = \frac{R_j \cdot \hat{T}(j)}{1 + \alpha \cdot C_p(j)}$$</div>
-<p>综合释放资源量 \(R_j\)、剩余时间 \(\hat{T}(j)\) 和抢占代价 \(C_p(j)\)（已完成进度的浪费 + checkpoint 保存时间）。</p>
+<p>抢占对象选择：对候选 GPU 上全部 Best-effort 任务计算集合代价，选择最小者。</p>
+<div class="formula">$$\Phi(J)=\sum_{j\in J}\frac{1+\alpha C_p(j)}{\hat T(j)}+\frac{\beta(|J|-1)}{\bar T(J)}$$</div>
+<p>剩余时间越短、累计抢占开销越高，代价越高；第二项额外惩罚同时中断多个任务。候选设备必须在清退全部驻留任务后满足新任务的资源约束。</p>
 </div>
 
 <div class="comp">
@@ -47,7 +47,7 @@
 <p>Random Forest 预测两个任务共享同一块 GPU 时的性能保持率（R² = 0.902）。特征来自硬件计数器（SM activity、memory bandwidth），而非模型架构，保证跨框架泛化。只有预测保持率高于动态容忍阈值时才允许合用。运行时持续监控，实际性能下降超过容忍度时立即驱逐低优先级伙伴。</p>
 </div>
 
-<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter → Score → Reserve → PostFilter → Permit 五个扩展点，端到端调度延迟 &lt; 50ms。</p>
+<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter、Score、Reserve、PostFilter、Permit 五个扩展点（无可行节点时才进入 PostFilter 抢占分支），端到端调度延迟 &lt; 50ms。</p>
 
 <h3>核心结果</h3>
 <div class="grid">

@@ -18,10 +18,10 @@
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 抢占效率 \(E_j\) 的物理含义？为什么用贪心？</div>
-<div class="qa-a"><p>定义：</p>
-<div class="formula">$$E_j = \frac{R_j \cdot \hat{T}(j)}{1 + \alpha \cdot C_p(j)}$$</div>
-<p>分子 <code>R_j·T̂(j)</code> 是"如果抢占这个 victim，能回收多少 <strong>GPU-时</strong>"；分母 <code>1+α·C_p(j)</code> 惩罚<strong>已经被抢占过多次的 Pod</strong>，避免同一作业被反复打断。SelectVictims 按 \(E_j\) 降序贪心选取直到释放约束 Eq.3 满足，复杂度 O(n log n)。这是对原 NP-hard 选 victim 子问题的近似。论文 sensitivity 给默认 <strong>α=0.5</strong>、<strong>β=0.3</strong>，区间 α∈[0.3,0.8]、β∈[0.1,0.6] 都接近最优。</p></div>
+<div class="qa-q">Q: 抢占代价为什么按一张卡上的完整任务集合计算？</div>
+<div class="qa-a"><p>共享卡上只停一个任务，不能保证整张卡可供新任务使用。因此论文 Eq.3–5 先筛选清退后资源足够、且驻留任务全部为 Best-effort 的设备，再计算其完整任务集合的代价：</p>
+<div class="formula">$$\Phi(J)=\sum_{j\in J}\frac{1+\alpha C_p(j)}{\hat T(j)}+\frac{\beta(|J|-1)}{\bar T(J)}$$</div>
+<p>(hat T(j)) 是预测剩余时间，(C_p(j)) 是归一化累计抢占开销，(ar T(J)) 是集合内的平均剩余时间。第一项保护快完成和累计打断开销高的任务；第二项惩罚同时打断多个任务。取 (d^*=argmin_dPhi(V(d)))，先预留设备，再清退其全部任务，释放后绑定新任务。没有可行设备就继续排队。默认 (alpha=0.5,eta=0.3)。这是候选设备代价排序，不是按单任务 GPU-时收益逐个累加的背包贪心。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

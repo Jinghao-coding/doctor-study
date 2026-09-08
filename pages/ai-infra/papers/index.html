@@ -356,11 +356,12 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <p>我们先用一个指标来判断，哪个租户现在最需要补资源。这个指标叫 QAD，也就是配额保障度。计算方法是：已经分给保障任务的 GPU 数量，除以配额和当前保障需求中较小的那个。</p>
 <p>举个例子，一个团队配额是 8 张卡，但现在只需要 4 张，系统也给了 4 张，那它的保障已经完全满足，QAD 就是 1。如果它需要 8 张，却只拿到 4 张，QAD 就是 0.5。这个值越低，说明当前欠它的资源越多，调度时就越应该优先补上。借用的额外资源单独记账，不拿来抵消这个保障缺口。</p>
 <p>在此基础上，我们把作业分成 Guaranteed 和 Best-effort 两类。Guaranteed 是需要优先兑现的配额内需求；Best-effort 可以借用剩余资源，但资源紧张时需要让出来。调度顺序先考虑保障任务，再按租户的 QAD 排序，在同等保障程度下利用预测剩余运行时间，让短任务更早完成。</p>
-<p>共享的时候，调度器会先检查资源是否够用，再判断干扰是否可接受。我们通过 DCGM 收集 GPU 的硬件指标，用 Random Forest 预测两个任务放在一起以后，各自还能保留多少吞吐。通过判断以后，才允许它们通过 MPS 在同一张卡上运行。开始共享后也继续观察实际表现，如果连续三个采样窗口低于动态容忍阈值，就移走 Best-effort 伙伴，恢复保障任务的性能。</p>
+<p>共享的时候，调度器会先检查资源是否够用，再判断干扰是否可接受。我们通过 DCGM 收集 GPU 的硬件指标，用 Random Forest 预测两个任务放在一起以后，各自还能保留多少吞吐。通过判断以后，才允许它们通过 MPS 在同一张卡上运行。开始共享后也继续观察实际表现，如果连续三个采样窗口低于动态容忍阈值，就停止同一张 GPU 上借用资源的 Best-effort 训练任务，释放它占用的资源，让保障任务继续运行。</p>
 <p>抢占可以用一个具体过程来解释。比如 A 团队配额是 8 张卡，之前只用了 4 张，集群的剩余资源被其他团队的 Best-effort 任务利用起来了。现在 A 又来了一个需要 2 张卡的保障任务。</p>
 <p>调度器不会一看到需求增加就直接杀任务，而是先尝试正常放置：有没有空闲 GPU，或者有没有满足干扰要求的共享位置。如果这些方式都安排不下，才进入抢占路径，找哪些 Best-effort 任务可以让出所需资源。</p>
 <p>选谁的时候，我们会同时看能释放多少资源、任务预计还要运行多久，以及它之前被抢占的代价。比如其他条件一样，一个任务还有 1 分钟就结束，另一个还有 20 分钟，我们更倾向于让后者让出资源，尽量让快完成的任务先完成。已经反复被打断的任务，也会增加它的抢占代价，避免总是牺牲同一个任务。</p>
 <p>还要注意，一张 GPU 上可能同时有两个 Best-effort 任务。如果新任务需要完整的一张卡，只停其中一个，另一个还占着卡，就没有真正回收成功。所以我们会把这张卡上需要一起退出的任务作为一组，计算整体代价，再选择能满足新任务资源需求的组合，同时检查 CPU 和内存等条件。</p>
+<p>我们把这些考虑写成一个代价分数：剩余时间越短，代价越高；之前累计的抢占开销越大，代价也越高；如果回收一张卡需要同时打断多个任务，再额外加一个惩罚。最后只在清退后资源足够、卡上全部是 Best-effort 的候选设备中，选整组代价最低的那张。这个函数把刚才的取舍变成了调度器能执行的比较规则。</p>
 <p>选好以后，执行层面做的是删除被选中的 Pod。调度器通过 Kubernetes API 发出删除请求，由所在节点的 kubelet 和容器运行时终止容器，训练进程退出后才会释放它占用的 GPU 资源。这里要区分“已经发出删除请求”和“资源真的释放了”：Pod 还在终止过程中时，不能马上把同一份资源算给新任务；要根据实际终止和资源状态，再完成新任务的调度和绑定。</p>
 <p>所以这套抢占做的是作业层面的中断和重新安排。被中断的训练之后重新运行时，能保留多少进度取决于它自己的 checkpoint 支持；删除 Pod 本身不会自动保存训练状态。这也是我们在选任务时要考虑抢占代价的原因。</p>
 <p>这里有两个不同的预测模块。一个是按租户历史训练的 Gradient Boosting，预测任务还要运行多久，用来辅助排队和选择抢占对象；另一个是刚才提到的 Random Forest，预测共享后的性能，用来决定哪些任务适合放在一起。前者解决运行顺序，后者解决共享位置。</p>
@@ -372,7 +373,7 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <div class="qa">
 <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 如果只展开抢占，怎么用一分钟讲清楚？</div>
 <div class="qa-a">
-<p>我们的抢占有两个主要入口：一个是保障任务来了，正常放置和安全共享都安排不下，需要回收 Best-effort 占用的资源；另一个是共享后实际干扰持续超标，需要移走 Best-effort 伙伴。</p>
+<p>我们的抢占有两个主要入口：一个是保障任务来了，正常放置和安全共享都安排不下，需要回收 Best-effort 占用的资源；另一个是共享后实际干扰持续超标，需要停止同卡上借用资源的 Best-effort 训练任务。</p>
 <p>进入回收以后，先找能够满足新任务需求的候选资源，再比较候选任务的剩余运行时间、历史抢占代价，以及需要同时打断多少任务。快结束的任务和已经多次被抢占的任务，会尽量保护。如果需要完整 GPU，就必须把该卡上需要退出的 Best-effort 任务一起考虑，不能只停一个就算释放了一张卡。</p>
 <p>执行上是通过 Kubernetes 删除选中的 Pod，由节点终止训练进程。删除请求返回成功不等于 GPU 已经空出来，要等实际退出和资源释放，再给新任务分配。训练进度的恢复依赖任务自身的 checkpoint，Pod 删除不会自动保存进度。</p>
 </div>
@@ -383,6 +384,39 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <p>MPS 负责多个 GPU 进程并发执行，不负责保存训练进度。删除 Pod 会终止其中的进程，内存和显存里的状态不能因此自动保留。</p>
 <p>后续重建或重新提交任务，需要由作业控制器或提交系统负责；恢复训练还需要训练程序支持 checkpoint，保存模型、优化器和训练步数等状态，并在启动时加载。没有这些支持，就可能需要重新训练。因此，介绍 DeepShare 时可以明确说它完成了代价感知的抢占决策和 Pod 层面的执行，不能把它描述成任意训练任务的透明暂停和原地继续。</p>
 </div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 抢占代价函数怎么推导？每一项为什么这样写？</div>
+<div class="qa-a">
+<p>论文使用下面的集合代价，分数越小越优先选择：</p>
+<div class="formula">$$\Phi(J)=\sum_{j\in J}\frac{1+\alpha C_p(j)}{\hat T(j)}+\frac{\beta(|J|-1)}{\bar T(J)}$$</div>
+<p>这里，(J) 是要回收的一张 GPU 上的全部驻留任务，(|J|) 是任务数量；(hat T(j)) 是任务 j 的预测剩余时间，(ar T(J)=
+rac{1}{|J|}sum_{jin J}hat T(j)) 是这些任务的平均剩余时间；(C_p(j)) 是归一化后的累计抢占开销。默认 (alpha=0.5)、(eta=0.3)，分别控制历史打断和多任务打断的惩罚强度。&lt;/p&gt;
+<p><strong>第一步，保护快完成的任务。</strong>先写 (1/hat T(j))。其他条件一样，任务越接近完成，倒数越大，抢占它就越不划算。这是一个调度偏好，不是说剩余时间长的任务一定丢失进度更少。</p>
+<p><strong>第二步，减少重复抢占。</strong>把分子改成 (1+alpha C_p(j))。没有历史开销时也保留基础代价 1；累计开销增加以后，这个任务的分数会升高，下次就更不容易再次成为抢占对象。累计开销不等同于简单的抢占次数。</p>
+<p><strong>第三步，计算整张卡的代价。</strong>对卡上的任务求和。回收共享 GPU 时，停止一个任务并不代表整张卡释放，所以必须评价完整集合。</p>
+<p><strong>第四步，进一步惩罚一次打断多个任务。</strong>加入 (eta(|J|-1)/ar T(J))。只停一个任务时，这项为零；停多个任务时，这项增加；如果它们平均都快结束了，这项还会更大。前面的求和已经累计每个任务的代价，这一项额外表达了对多任务同时中断的惩罚。</p>
+<p><strong>最后，先检查可行性，再最小化代价。</strong>设 (V(d)) 是 GPU d 的全部驻留任务，候选集 (mathcal D_j^P) 只包含这些任务全部为 Best-effort、且清退后能满足新任务显存和节点 CPU/内存约束的 GPU：</p>
+<div class="formula">$$d^*=argmin_{dinmathcal D_j^P}Phi(V(d)),qquad J^*=V(d^*)$$</div>
+<p>例如统一用分钟、历史开销均为零：GPU A 上一个任务还剩 10 分钟，代价是 0.1；GPU B 上一个任务还剩 100 分钟，代价是 0.01；GPU C 上两个任务都还剩 100 分钟，代价是 (0.01+0.01+0.3/100=0.023)。如果三张卡释放后都满足需求，就选 B。</p>
+<p>这个函数是根据上述目标构造的启发式排序代价，不是“会损失多少秒”的精确模型，也不提供全局最优完成时间的证明。论文将 (C_p) 定义为归一化累计抢占开销，未在该处进一步规定它的归一化计算式。执行时先预留选定设备，再发起 Pod 删除，释放后绑定；没有可行候选就继续排队。</p>
+</div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: MPS 已经能共享 GPU，为什么还需要你们这个系统？</div>
+<div class="qa-a"><p>MPS 解决的是多个进程能在一张 GPU 上并发执行，但它不知道谁有配额保障，也不会替我们决定哪些任务适合一起跑。我们的工作是在它上面做调度：判断是否允许共享、安排哪个任务先运行、保障任务来了回收谁，以及共享干扰超标后停止哪个借用任务。MPS 提供执行能力，DeepShare 根据租户需求和运行表现作决定。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 一次任务提交后，哪些组件实际参与了执行？</div>
+<div class="qa-a"><p>首先读取任务所属租户、申请资源和作业类别，结合 TenantQuota 配置判断它进入保障队列还是借用队列。调度插件根据正在运行的 Pod 更新 QAD，决定谁先被安排，然后检查候选 GPU 的资源和共享干扰。找到位置后先预留资源，再完成绑定，由节点启动容器。如果保障任务没有可行位置，就进入 PostFilter 选择抢占对象；删除选中的 Pod、等待资源释放后，再完成放置。Controller 管配置，调度插件作决定，kubelet 和节点上的运行环境负责实际执行。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 预测不准，会不会整个调度器就不能用了？</div>
+<div class="qa-a"><p>运行时间预测影响任务顺序和抢占代价，但不会改变保障任务优先于借用任务、不能抢占保障任务这些规则。共享干扰预测则先决定是否允许合用，运行后还要检查实际吞吐；如果连续三个窗口低于阈值，就停止同卡上借用资源的任务。因此预测帮助我们作更好的选择，资源约束和运行反馈仍然持续起作用。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 怎么证明提高利用率没有以拖慢用户任务为代价？</div>
+<div class="qa-a"><p>要同时看利用率、排队时间、作业完成时间和保障任务的 QoS。只看利用率不够，因为两个任务相互争用也可能让 GPU 一直忙。我们做了轨迹仿真和真实集群对比；真实集群实验中，相比 Hard+Colocate，平均作业完成时间下降 34%，保障租户 QoS 合规率达到 93%。进一步区分配额借用、预测排序和共享的贡献，要看分别关闭这些机制的消融结果。</p></div>
 </div></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-2" aria-labelledby="papers-tabs-panel-2-sub-2" hidden><div class="card card-s" style="margin-top:0.8rem">
 <p><strong>📄 论文原文：</strong><a href="../../../resources/papers/cluster_2026_Deepshare.pdf" target="_blank">IEEE Cluster 2026 — DeepShare PDF</a></p>
 </div>
@@ -420,9 +454,9 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <p>Per-tenant gradient boosting regressor 预测作业剩余运行时间（MAPE 31.84%，R² = 0.7286）。调度排序采用词典序：</p>
 <div class="formula">$$\big(\tilde{Q}_i(t)\uparrow,\; \hat{T}(j)\uparrow\big)$$</div>
 <p>先按 QAD 升序（优先欠缺的租户），再按预测运行时间升序（短作业优先）。</p>
-<p>抢占牺牲者选择：代价基抢占效率</p>
-<div class="formula">$$E_j = \frac{R_j \cdot \hat{T}(j)}{1 + \alpha \cdot C_p(j)}$$</div>
-<p>综合释放资源量 \(R_j\)、剩余时间 \(\hat{T}(j)\) 和抢占代价 \(C_p(j)\)（已完成进度的浪费 + checkpoint 保存时间）。</p>
+<p>抢占对象选择：对候选 GPU 上全部 Best-effort 任务计算集合代价，选择最小者。</p>
+<div class="formula">$$\Phi(J)=\sum_{j\in J}\frac{1+\alpha C_p(j)}{\hat T(j)}+\frac{\beta(|J|-1)}{\bar T(J)}$$</div>
+<p>剩余时间越短、累计抢占开销越高，代价越高；第二项额外惩罚同时中断多个任务。候选设备必须在清退全部驻留任务后满足新任务的资源约束。</p>
 </div>
 
 <div class="comp">
@@ -430,7 +464,7 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <p>Random Forest 预测两个任务共享同一块 GPU 时的性能保持率（R² = 0.902）。特征来自硬件计数器（SM activity、memory bandwidth），而非模型架构，保证跨框架泛化。只有预测保持率高于动态容忍阈值时才允许合用。运行时持续监控，实际性能下降超过容忍度时立即驱逐低优先级伙伴。</p>
 </div>
 
-<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter → Score → Reserve → PostFilter → Permit 五个扩展点，端到端调度延迟 &lt; 50ms。</p>
+<p>整个系统实现为 <strong>Kubernetes scheduler plugin</strong>，覆盖 Filter、Score、Reserve、PostFilter、Permit 五个扩展点（无可行节点时才进入 PostFilter 抢占分支），端到端调度延迟 &lt; 50ms。</p>
 
 <h3>核心结果</h3>
 <div class="grid">
@@ -837,7 +871,7 @@ spec:
 <div class="qa-q">Q: 为什么 QAD 不放在 Controller 里周期性写 CRD？</div>
 <div class="qa-a"><p>QAD 是 50ms 调度周期内持续变化的热状态，排序、共享和抢占都要同步消费。若 Controller 计算后再写 CRD，既增加 API Server 写压力，也引入控制环延迟和一致性窗口。放在 Scheduler Plugin 内存里能直接复用 informer cache，并在 leader 切换后重建。</p></div>
 </div></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-2-subpanel-5" aria-labelledby="papers-tabs-panel-2-sub-5" hidden><h2>一次调度周期怎么走</h2>
-<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">读取租户 quota、作业 class 与运行 Pod</div><div class="flow-desc">Controller 提供配置元数据，informer 提供实时状态</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">计算瞬时 QAD</div><div class="flow-desc">A_i^G / min(q_i, D_i^G)，无 Guaranteed demand 时为 1</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到调度控制信号 Q̃_i</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">两级队列排序</div><div class="flow-desc">Guaranteed 先于 Best-effort，Q̃ 低优先，预测剩余时间短次优先</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">尝试独占 GPU</div><div class="flow-desc">无干扰，优先级最高</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">尝试安全 colocation</div><div class="flow-desc">RF retention 预测与 QAD 动态门槛同时通过</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">回收 CPU / Memory</div><div class="flow-desc">对 Best-effort Pod 发起 in-place resize</div></div><div class="flow-step"><div class="flow-index">08</div><div class="flow-title">选择 GPU victims</div><div class="flow-desc">PostFilter 按抢占效率贪心回收足够的完整 GPU</div></div></div>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">读取租户 quota、作业 class 与运行 Pod</div><div class="flow-desc">Controller 提供配置元数据，informer 提供实时状态</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">计算瞬时 QAD</div><div class="flow-desc">A_i^G / min(q_i, D_i^G)，无 Guaranteed demand 时为 1</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">EMA 平滑</div><div class="flow-desc">得到调度控制信号 Q̃_i</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">两级队列排序</div><div class="flow-desc">Guaranteed 先于 Best-effort，Q̃ 低优先，预测剩余时间短次优先</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">尝试独占 GPU</div><div class="flow-desc">无干扰，优先级最高</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">尝试安全 colocation</div><div class="flow-desc">RF retention 预测与 QAD 动态门槛同时通过</div></div><div class="flow-step"><div class="flow-index">07</div><div class="flow-title">回收 CPU / Memory</div><div class="flow-desc">对 Best-effort Pod 发起 in-place resize</div></div><div class="flow-step"><div class="flow-index">08</div><div class="flow-title">选择 GPU victims</div><div class="flow-desc">PostFilter 比较候选设备完整任务集合的代价，预留最低代价设备并清退</div></div></div>
 <h2>两级队列不要记成两个 Controller</h2>
 <div class="card card-s">
 <h3>队列符号和职责</h3>
@@ -976,10 +1010,10 @@ $$&lt;/div&gt;
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 抢占效率 \(E_j\) 的物理含义？为什么用贪心？</div>
-<div class="qa-a"><p>定义：</p>
-<div class="formula">$$E_j = \frac{R_j \cdot \hat{T}(j)}{1 + \alpha \cdot C_p(j)}$$</div>
-<p>分子 <code>R_j·T̂(j)</code> 是&quot;如果抢占这个 victim，能回收多少 <strong>GPU-时</strong>&quot;；分母 <code>1+α·C_p(j)</code> 惩罚<strong>已经被抢占过多次的 Pod</strong>，避免同一作业被反复打断。SelectVictims 按 \(E_j\) 降序贪心选取直到释放约束 Eq.3 满足，复杂度 O(n log n)。这是对原 NP-hard 选 victim 子问题的近似。论文 sensitivity 给默认 <strong>α=0.5</strong>、<strong>β=0.3</strong>，区间 α∈[0.3,0.8]、β∈[0.1,0.6] 都接近最优。</p></div>
+<div class="qa-q">Q: 抢占代价为什么按一张卡上的完整任务集合计算？</div>
+<div class="qa-a"><p>共享卡上只停一个任务，不能保证整张卡可供新任务使用。因此论文 Eq.3–5 先筛选清退后资源足够、且驻留任务全部为 Best-effort 的设备，再计算其完整任务集合的代价：</p>
+<div class="formula">$$\Phi(J)=\sum_{j\in J}\frac{1+\alpha C_p(j)}{\hat T(j)}+\frac{\beta(|J|-1)}{\bar T(J)}$$</div>
+<p>(hat T(j)) 是预测剩余时间，(C_p(j)) 是归一化累计抢占开销，(ar T(J)) 是集合内的平均剩余时间。第一项保护快完成和累计打断开销高的任务；第二项惩罚同时打断多个任务。取 (d^*=argmin_dPhi(V(d)))，先预留设备，再清退其全部任务，释放后绑定新任务。没有可行设备就继续排队。默认 (alpha=0.5,eta=0.3)。这是候选设备代价排序，不是按单任务 GPU-时收益逐个累加的背包贪心。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -1257,7 +1291,9 @@ $$&lt;/div&gt;
 <p>所以我们的核心思路是：把工作流的结构和依赖关系交给调度器，让它既知道当前有哪些任务要执行，也知道后面可能需要什么资源。</p>
 <p>系统分成三个模块，分别解决代价估计、工作流结构优化和运行时调度。</p>
 <p>首先是 SageRadar。因为我们面对的是异构 GPU，同一个模型放到不同的 GPU 上，执行时间和显存需求是不一样的，输入长度和生成长度也会影响执行代价。因此，调度前需要先估计不同执行配置的时间和显存开销。</p>
-<p>这个模块给后面的调度提供依据。比如，一个模型能不能放进当前 GPU，选择这个执行配置大概需要多久。否则，调度器虽然知道后续要执行什么，也很难判断怎样安排更合适。</p>
+<p>具体来说，我们把一次模型调用转成算子图，节点是矩阵乘、Attention 这些算子，边是张量依赖。把计算量、张量形状、请求长度和 GPU 属性一起输入图模型，用实际测量的运行时间和显存峰值做监督，学习这个配置大概要花多少资源。预测结果提前写入资源表，调度时直接查询。</p>
+<p>比如一个请求预计 5 秒后就绪，A100 上没有模型，加载要 8 秒、执行要 4 秒；V100 已经有模型，但执行要 9 秒。如果允许现在开始加载，A100 在第 12 秒完成，V100 在第 14 秒完成。这时虽然 A100 需要加载，仍然更合适。这个例子说明，预测要和模型是否驻留、请求什么时候就绪一起使用，才能转化成调度决策。</p>
+<p>时间预测用于比较完成时间，显存预测用于判断能否接收请求。显存还会做校正和增加余量，并按配置的输出上限检查，避免因为最近输出比较短，就低估下一次调用需要的容量。</p>
 <p>第二个模块是 SageGraph，主要利用工作流结构减少连续调用之间的调度开销。</p>
 <p>这里可以举一个很具体的例子：A 负责生成初稿，B 负责修改，C 负责整理最终输出。这三个步骤前后依赖，而且使用相同的模型部署配置。</p>
 <p>我们的做法是先检查这段调用是不是满足条件，比如它是一条连续的链，中间没有分支，后一步只依赖前一步，而且模型配置兼容。满足条件后，就把它们合成一个执行任务。</p>
@@ -1269,10 +1305,31 @@ $$&lt;/div&gt;
 <p>比如工作流 W1 已经在一张 GPU 上加载了某个模型，W2 随后也需要相同部署配置的模型，那么只要这个实例满足接收请求的条件，W2 就可以直接使用它。两个工作流分别提交自己的提示词、接收自己的结果，共用的是已经加载的模型服务。</p>
 <p>再比如，当前步骤还在执行，但后续步骤需要另一个模型。如果资源条件允许，系统就可以提前加载那个模型，让加载和当前计算同时进行。这样等后续任务真正就绪时，就有机会直接开始执行。</p>
 <p>这里的一个关键取舍是，提前准备也有成本。过早加载会占用显存，可能挤占当前任务的资源；加载太晚，又不能有效减少等待。所以需要把后续需求和当前资源状态放在一起判断。类似地，增加副本能缓解排队，但也会占用更多显存，不能只看某一个模型的队列就无限扩副本。</p>
+<p>实现上，工作流执行端推进节点依赖，模型服务负责加载和生成，调度器统一维护请求和模型实例的状态。任务完成、加载完成等事件通过命令队列进入调度器，由它串行更新资源记录。例如决定加载模型时，先登记正在加载的实例和资源占用，再发起异步加载；这样后一个请求就不会把同一份显存又申请一次。</p>
 <p>这几个模块是配合工作的：SageRadar 提供执行代价，SageGraph 把适合连续执行的步骤组织起来，SageWeaver 再根据整个集群的状态安排模型和任务。</p>
 <p>实验中，我们关注的是这些优化最终能不能缩短整个工作流的完成时间。在论文报告的突发负载场景下，整体完成时间最高降低了 36.8%，会话的 p95 延迟最高降低了 25.9%。</p>
 <p>我认为这项工作最有价值的地方，是利用了 Agent 工作流天然具备、但单次请求调度很难看到的信息：步骤之间有依赖，后续模型需求可以提前知道，部分连续调用也可以稳定地使用同一个实例。把这些信息用于资源决策，就能减少整个执行过程中的空等，让 GPU 的计算和模型准备衔接得更好。</p>
 </div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 和普通的模型缓存、换入换出有什么区别？</div>
+<div class="qa-a"><p>普通缓存主要根据已经到来的请求决定保留谁、换入谁。我们额外利用工作流依赖：前一步还在运行时，就能看到后续可能需要什么模型，从而评估能不能提前准备；连续兼容的调用可以一次安排，减少阶段间重新调度。落到动作上仍然是加载、调用和回收模型，区别在于决定这些动作时，多了后续需求、就绪时间和整个工作流完成时间这些依据。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 从一个会话到达开始，系统到底怎么跑？</div>
+<div class="qa-a"><p>假设 A 调用模型 M1，接着 B 调用工具，再由 C 调用 M2。会话到达后，运行时知道这三个步骤的依赖，A 可以开始，B 和 C 要等待。调度器查 A 的执行代价，检查 M1 是否已有可用实例，决定复用还是加载；实例就绪后 A 开始生成。</p><p>A 完成后，运行时把结果交给 B，B 执行工具调用。此时 GPU 不需要继续替这个工具计算，调度器可服务其他请求；结合后续 C 的需求和工具完成时间估计，也可以判断是否提前加载 M2。工具结果真正返回后，C 才能成为可执行任务，拿到 M2 实例并开始生成。C 完成后会话结束，实例上的任务记录更新；没有任务使用的模型可以保留给其他会话，或者在显存紧张时回收。</p><p>这里 A 和 C 使用不同模型，中间还有工具调用，因此不作为同模型连续链融合。每一步由真实完成事件推进，预测只辅助提前准备。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 提前加载为什么可能让 p95 更差？你会怎么处理？</div>
+<div class="qa-a"><p>比如预测后续很快会用到 M2，提前加载却挤掉了当前请求马上要用的 M1，M1 就要重新加载，等待时间反而增加。还有一种情况是分支最终没走到 M2，这次加载既占了显存，又消耗了加载带宽。</p><p>设计上我会先满足已就绪请求，再把预加载限制在可用容量和并发加载预算内；对预测收益接近成本的候选更保守，并持续比较预加载命中率、重加载次数和 p95。如果误差变大，就降低预加载的积极程度。这里的关键是把提前准备当作有成本的优化，具体限额和回退策略还需要结合实现与实验验证。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 两个请求同时申请显存，如何防止超额分配？</div>
+<div class="qa-a"><p>当前调度器通过命令队列串行处理核心状态更新。检查容量、登记资源占用和记录实例正在加载，属于同一段受控的状态更新；真正加载可以异步执行，但预留必须先完成。因此后来的请求看到的已经是扣除预留后的容量，不能重复使用它。加载完成后再更新可用状态，失败路径则要撤销对应预留，不能只依赖实时查询显存来避免竞争。</p></div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 为什么不只报预测准确率？</div>
+<div class="qa-a"><p>因为我们最终优化的是会话完成时间。预测更准，如果没有改变放置或加载决定，未必产生收益；平均误差较小，也可能有少数显存低估导致 OOM。所以我会同时看预测误差、显存低估、加载等待、重加载次数、平均完成时间和 p95，再通过分别关闭融合、预加载等机制，判断收益来自哪里。</p></div>
 </div></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-4-subpanel-2" aria-labelledby="papers-tabs-panel-4-sub-2" hidden><h2>工作流依赖如何影响 GPU 执行</h2>
 <p>SagePilot 研究多个 Agent 工作流共享异构 GPU 时，模型准备、请求准入与设备放置如何共同影响完成时间。一个工作流包含模型调用和工具调用；下游调用尚未 ready 时，其模型身份可能已经确定，因此存在提前加载的机会。连续同部署调用若每次都重新申请后端，也会增加排队，并留下模型被回收的空隙。</p>
 <div class="table-scroll">
@@ -1370,28 +1427,76 @@ W2: Q8 调用 ── 工具 ── Q14 调用</code></pre>
 <p>公式 (12) 的排序键为：</p>
 <p>\[ \Phi=(-A_1,\ldots,-A_K,\hat C_F,-P_N,H_{life}) \]</p>
 <p>按字典序最小化：先尽量服务高优先级 ready 单元，再比较这些单元的最晚完成时间，然后增加及时预取，最后降低加载和回收导致的生命周期代价。它不使用一个任意加权总分来交换这些优先顺序。Algorithm 1 按这个意图逐步构造计划，并非求解所有图与排程组合的精确优化器。</p>
-<p>来源：用户提供的 <code>PPoPP2027_sagepilot.pdf</code> 初稿，第 4–7 页，Fig. 3–4、公式 (1)–(12)、Algorithm 1。文件采用 PPoPP ’27 模板，不据此推断已投稿或录用。</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-4-subpanel-4" aria-labelledby="papers-tabs-panel-4-sub-4" hidden><h2>预测对象与查表接口</h2>
-<p>预测对象是一种请求配置在某类 GPU 上的资源代价。例如 <code>Qwen3-8B / decode / V100 / batch=2 / 输入=2048 / 输出=512</code> 对应运行时间、显存点估计、显存准入上界和加载时间。调度在线查表；离线可以用 GNN 或实测 profiling 生成同一接口的数据。</p>
-<p><strong>GNN 读取模型算子图，SageGraph 处理 Agent 工作流图。</strong> 前者的节点是矩阵乘、Attention 等算子；后者的节点是完整模型调用或工具调用。</p>
+<p>来源：用户提供的 <code>PPoPP2027_sagepilot.pdf</code> 初稿，第 4–7 页，Fig. 3–4、公式 (1)–(12)、Algorithm 1。文件采用 PPoPP ’27 模板，不据此推断已投稿或录用。</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-4-subpanel-4" aria-labelledby="papers-tabs-panel-4-sub-4" hidden><h2>预测怎样帮助调度</h2>
+<div class="qa open">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: SageRadar 的预测具体怎么做，为什么调度需要它？</div>
+<div class="qa-a">
+<p>调度器知道下一步要调用哪个模型，但还需要知道：放到不同 GPU 上分别要跑多久、需要多少显存，如果模型没加载，还要准备多久。只有这些数值，才能比较一个请求放在哪里更早完成，以及能不能放得下。</p>
+<p>所以我们的预测对象是“一次模型调用在某种执行配置下的资源开销”。比如同样调用 Qwen3-8B，输入 2048 tokens、输出预算 512 tokens、batch 为 2，在 V100 和 A100 上就分别对应一组时间和显存估计。输入长度、输出长度和 batch 改了，估计也要跟着变。</p>
+<p>具体做法是，把模型在这个配置下的计算过程转成算子图。图上的节点是矩阵乘、Attention 这些算子，边表示张量怎样从一个算子传到下一个算子。每个节点带上计算量、张量形状等特征，边带上数据量，再把 GPU 算力、带宽以及请求配置一起交给图模型。</p>
+<p>图模型沿着依赖关系聚合信息，最后汇总出整个计算图的表示，用不同的回归头预测运行时间和峰值显存等指标。训练标签来自实际测量：在对应配置下执行，记录耗时和资源峰值，让模型学习图结构、配置和资源代价之间的关系。</p>
+<p>这些预测会提前整理成资源表。在线调度时，根据模型、GPU、batch 和长度配置查表，再结合当前队列、模型是否已经驻留、前驱任务什么时候完成，比较候选位置。模型加载时间也进入这套查询接口，并通过加载实测记录进行校准。</p>
+<p>时间和显存的使用方式不同：时间估计帮助选择更快完成的位置，显存估计用来判断能不能接这个请求。显存低估可能直接导致 OOM，所以我们会给预测值做校正、加入余量，而且按配置允许的输出上限检查容量，不因为最近回答比较短就把显存预算一起缩小。</p>
+</div>
+</div>
+<h2>用一个请求串起输入与输出</h2>
+<p>以 <code>Qwen3-8B / decode / batch=2 / 输入2048 / 输出预算512</code> 为例。这里 512 是需要评估的输出长度配置，不代表已经知道下一次真实生成长度。</p>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">确定执行配置</div><div class="flow-desc">模型、prefill 或 decode、batch、输入长度、输出长度配置</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">生成模型算子图</div><div class="flow-desc">节点表示算子，边表示张量依赖</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">加入目标 GPU 属性</div><div class="flow-desc">同一请求分别评估 V100、A100 等候选设备</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">用实测样本训练回归模型</div><div class="flow-desc">学习执行时间、峰值显存等资源指标</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">生成并校准资源表</div><div class="flow-desc">时间供候选比较，显存校正并增加准入余量</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">在线调度查询</div><div class="flow-desc">结合就绪时间、驻留状态和排队情况选择位置</div></div></div>
+<p><strong>这里有两张不同的图。</strong> SageRadar 的算子图展开一次模型调用内部的计算；SageGraph 的工作流图描述多个 Agent 调用和工具调用之间的先后关系。前者回答“一次调用要花多少资源”，后者告诉调度器“下一次调用什么时候才有机会开始”。</p>
 <div class="table-scroll">
 
 <div class="table-scroll"><table>
-<tr><th>特征层次</th><th>具体输入</th><th>提供的信息</th></tr>
-<tr><td>节点</td><td>算子类型、MACs、参数量、内存量、张量形状、入度和出度</td><td>每个算子的计算与访存规模</td></tr>
-<tr><td>边</td><td>张量字节数、元素数、维度、两端节点连接信息</td><td>算子之间的数据依赖</td></tr>
-<tr><td>全局</td><td>阶段、batch、输出长度、GPU 算力/容量/带宽、整图统计</td><td>请求配置与设备条件</td></tr>
+<tr><th>输入层次</th><th>例子</th><th>为什么需要</th></tr>
+<tr><td>算子节点</td><td>算子类型、MACs、参数量、张量形状、内存量</td><td>判断这个算子有多少计算和访存工作；MACs 表示乘加操作数量</td></tr>
+<tr><td>依赖边</td><td>张量字节数、元素数、维度、连接关系</td><td>区分算子怎样衔接、需要传递多少数据</td></tr>
+<tr><td>请求配置</td><td>prefill/decode、batch、长度与整图统计</td><td>同一个模型在不同请求规模下开销不同；部分长度信息也体现在张量形状中</td></tr>
+<tr><td>设备属性</td><td>GPU 算力、显存容量、带宽</td><td>相同计算图在不同设备上的执行表现不同</td></tr>
 </table></div>
 
 </div>
-<p>初稿 §3.3（第 4–5 页）抽象出运行时间、峰值显存与部署加载时间三种输出；以下九目标网络配置来自此前核对的代码，属于实现补充，初稿没有展开全部网络参数。</p>
-<h2>原始预测如何训练出来</h2>
-<p>当前路径从 PyTorch 导出的计算图构造特征。decode 图先建立长度为 <code>输入长度 + 输出长度 - 1</code> 的 KV 上下文，再捕获一步 decode，并把输出长度作为全局特征。因此输出 512 tokens 的配置不需要把 512 步全部展开成图。</p>
-<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">算子类型 embedding</div><div class="flow-desc">与节点数值特征拼接</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">节点、边、全局特征编码</div><div class="flow-desc">映射到隐藏向量</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">TransformerConv 图层</div><div class="flow-desc">沿依赖边聚合，并更新边与全局状态</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">mean / sum / max pooling</div><div class="flow-desc">汇总整图表示</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">独立回归头</div><div class="flow-desc">输出各目标标量，按对应缩放规则恢复量纲</div></div></div>
-<p>核对的训练配置使用 128 维隐藏表示、2 层图网络、8 个 attention heads、九个预测目标。训练以实测标签做监督，使用加权 Smooth L1 损失和 AdamW。运行时间、显存和部署时间对应 <code>run_duration_sec_avg</code>、<code>gpu_mem_used_mb_max</code>、<code>deployment_duration_sec_avg</code>；其他目标包括 CPU、主机内存、GPU 活跃度与功率。</p>
-<h2>运行时间：用近期长度选择预测桶</h2>
-<p>资源表按模型、GPU、batch、输入长度和输出长度索引。在线时间估计可使用同一节点近期输出 token 数的 p90 选择覆盖桶；没有历史则使用配置的输出上限。</p>
-<p>例如输出上限为 1024，近期 p90 为 300，时间估计可查询覆盖 300 的桶。p90 描述过去样本的长度分布，不能保证下一次一定不超过它。</p>
-<p>当前等预算评估读取已标定的运行时间缓存；冻结缓存最初的完整标定入口在原问答中尚未追清。因此不把未经核实的线性校准公式写成运行时间的既定实现。</p>
+<h2>图模型怎样训练出来</h2>
+<p><strong>一个训练样本由“算子图和配置”以及“对应的实测资源标签”组成。</strong> 网络共享图编码部分，再分别回归多个指标；不同目标的数值尺度经过缩放，输出时恢复对应单位。</p>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">编码节点、边和全局特征</div><div class="flow-desc">算子类型先做 embedding，再与数值特征合并</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">沿依赖边聚合信息</div><div class="flow-desc">TransformerConv 图层更新表示</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">汇总整个图</div><div class="flow-desc">mean / sum / max pooling 保留平均、总量和极值信息</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">分别回归各个目标</div><div class="flow-desc">独立预测头输出耗时、显存等指标</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">与实测标签比较并更新参数</div><div class="flow-desc">加权 Smooth L1 损失，AdamW 优化</div></div></div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: Decode 生成 512 个 token，要把 512 步都展开成图吗？</div>
+<div class="qa-a">
+<p>当前采图实现没有把所有生成步骤展开。它先构造长度为“输入长度 + 输出长度 − 1”的 KV 上下文，再捕获一步 decode，同时把输出长度作为全局特征。输入 2048、输出 512 时，构造的是长度 2559 的已有上下文，再捕获接下来这一步。</p>
+<p>这样既能让图反映长上下文下的算子形状，又控制了图的规模。训练时用对应配置的实测耗时作为标签，让模型学习配置到运行时间的关系。不能把这里的一步采图理解为只预测一个 token，也不能直接说实现就是“最后一步耗时乘 512”。</p>
+</div>
+</div>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 网络结构和训练目标具体是什么？</div>
+<div class="qa-a">
+<p>核对的训练配置采用 128 维隐藏表示、2 层图网络、8 个 attention heads，读出方式是 mean/sum/max，使用加权 Smooth L1 和 AdamW。共有九个预测目标，其中调度重点使用运行时间、峰值显存和部署时间，标签分别是 run_duration_sec_avg、gpu_mem_used_mb_max 和 deployment_duration_sec_avg；其余目标包括 CPU、主机内存、GPU 活跃度和功率等。</p>
+<p>初稿 §3.3 介绍的是运行时间、峰值显存和部署加载时间三类资源输出，上面的网络参数来自关联实现。</p>
+</div>
+</div>
+<h2>预测怎样变成一次放置决策</h2>
+<p>在忽略额外资源争用、且排队等待可以用一个可执行时刻表示的简化例子中：</p>
+<p>\[ t_{finish}(d)=\max\{t_{ready},\ t_{model}(d),\ t_{queue}(d)\}+\hat T_{run}(d) \]</p>
+<ul><li>\(t_{ready}\)：前驱结束、输入齐备的时刻，由工作流进展估计。</li><li>\(t_{model}(d)\)：设备 d 上模型准备好的时刻，由驻留状态和加载耗时决定。</li><li>\(t_{queue}(d)\)：设备上的执行队列允许这个请求开始的时刻。</li><li>\(\hat T_{run}(d)\)：资源表提供的本次调用执行时间估计。</li></ul>
+<p>取最大值是因为三个条件都满足才能开始，再加上实际执行所需的时间。<strong>GNN 提供执行代价，当前排队和驻留状态由调度器掌握，整个工作流的就绪时间也不是 GNN 单独输出的。</strong></p>
+<p>例如从现在计时，请求预计第 5 秒就绪，两张卡都空闲：A100 没有模型，从现在加载需要 8 秒，执行需要 4 秒；V100 已驻留模型，执行需要 9 秒。</p>
+<div class="table-scroll">
+
+<div class="table-scroll"><table>
+<tr><th>候选</th><th>能开始执行的时刻</th><th>预计完成时刻</th></tr>
+<tr><td>A100，允许现在开始加载</td><td>max(5, 8, 0) = 8 秒</td><td>8 + 4 = 12 秒</td></tr>
+<tr><td>V100，模型已经驻留</td><td>max(5, 0, 0) = 5 秒</td><td>5 + 9 = 14 秒</td></tr>
+</table></div>
+
+</div>
+<p>在这个例子的资源条件下，A100 更早完成。如果必须等请求就绪后才加载，A100 则要到第 17 秒完成。预测的价值，是把加载能否提前、不同 GPU 的执行速度以及请求就绪时间放到同一次比较里。这是解释决策的算例，真实准入还要检查显存和其他请求的资源占用。</p>
+<h2>输出长度未知，时间和显存分别怎么估计</h2>
+<p>资源表按模型、GPU、batch、输入长度和输出长度配置索引。运行时间可以用同一节点近期输出 token 数的 p90 选择覆盖桶；没有历史时使用配置的输出上限。p90 就是近期样本中约 90% 不超过的长度。</p>
+<p>例如输出上限为 1024，近期 p90 为 300，如果资源表有 256、512、1024 三个桶，时间估计选择能覆盖 300 的 512 桶；<strong>显存仍查询覆盖 1024 上限的配置</strong>。时间侧利用近期请求通常较短这个信息，容量侧继续为允许生成的最大长度留空间。</p>
+<div class="qa">
+<div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 在线每来一个请求，都跑一次 GNN 吗？实测表和预测表是什么关系？</div>
+<div class="qa-a">
+<p>当前调度接口在线查资源表，离线可以用 GNN 预测或实测 profiling 填充同一套字段，所以图推理不用放在每次调度的关键路径上。GNN 的作用是学习不同配置的资源代价；实际测量则提供训练标签、校准依据，也可以直接形成资源表。</p>
+<p>讲实验时，要区分这一轮使用的是预测表还是实测表。当前等预算评估使用已标定的运行时间缓存，具体某次运行是否使用 GNN 表，应以该次配置为准。</p>
+</div>
+</div>
 <h2>显存：点估计、校正值与准入上界</h2>
 <p>显存低估可能导致 OOM，所以点预测不能直接等同准入预算。当前后处理先拟合线性去偏项，其中 I、B、O 分别是输入长度、batch 和输出长度：</p>
 <p>\[ M_{corr}=\max\{1, w^\top[\hat M,\log_2 I,\log_2 B,\log_2 O,1]\} \]</p>

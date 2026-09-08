@@ -8,7 +8,7 @@ EMA 平滑 | 得到调度控制信号 Q̃_i
 尝试独占 GPU | 无干扰，优先级最高
 尝试安全 colocation | RF retention 预测与 QAD 动态门槛同时通过
 回收 CPU / Memory | 对 Best-effort Pod 发起 in-place resize
-选择 GPU victims | PostFilter 按抢占效率贪心回收足够的完整 GPU
+选择 GPU victims | PostFilter 比较候选设备完整任务集合的代价，预留最低代价设备并清退
 ```
 
 ## 两级队列不要记成两个 Controller
