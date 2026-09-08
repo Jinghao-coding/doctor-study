@@ -1315,14 +1315,11 @@ $$&lt;/div&gt;
 <p>我们会把当前已经确定、即将执行的需求放到一起，按模型部署配置识别可共享的部分，再检查设备和隔离条件是否兼容。满足条件时，<strong>可以让 W1、W2 的后续调用共同依赖一个“准备 M2”的动作，而不是分别安排模型准备。</strong></p>
 <p>这样，调度器看到的就是“准备这一个实例，可以服务两个工作流的后续需求”，进而决定是否采用这个共享方案、何时加载，以及是否需要额外副本。两个工作流本身不会合成一个任务，它们的提示词、生成结果和完成状态仍然独立。</p>
 <p><strong>所以，单工作流内主要改变连续调用的执行单位，并把模型准备与计算的依赖拆开；多工作流间主要识别可以共享的模型准备。</strong>转换后，再交给调度器决定这些执行单元和动作具体怎么落到 GPU 上。底层本来就可能复用实例，我们增加的是在准备模型之前，就把连续需求和跨工作流需求纳入执行方案。</p>
-<h3>SageWeaver：在资源约束下联合选择执行方案和调度顺序</h3>
-<p><strong>最后是 SageWeaver。这里本质上是一个带资源约束的在线优化问题。</strong>前面已经知道有哪些执行单元、模型准备方式，以及它们大概要花多少时间；现在要决定每个单元使用哪个实例、落在哪张 GPU 上，模型是复用、加载还是先回收再加载，以及争用同一资源的动作谁先执行。这些决定会互相影响，所以要放在一起考虑。</p>
-<p><strong>目标有明确的先后顺序。</strong>论文先要求尽量接纳当前已经就绪的任务，并优先照顾优先级高、等待较久的任务；在接纳情况相同时，让这批任务中最后一个任务尽早完成；再比较能否及时准备后续模型，最后减少加载和回收引起的额外代价。也就是说，不能为了提前准备未来任务，随意牺牲当前已经能执行的任务。这里优化的是当前规划窗口，窗口里包含已就绪任务和紧邻的、路径已确定的后续任务；通过不断更新这个窗口，来改善整个工作流的完成时间。</p>
-<p><strong>比较方案之前，先检查硬约束。</strong>数据依赖必须满足，生成前模型必须可用，设备必须支持这个部署，显存和实例并发容量不能超限，正在使用的实例不能回收。论文中的显存约束同时考虑模型驻留、加载等过渡状态和请求的增量显存，而不是只看模型权重能不能放下。</p>
-<p>举个例子，两个工作流当前都要用 M1，后面都要用 M2，而我们只剩一张可用 GPU。复用已有 M1 可以省下加载，但可能要排队；新加载一个 M1 可以让当前任务更快完成，却会占掉提前准备 M2 的位置。<strong>调度的难点就是判断：眼前减少的排队，是否值得付出加载和后续资源占用的代价。</strong>这些候选的影响，要结合前面的时间预测和当前资源状态来判断。</p>
-<p>具体比较时，我们把等待也算进预计完成时间：一个动作要等数据、模型准备和冲突资源都满足条件，才能开始，再加上它自己的预计耗时。例如，当前请求在已有 M1 实例上预计还要 70 秒才能完成，而新实例加载 30 秒、执行 20 秒，总共 50 秒，那么增加副本有预计 20 秒的收益。但仍然要检查设备容量、副本上限和其他需求的可行位置。这些数字只是解释决策的算例。</p>
-<p><strong>论文实际采用事件驱动的启发式，逐步构造方案。</strong>每轮先按优先级和等待时间排列已就绪任务，检查能否直接使用已有实例；对不能直接接纳的任务，再安排加载、扩副本或回收空闲实例。只有这一轮没有产生推进已就绪任务的准入或模型准备动作时，才考虑后续模型的提前加载。因此，提前加载有明确的触发条件，不是看到未来需要模型就立即加载。</p>
-<p>构造过程中，算法更新预计完成时间，安排资源冲突的先后关系并检查容量；最终只发出当前真正能执行的动作。等新请求到达、模型加载完成或任务结束，再根据新状态调整尚未发出的安排。<strong>所以，论文给出了联合优化的目标与约束，实现上用在线启发式控制求解开销，没有穷举所有物理图和排程，也不保证全局最优。</strong></p>
+<h3>SageWeaver：决定用哪张卡、模型怎么准备</h3>
+<p>最后是 SageWeaver，负责把前面的方案安排到 GPU 上。它要一起决定<strong>任务用哪个实例、模型要不要加载，以及谁先执行</strong>。</p>
+<p>我们的原则是<strong>先让已经就绪的任务跑起来</strong>。先按优先级和等待时间处理，看看能不能复用已有实例；如果不行，再考虑加载新实例，或者回收空闲实例腾位置。选择时会结合预测时间，比较继续排队和重新加载哪个更划算，同时检查显存和并发容量。</p>
+<p>提前准备后续模型也有条件：<strong>这一轮没有产生推进当前任务的动作时，才考虑预加载</strong>，避免后续任务的准备挤占当前任务需要的资源。</p>
+<p>实现上，我们<strong>每次根据事件更新方案</strong>：来了新请求、模型加载完或者任务结束，就重新看资源状态，只发出当前能执行的动作。这样能控制在线决策的开销，但不保证全局最优。</p>
 <h3>三个模块怎样配合</h3>
 <p>还是以 C 的提前加载为例：<strong>SageRadar 估计 B 什么时候结束、M2 加载需要多久；SageGraph 把“准备 M2”加入 C 的执行关系，并识别可以共享的准备动作；SageWeaver 决定这次是否提前准备、使用哪张 GPU，以及何时发出命令。</strong>三者分别提供代价、构造执行方式和作出资源决策，共同完成逻辑工作流到实际执行方案的转换。职责可以分开解释，运行时则随着状态变化逐步构造和选择，不要求先把所有候选图全部生成出来。</p>
 <h3>效果：减少整个会话的等待</h3>
@@ -1833,141 +1830,144 @@ $$&lt;/div&gt;
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 简历里的个人贡献该如何具体表达？</div>
 <div class="qa-a"><p>把真实负责的组件、一个可复现的问题、做出的代码或策略改变，以及有运行记录支撑的结果连起来。团队成果、当前实现和未来扩展分别陈述。未确认的个人职责、投稿状态与实验提升不填成既成事实。</p></div>
-</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::05h-sagepilot-five-minute-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::05h-sagepilot-five-minute-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">PE 2026 ElastiCo</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">字节 Lumen 实习</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-5" aria-labelledby="papers-tabs-tab-5" data-mid="papers-tabs::07a-lumen-project-story-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>字节 Lumen 实习</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-5-sub-1" aria-controls="papers-tabs-panel-5-subpanel-1" aria-selected="true" title="完整口述与策略取舍"><span class="subtab-title">完整口述与策略取舍</span><span class="subtab-desc">约五分钟串讲资源借用、优先级、抢占策略与工程正确性</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-2" aria-controls="papers-tabs-panel-5-subpanel-2" aria-selected="false" title="配额、优先级与抢占"><span class="subtab-title">配额、优先级与抢占</span><span class="subtab-desc">Spot 借用边界、任务排序、中断代价与回收集合</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-3" aria-controls="papers-tabs-panel-5-subpanel-3" aria-selected="false" title="状态机与可靠性设计"><span class="subtab-title">状态机与可靠性设计</span><span class="subtab-desc">原子预留、回收确认、RPC 超时与账本核对的重建方案</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-5-subpanel-1" aria-labelledby="papers-tabs-panel-5-sub-1" ><h2>项目口述</h2>
-<div class="qa open" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 请完整介绍字节 Lumen 实习，包括策略设计与工程取舍（约五分钟）</div>
-<div class="qa-a">
-<p>我在字节国际电商 Lumen 实习时，参与的是训练统一资源池的调度系统建设。当时 GPU 主要按团队固定分配，问题是不同团队的需求并不同步：一边有训练任务持续排队，另一边却还有数百张 GPU 空闲。这不只是资源总量不够，也有固定分配带来的资源隔离问题。</p>
-<p>我这段工作的重点，是在已有的 Merlin 训练平台之上设计跨团队调度层。上层统一看团队配额、实际占用和待运行任务，决定资源怎样借用、任务怎样安排、什么时候需要回收，再通过 Thrift 把调度结果交给 Merlin 执行。我的工作围绕资源协调和任务状态管理展开。</p>
-<p>第一个策略点是配额借用。固定配额代表团队的资源额度，但不意味着它暂时不用的资源必须一直空着。我们把空闲配额作为可回收的 Spot 资源借给其他团队，原团队需求恢复时再收回。这样借用方获得了额外的运行机会，原团队也保留了恢复使用的能力。这里的关键是把正常配额使用和借用资源区分开，否则后面回收时就说不清哪些任务可以被影响。</p>
-<p>第二个策略点是优先级。我们把 A/B/C 任务优先级纳入调度，但它不是唯一的决策依据。配额回答的是团队可以获得怎样的资源额度，优先级回答的是任务竞争时的安排，而 Spot 回答的是资源能不能被收回。这三个维度需要一起考虑。比如一个借用任务优先级比较高，也不能仅凭这个标签推导出它永远不需要归还资源；具体还要看配额保障与借用规则。A/B/C 的具体分类和当时的排序细节我现在记不全，但这些约束不能混成一个优先级数字。</p>
-<p>第三个策略点是低代价抢占。原团队需要收回资源时，要决定中断哪些任务。我们结合任务类型、SM Active，也就是计算单元活跃度，以及已经运行的时长来估计中断代价，再选择能够释放足够 GPU、代价相对较低的任务组合。目标是减少已经投入的计算损失，以及一次回收影响的任务数量。</p>
-<p>这里不能只选活跃度最低的任务。低活跃可能与通信、读数据或者执行阶段有关，不一定代表任务没价值；已运行时长也不等于剩余时长，不能据此断言任务马上就完成了。所以这些信号需要结合起来看。具体评分权重和组合算法我已经记不清了，但可以把策略分成两个问题：候选是否允许回收，以及回收这些候选的代价和资源效果如何。</p>
-<p>如果进一步展开实现设计，我会先过滤不能抢的任务，再评估候选组合。一个可实现的近似方案是参考中断代价与可释放资源量做排序，逐步选出候选，再检查资源放置是否可行。比如目标任务需要同节点四张卡，分别从四个节点腾出一张卡未必有用；多卡任务如果需要整体停止，也不能假设可以只抽走其中一张卡。这是我根据机制重建的实现思路，不是对原代码算法的逐行还原。</p>
-<p>工程方面，我设计了覆盖提交、排队、调度、运行和终止的任务状态机。MySQL 持久化任务和配额状态，Redis 缓存调度需要的高频数据，Thrift 对接 Merlin 的执行层。任务状态变化时更新记录，同时持续核对团队配额、调度记录中的分配和实际占用，检测状态不一致或执行异常。</p>
-<p>这部分有两个非常重要的正确性问题。一个是并发预留：如果两个调度请求同时看到还有四张卡，不能各自都分配四张。另一个是异步回收：发出终止请求不等于 GPU 已经空闲，必须确认执行层释放后，才能把资源交给新任务。</p>
-<p>如果让我现在实现，我会把配额检查和预留放在同一个并发控制范围里，先持久化预留与待执行操作，再调用 Merlin。回收请求发出后仍保留占用，收到明确释放结果后再更新账本。RPC 超时不能直接当失败，更不能立即把资源重新分配出去，因为对方可能已经执行，只是响应没有回来；需要查执行状态，并用可追踪、可重试的操作配合状态核对来收敛。具体事务、字段和重试代码是设计层面的解释，不能说我还记得当时用了哪一种实现。</p>
-<p>这段实习让我积累的是把资源共享策略接到实际任务执行上的经验。策略上要同时考虑资源利用、团队保障和中断成本；工程上要保证调度记录与实际占用能够对应起来。结果方面，现有材料能支持的是借用、回收、状态管理及平台对接这些工作，量化收益我没有足够依据，所以不会报一个利用率提升或节省成本的数字。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 用半分钟概括这段实习</div>
-<div class="qa-a">
-<p>我在 Lumen 做训练资源池的跨团队调度。原来 GPU 固定分给各团队，会出现一边排队、一边空闲的问题。我在 Merlin 上层设计资源协调机制，把闲置配额作为可回收 Spot 借出，结合 A/B/C 优先级和中断代价做调度回收，并通过任务状态机、MySQL/Redis 和 Thrift 把策略与实际执行连接起来。核心取舍是提高资源共享程度，同时保留原团队的资源保障。</p>
-</div>
-</div>
-<h2>个人贡献与结果</h2>
-<p>简历记载的工作包括跨团队调度层设计、资源借用与回收、任务状态机，以及 MySQL、Redis、Thrift 和 Merlin 的执行对接。项目整体成果与个人独立完成的模块应分别陈述；现有材料没有可核实的利用率提升、成本节省或全量上线数字。</p>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 已经有 Merlin，为什么还要你这一层？</div>
-<div class="qa-a">
-<p>“Merlin 是已有的训练执行平台，我做的层补上跨团队资源协调：统一资源视图、配额借用、任务优先级和回收决策。上层决定资源如何在团队和任务之间安排，再把结果交给底层执行。”</p>
-<p>不要扩展为自己重写了训练平台，也不要声称已知 Merlin 的全部底层调度实现。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 你的个人贡献和最后收益是什么？</div>
-<div class="qa-a">
-<p>“我参与训练资源池建设，重点是跨团队调度层，包括借用回收策略、任务状态管理以及与 Merlin 的对接。项目收益是让原来隔离的闲置资源可以跨团队使用，并有明确的回收与状态跟踪机制。具体上线覆盖范围和量化收益，我只讲实际核实过的数据。”</p>
-<p>面试前进一步明确自己独立完成、共同完成及他人负责的模块。没有上线证据就不说全量上线；没有数字就不说节省成本、回收全部闲置卡或提升若干百分点。</p>
-</div>
-</div>
-<h2>事实依据</h2>
-<p>口述依据是个人最新中文简历与经历库（2026-09-09 核对），未核对字节内部代码。A/B/C 定义、评分权重、checkpoint 和恢复策略尚未确认。基于这些机制推导出的工程方案，应表述为设计分析，不视为当时已完成的实现。</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-5-subpanel-2" aria-labelledby="papers-tabs-panel-5-sub-2" hidden><h2>配额、优先级与可回收资源</h2>
-<div class="table-scroll">
-
+</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::05h-sagepilot-five-minute-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::05h-sagepilot-five-minute-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">PE 2026 ElastiCo</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">字节 Lumen 实习</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-5" aria-labelledby="papers-tabs-tab-5" data-mid="papers-tabs::07a-lumen-project-story-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>字节 Lumen 实习</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-5-sub-1" aria-controls="papers-tabs-panel-5-subpanel-1" aria-selected="true" title="完整口述与策略取舍"><span class="subtab-title">完整口述与策略取舍</span><span class="subtab-desc">约五分钟串讲资源借用、优先级、抢占策略与工程正确性</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-2" aria-controls="papers-tabs-panel-5-subpanel-2" aria-selected="false" title="配额、优先级与抢占"><span class="subtab-title">配额、优先级与抢占</span><span class="subtab-desc">Spot 借用边界、任务排序、中断代价与回收集合</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-3" aria-controls="papers-tabs-panel-5-subpanel-3" aria-selected="false" title="状态机与可靠性设计"><span class="subtab-title">状态机与可靠性设计</span><span class="subtab-desc">原子预留、回收确认、RPC 超时与账本核对的重建方案</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-5-subpanel-1" aria-labelledby="papers-tabs-panel-5-sub-1" ><h2>完整口述：跨团队训练资源池</h2>
+<h3>1. 业务问题：排队与闲置并存</h3>
+<p>我在字节国际电商 Lumen 实习时，参与的是训练统一资源池的调度系统建设。当时 GPU 主要按团队<strong>固定分配</strong>，问题是不同团队的<strong>需求并不同步</strong>：一边有训练任务持续排队，另一边却还有数百张 GPU 空闲。</p>
+<p>这不只是资源总量不够，也有固定分配带来的资源隔离问题。</p>
+<h3>2. 我的工作：跨团队调度层</h3>
+<p>我这段工作的重点，是在已有的 Merlin 训练平台之上设计<strong>跨团队调度层</strong>。上层统一看团队配额、实际占用和待运行任务，决定资源怎样借用、任务怎样安排、什么时候需要回收，再通过 <strong>Thrift</strong> 把调度结果交给 Merlin 执行。</p>
+<p>我的工作围绕资源协调和任务状态管理展开。</p>
+<h3>3. 配额借用：闲置时共享，需要时收回</h3>
+<p>第一个策略点是配额借用。固定配额代表团队的资源额度，但不意味着它暂时不用的资源必须一直空着。我们把空闲配额作为<strong>可回收的 Spot 资源</strong>借给其他团队，原团队需求恢复时再收回。</p>
+<p>这样借用方获得了额外的运行机会，原团队也保留了恢复使用的能力。这里的关键是把<strong>正常配额使用和借用资源区分开</strong>，否则后面回收时就说不清哪些任务可以被影响。</p>
+<h3>4. 优先级：额度、排序与回收权分开</h3>
+<p>第二个策略点是优先级。我们把 <strong>A/B/C</strong> 任务优先级纳入调度，但它不是唯一的决策依据。配额回答的是团队可以获得怎样的资源额度，优先级回答的是任务竞争时的安排，而 Spot 回答的是资源能不能被收回。</p>
+<p>这<strong>三个维度</strong>需要一起考虑。比如一个借用任务优先级比较高，也不能仅凭这个标签推导出它永远不需要归还资源；具体还要看配额保障与借用规则。A/B/C 的具体分类和当时的排序细节我现在记不全，但这些约束不能混成一个优先级数字。</p>
+<ul><li><strong>配额</strong>：团队层面的资源额度。</li><li><strong>优先级</strong>：任务竞争时的执行安排。</li><li><strong>Spot</strong>：资源的可回收属性。</li></ul>
+<h3>5. 抢占目标：释放足够资源，减少中断损失</h3>
+<p>第三个策略点是低代价抢占。原团队需要收回资源时，要决定中断哪些任务。</p>
+<p>我们结合<strong>任务类型</strong>、<strong>SM Active</strong>，也就是计算单元活跃度，以及<strong>已经运行的时长</strong>来估计中断代价，再选择能够释放足够 GPU、代价相对较低的任务组合。目标是减少已经投入的计算损失，以及一次回收影响的任务数量。</p>
+<ol><li><strong>筛候选</strong>：哪些任务允许回收？</li><li><strong>评代价</strong>：中断会损失多少工作？</li><li><strong>验资源</strong>：回收后能否实际启动目标任务？</li></ol>
+<h3>6. 代价判断：三个信号一起看</h3>
+<p>这里不能只选活跃度最低的任务。<strong>低活跃</strong>可能与通信、读数据或者执行阶段有关，不一定代表任务没价值；<strong>已运行时长也不等于剩余时长</strong>，不能据此断言任务马上就完成了。</p>
+<p>所以这些信号需要结合起来看。具体评分权重和组合算法我已经记不清了，但可以把策略分成两个问题：候选是否允许回收，以及回收这些候选的代价和资源效果如何。</p>
+<h3>7. 候选组合：先合法，再低代价，最后可放置</h3>
+<p>如果进一步展开实现设计，我会<strong>先过滤不能抢的任务</strong>，再评估候选组合。一个可实现的近似方案是参考中断代价与可释放资源量做排序，逐步选出候选，再检查<strong>资源放置是否可行</strong>。</p>
+<p>比如目标任务需要同节点四张卡，分别从四个节点腾出一张卡未必有用；多卡任务如果需要整体停止，也不能假设可以只抽走其中一张卡。这是我根据机制<strong>重建的实现思路</strong>，不是对原代码算法的逐行还原。</p>
+<h3>8. 工程链路：调度决策接到真实执行</h3>
+<p>工程方面，我设计了覆盖提交、排队、调度、运行和终止的<strong>任务状态机</strong>。<strong>MySQL</strong> 持久化任务和配额状态，<strong>Redis</strong> 缓存调度需要的高频数据，<strong>Thrift</strong> 对接 Merlin 的执行层。</p>
+<p>任务状态变化时更新记录，同时持续核对团队配额、调度记录中的分配和实际占用，检测状态不一致或执行异常。</p>
+<h3>9. 正确性：不能超卖，不能提前释放</h3>
+<p>这部分有两个非常重要的正确性问题。一个是<strong>并发预留</strong>：如果两个调度请求同时看到还有四张卡，不能各自都分配四张。</p>
+<p>另一个是<strong>异步回收</strong>：发出终止请求不等于 GPU 已经空闲，必须确认执行层释放后，才能把资源交给新任务。</p>
+<h3>10. 可靠实现：预留、确认、重试与核对</h3>
+<p>如果让我现在实现，我会把<strong>配额检查和预留</strong>放在同一个并发控制范围里，先持久化预留与待执行操作，再调用 Merlin。回收请求发出后仍保留占用，收到明确释放结果后再更新账本。</p>
+<p><strong>RPC 超时</strong>不能直接当失败，更不能立即把资源重新分配出去，因为对方可能已经执行，只是响应没有回来；需要查执行状态，并用可追踪、可重试的操作配合状态核对来收敛。具体事务、字段和重试代码是设计层面的解释，不能说我还记得当时用了哪一种实现。</p>
+<h3>11. 结果表达：机制完成情况与可核实收益</h3>
+<p>这段实习让我积累的是把资源共享策略接到实际任务执行上的经验。策略上要同时考虑<strong>资源利用、团队保障和中断成本</strong>；工程上要保证调度记录与实际占用能够对应起来。</p>
+<p>结果方面，现有材料能支持的是借用、回收、状态管理及平台对接这些工作，<strong>量化收益</strong>我没有足够依据，所以不会报一个利用率提升或节省成本的数字。</p>
+<h2>项目职责追问</h2>
+<h3>已经有 Merlin，为什么还需要这一层？</h3>
+<p><strong>我做的是跨团队资源协调。</strong></p>
+<ul><li><strong>上层</strong>：统一资源视图、配额借用、任务优先级和回收决策。</li><li><strong>Merlin</strong>：承接调度结果，执行训练任务。</li><li><strong>衔接</strong>：通过 Thrift 下发操作，并同步、核对任务状态。</li></ul>
+<h3>个人贡献和收益怎么讲？</h3>
+<p>我参与训练资源池建设，重点是<strong>跨团队调度、借用回收、任务状态管理和平台对接</strong>。收益是让原来隔离的闲置资源可以跨团队使用，并有明确的回收与状态跟踪机制。</p>
+<p><strong>事实口径</strong>：来源为最新中文简历与经历库，未核对内部代码。个人独立完成的模块和团队成果需分别说明；A/B/C 定义、评分权重、checkpoint、恢复策略和量化收益未确认。重建方案应以“如果现在实现”表述。</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-5-subpanel-2" aria-labelledby="papers-tabs-panel-5-sub-2" hidden><h2>配额、优先级、Spot 与抢占</h2>
 <div class="table-scroll"><table>
-<tr><th>概念</th><th>口头解释</th><th>不应直接推断的细节</th></tr>
-<tr><td>配额</td><td>团队层面的资源额度，是借用和回收的依据；需要结合实际占用与待运行需求判断</td><td>GPU 型号维度、层级配额、超额上限、是否允许透支</td></tr>
-<tr><td>优先级</td><td>任务层面的调度输入，参与决定资源竞争时的安排</td><td>A/B/C 分别代表什么、精确排序、同级 FIFO、是否跨团队全局比较</td></tr>
-<tr><td>Spot</td><td>借用的资源可以被原团队收回，借用方没有永久占有权</td><td>Spot 是否与某一优先级绑定，是否自动降级</td></tr>
-<tr><td>抢占</td><td>为满足资源需求，中断允许回收的任务来释放资源</td><td>kill/pause/checkpoint、通知期、自动恢复与补偿策略</td></tr>
+<tr><th>概念</th><th>决定什么</th><th>容易混淆的地方</th></tr>
+<tr><td><strong>配额</strong></td><td>团队层面的资源额度</td><td>配额不等于当前占用</td></tr>
+<tr><td><strong>优先级</strong></td><td>任务竞争时的执行安排</td><td>高优先级不自动获得跨团队无限抢占权</td></tr>
+<tr><td><strong>Spot</strong></td><td>借用资源可以被收回</td><td>借用不改变原团队的配额归属</td></tr>
+<tr><td><strong>抢占</strong></td><td>中断允许回收的任务，释放资源</td><td>发请求不等于已释放，无损恢复也不是默认能力</td></tr>
 </table></div>
-
-</div>
-<h2>调度追问</h2>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 配额固定了，为什么还能借用？</div>
-<div class="qa-a">
-<p>“配额和当前实际使用量是两个量。我们保留团队的配额管理，但允许暂时空闲的部分以可回收方式借出去。借用增加的是资源使用机会；原团队需求恢复时，需要通过回收恢复它的使用空间。”</p>
-<p>示意数字，非生产参数：甲团队配额 8 张，只用 4 张；假设另外 4 张满足借用条件，乙团队可以借这 4 张。甲后来新增 2 张需求，若无其他可用资源，就需要回收相应借用资源。若被抢占任务以 4 张卡为整体运行，可能实际释放 4 张，不能默认可从任意训练任务抽走 2 张卡。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: A/B/C 分别是什么？A 一定能抢 C 吗？</div>
-<div class="qa-a">
-<p>简历只能确认 A/B/C 参与调度，不能确认类别定义和抢占矩阵。先由本人补全定义，再讲规则。</p>
-<p>“这里需要分开看任务优先级和资源能否被回收。高优先级是调度依据，但是否能抢某个任务，还要满足资源的可回收条件和团队配额规则。我们明确实现的是原团队需求恢复时回收借出的 Spot 资源。”</p>
-<p>不能自行把 A/B/C 解释成线上/离线/实验，或承诺 A 可以无条件抢占其他团队的保障资源。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么不直接抢 GPU 利用率最低的任务？</div>
-<div class="qa-a">
-<p>“因为低活跃不等于低中断代价。我们结合任务类型、SM Active 和已运行时长来评估，而不是只看一个指标。SM Active 提供计算单元活跃情况的信息，但任务是否快完成、是否处于通信或等待阶段，都不能仅凭它判断。最终还要看这组任务能释放多少资源，是否满足回收需求。”</p>
-<p>后半段是指标解释，不表示实际系统实现了阶段识别或完成时间预测。不要把 SM Active 说成显存占用率。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 中断代价公式是什么？是不是运行越久越不能抢？</div>
-<div class="qa-a">
-<p>“我简历中对应的输入是任务类型、SM Active 和已运行时长。具体如何打分需要按当时实际规则讲，不能把已运行时长直接等同于剩余时长。运行时间反映已投入的计算，但如果没有检查点，打断可能损失更多工作；是否有检查点也影响代价。”</p>
-<p>这是解释因素，不是已证实的评分公式。待本人补：规则/权重、排序或组合算法、是否保护快完成任务、是否使用检查点信息。不能借用 DeepShare 的运行时间预测或历史抢占惩罚冒充 Lumen 实现。</p>
-</div>
-</div>
-<h2>抢占集合的可行性</h2>
-<p>以下是可选实现思路，不代表已核对的 Lumen 算法。</p>
-<p>先过滤不允许抢的任务，只留下允许回收且资源位置、卡型能帮助满足本次需求的候选。然后使用简历记载的任务类型、SM Active、已运行时长等信号评估相对中断代价。SM Active 低不能单独证明任务无用；已运行久也不等于快结束。</p>
-<p>具体权重不明时不编公式。可以解释一种可选启发式：按估计中断代价相对可释放资源量排序，逐步选择任务，并检查释放集合能否满足目标作业的完整资源需求。这只是可实现的近似方法，不能声称原系统采用它或保证全局最优。</p>
-<p>例如新任务需要同节点 4 张卡，分别在四个节点腾出一张并不一定可用。任务按多卡整体运行时，也可能必须整任务回收，带来额外释放量。因此目标是找到可行且代价较低的集合，而不是只凑够 GPU 总数。</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-5-subpanel-3" aria-labelledby="papers-tabs-panel-5-sub-3" hidden><h2>调度状态与执行状态</h2>
-<p>MySQL 持久化任务与配额，Redis 缓存高频调度数据，Merlin 执行训练任务，Thrift 连接调度与执行。事件更新与资源核对属于简历记载的工作；以下事务、预留字段、幂等标识及恢复流程是重建的可靠实现方案，尚未由原代码证实。</p>
-<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">校验与预留</div><div class="flow-desc">在同一并发控制范围内检查额度并登记占用意图</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">请求执行</div><div class="flow-desc">提交本地事务后调用 Merlin，保留可追踪的操作标识</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">确认结果</div><div class="flow-desc">根据执行结果推进任务状态，超时保持待核查</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">资源回收</div><div class="flow-desc">发出回收请求后仍计为占用，确认释放才可重新分配</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">状态核对</div><div class="flow-desc">比较持久化记录与执行层状态，修复遗漏、重复与乱序影响</div></div></div>
-<h2>配额账本与原子预留</h2>
-<p>一个合理设计是分别记录配置配额、运行中的保障占用、保障预留、借入占用、借出占用与待回收量。字段不一定这样命名，但对应含义不能混淆。按资源池和卡型分别核算，不能把不同卡直接按数量互换。</p>
-<p>简化的借用上限是“配置配额减去保障占用和保障预留”的非负部分，再扣掉已经借出的量，并结合等待中的保障需求和实际可分配资源裁剪。这里的数量只是配额账本约束，不能代替物理可放置性检查。</p>
-<p>例如两次调度同时看到还剩 4 张卡，各自准备分配 4 张，如果只读取缓存而没有原子预留，就可能重复分配。可靠设计要让校验和预留在同一并发控制范围内完成。若采用 MySQL，可以在事务中锁住相关配额账本行，或使用条件更新/版本检查；具体方案是建议，不能声称当年实际用了某一种。</p>
-<h2>回收确认与超时</h2>
-<p>可靠的概念状态链：Running → ReclaimRequested → Releasing → Released；名称为设计示意。发出回收 RPC 后，资源仍按占用计算，直到执行层确认释放。是否保存 checkpoint、是否可恢复，简历未说明，不预设“无损抢占”。</p>
-<p>若 RPC 超时，可能请求失败，也可能对方执行成功但响应丢失，因此不能直接重发一个全新的操作并释放账本。可选设计是持久化操作标识，查询目标任务当前状态，再按幂等语义重试。同一释放操作只扣减一次占用。</p>
-<h2>执行意图与状态核对</h2>
-<p>一种可靠设计：短事务记录预留和待执行意图，提交后调用 Merlin，收到响应或事件再推进状态。不能指望 MySQL 事务把外部训练平台也原子提交。若提交意图后进程崩溃，需要能扫描未完成意图继续执行；若执行成功但本地未记账，则靠事件或执行状态核对恢复。</p>
-<p>Redis 用于提高读取速度，正确性不能仅依赖可能过期的缓存。状态事件应有去重及乱序保护，例如操作标识、版本或合法状态迁移校验；晚到的 Running 事件不能把已经完成的任务恢复成运行。具体权威数据源及多调度实例协调方式仍需按真实系统确认。</p>
-<h2>效果验证</h2>
-<p>适合检查的指标：空闲可借用资源、队列等待时间、资源回收耗时、保障请求满足情况、抢占次数与重算损失、账本与执行层不一致数量。它们是建议验证项，不是已记录的上线数据。没有可靠实测结果时，说明机制完成情况，不承诺提升幅度。</p>
-<h2>工程追问</h2>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 发出终止请求，就能把 GPU 分给新任务了吗？</div>
-<div class="qa-a">
-<p>“不能把发出请求直接当成资源已经空闲。简历里的执行链是调度层通过 Thrift 请求 Merlin 执行，再同步任务状态，并核对分配记录和实际占用。设计上需要确认资源已经释放，再让新任务使用，否则会出现重复分配。”</p>
-<p>前两句描述事实；最后一句是正确性要求。实际确认信号、过渡状态、重试和超时机制必须由本人补充，不能假称已经实现某种协议。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: MySQL、Redis、Merlin 状态不一致怎么办？</div>
-<div class="qa-a">
-<p>“MySQL 持久化任务和配额状态，Redis 缓存调度需要的高频数据，Merlin 执行任务。我们根据状态变更事件同步记录，并持续核对配额、分配记录和实际占用，检测异常。这里的关键是不能只相信缓存中的数字，还要检查执行结果。”</p>
-<p>待核对：最终权威状态、核对触发方式、缓存失效机制、重复事件处理、并发扣配额的原子性。若面试官让你重新设计，可明确说“如果现在设计，我会……”，再讨论事务、幂等操作标识、版本校验和重试；不要表述为已做。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 记不清代码细节时，怎样说明自己的实现理解？</div>
-<div class="qa-a">
-<p>“当时实际做的是跨团队配额借用和回收、任务状态管理，以及与 Merlin 的执行对接。具体评分权重和代码字段我现在记不清了，但这里有两个必须保证的点：一是配额检查和资源预留不能被并发请求重复使用；二是发出回收请求不代表资源已经释放，要根据执行状态确认并核对账本。如果让我现在实现，我会用持久化预留、可重试的执行意图和状态核对，把这两点保证住。”</p>
-</div>
-</div>
+<h2>配额固定了，为什么还能借用？</h2>
+<p><strong>保留团队额度，临时共享未使用的资源。</strong></p>
+<p>口述：“配额和实际使用量是两个量。我们保留配额管理，但允许空闲部分以可回收方式借出去。原团队需求恢复时，通过回收恢复它的使用空间。”</p>
+<h3>用一个例子讲清（示意数字）</h3>
+<ol><li><strong>甲配额 8 张，实际用 4 张</strong>：若剩余资源满足借用条件，可借给乙。</li><li><strong>乙借用 4 张</strong>：得到额外运行机会，但这部分资源可回收。</li><li><strong>甲新增 2 张需求</strong>：没有其他可用资源时，需要回收相应借用资源。</li><li><strong>乙的任务必须四卡整体停止</strong>：可能实际释放 4 张，不能假设任意抽走 2 张。</li></ol>
+<h2>A 一定能抢 C 吗？</h2>
+<p><strong>先看资源是否允许回收，再看优先级与配额规则。</strong></p>
+<ul><li><strong>优先级</strong>是调度输入，不等于对所有运行任务的抢占授权。</li><li><strong>借用条件</strong>决定资源何时必须归还。</li><li><strong>保障规则</strong>决定原团队需求恢复时如何处理竞争。</li></ul>
+<p>口述：“这里要分开看任务优先级和资源能否回收。我们明确实现的是原团队需求恢复时回收借出的 Spot 资源，不能只凭一个优先级标签判断能抢谁。”</p>
+<p><strong>待核对</strong>：A/B/C 的具体定义、同级排序和抢占矩阵。不能自行解释为线上、离线和实验三类。</p>
+<h2>为什么不直接抢活跃度最低的任务？</h2>
+<p><strong>低活跃不等于低中断代价。</strong></p>
+<div class="table-scroll"><table>
+<tr><th>简历记载的信号</th><th>用途</th><th>不能直接推出的结论</th></tr>
+<tr><td><strong>任务类型</strong></td><td>为中断代价评估提供任务差异信息</td><td>某类任务一定可无损恢复</td></tr>
+<tr><td><strong>SM Active</strong></td><td>反映计算单元活跃情况</td><td>任务没价值、显存占用低或很快结束</td></tr>
+<tr><td><strong>已运行时长</strong></td><td>反映已投入的运行时间</td><td>剩余时间短，或者一定不能抢</td></tr>
+</table></div>
+<p>口述：“我们结合任务类型、SM Active 和已运行时长评估。低活跃可能与通信或读数据有关，不能只看一个指标；还要看这组任务释放的资源能否满足回收需求。”</p>
+<h2>抢占策略怎样展开？</h2>
+<p><strong>简历确认</strong>：结合上述三个信号估计中断代价，在释放足够 GPU 的前提下选择代价较低的任务组合。</p>
+<h3>1. 候选过滤：能不能抢</h3>
+<ul><li>只考虑<strong>允许回收</strong>的任务。</li><li>检查资源位置、卡型是否有助于本次需求。</li><li>保留业务规则保护的任务。</li></ul>
+<h3>2. 代价选择：抢哪些更合适</h3>
+<ul><li>结合<strong>任务类型、SM Active、已运行时长</strong>评估。</li><li>兼顾计算损失、需要中断的任务数量和释放资源量。</li><li>可选启发式：参考<strong>估计中断代价 / 可释放资源量</strong>排序，逐步选择候选。</li></ul>
+<h3>3. 放置检查：抢完能不能用</h3>
+<ul><li><strong>总卡数够，不代表可以放置</strong>：同节点四卡需求不能靠四个节点各一张满足。</li><li><strong>多卡作业可能整体回收</strong>：不能默认部分 GPU 可直接抽离。</li><li>目标是<strong>可行且代价较低的集合</strong>，不是只凑够 GPU 数量。</li></ul>
+<p><strong>实现口径</strong>：以上三步是对机制的设计展开；具体过滤规则和排序算法未由原代码证实。该启发式不保证全局最优。</p>
+<h2>运行越久越不能抢吗？</h2>
+<p><strong>已运行时长不是剩余时长，也不是完整损失模型。</strong></p>
+<ul><li>没有 checkpoint 时，中断可能损失较多已完成计算。</li><li>有 checkpoint 时，损失还受保存位置、恢复开销等影响。</li><li>Lumen 的 checkpoint 能力和评分权重未确认，不能补成既成事实。</li></ul>
+<p>口述：“具体权重我记不清了，但不能把已运行时长等同于剩余时长。我会解释当时使用的信号和取舍，不编一个原系统的评分公式。”</p></div><div class="subtab-panel" role="tabpanel" id="papers-tabs-panel-5-subpanel-3" aria-labelledby="papers-tabs-panel-5-sub-3" hidden><h2>执行链路与职责</h2>
+<div class="table-scroll"><table>
+<tr><th>组件</th><th>简历记载的职责</th></tr>
+<tr><td><strong>MySQL</strong></td><td>持久化任务与配额状态</td></tr>
+<tr><td><strong>Redis</strong></td><td>缓存调度需要的高频数据</td></tr>
+<tr><td><strong>Thrift</strong></td><td>连接调度层与 Merlin 执行层</td></tr>
+<tr><td><strong>Merlin</strong></td><td>执行训练任务，提供状态同步与回收对接</td></tr>
+</table></div>
+<p><strong>实现口径</strong>：事件更新、资源核对属于简历记载的工作。下述原子预留、操作标识、事务与恢复流程是可靠性设计方案，尚未由原代码证实。</p>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">校验并预留</div><div class="flow-desc">同一并发控制范围内检查额度、登记资源预留</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">请求执行</div><div class="flow-desc">持久化操作意图后调用 Merlin</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">确认结果</div><div class="flow-desc">根据执行结果推进状态，超时保留待核查状态</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">回收资源</div><div class="flow-desc">仍按占用核算，确认释放后才允许重新分配</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">核对状态</div><div class="flow-desc">比较账本与执行层，处理遗漏、重复与乱序</div></div></div>
+<h2>两个调度请求同时看到还有四张卡，怎么办？</h2>
+<p><strong>配额检查与资源预留必须是一个受并发保护的操作。</strong></p>
+<h3>错误路径</h3>
+<ol><li>请求甲读到剩余 4 张。</li><li>请求乙也读到剩余 4 张。</li><li>两者各分配 4 张，产生<strong>重复分配</strong>。</li></ol>
+<h3>设计方案</h3>
+<ol><li><strong>检查额度</strong>：同时考虑运行中的占用和已预留资源。</li><li><strong>原子预留</strong>：可用数据库事务配合行锁，或条件更新与版本校验。</li><li><strong>提交后执行</strong>：登记预留与操作意图，再请求执行层启动。</li><li><strong>按结果收敛</strong>：确认失败才能撤销；状态不确定时先核查。</li></ol>
+<p>口述：“Redis 可以加速读，但缓存中的剩余额度不能直接作为最终分配依据。如果现在实现，我会把校验和预留放进同一并发控制范围。”</p>
+<h2>配额账本需要记哪些量？</h2>
+<ul><li><strong>配置配额</strong>：团队的资源额度。</li><li><strong>保障占用与保障预留</strong>：已运行和已承诺、尚未完成启动的资源。</li><li><strong>借入与借出占用</strong>：跨团队使用关系。</li><li><strong>待回收量</strong>：已请求回收但尚未确认释放的资源。</li></ul>
+<p>借用空间应从配额中扣除保障占用、保障预留和已借出量，再结合等待需求与物理可分配资源约束判断。<strong>按资源池和卡型核算，不能把异构卡简单相加。</strong></p>
+<p>这些是账本设计含义，不是对历史数据库字段的还原。</p>
+<h2>发出终止请求，就能把 GPU 分给新任务了吗？</h2>
+<p><strong>不能。请求回收和确认释放是两个时刻。</strong></p>
+<p>概念状态链（名称为设计示意）：</p>
+<pre><code class="language-text">Running → ReclaimRequested → Releasing → Released</code></pre>
+<ul><li><strong>请求已发出</strong>：任务可能仍在运行，资源继续按占用核算。</li><li><strong>释放已确认</strong>：更新账本，资源才可再次分配。</li><li><strong>checkpoint 与恢复</strong>：能力未确认，不能默认无损抢占。</li></ul>
+<p>口述：“调度层通过 Thrift 请求 Merlin 执行，再同步任务状态并核对实际占用。正确性上必须确认释放，不能发完请求就把卡分给新任务。”</p>
+<h2>抢占 RPC 超时怎么办？</h2>
+<p><strong>超时表示结果未知，不等于执行失败。</strong></p>
+<div class="table-scroll"><table>
+<tr><th>可能情况</th><th>处理原则</th></tr>
+<tr><td>请求未到执行层</td><td>核查后重试</td></tr>
+<tr><td>已执行，但响应丢失</td><td>查询状态，避免重复执行或重复释放</td></tr>
+<tr><td>执行仍在进行</td><td>保留待回收占用，等待或核查</td></tr>
+</table></div>
+<h3>可选恢复机制</h3>
+<ol><li>持久化<strong>操作标识</strong>，使一次回收可追踪。</li><li>查询目标任务当前状态。</li><li>按<strong>幂等语义</strong>重试同一操作。</li><li>同一释放结果只扣减一次占用。</li></ol>
+<h2>MySQL、Redis 和 Merlin 状态不一致怎么办？</h2>
+<p><strong>缓存用于加速，执行结果仍需要核对。</strong></p>
+<p>简历记载的做法：根据状态变更事件更新记录，持续核对配额、分配记录和实际占用，检测异常。</p>
+<h3>重建的可靠方案</h3>
+<ul><li><strong>短事务记录意图</strong>：保存预留及待执行操作，提交后调用 Merlin。</li><li><strong>崩溃后继续处理</strong>：扫描未完成操作，而不是把已提交意图遗忘。</li><li><strong>事件去重</strong>：按操作标识或版本判断是否已处理。</li><li><strong>乱序保护</strong>：晚到的 <code>Running</code> 事件不能把已完成任务恢复成运行。</li><li><strong>执行状态核对</strong>：执行成功但本地未记账时，通过状态核对恢复。</li></ul>
+<p><strong>关键限制</strong>：普通 MySQL 事务不能把外部 RPC 一起原子提交。最终权威状态、多实例协调及具体重试机制仍需按实际系统确认。</p>
+<h2>怎样验证策略和实现是否有效？</h2>
+<div class="table-scroll"><table>
+<tr><th>目标</th><th>建议观察的指标</th></tr>
+<tr><td><strong>资源效率</strong></td><td>可借用闲置资源、队列等待时间</td></tr>
+<tr><td><strong>团队保障</strong></td><td>保障请求满足情况、回收耗时</td></tr>
+<tr><td><strong>中断成本</strong></td><td>抢占次数、重算损失</td></tr>
+<tr><td><strong>状态正确性</strong></td><td>账本与执行层不一致数量、恢复耗时</td></tr>
+</table></div>
+<p>这些是<strong>建议验证项</strong>，不是已记录的上线数据。</p>
 <h2>模拟追问</h2>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 团队甲要收回配额，乙正在运行高优先级借用任务，如何决策？</div>
-<div class="qa-a">
-<p>先说明配额保障与借用条款，再判断可回收范围。若承诺原团队优先恢复额度，借用任务的高优先级不能自动覆盖此约定。A/B/C 的真实含义与具体抢占矩阵仍需核对。</p>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 抢占 RPC 超时，下一轮读到旧缓存，怎样避免重复分配？</div>
-<div class="qa-a">
-<p>不能因 RPC 超时就把资源视为空闲。设计上保留待回收占用，以操作标识查询或幂等重试；只有确认释放才更新账本，准入必须经过原子预留。说明这是设计方案，不能把未核对的故障恢复实现说成过去做过。</p>
-</div>
-</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::07a-lumen-project-story-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::07a-lumen-project-story-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">SagePilot</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">面试叙事</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-6" aria-labelledby="papers-tabs-tab-6" data-mid="papers-tabs::03-section-03-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试叙事</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-6-sub-1" aria-controls="papers-tabs-panel-6-subpanel-1" aria-selected="true" title="关系与面试叙事"><span class="subtab-title">关系与面试叙事</span><span class="subtab-desc">互补关系、共通理念、自我介绍定位</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-6-sub-2" aria-controls="papers-tabs-panel-6-subpanel-2" aria-selected="false" title="简历视角面试问答"><span class="subtab-title">简历视角面试问答</span><span class="subtab-desc">从简历描述出发预测面试官追问，含跨论文串联问题</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-6-subpanel-1" aria-labelledby="papers-tabs-panel-6-sub-1" ><div class="card card-s">
+<h3>甲要收回配额，乙是高优先级借用任务，谁优先？</h3>
+<p><strong>按保障与借用条款决定。</strong> 若承诺原团队需求恢复时归还资源，借用任务的高优先级不能自动覆盖该约定。A/B/C 的具体抢占矩阵未确认。</p>
+<h3>记不清代码细节，如何说明自己的理解？</h3>
+<p>“当时实际做的是配额借用和回收、任务状态管理，以及与 Merlin 的对接。具体字段和权重我记不清了，但有两个必须保证的点：<strong>配额不能被并发重复使用，资源不能在确认释放前再次分配</strong>。如果现在实现，我会通过持久化预留、可重试操作和状态核对来保证。”</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::07a-lumen-project-story-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::07a-lumen-project-story-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">SagePilot</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">面试叙事</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-6" aria-labelledby="papers-tabs-tab-6" data-mid="papers-tabs::03-section-03-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>面试叙事</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-6-sub-1" aria-controls="papers-tabs-panel-6-subpanel-1" aria-selected="true" title="关系与面试叙事"><span class="subtab-title">关系与面试叙事</span><span class="subtab-desc">互补关系、共通理念、自我介绍定位</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-6-sub-2" aria-controls="papers-tabs-panel-6-subpanel-2" aria-selected="false" title="简历视角面试问答"><span class="subtab-title">简历视角面试问答</span><span class="subtab-desc">从简历描述出发预测面试官追问，含跨论文串联问题</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-6-subpanel-1" aria-labelledby="papers-tabs-panel-6-sub-1" ><div class="card card-s">
 <h3>互补关系</h3>
 <p>Maestro 解决<strong>推理侧</strong>的多 agent 调度，DeepShare 解决<strong>训练侧</strong>的多租户管理。一个完整的 GPU 集群需要同时支持训练和推理。</p>
 
