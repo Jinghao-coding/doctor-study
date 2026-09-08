@@ -1,6 +1,6 @@
 {
   "title": "论文工作",
-  "subtitle": "Maestro · DeepShare · ElastiCo · SagePilot · 简历视角面试问答",
+  "subtitle": "Maestro · DeepShare · ElastiCo · SagePilot · 字节 Lumen 实习 · 面试问答",
   "kicker": "Research Work",
   "tags": [
     "papers",
@@ -188,6 +188,28 @@
               "level": "进阶",
               "priority": 1,
               "time": 10
+            }
+          ]
+        },
+        {
+          "title": "字节 Lumen 实习",
+          "description": "跨团队训练资源池：项目口述、配额与抢占、状态一致性",
+          "items": [
+            {
+              "title": "完整口述与策略取舍",
+              "description": "约五分钟串讲资源借用、优先级、抢占策略与工程正确性",
+              "file": "07a-lumen-project-story.md",
+              "time": 6
+            },
+            {
+              "title": "配额、优先级与抢占",
+              "description": "Spot 借用边界、任务排序、中断代价与回收集合",
+              "file": "07b-lumen-quota-preemption.md"
+            },
+            {
+              "title": "状态机与可靠性设计",
+              "description": "原子预留、回收确认、RPC 超时与账本核对的重建方案",
+              "file": "07c-lumen-state-reliability.md"
             }
           ]
         },
