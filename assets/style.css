@@ -3725,3 +3725,21 @@ kbd {
   }
   .home-page .idx-lanes article:last-child { border-bottom: none; }
 }
+
+/* Oral paper presentations: readable sections without clipping long scripts. */
+.qa.open.speech > .qa-a { max-height: none; padding: 1.4rem clamp(1rem, 3vw, 2.4rem) 1.8rem; }
+.speech > .qa-a > h3 {
+  margin: 2rem 0 0.8rem;
+  padding: 0.25rem 0 0.25rem 0.8rem;
+  border-left: 3px solid var(--accent, #2563eb);
+  font-size: 1.12rem;
+  line-height: 1.5;
+  color: var(--txt);
+}
+.speech > .qa-a > h3:first-child { margin-top: 0; }
+.speech > .qa-a > p { max-width: 76ch; margin: 0.8rem 0; font-size: 1rem; line-height: 1.95; }
+.speech > .qa-a strong { font-weight: 750; color: var(--txt); }
+@media (max-width: 640px) {
+  .qa.open.speech > .qa-a { padding: 1rem; }
+  .speech > .qa-a > p { line-height: 1.85; }
+}
