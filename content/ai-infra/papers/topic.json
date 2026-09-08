@@ -55,10 +55,10 @@
           "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
           "items": [
             {
-              "title": "5 分钟叙述",
-              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "title": "项目口述与抢占过程",
+              "description": "从实验室用卡问题讲起：MPS 共享、配额保障、抢占执行与训练恢复",
               "file": "02g-deepshare-five-minute.md",
-              "time": 5
+              "time": 8
             },
             {
               "title": "概述与设计",

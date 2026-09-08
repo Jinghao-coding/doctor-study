@@ -57,14 +57,16 @@ $$</div>
 
 ## 五个扩展点怎么串起来
 
+Filter 之后存在分支：有可行节点时进入打分、预留与绑定路径；没有可行节点时才进入 PostFilter 尝试抢占。PostFilter 不在 Reserve 之后顺序执行。Permit 在这里用于等待 CPU / Memory resize 状态，不是等待 GPU 抢占释放的通用屏障。
+
 <table>
-<thead><tr><th>顺序</th><th>扩展点</th><th>关键动作</th></tr></thead>
+<thead><tr><th>路径</th><th>扩展点</th><th>关键动作</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>Filter</td><td>检查空闲/单 resident GPU、CPU/内存/显存 headroom 和 Best-effort cap</td></tr>
-<tr><td>2</td><td>Score</td><td>比较 RF 预测 retention，优先低干扰候选</td></tr>
-<tr><td>3</td><td>Reserve</td><td>在下一周期视图中预占 GPU，防止并发调度 double booking</td></tr>
-<tr><td>4</td><td>PostFilter</td><td>无可行节点时执行 cost-aware victim selection</td></tr>
-<tr><td>5</td><td>Permit</td><td>仅在 CPU/Memory resize 已发起时等待 Pod.Status.Resources 更新</td></tr>
+<tr><td>共同筛选</td><td>Filter</td><td>检查空闲/单 resident GPU、CPU/内存/显存 headroom 和 Best-effort cap</td></tr>
+<tr><td>有可行节点</td><td>Score</td><td>比较 RF 预测 retention，优先低干扰候选</td></tr>
+<tr><td>有可行节点</td><td>Reserve</td><td>在下一周期视图中预占 GPU，防止并发调度 double booking</td></tr>
+<tr><td>无可行节点</td><td>PostFilter</td><td>无可行节点时执行 cost-aware victim selection</td></tr>
+<tr><td>有可行节点</td><td>Permit</td><td>仅在 CPU/Memory resize 已发起时等待 Pod.Status.Resources 更新</td></tr>
 </tbody>
 </table>
 
@@ -74,7 +76,7 @@ $$</div>
 <ul>
 <li>Plugin 以多副本 Deployment 运行，通过 Lease 选主。</li>
 <li>QAD 可从 informer cache 的运行 Pod 推导；新 leader 用首轮瞬时 QAD warm-start EMA。</li>
-<li>抢占表达为 Pod deletion，由 API Server 幂等 reconcile，不需要自定义补偿事务。</li>
+<li>抢占通过 Pod deletion 发起，由节点的 kubelet 和容器运行时执行终止。API 接受删除请求不等于资源释放；后续分配必须依据实际终止与资源状态。Pod 删除本身不提供训练 checkpoint 或透明恢复。</li>
 <li>调度端到端延迟低于 50ms，其中特征提取、队列记账和受限候选打分合计低于 25ms。</li>
 </ul>
 </div>
