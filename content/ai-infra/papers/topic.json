@@ -1,12 +1,13 @@
 {
   "title": "论文工作",
-  "subtitle": "Maestro · DeepShare · ElastiCo · SagePilot · 字节 Lumen 实习 · 面试问答",
+  "subtitle": "Maestro · DeepShare · ElastiCo · 多目标性能预测 · SagePilot · 字节 Lumen 实习 · 面试问答",
   "kicker": "Research Work",
   "tags": [
     "papers",
     "maestro",
     "deepshare",
     "elastico",
+    "performance-prediction",
     "sagepilot"
   ],
   "output": "pages/ai-infra/papers/index.html",
@@ -114,6 +115,20 @@
               "level": "精通",
               "priority": 1,
               "time": 20
+            }
+          ]
+        },
+        {
+          "title": "多目标训练性能预测",
+          "description": "ONNX 计算图、Graph Transformer、七目标资源预测与跨模型跨硬件泛化",
+          "items": [
+            {
+              "title": "项目口述与高频追问",
+              "description": "从 profiling 成本讲到图表示、多目标回归、调度接入和误差边界",
+              "file": "06a-multitask-gnn-prediction-story.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 8
             }
           ]
         },
