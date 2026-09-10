@@ -13,6 +13,7 @@
     {"title": "GPU 集群管理", "href": "pages/ai-infra/cluster-management/index.html"},
     {"title": "性能预测与建模", "href": "pages/ai-infra/performance-prediction/index.html"},
     {"title": "计算机与系统基础", "href": "pages/cs-basics/index.html"},
+    {"title": "概率与数学面试题", "href": "pages/cs-basics/math-interview/index.html"},
     {"title": "操作系统", "href": "pages/cs-basics/os/index.html"},
     {"title": "计算机组成原理", "href": "pages/cs-basics/computer-architecture/index.html"},
     {"title": "计算机网络", "href": "pages/cs-basics/networking/index.html"},
@@ -113,6 +114,15 @@
       "description": "计算机与系统基础知识地图：操作系统、组成原理、网络、C/C++、Go、容器、Linux 内核与分布式 AI 等模块。",
       "tags": ["cs-basics", "overview", "knowledge-map"],
       "color": "c4"
+    },
+    {
+      "title": "概率与数学面试题",
+      "slug": "cs-basics/math-interview",
+      "source": "content/cs-basics/math-interview/topic.json",
+      "output": "pages/cs-basics/math-interview/index.html",
+      "description": "用条件概率、全概率公式、对称性和状态压缩严谨推导经典数学面试问题。",
+      "tags": ["probability", "math", "interview"],
+      "color": "c3"
     },
     {
       "title": "操作系统基础",

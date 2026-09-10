@@ -2,7 +2,21 @@
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q1：DP、TP、PP、EP 分别切什么？为什么不能随便增加并行度？</div>
-<div class="qa-a"><p>DP 用模型副本处理不同数据；TP 切层内张量运算；PP 切层形成流水线；EP 把 MoE 专家分到不同设备。DP 有梯度同步，TP 常有层内集合通信，PP 传 stage 间激活与梯度，EP 有 token dispatch/combine。并行度越大不代表越快，通信、气泡、小矩阵效率和负载不均可能抵消收益。</p><p><strong>追问：DP×TP×PP×EP 就是卡数吗？</strong>不能无条件相乘。只有互不重叠的 mesh 维度才能相乘；EP 常与已有并行组组合或重用 rank，须先说明具体布局。</p></div>
+<div class="qa-a">
+<div class="qa-section"><div class="qa-section-title">数据并行 DP：切数据</div><p>每个 rank 保存模型副本，处理不同 mini-batch。各卡反向得到不同梯度，所以更新前要通过 AllReduce 聚合梯度，或者在分片训练中用 ReduceScatter 留下各 rank 负责的梯度片段。它适合扩训练吞吐，但每卡仍要容纳模型和相关状态。</p></div>
+<div class="qa-section"><div class="qa-section-title">张量并行 TP：切一层内部的矩阵</div><p>多个 rank 共同计算同一层。沿输出维切分时，各卡得到不同输出片段；沿归约维切分时，各卡得到部分和。是否使用 AllGather、AllReduce 或 ReduceScatter，取决于矩阵如何切分以及下一算子能否直接消费分片。TP 几乎每层都通信，通常放在 NVLink/NVSwitch 域内。</p></div>
+<div class="qa-section"><div class="qa-section-title">流水线并行 PP：切模型层</div><p>每个 stage 保存连续的一段层，前向向下一 stage 发送激活，反向向上一 stage 发送激活梯度，主要是点对点 Send/Recv。micro-batch 用来填充流水线，但不能彻底消除 bubble，stage 不均衡也会让其他卡等待。</p></div>
+<div class="qa-section"><div class="qa-section-title">专家并行 EP：切 MoE Experts</div><p>token 根据路由结果发往持有目标 expert 的 rank，计算后再返回，典型通信是两次 All-to-All。热门专家会造成负载和通信不均衡，因此还需要 capacity、辅助负载均衡损失或路由约束。</p></div>
+<p><strong>为什么不能随便增加并行度？</strong>并行度越高，每卡局部计算越小，而通信启动、带宽竞争、流水线气泡和负载不均的占比会上升。DP×TP×PP×EP 也不能无条件当作卡数相乘；只有互不重叠的 device-mesh 维度才能直接相乘，EP 还可能与其他并行组共享 rank。</p>
+</div>
+</div>
+
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：AllReduce、AllGather 和 ReduceScatter 的输入输出分别是什么？</div>
+<div class="qa-a">
+<p>用两卡求和举例。两卡分别输入 <code>[1,2]</code> 和 <code>[3,4]</code>：AllReduce 先逐元素归约，再把完整结果给每个 rank，所以两卡都得到 <code>[4,6]</code>；AllGather 不做求和，只按 rank 拼接，所以两卡都得到 <code>[1,2,3,4]</code>；ReduceScatter 先归约得到 <code>[4,6]</code>，再按 rank 分片，因此第一卡得到 <code>[4]</code>，第二卡得到 <code>[6]</code>。在相同数据布局和归约操作下，ReduceScatter 后接 AllGather 与 AllReduce 的结果等价。</p>
+<div class="qa-summary">判断顺序：先问是否归约，再问最终每卡持有完整结果还是一个分片。</div>
+</div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">

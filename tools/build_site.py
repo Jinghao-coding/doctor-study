@@ -58,6 +58,7 @@ TRACKS = [
             "cs-basics/linux-container",
             "cs-basics/linux-kernel-ai",
             "cs-basics/distributed-ai",
+            "cs-basics/math-interview",
         ],
         "home_max": 1,
     },

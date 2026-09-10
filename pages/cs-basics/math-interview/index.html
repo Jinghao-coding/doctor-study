@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f172a'/><text x='50' y='66' font-size='52' font-weight='800' fill='%23f7f9fb' text-anchor='middle' font-family='system-ui,-apple-system,sans-serif'>DS</text></svg>">
+<title>概率与数学面试题 · doctor-study</title>
+<link rel="stylesheet" href="../../../assets/style.css?v=1788849552">
+</head>
+<body>
+<nav class="topnav">
+<a class="nav-brand" href="../../../index.html"><span class="brand-mark">DS</span><span><strong>doctor-study</strong><small>AI Infra interview desk</small></span></a><div class="nav-primary"><a class="nav-pill" href="../../../index.html">首页</a><details class="nav-menu"><summary title="计算机与系统基础">系统基础</summary><div class="nav-menu-panel"><a href="../../../pages/cs-basics/index.html"><span>计算机与系统基础</span><small>cs-basics / overview / knowledge-map</small></a><a href="../../../pages/cs-basics/math-interview/index.html"><span>概率与数学面试题</span><small>probability / math / interview</small></a><a href="../../../pages/cs-basics/os/index.html"><span>操作系统基础</span><small>os / linux / scheduling</small></a><a href="../../../pages/cs-basics/computer-architecture/index.html"><span>计算机组成原理</span><small>computer-architecture / cpu / cache</small></a><a href="../../../pages/cs-basics/networking/index.html"><span>计算机网络基础</span><small>networking / tcp / udp</small></a><a href="../../../pages/cs-basics/programming-systems/index.html"><span>编程语言与工程基础 (C/C++)</span><small>cpp / binary / compiler</small></a><a href="../../../pages/cs-basics/golang/index.html"><span>Go 语言基础与工程</span><small>golang / gmp / concurrency</small></a><a href="../../../pages/cs-basics/linux-container/index.html"><span>Linux 与容器基础</span><small>linux / container / docker</small></a><a href="../../../pages/cs-basics/linux-kernel-ai/index.html"><span>Linux 内核与大模型系统</span><small>linux / kernel / numa</small></a><a href="../../../pages/cs-basics/distributed-ai/index.html"><span>分布式与 AI Infra 基础</span><small>distributed / gpu / nccl</small></a></div></details><details class="nav-menu"><summary title="AI Infra 核心系统">核心系统</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/gpu/index.html"><span>GPU 硬件与资源共享</span><small>gpu / hardware / sharing</small></a><a href="../../../pages/ai-infra/transformer/index.html"><span>Transformer 与大模型基础</span><small>transformer / attention / tokenizer</small></a></div></details><details class="nav-menu"><summary title="调度与集群">调度集群</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/kubernetes/index.html"><span>Kubernetes 核心</span><small>k8s / scheduler / etcd</small></a><a href="../../../pages/ai-infra/scheduling/index.html"><span>任务调度理论</span><small>scheduling / theory / queueing</small></a><a href="../../../pages/ai-infra/cluster-management/index.html"><span>GPU 集群管理</span><small>cluster / volcano / fault-tolerance</small></a></div></details><details class="nav-menu"><summary title="推理 / 训练 / 性能">推理训练</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/llm-inference/index.html"><span>LLM 推理系统</span><small>llm / inference / kv-cache</small></a><a href="../../../pages/ai-infra/distributed-training/index.html"><span>分布式训练</span><small>training / parallelism / zero</small></a><a href="../../../pages/ai-infra/performance-prediction/index.html"><span>性能预测与建模</span><small>prediction / ml-for-systems</small></a></div></details><details class="nav-menu"><summary title="论文项目与 Agent">项目表达</summary><div class="nav-menu-panel"><a href="../../../pages/ai-infra/papers/index.html"><span>论文工作</span><small>papers / maestro / deepshare</small></a><a href="../../../pages/ai-infra/agent/index.html"><span>AI Agent</span><small>agent / llm / react</small></a></div></details><button class="nav-search" type="button" data-focus-tabs>搜索模块</button></div><button class="side-toggle" type="button" aria-pressed="false">折叠主题</button>
+</nav>
+<div class="app-shell">
+<aside class="app-sidebar"><div class="side-head"><div><div class="side-kicker">Study Map</div><div class="side-title">学习主题</div></div><button class="side-collapse" type="button" aria-pressed="false" title="折叠学习主题">‹</button></div><div class="side-section"><div class="side-section-title" title="计算机与系统基础">系统基础</div><a class="side-link" href="../../../pages/cs-basics/index.html" data-initial="计算" title="计算机与系统基础"><span>计算机与系统基础</span><small>cs-basics · overview</small></a><a class="side-link active" href="../../../pages/cs-basics/math-interview/index.html" data-initial="概率" title="概率与数学面试题"><span>概率与数学面试题</span><small>probability · math</small></a><a class="side-link" href="../../../pages/cs-basics/os/index.html" data-initial="操作" title="操作系统基础"><span>操作系统基础</span><small>os · linux</small></a><a class="side-link" href="../../../pages/cs-basics/computer-architecture/index.html" data-initial="计算" title="计算机组成原理"><span>计算机组成原理</span><small>computer-architecture · cpu</small></a><a class="side-link" href="../../../pages/cs-basics/networking/index.html" data-initial="计算" title="计算机网络基础"><span>计算机网络基础</span><small>networking · tcp</small></a><a class="side-link" href="../../../pages/cs-basics/programming-systems/index.html" data-initial="编程" title="编程语言与工程基础 (C/C++)"><span>编程语言与工程基础 (C/C++)</span><small>cpp · binary</small></a><a class="side-link" href="../../../pages/cs-basics/golang/index.html" data-initial="Go" title="Go 语言基础与工程"><span>Go 语言基础与工程</span><small>golang · gmp</small></a><a class="side-link" href="../../../pages/cs-basics/linux-container/index.html" data-initial="Li" title="Linux 与容器基础"><span>Linux 与容器基础</span><small>linux · container</small></a><a class="side-link" href="../../../pages/cs-basics/linux-kernel-ai/index.html" data-initial="Li" title="Linux 内核与大模型系统"><span>Linux 内核与大模型系统</span><small>linux · kernel</small></a><a class="side-link" href="../../../pages/cs-basics/distributed-ai/index.html" data-initial="分布" title="分布式与 AI Infra 基础"><span>分布式与 AI Infra 基础</span><small>distributed · gpu</small></a></div><div class="side-section"><div class="side-section-title" title="AI Infra 核心系统">核心系统</div><a class="side-link" href="../../../pages/ai-infra/gpu/index.html" data-initial="GP" title="GPU 硬件与资源共享"><span>GPU 硬件与资源共享</span><small>gpu · hardware</small></a><a class="side-link" href="../../../pages/ai-infra/transformer/index.html" data-initial="Tr" title="Transformer 与大模型基础"><span>Transformer 与大模型基础</span><small>transformer · attention</small></a></div><div class="side-section"><div class="side-section-title" title="调度与集群">调度集群</div><a class="side-link" href="../../../pages/ai-infra/kubernetes/index.html" data-initial="Ku" title="Kubernetes 核心"><span>Kubernetes 核心</span><small>k8s · scheduler</small></a><a class="side-link" href="../../../pages/ai-infra/scheduling/index.html" data-initial="任务" title="任务调度理论"><span>任务调度理论</span><small>scheduling · theory</small></a><a class="side-link" href="../../../pages/ai-infra/cluster-management/index.html" data-initial="GP" title="GPU 集群管理"><span>GPU 集群管理</span><small>cluster · volcano</small></a></div><div class="side-section"><div class="side-section-title" title="推理 / 训练 / 性能">推理训练</div><a class="side-link" href="../../../pages/ai-infra/llm-inference/index.html" data-initial="LL" title="LLM 推理系统"><span>LLM 推理系统</span><small>llm · inference</small></a><a class="side-link" href="../../../pages/ai-infra/distributed-training/index.html" data-initial="分布" title="分布式训练"><span>分布式训练</span><small>training · parallelism</small></a><a class="side-link" href="../../../pages/ai-infra/performance-prediction/index.html" data-initial="性能" title="性能预测与建模"><span>性能预测与建模</span><small>prediction · ml-for-systems</small></a></div><div class="side-section"><div class="side-section-title" title="论文项目与 Agent">项目表达</div><a class="side-link" href="../../../pages/ai-infra/papers/index.html" data-initial="论文" title="论文工作"><span>论文工作</span><small>papers · maestro</small></a><a class="side-link" href="../../../pages/ai-infra/agent/index.html" data-initial="AI" title="AI Agent"><span>AI Agent</span><small>agent · llm</small></a></div></aside><div class="side-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整学习主题宽度" title="拖动调整学习主题宽度"></div>
+  <main class="wrap">
+  <section class="topic-hero" aria-label="主题概览"><div class="hero-copy"><h1>概率与数学面试题</h1><p class="sub">条件概率 · 全概率公式 · 对称性 · 状态压缩</p></div></section>
+
+<section class="tabs-shell" data-tabs data-tabs-id="math-interview-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 1</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">概率与数学面试模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="概率与数学面试模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="math-interview-tabs-tab-1" data-initial="01" data-mid="math-interview-tabs::01-random-seat-probability-md" data-search="醉汉随机占座 用对称性、吸收状态和递推证明最后一人坐回原座的概率" title="醉汉随机占座" aria-controls="math-interview-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">醉汉随机占座</span><span class="tab-desc">用对称性、吸收状态和递推证明最后一人坐回原座的概率</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="math-interview-tabs-panel-1" aria-labelledby="math-interview-tabs-tab-1" data-mid="math-interview-tabs::01-random-seat-probability-md" ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>醉汉随机占座</h2></div><div class="tab-panel-body"><h2>问题建模</h2>
+<p>有 $N$ 名乘客和 $N$ 个一一对应的座位，按 $1,2,\ldots,N$ 到达：</p>
+<ul><li>第 1 人均匀随机选择一个座位；</li><li>第 $i$ 人若 $i$ 号座位空着就坐下，否则在剩余空位中均匀随机选择；</li><li>问第 $N$ 人最后坐到 $N$ 号座位的概率。</li></ul>
+<p>当 $N=1$ 时概率为 1；以下讨论 $N\ge 2$。</p>
+<h2>错位链只由两个终止座位决定</h2>
+<p>如果第 1 人坐到 1 号，所有后续乘客都坐自己的座位，第 $N$ 人成功；如果第 1 人坐到 $N$ 号，第 $N$ 人必然失败。</p>
+<p>若第 1 人坐到中间的 $k$ 号座位，则第 2 到第 $k-1$ 人都正常就座。第 $k$ 人到达时自己的座位被占，他会在：</p>
+<p>$$ \{1,k+1,k+2,\ldots,N\} $$</p>
+<p>中随机选择。若又选中一个中间座位，被迫随机选择的人继续向后传递，形成一条错位链。</p>
+<p>这条链只会以两种方式终止：</p>
+<ul><li>某人选中 1 号座位：此后所有人恢复正常，第 $N$ 人坐到自己的座位；</li><li>某人选中 $N$ 号座位：第 $N$ 人的座位被占，最终失败。</li></ul>
+<h2>对称性证明</h2>
+<p>在错位链终止之前，1 号和 $N$ 号始终都在空位集合中。设某一步还有 $m$ 个可选空位，那么当前随机乘客：</p>
+<p>$$ P(\text{选中 1 号}\mid\text{当前状态})=\frac1m $$</p>
+<p>$$ P(\text{选中 N 号}\mid\text{当前状态})=\frac1m $$</p>
+<p>选中其他中间座位只会把随机选择权传给下一位被占座者；新状态中 1 号和 $N$ 号仍然对称。因为有限个座位会不断被占用，过程最终必然命中两者之一。两个终止事件概率相等、总和为 1，因此：</p>
+<p>$$ P(\text{最后一人坐到自己的座位})=\frac12 $$</p>
+<h2>递推证明</h2>
+<p>令 $p_N$ 表示 $N$ 人时最后一人成功的概率。按第 1 人第一次选择的位置分情况：</p>
+<ul><li>选 1 号：概率 $1/N$，条件成功率为 1；</li><li>选 $N$ 号：概率 $1/N$，条件成功率为 0；</li><li>选中间 $k$ 号：概率 $1/N$，之后剩下 $N-k+1$ 人和同样数量的相关空位，化为规模 $N-k+1$ 的同类问题。</li></ul>
+<p>所以：</p>
+<p>$$ p_N=\frac1N+\frac1N\sum_{k=2}^{N-1}p_{N-k+1} =\frac{1+\sum_{j=2}^{N-1}p_j}{N} $$</p>
+<p>基础情形为 $p_2=1/2$。假设 $p_2,\ldots,p_{N-1}$ 都等于 $1/2$，则：</p>
+<p>$$ p_N=\frac{1+(N-2)\times\frac12}{N} =\frac{N/2}{N}=\frac12 $$</p>
+<p>因此对所有 $N\ge2$，$p_N=1/2$。</p>
+<h2>为什么中间分支仍是同类问题</h2>
+<p>第 1 人占据 $k$ 号后，第 $k$ 人开始随机选择，相关空位是 $\{1,k+1,\ldots,N\}$。把 1 号座位视为第 $k$ 人在缩小问题中的“安全座位”，把第 $k$ 人视为新的随机乘客：</p>
+<ul><li>他会在所有相关空位中均匀随机选择；</li><li>后面的乘客仍然优先选择自己的座位；</li><li>原来的第 $N$ 人仍是最后一人；</li><li>选中安全座位则错位链终止，选中最后一人的座位则失败。</li></ul>
+<p>因此这不是形式上的类比，而是选择规则与成功事件完全保持不变的状态压缩。</p>
+<h2>高频追问</h2>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 为什么答案与 N 无关？</div>
+<div class="qa-a"><p>中间座位只决定错位链会传递多少次，不决定最终成功还是失败。链终止前，醉汉的 1 号座位和最后一人的 N 号座位始终成对出现、被选中的条件概率相同。最终必然先命中其中一个，所以两种结果各占一半。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 这道题使用了哪些概率思想？</div>
+<div class="qa-a"><p>核心是状态压缩、条件概率、全概率公式和对称性。直接跟踪完整座位排列很复杂，但与结果有关的状态只有错位链是否先吸收到 1 号或 N 号两个终止状态。</p></div>
+</div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="math-interview-tabs::01-random-seat-probability-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="math-interview-tabs::01-random-seat-probability-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"></div></div></article></div></section>
+  </main>
+</div>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>doctor-study · AI Infra 面试准备</span>
+    <span class="footer-dot">·</span>
+    <span>内容源：<code>content/</code> · 生成：<code>tools/build_site.py</code></span>
+  </div>
+</footer>
+<script src="../../../assets/script.js?v=1786377329"></script>
+<script>
+(function(){
+  function syncPrismTheme(){
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+      (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var light = document.getElementById('prism-light');
+    var dark2 = document.getElementById('prism-dark');
+    if(light) light.disabled = dark;
+    if(dark2) dark2.disabled = !dark;
+  }
+  syncPrismTheme();
+  var mo = new MutationObserver(syncPrismTheme);
+  mo.observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncPrismTheme);
+})();
+</script>
+<template id="optional-page-assets">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<link id="prism-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" crossorigin="anonymous">
+<link id="prism-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css" crossorigin="anonymous" disabled>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});"></script>
+</template>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var assets = document.getElementById('optional-page-assets').content;
+  assets.querySelectorAll('link').forEach(function(link){
+    var copy = link.cloneNode(true);
+    var theme = document.documentElement.getAttribute('data-theme');
+    var dark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if(copy.id === 'prism-light') copy.disabled = dark;
+    if(copy.id === 'prism-dark') copy.disabled = !dark;
+    document.head.appendChild(copy);
+  });
+  var scripts = Array.from(assets.querySelectorAll('script'));
+  function loadNext(){
+    var source = scripts.shift();
+    if(!source) return;
+    var script = document.createElement('script');
+    Array.from(source.attributes).forEach(function(attr){
+      if(attr.name !== 'defer') script.setAttribute(attr.name, attr.value);
+    });
+    script.addEventListener('load', loadNext);
+    script.addEventListener('error', loadNext);
+    document.body.appendChild(script);
+  }
+  loadNext();
+});
+</script>
+</body>
+</html>

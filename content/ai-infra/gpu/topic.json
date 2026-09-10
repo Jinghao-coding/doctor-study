@@ -56,6 +56,14 @@
               "time": 20
             },
             {
+              "title": "CUDA Graph 与 Launch 编排",
+              "description": "PyTorch 到 CUDA 的提交链路、kernel launch 拦截、Graph 重放和自定义算子开发边界",
+              "file": "10-cuda-graph-launch-interception.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 22
+            },
+            {
               "title": "内存模型与Occupancy",
               "description": "寄存器/shared memory/L1/L2/HBM层次、Occupancy计算与调优",
               "file": "13-cuda-memory-occupancy.md",

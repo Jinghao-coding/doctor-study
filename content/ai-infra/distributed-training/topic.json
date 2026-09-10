@@ -50,6 +50,14 @@
           "title": "显存与通信",
           "items": [
             {
+              "title": "混合精度训练",
+              "description": "FP16/BF16 位结构、autocast、loss scaling、显存核算及调度配置边界",
+              "file": "08-mixed-precision.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 18
+            },
+            {
               "title": "ZeRO / FSDP",
               "description": "训练状态拆分、显存计算、通信开销与选型",
               "file": "04-zero-fsdp.md",

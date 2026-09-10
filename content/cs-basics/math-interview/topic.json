@@ -1,0 +1,30 @@
+{
+  "title": "概率与数学面试题",
+  "subtitle": "条件概率 · 全概率公式 · 对称性 · 状态压缩",
+  "kicker": "Math Interview",
+  "tags": ["probability", "math", "interview"],
+  "output": "pages/cs-basics/math-interview/index.html",
+  "layout": [
+    {
+      "type": "tabs",
+      "id": "math-interview-tabs",
+      "title": "概率与数学面试模块",
+      "groups": [
+        {
+          "title": "随机过程与状态压缩",
+          "items": [
+            {
+              "title": "醉汉随机占座",
+              "description": "用对称性、吸收状态和递推证明最后一人坐回原座的概率",
+              "file": "01-random-seat-probability.md",
+              "level": "基础",
+              "priority": 3,
+              "time": 12
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": []
+}

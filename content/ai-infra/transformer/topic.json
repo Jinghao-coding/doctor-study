@@ -49,6 +49,14 @@
               "time": 25
             },
             {
+              "title": "Attention 优化方向",
+              "description": "FlashAttention、MQA/GQA、稀疏与线性 Attention、KV 存储及低精度优化",
+              "file": "08-attention-optimizations.md",
+              "level": "精通",
+              "priority": 3,
+              "time": 22
+            },
+            {
               "title": "训练稳定性",
               "description": "梯度消失/爆炸、残差、归一化、初始化、warmup",
               "file": "04-training.md",
