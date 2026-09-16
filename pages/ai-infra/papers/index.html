@@ -387,36 +387,25 @@ KV 需求 ≈ 该模型每 token 的 KV 字节数 × (输入长度 + 预测输�
 <p>来源：Maestro 论文 §III–IV，以及 <code>concerto-runtime@8ee8969</code> 中 <code>python-predictor</code> 的训练、预测与回调实现。实现细节对应后续服务快照；实验数字取自论文。</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::01a-maestro-five-minute-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::01a-maestro-five-minute-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-next" data-step-target="2"><span class="tab-step-label">下一篇</span><span class="tab-step-title">IEEE Cluster 2026 DeepShare</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-2" aria-labelledby="papers-tabs-tab-2" data-mid="papers-tabs::02g-deepshare-five-minute-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>IEEE Cluster 2026 DeepShare</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-2-sub-1" aria-controls="papers-tabs-panel-2-subpanel-1" aria-selected="true" title="项目口述与抢占过程"><span class="subtab-title">项目口述与抢占过程</span><span class="subtab-desc">从实验室用卡问题讲起：MPS 共享、配额保障、抢占执行与训练恢复</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-2" aria-controls="papers-tabs-panel-2-subpanel-2" aria-selected="false" title="概述与设计"><span class="subtab-title">概述与设计</span><span class="subtab-desc">问题背景 / 系统设计 / 核心定位</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-3" aria-controls="papers-tabs-panel-2-subpanel-3" aria-selected="false" title="QAD 记忆模型"><span class="subtab-title">QAD 记忆模型</span><span class="subtab-desc">逐项解释分子分母、边界例子、EMA 与三类控制决策</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-4" aria-controls="papers-tabs-panel-2-subpanel-4" aria-selected="false" title="总体架构"><span class="subtab-title">总体架构</span><span class="subtab-desc">Controller + Plugin 架构 / K8S 对象设计</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-5" aria-controls="papers-tabs-panel-2-subpanel-5" aria-selected="false" title="K8S 实现细节"><span class="subtab-title">K8S 实现细节</span><span class="subtab-desc">两级队列 / QAD 控制环 / Scheduler 五个扩展点</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-6" aria-controls="papers-tabs-panel-2-subpanel-6" aria-selected="false" title="高频问答"><span class="subtab-title">高频问答</span><span class="subtab-desc">DeepShare + 实现细节高频问题</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-7" aria-controls="papers-tabs-panel-2-subpanel-7" aria-selected="false" title="论文延伸问答"><span class="subtab-title">论文延伸问答</span><span class="subtab-desc">EMA / RF / ablation / sensitivity / related work</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-2-sub-8" aria-controls="papers-tabs-panel-2-subpanel-8" aria-selected="false" title="主讲展开与追问"><span class="subtab-title">主讲展开与追问</span><span class="subtab-desc">背景动机 / 三个机制 / 两个预测模块 / 追问口径</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-2-subpanel-1" aria-labelledby="papers-tabs-panel-2-sub-1" ><div class="qa open speech">
 <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 请介绍一下 DeepShare，包括为什么做、怎么共享，以及怎么抢占。</div>
 <div class="qa-a">
-<h3>问题：有人等卡，有人占卡却用不满</h3>
-<p>DeepShare 这项工作，最开始来自我们实验室使用 GPU 的一个实际问题。</p>
-<p>实验室里做深度学习的人很多，大家都需要 GPU 跑训练。最直接的方式，就是一个任务占一张卡。但有些任务虽然一直占着卡，实际上并没有把整张卡用满。比如模型规模比较小，或者训练过程中还有数据准备和 CPU 处理，GPU 并不是一直在高效计算。结果就是，<strong>一边有人排队等卡，另一边已经分出去的卡还有剩余能力</strong>。</p>
-<h3>共享：用 MPS 让多个任务并发执行</h3>
-<p>所以我们就想，能不能让多个训练任务共享同一张 GPU，把这些剩余能力利用起来？我们采用的是 NVIDIA MPS，也就是多进程服务，让多个训练进程能够在同一张 GPU 上并发执行。它提供了共享的执行能力，但具体让哪些任务一起跑、资源不够了让谁退出，仍然需要调度器决定。</p>
-<p>真正做起来以后，我们发现，光把任务放到一起还不够，有两个问题必须解决。</p>
-<p>第一个是干扰。两个任务单独跑的时候可能都用不满卡，但放在一起，不一定就能互补。比如两个任务都在大量访问显存，就可能争用带宽，导致原来的训练明显变慢。所以显存装得下，只是共享的基本条件，还要判断一起跑以后性能能不能接受。</p>
-<p>第二个是资源保障。实验室里不同课题组、不同用户都有自己的资源需求。如果把暂时不用的资源借出去，原来的用户后来提交任务了，系统就得有办法把资源收回来。否则共享虽然提高了利用率，却可能让用户连自己配额内的任务都跑不起来。</p>
-<p>因此，DeepShare 同时做两件事：让空闲资源能够被借用，让单卡剩余能力能够被共享；同时保证，当保障需求回来或者共享干扰过大时，系统有明确的回收办法。</p>
-<h3>保障：哪些资源应该优先兑现</h3>
-<p>我们先用一个指标来判断，哪个租户现在最需要补资源。这个指标叫 QAD，也就是配额保障度。计算方法是：已经分给保障任务的 GPU 数量，除以配额和当前保障需求中较小的那个。</p>
-<p>举个例子，一个团队配额是 8 张卡，但现在只需要 4 张，系统也给了 4 张，那它的保障已经完全满足，QAD 就是 1。如果它需要 8 张，却只拿到 4 张，QAD 就是 0.5。<strong>这个值越低，说明当前欠它的资源越多</strong>，调度时就越应该优先补上。借用的额外资源单独记账，不拿来抵消这个保障缺口。</p>
-<p>在此基础上，我们把作业分成 Guaranteed 和 Best-effort 两类。Guaranteed 是需要优先兑现的配额内需求；Best-effort 可以借用剩余资源，但资源紧张时需要让出来。调度顺序先考虑保障任务，再按租户的 QAD 排序，在同等保障程度下利用预测剩余运行时间，让短任务更早完成。</p>
-<h3>干扰：装得下，还要一起跑得好</h3>
-<p>共享的时候，调度器会先检查资源是否够用，再判断干扰是否可接受。我们通过 DCGM 收集 GPU 的硬件指标，用 Random Forest 预测两个任务放在一起以后，各自还能保留多少吞吐。通过判断以后，才允许它们通过 MPS 在同一张卡上运行。开始共享后也继续观察实际表现，如果<strong>连续三个采样窗口低于动态容忍阈值</strong>，就停止同一张 GPU 上借用资源的 Best-effort 训练任务，释放它占用的资源，让保障任务继续运行。</p>
-<h3>回收：保障任务来了，谁让出资源</h3>
-<p>抢占可以用一个具体过程来解释。比如 A 团队配额是 8 张卡，之前只用了 4 张，集群的剩余资源被其他团队的 Best-effort 任务利用起来了。现在 A 又来了一个需要 2 张卡的保障任务。</p>
-<p>调度器不会一看到需求增加就直接杀任务，而是先尝试正常放置：有没有空闲 GPU，或者有没有满足干扰要求的共享位置。如果这些方式都安排不下，才进入抢占路径，找哪些 Best-effort 任务可以让出所需资源。</p>
-<p>选谁的时候，我们会同时看能释放多少资源、任务预计还要运行多久，以及它之前被抢占的代价。比如其他条件一样，一个任务还有 1 分钟就结束，另一个还有 20 分钟，我们更倾向于让后者让出资源，尽量让快完成的任务先完成。已经反复被打断的任务，也会增加它的抢占代价，避免总是牺牲同一个任务。</p>
-<p>还要注意，一张 GPU 上可能同时有两个 Best-effort 任务。如果新任务需要完整的一张卡，只停其中一个，另一个还占着卡，就没有真正回收成功。所以我们会把这张卡上需要一起退出的任务作为一组，计算整体代价，再选择能满足新任务资源需求的组合，同时检查 CPU 和内存等条件。</p>
-<p>我们把这些考虑写成一个代价分数：剩余时间越短，代价越高；之前累计的抢占开销越大，代价也越高；如果回收一张卡需要同时打断多个任务，再额外加一个惩罚。最后只在清退后资源足够、卡上全部是 Best-effort 的候选设备中，<strong>选整组代价最低的那张</strong>。这个函数把刚才的取舍变成了调度器能执行的比较规则。</p>
-<h3>执行：停止 Pod，确认释放，再安排新任务</h3>
-<p>选好以后，执行层面做的是<strong>删除被选中的 Pod</strong>。调度器通过 Kubernetes API 发出删除请求，由所在节点的 kubelet 和容器运行时终止容器，训练进程退出后才会释放它占用的 GPU 资源。这里要区分“<strong>已经发出删除请求”和“资源真的释放了</strong>”：Pod 还在终止过程中时，不能马上把同一份资源算给新任务；要根据实际终止和资源状态，再完成新任务的调度和绑定。</p>
-<p>所以这套抢占做的是作业层面的中断和重新安排。被中断的训练之后重新运行时，能保留多少进度取决于它自己的 checkpoint 支持；删除 Pod 本身不会自动保存训练状态。这也是我们在选任务时要考虑抢占代价的原因。</p>
-<h3>实现：预测、调度与节点执行怎样配合</h3>
-<p>这里有两个不同的预测模块。一个是按租户历史训练的 Gradient Boosting，预测任务还要运行多久，用来辅助排队和选择抢占对象；另一个是刚才提到的 Random Forest，预测共享后的性能，用来决定哪些任务适合放在一起。前者解决运行顺序，后者解决共享位置。</p>
-<p>工程上，我们把这些策略放到了 Kubernetes 的 Controller 和调度插件里。Controller 管理租户配额和作业类别，调度插件根据运行中的 Pod 更新保障状态，执行排序、共享准入、资源预留和抢占；节点侧提供 MPS 运行环境和 GPU 指标采集。</p>
-<h3>效果：利用率与任务完成时间一起看</h3>
-<p>实验上，我们分别做了历史轨迹驱动的仿真和真实 GPU 集群实验。轨迹实验中，GPU 平均利用率达到约 70.6%，平均排队时间相对 Lucid 降低了 46%。真实集群中，相比 Hard+Colocate，<strong>平均作业完成时间降低了 34%</strong>，保障租户的 QoS 合规率达到 93%。</p>
-<p>回到实验室最开始的问题，DeepShare 想做到的是：任务用不满卡的时候，让其他任务用上剩余能力；用户需要自己的保障资源时，能合理地收回来；共享真的拖慢任务时，也能及时调整。这样才能把 GPU 利用率提高，同时让用户愿意接受共享。</p>
+<p>DeepShare 主要解决多租户 GPU 集群中的一个矛盾：大家希望把暂时空闲的资源共享出去，提高利用率，但又需要保证，自己真正有任务的时候，配额内的资源能够及时拿回来。</p>
+<p>这个问题有两个层次。</p>
+<p>一个是团队之间的配额闲置。比如 A 团队有 8 张卡的配额，当前只需要 4 张，剩下的配额如果不能借出去，其他团队即使排队也用不上。</p>
+<p>另一个是已经分配出去的 GPU 没有被充分利用。有些训练任务显存和计算需求都比较小，独占一张卡会留下剩余能力，可以考虑让其他任务通过 MPS 与它共享。</p>
+<p>但是，借用和共享都会影响原来的任务。借出去的资源可能来不及收回，共享任务也可能争用计算或显存带宽。所以我们关注的是：<strong>怎样让资源使用得更充分，同时让调度始终知道哪些租户的保障需求还没有得到满足。</strong></p>
+<p>为此，我们先定义一个保障满足程度：已经分给租户保障任务的 GPU 数量，除以它的配额与当前保障需求中较小的那个。</p>
+<p>比如 A 的配额是 8 张，但当前只需要 4 张，也拿到了 4 张，它的保障已经满足。不能因为另外 4 张配额没用，就一直给它更高优先级。如果它需要 8 张，却只拿到 4 张，才说明它还有一半保障需求没有满足。</p>
+<p>这个指标也会做时间上的平滑，避免一次任务结束或短暂的需求波动，就让调度策略来回变化。我们更关心的是持续没有得到满足的租户。</p>
+<p>接下来，<strong>同一份保障状态会影响排队、共享和回收三个决定。</strong></p>
+<p>先说排队。系统区分保障型任务和可以借用剩余资源的任务，优先处理保障需求。在保障任务之间，先看哪个租户的保障缺口更大；保障程度相近时，再利用预测运行时间让较短任务先完成。这样，短任务优化就不会一直把资源不足租户的大任务推到后面。</p>
+<p>再说共享。显存放得下只是必要条件，还要判断两个任务一起运行以后会慢多少。我们采集 GPU 的运行指标，预测共置后的吞吐保留比例，再决定是否允许它们通过 MPS 在同一张卡上运行。</p>
+<p>这里还要结合租户的保障状态。如果一个租户已经处于资源不足的状态，就应该更保守地引入共享，避免让它正在运行的任务继续受到干扰。任务开始共享以后，系统还会监测实际表现；如果性能持续低于允许范围，就停止同卡上借用资源的任务，保护保障任务。</p>
+<p>最后是资源回收。比如 A 原来用了 4 张卡，剩余资源被其他团队借走了，现在 A 又提交了保障任务。系统先检查有没有空闲位置，或者能不能进行满足干扰要求的共享。确实放不下时，再从借用资源的任务中选择抢占对象。</p>
+<p>选择时，我们考虑任务的预测剩余时间、历史抢占开销，以及释放目标 GPU 需要同时中断多少任务。</p>
+<p>其中，保护快完成的任务，是为了让这些任务尽快结束，避免临近完成时又被打断；历史抢占开销则用于减少反复牺牲同一个任务。这里的代价是调度上的比较分数，实际会丢失多少训练进度，还取决于任务自己的 checkpoint。</p>
+<p>共享场景还有一个容易忽略的地方：一张卡上可能同时跑着两个借用任务。如果新任务需要整张卡，只停掉其中一个并不能满足需求。因此，我们按需要清退的整组任务计算代价，在满足资源条件的候选设备中选择。</p>
+<p>工程上，这些机制通过 Kubernetes 的控制器和调度插件实现。控制器维护租户配额与任务类别，调度器负责排序、共享准入和抢占选择，节点侧提供 MPS 环境与 GPU 指标采集。抢占通过终止选中的 Pod 执行，确认资源释放以后，再安排新的任务。</p>
+<p>实验中，我们同时看利用率、排队时间和作业完成时间，避免只把 GPU 跑忙，却让用户等得更久。轨迹实验里，平均 GPU 利用率约为 70.6%，相对 Lucid，平均排队时间降低了 46%；真实集群实验中，相比 Hard+Colocate，平均作业完成时间降低了 34%，保障租户的 QoS 合规率达到 93%。</p>
+<p><strong>DeepShare 最主要的设计，是让租户的保障状态贯穿整个资源调度过程：决定谁先运行、共享可以多激进，以及资源紧张时应该让谁退出。</strong> 这样，资源借用和 GPU 共享才能在同一套保障规则下配合起来。</p>
 </div>
 </div>
 <div class="qa">
@@ -1407,32 +1396,22 @@ $$&lt;/div&gt;
 </div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="papers-tabs::06a-multitask-gnn-prediction-story-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="papers-tabs::06a-multitask-gnn-prediction-story-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="3"><span class="tab-step-label">上一篇</span><span class="tab-step-title">PE 2026 ElastiCo</span></button><button type="button" class="tab-step tab-step-next" data-step-target="5"><span class="tab-step-label">下一篇</span><span class="tab-step-title">SagePilot</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="papers-tabs-panel-5" aria-labelledby="papers-tabs-tab-5" data-mid="papers-tabs::05h-sagepilot-five-minute-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>SagePilot</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="papers-tabs-panel-5-sub-1" aria-controls="papers-tabs-panel-5-subpanel-1" aria-selected="true" title="5 分钟叙述"><span class="subtab-title">5 分钟叙述</span><span class="subtab-desc">问题背景、核心思路、关键机制与实验结论的完整口述稿</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-2" aria-controls="papers-tabs-panel-5-subpanel-2" aria-selected="false" title="系统问题与设计"><span class="subtab-title">系统问题与设计</span><span class="subtab-desc">工作流瓶颈、三模块链路、QMSum 例子与实现边界</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-3" aria-controls="papers-tabs-panel-5-subpanel-3" aria-selected="false" title="论文物理图与联合规划"><span class="subtab-title">论文物理图与联合规划</span><span class="subtab-desc">逻辑与物理执行、上下文包络、Algorithm 1 与字典序目标</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-4" aria-controls="papers-tabs-panel-5-subpanel-4" aria-selected="false" title="运行时间与显存预测"><span class="subtab-title">运行时间与显存预测</span><span class="subtab-desc">算子图特征、九目标回归、时间分桶与显存准入上界</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-5" aria-controls="papers-tabs-panel-5-subpanel-5" aria-selected="false" title="加载时间怎么算"><span class="subtab-title">加载时间怎么算</span><span class="subtab-desc">warm reload 两层中位数算例、样本门槛与回退规则</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-6" aria-controls="papers-tabs-panel-5-subpanel-6" aria-selected="false" title="SageGraph 链融合"><span class="subtab-title">SageGraph 链融合</span><span class="subtab-desc">合法链条件、一次租约多次生成与上下文预算</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-7" aria-controls="papers-tabs-panel-5-subpanel-7" aria-selected="false" title="SageWeaver 调度"><span class="subtab-title">SageWeaver 调度</span><span class="subtab-desc">准入、加载收益、扩副本、回收与预取的具体决策</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-8" aria-controls="papers-tabs-panel-5-subpanel-8" aria-selected="false" title="初稿实验结果"><span class="subtab-title">初稿实验结果</span><span class="subtab-desc">180 会话实验、预测精度、消融结果与证据限制</span></button><button class="subtab-button" type="button" role="tab" id="papers-tabs-panel-5-sub-9" aria-controls="papers-tabs-panel-5-subpanel-9" aria-selected="false" title="工程追问与实验证据"><span class="subtab-title">工程追问与实验证据</span><span class="subtab-desc">预测归因、实测与模拟、并发正确性及扩展设计</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="papers-tabs-panel-5-subpanel-1" aria-labelledby="papers-tabs-panel-5-sub-1" ><div class="qa open speech">
 <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">Q: 请介绍一下 SagePilot 这项工作。</div>
 <div class="qa-a">
-<p>我讲的工作是 SagePilot，它解决的是：多个 Agent 工作流同时使用一小批异构 GPU 时，怎样让用户任务更快完成。</p>
-<p>我先解释一下这里的工作流。比如用户提出一个代码修复任务，系统会先分析问题，再生成代码，接着运行测试，测试失败后再修改。这里每一步可能调用模型，也可能调用工具，前后有依赖关系。这样的一个完整任务，就是一个工作流。</p>
-<p>当很多用户任务同时到来时，它们会共享底层 GPU，而且不同步骤可能使用不同模型。我们关注的就是：GPU 数量有限，不能让所有模型一直驻留，那模型什么时候加载、请求什么时候执行、用完后模型要不要保留，应该怎么安排？</p>
-<p>我们发现，单纯调整请求的执行顺序不够。论文的动机实验里，请求等待时间大约八成都花在等模型可用上。同时，总 GPU 占用时间里，又有约三成是模型已经加载、却没有执行生成。</p>
-<p>这意味着，即使一个请求排到了前面，模型没准备好，它还是跑不了；而另一张卡上，可能正放着一个暂时没人使用的模型。所以我们需要把请求调度和模型管理放在一起考虑。</p>
-<p>用一个例子说明。假设一个任务有三步：A 用模型 M1 生成初稿，B 继续用 M1 修改，C 再用模型 M2 检查。</p>
-<p>如果每一步都独立申请资源，A 完成以后，B 就要重新争取 M1 的执行机会。资源竞争时，中间可能排队，甚至遇到实例被回收。等 B 完成，C 才提出对 M2 的需求，又要等待模型加载。</p>
-<p>但从工作流来看，这些需求其实可以提前知道。</p>
-<p>首先，A 和 B 连续使用同一个部署。如果它们之间没有分叉、配置也兼容，我们可以把它们作为一组，一次申请实例，在两步完成前保持实例可用。两次生成仍然分别执行，结果也照常传递，只是中间不用重新申请资源。</p>
-<p>其次，C 必须等 B 的结果才能开始检查，但加载 M2 不需要等这个结果。因此，如果资源允许，我们可以在 B 运行时提前加载 M2。</p>
-<p>这就是 SagePilot 的核心：<strong>工作流规定任务之间的依赖，我们利用这些依赖，提前安排底层的实例使用和模型准备。</strong> 论文把这个过程叫作从逻辑工作流到物理执行图的转换。</p>
-<p>系统用三个模块来完成这件事。</p>
-<p>第一个是 SageRadar，负责估计代价。它根据模型结构、请求配置和 GPU 特征，估计一次调用要跑多久、占多少显存、模型加载需要多久。运行时主要查询已经准备好的资源画像。</p>
-<p>在刚才的例子里，它提供的信息就是：B 预计还要运行多久，M2 在候选 GPU 上加载需要多久，以及显存够不够。</p>
-<p>第二个模块是 SageGraph，负责把逻辑工作流转换成物理执行图，主要做两件事。</p>
-<p>第一件是工作流内部的连续调用融合。比如 A 用 M1 生成，B 继续用 M1 修改。逐节点申请资源时，A 结束后，B 要重新申请执行机会；即使模型还在，资源竞争时也可能重新排队。我们发现，如果 A、B 是相邻的一对一关系，而且部署和配置兼容，就可以把它们融合成一个执行单元，共享一次准入和实例租约。两步仍然分别生成，但中间不用重新申请实例。</p>
-<p>第二件是跨工作流的模型准备协调。比如 W1 后面的 C 和 W2 后面的 D 都需要 M2。如果只等各自请求就绪后再处理，就看不到这两份后续需求可以一起准备。我们会把兼容的需求合并，让 C、D 共同依赖一个 M2 准备动作。底层原本也可能复用已加载的实例，我们增加的是在加载之前，就把多个工作流的需求一起考虑。</p>
-<p>这里还要拆开两种依赖：C 必须等前一步的结果才能生成，但加载 M2 不需要等这个结果。因此，对于路径和模型已经确定的后续步骤，可以提前准备。<strong>SageGraph 输出的就是这些执行单元、模型准备动作，以及它们之间的依赖关系。</strong></p>
-<p>第三个模块是 SageWeaver，负责结合实时资源状态，从这些候选里决定具体怎么执行。</p>
-<p>比如两个工作流都需要 M2，共享已有实例可以省加载和显存，但可能排队；增加副本能减少等待，却可能占掉第三个工作流需要的 GPU。所以它要把模型复用、加载和回收、设备绑定以及执行顺序放在一起考虑。</p>
-<p>它的决策原则是：先推进已经就绪的任务，其中优先考虑高优先级和等待较久的任务；在接纳情况相同时，再比较哪种安排能让这批任务更早完成。比较时会把排队、加载和实际执行都算进去，之后才考虑后续模型预取和减少重加载。</p>
-<p>实际算法采用事件驱动的启发式：先尝试复用可用实例，不能满足需求时，再考虑加载、扩副本或安全回收。多个模型竞争加载机会时，会汇总不同工作流对同一模型的需求，再结合加载时间排序。当前没有可推进的 ready 动作时，才考虑预取。</p>
-<p>每轮只发出当前能执行的动作，任务或加载完成后再更新计划。<strong>因此，SageGraph 负责表达哪些调用能融合、哪些准备能共享和提前；SageWeaver 负责判断在当前资源竞争下，这次到底采用哪种安排。</strong></p>
-<p>评估方面，论文初稿覆盖数学求解、代码修复和会议总结三个场景，共 180 个会话，使用 Qwen3 模型、vLLM 后端，以及 V100 和 A100 GPU。</p>
-<p>按初稿报告，突发负载下，相比其中的对照策略，整批任务全部完成的时间最多降低了 36.8%，会话的 p95 完成延迟最多降低了 25.9%。消融也表明，跨工作流统一考虑模型生命周期，对整批完成时间帮助明显；连续调用融合，则主要改善慢会话的等待。</p>
-<p>我认为这项工作的主要贡献，是让调度器提前看到工作流后面的需求。这样它既能安排当前请求，也能决定连续调用怎样复用实例、后续模型什么时候准备，以及有限的 GPU 应该留给谁，最终减少用户完成整个任务需要等待的时间。</p>
+<p>我做的 SagePilot，主要研究多个大模型 Agent 工作流共享有限的异构 GPU 时，怎样减少整个任务的完成时间。</p>
+<p>这里的工作流，可以理解为一个需要多个步骤协作的任务。比如代码修复，先分析问题，再生成修改，接着运行测试，最后根据测试结果继续修正。这些步骤存在前后依赖，也可能调用不同模型。当很多工作流同时运行，而 GPU 又放不下所有模型时，每一步除了等前面的结果，还可能等模型加载、等实例空出来。</p>
+<p>我们在实验中观察到，请求等待中很大一部分是在等模型可用，但与此同时，也存在模型已经驻留、暂时没有执行请求的情况。这里的关键问题是：<strong>模型什么时候需要用，和资源什么时候为它准备好，没有很好地衔接起来。</strong></p>
+<p>如果底层只在请求真正到达时才处理，后续步骤虽然已经可以确定要用哪个模型，系统仍然要等它就绪以后才开始准备。另一方面，一个模型当前没有请求，也不能直接判断应该回收，因为另一个工作流可能马上就要用到它。</p>
+<p>所以我们的思路是，利用工作流已经暴露出来的依赖和后续需求，把请求执行与模型的加载、保留和回收一起安排。</p>
+<p>举一个简化的例子：A 用模型 M1 生成初稿，B 继续用 M1 修改，C 再用 M2 检查。这里有两个可以利用的机会。</p>
+<p>首先，如果 A 和 B 是连续的一对一依赖，而且模型部署和配置兼容，就可以让它们共用一次外层资源申请，在两步完成前保持实例可用。A、B 仍然是两次独立的模型调用，A 的结果也照常传给 B，但可以减少阶段切换时重新申请实例带来的等待。</p>
+<p>其次，C 必须拿到 B 的输出才能生成，<strong>但把 M2 加载到 GPU 上，并不需要等 B 的输出。</strong> 如果已经确定后面会执行 C，就有机会在 B 运行时准备 M2，让模型加载与前面的计算重叠。</p>
+<p>真正困难的是，多条工作流会竞争同一批资源，提前准备并不总是划算。</p>
+<p>比如，M2 已经有一个实例，但是队列很长。这时复用它可以省掉加载和额外显存，但 C 需要继续等待；再开一个副本可能更快，却会占用其他任务需要的 GPU。又比如，为了加载 M2 回收了 M1，结果另一条工作流马上需要 M1，就会产生新的加载等待。</p>
+<p>因此，调度器需要同时看三类信息：当前哪些任务已经就绪，后续哪些模型需求已经确定，以及各张 GPU 上驻留了什么模型、还有多少容量。</p>
+<p>为了比较这些选择，我们还需要估计调用在不同 GPU 上的执行时间、显存需求和模型加载时间。异构设备的区别就在这里：同一个模型在不同卡上的运行速度和容量条件不一样，计算更快的卡也可能正在忙。只看模型的计算时间，或者只找一张放得下模型的卡，都不足以判断请求最终多久能够完成。</p>
+<p>在具体执行时，我们优先推进已经就绪的任务。已有实例能够接纳，就先考虑复用；不能接纳，再判断是否需要加载新实例、增加副本，或者回收没有活跃任务使用的模型。对于后续需求，则在当前资源条件允许时安排预加载。</p>
+<p>这些决定是随着运行状态不断更新的。新任务到达、模型加载完成、一次调用结束，都会触发下一轮调度。系统只执行当前确定可行的动作，后面的安排可以重新调整。预测用于辅助选择，任务真正开始仍然要等输入和模型都准备好。</p>
+<p>评估中，我们使用了数学求解、代码修复和会议总结三类工作流，在 V100、A100 组成的异构 GPU 集群上运行并发会话，同时观察整批任务的完成时间、单个会话的尾延迟和 GPU 占用。消融实验进一步区分了连续调用复用和跨工作流模型管理的作用：前者减少阶段之间的等待，后者减少重复准备及不合适的模型驻留。</p>
+<p><strong>这项工作的核心，是把工作流中已经知道的后续需求，提前转化成具体的资源安排。</strong> 最终希望减少的，是用户完成整个任务需要等待的时间。</p>
 </div>
 </div>
 <details class="scheduler-detail">
