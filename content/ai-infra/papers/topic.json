@@ -137,10 +137,10 @@
           "description": "PPoPP 初稿设计、资源预测、链融合、调度实现与实验口径",
           "items": [
             {
-              "title": "5 分钟叙述",
-              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "title": "项目口述（5～10 分钟）",
+              "description": "私有异构 GPU 场景、模型等待与重复准入动机、工作流执行及实验结果",
               "file": "05h-sagepilot-five-minute.md",
-              "time": 5
+              "time": 10
             },
             {
               "title": "系统问题与设计",
