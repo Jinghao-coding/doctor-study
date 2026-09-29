@@ -208,22 +208,22 @@
         },
         {
           "title": "字节 Lumen 实习",
-          "description": "跨团队训练资源池：项目口述、配额与抢占、状态一致性",
+          "description": "Lumen 内部公共池：C/Spot 使用、额度回收与 Merlin OpenAPI 对接",
           "items": [
             {
-              "title": "完整口述与策略取舍",
-              "description": "约五分钟串讲资源借用、优先级、抢占策略与工程正确性",
+              "title": "项目动机与完整口述",
+              "description": "内部闲置资源优先利用、个人职责与 Merlin 分工",
               "file": "07a-lumen-project-story.md",
               "time": 6
             },
             {
-              "title": "配额、优先级与抢占",
-              "description": "Spot 借用边界、任务排序、中断代价与回收集合",
+              "title": "公共池准入与 Spot 回收",
+              "description": "C 优先级使用、额度承诺、回收组合与资源交付",
               "file": "07b-lumen-quota-preemption.md"
             },
             {
               "title": "状态机与可靠性设计",
-              "description": "原子预留、回收确认、RPC 超时与账本核对的重建方案",
+              "description": "OpenAPI 结果核查、并发记账与实际释放确认",
               "file": "07c-lumen-state-reliability.md"
             }
           ]
