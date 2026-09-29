@@ -56,8 +56,8 @@
           "description": "多租户 GPU 集群、QAD 保障、干扰感知合用、K8S 实现细节",
           "items": [
             {
-              "title": "项目口述（5～10 分钟）",
-              "description": "高校单卡训练背景、资源闲置与排队动机、QAD 协调机制及完整调度过程",
+              "title": "项目口述与工程追问",
+              "description": "实验室共享集群背景、精简口述、QAD 与预测器实现及节点执行",
               "file": "02g-deepshare-five-minute.md",
               "time": 8
             },
