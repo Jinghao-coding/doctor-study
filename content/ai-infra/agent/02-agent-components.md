@@ -1,6 +1,6 @@
 <div class="card card-m">
 <h3>记忆系统：Agent 的上下文管理</h3>
-<p>记忆是 Agent 区别于单次 LLM 调用的关键。一个合格的 Agent 需要管理<strong>短期记忆、长期记忆和工作记忆</strong>，面试中要能说清楚三者的区别和实现方式。</p>
+<p>上下文与任务状态为 Agent 的后续决策提供依据。常见设计包括<strong>短期记忆、长期记忆和工作记忆</strong>；长期记忆用于跨会话保存信息，按任务需要添加，不是 Agent 的必要条件。</p>
 <table>
 <tr><th>记忆类型</th><th>存储位置</th><th>生命周期</th><th>实现方式</th><th>典型容量</th></tr>
 <tr><td>感官记忆</td><td>当前对话上下文</td><td>单次交互</td><td>直接拼入 prompt</td><td>受 context window 限制</td></tr>

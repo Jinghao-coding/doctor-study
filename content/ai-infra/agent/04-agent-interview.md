@@ -6,9 +6,10 @@
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 什么是 AI Agent？和传统的 LLM Chat 有什么区别？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">核心区别</div><p>LLM Chat 是"一问一答"的对话模式，Agent 是"感知→决策→行动→观察→再决策"的自主循环。Agent 多了三个关键能力：<strong>工具使用</strong>（不只是生成文本）、<strong>记忆管理</strong>（不只是对话历史）、<strong>多步规划</strong>（不只是单次推理）。</p></div>
-<div class="qa-section"><div class="qa-section-title">举例</div><p>用户问"帮我订明天去上海的机票"——LLM Chat 只能告诉你"请去携程订票"；Agent 可以自动搜索航班、比较价格、填写信息、完成预订。</p></div>
-<div class="qa-summary">Agent = LLM + 工具 + 记忆 + 规划。本质上是让 LLM 从"说"变成"做"。</div>
+<p>基于 LLM 的 Agent 是以大语言模型为决策核心、围绕目标执行任务的软件系统。它根据状态和环境反馈选择行动，由运行时执行工具，再读取结果继续决策，直到完成任务或触发停止条件。</p>
+<p>典型职责包括目标与指令、模型决策与规划、上下文与状态、工具执行、结果检查和运行时控制。长期记忆和独立规划器按需添加。模型产生工具调用请求，实际操作由宿主程序完成。</p>
+<p>例如修复代码：Agent 读取报错、检查实现、修改代码并运行测试，再根据测试结果决定是否继续修改。普通模型调用可以给出修复建议；固定工作流按预设路径执行；Agent 根据反馈动态选择后续行动。聊天界面可以承载其中任何一种系统。</p>
+<div class="qa-summary">判断重点是模型是否参与控制后续行动，以及执行结果是否反馈到决策中。调用一次工具或保存对话历史，都不是充分判据。</div>
 </div>
 </div>
 
