@@ -129,6 +129,14 @@
               "level": "进阶",
               "priority": 1,
               "time": 8
+            },
+            {
+              "title": "异构选卡与调度收益",
+              "description": "选卡动机、资源竞争、排队与成本算例、配置选择和决策质量验证",
+              "file": "06b-gnn-heterogeneous-placement.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 10
             }
           ]
         },
