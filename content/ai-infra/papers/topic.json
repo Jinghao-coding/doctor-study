@@ -119,12 +119,12 @@
           ]
         },
         {
-          "title": "多目标训练性能预测",
-          "description": "ONNX 计算图、Graph Transformer、七目标资源预测与跨模型跨硬件泛化",
+          "title": "异构硬件多目标性能预测",
+          "description": "训练与推理数据集建设、FX / ONNX 计算图、多目标预测与异构泛化",
           "items": [
             {
               "title": "项目口述与高频追问",
-              "description": "从 profiling 成本讲到图表示、多目标回归、调度接入和误差边界",
+              "description": "从预测目标讲到模型变体、运行时采集、图特征、多头预测与资源决策",
               "file": "06a-multitask-gnn-prediction-story.md",
               "level": "进阶",
               "priority": 1,
