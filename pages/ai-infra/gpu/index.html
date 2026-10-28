@@ -17,7 +17,7 @@
   <main class="wrap">
   <section class="topic-hero" aria-label="主题概览"><div class="hero-copy"><h1>GPU 硬件与资源共享</h1><p class="sub">硬件架构 · CUDA 执行模型 · 数据搬运 · 资源共享 · 性能诊断 · 调度对比</p></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="topic-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 5</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="GPU 内容模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="topic-tabs-tab-1" data-initial="01" data-mid="topic-tabs::00-cpu-vs-gpu-md" data-search="GPU硬件直觉 CPU vs GPU差异、SM/Tensor Core/HBM组件、NVLink/PCIe/RDMA互联 CPU vs GPU 设计差异 设计目标、核心形态、内存体系、适合/不适合任务对比 GPU硬件组件 SM、CUDA Core、Tensor Core、HBM、L2 Cache、主流GPU规格对比 GPU互联与数据路径 NVLink/NVSwitch、PCIe、RDMA/GPUDirect、HGX拓扑、NUMA亲和性" title="GPU硬件直觉" aria-controls="topic-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU硬件直觉</span><span class="tab-desc">CPU vs GPU差异、SM/Tensor Core/HBM组件、NVLink/PCIe/RDMA互联</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-2" data-initial="02" data-mid="topic-tabs::06-cuda-execution-model-md" data-search="CUDA编程模型 CUDA执行模型 · CUDA Graph 与 Launch 编排 · 内存模型与Occupancy 等 4 项 CUDA执行模型 kernel launch、grid/block/thread/warp/SM 层级关系、warp调度 CUDA Graph 与 Launch 编排 PyTorch 到 CUDA 的提交链路、kernel launch 拦截、Graph 重放和自定义算子开发边界 内存模型与Occupancy 寄存器/shared memory/L1/L2/HBM层次、Occupancy计算与调优 Host-Device 数据拷贝 H2D/D2H触发场景、pinned memory、DataLoader诊断、拷贝带宽 Stream异步流水线 Stream异步队列、event同步、多缓冲、计算与拷贝重叠" title="CUDA编程模型" aria-controls="topic-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CUDA编程模型</span><span class="tab-desc">CUDA执行模型 · CUDA Graph 与 Launch 编排 · 内存模型与Occupancy 等 4 项</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-3" data-initial="03" data-mid="topic-tabs::02-sharing-md" data-search="资源共享与调度 GPU虚拟化与共享 · CFS vs CUDA 调度 机制总览 五层虚拟化边界、核心机制对比、选型决策树 新 GPU 节点接入 Driver、containerd、Container Toolkit/CDI、Device Plugin、GPU Operator 与全链路验收 MIG 实战 裸机切分、GPU Operator 配置、Pod 申请、验证与重配风险 MPS 实战 MPS daemon、SM/显存限制、K8S 配置、验证与隔离边界 Time-Slicing 实战 replicas 配置、共享资源申请、验证、适用范围与常见误区 HAMi 开源方案 架构链路、Helm 部署、显存/算力申请、调度策略与排障 生产选型与论文映射 部署决策、监控兜底，以及 DeepShare/ElastiCo/Maestro 的机制落点 CFS vs CUDA 调度 Linux CFS与GPU调度器差异、抢占模型、为什么GPU不能直接套用CPU调度" title="资源共享与调度" aria-controls="topic-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">资源共享与调度</span><span class="tab-desc">GPU虚拟化与共享 · CFS vs CUDA 调度</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-4" data-initial="04" data-mid="topic-tabs::03-performance-metrics-md" data-search="性能指标与诊断 性能指标体系 · 利用率诊断与瓶颈分析 · GPU 指标与性能预测边界 性能指标体系 TFLOPS、HBM带宽、Roofline模型、利用率/互联/能耗指标全景 利用率诊断链路 GPU-Util→SM Active→Occupancy→Warp Stall→Throughput 诊断路径 瓶颈分类与排查 Compute/Memory-bandwidth/Memory-capacity/Communication 四类瓶颈排查 GPU 指标与性能预测边界 明确 GPU 页面负责指标语义，预测专题负责特征、标签、模型、评估与校准" title="性能指标与诊断" aria-controls="topic-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能指标与诊断</span><span class="tab-desc">性能指标体系 · 利用率诊断与瓶颈分析 · GPU 指标与性能预测边界</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-5" data-initial="05" data-mid="topic-tabs::14-interview-wrap-up-md" data-search="GPU 面试题库 基础机制、性能排障与平台设计三类面试问题，覆盖从单卡到集群的回答链路 基础机制高频题 CPU/GPU、CUDA、内存层次、数据路径、共享隔离的核心回答 性能与故障场景 GPU 利用率低、OOM、掉卡、通信慢、Pod 看不到 GPU 的诊断路径 GPU 平台系统设计 多租户 GPU 平台、资源抽象、调度、监控、弹性与容错设计" title="GPU 面试题库" aria-controls="topic-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 面试题库</span><span class="tab-desc">基础机制、性能排障与平台设计三类面试问题，覆盖从单卡到集群的回答链路</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="topic-tabs-panel-1" aria-labelledby="topic-tabs-tab-1" data-mid="topic-tabs::00-cpu-vs-gpu-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU硬件直觉</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-1-sub-1" aria-controls="topic-tabs-panel-1-subpanel-1" aria-selected="true" title="CPU vs GPU 设计差异"><span class="subtab-title">CPU vs GPU 设计差异</span><span class="subtab-desc">设计目标、核心形态、内存体系、适合/不适合任务对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-2" aria-controls="topic-tabs-panel-1-subpanel-2" aria-selected="false" title="GPU硬件组件"><span class="subtab-title">GPU硬件组件</span><span class="subtab-desc">SM、CUDA Core、Tensor Core、HBM、L2 Cache、主流GPU规格对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-3" aria-controls="topic-tabs-panel-1-subpanel-3" aria-selected="false" title="GPU互联与数据路径"><span class="subtab-title">GPU互联与数据路径</span><span class="subtab-desc">NVLink/NVSwitch、PCIe、RDMA/GPUDirect、HGX拓扑、NUMA亲和性</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-1-subpanel-1" aria-labelledby="topic-tabs-panel-1-sub-1" ><h2>核心概念</h2>
+<section class="tabs-shell" data-tabs data-tabs-id="topic-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 5</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="GPU 内容模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="topic-tabs-tab-1" data-initial="01" data-mid="topic-tabs::00-cpu-vs-gpu-md" data-search="GPU硬件直觉 CPU vs GPU差异、SM/Tensor Core/HBM组件、NVLink/PCIe/RDMA互联 CPU vs GPU 设计差异 设计目标、核心形态、内存体系、适合/不适合任务对比 GPU硬件组件 SM、CUDA Core、Tensor Core、HBM、L2 Cache、主流GPU规格对比 GPU互联与数据路径 NVLink/NVSwitch、PCIe、RDMA/GPUDirect、HGX拓扑、NUMA亲和性" title="GPU硬件直觉" aria-controls="topic-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU硬件直觉</span><span class="tab-desc">CPU vs GPU差异、SM/Tensor Core/HBM组件、NVLink/PCIe/RDMA互联</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-2" data-initial="02" data-mid="topic-tabs::06-cuda-execution-model-md" data-search="CUDA编程模型 CUDA执行模型 · CUDA Graph 与 Launch 编排 · 内存模型与Occupancy 等 4 项 CUDA执行模型 kernel launch、grid/block/thread/warp/SM 层级关系、warp调度 CUDA Graph 与 Launch 编排 PyTorch 到 CUDA 的提交链路、kernel launch 拦截、Graph 重放和自定义算子开发边界 内存模型与Occupancy 寄存器/shared memory/L1/L2/HBM层次、Occupancy计算与调优 Host-Device 数据拷贝 H2D/D2H触发场景、pinned memory、DataLoader诊断、拷贝带宽 Stream异步流水线 Stream异步队列、event同步、多缓冲、计算与拷贝重叠" title="CUDA编程模型" aria-controls="topic-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">CUDA编程模型</span><span class="tab-desc">CUDA执行模型 · CUDA Graph 与 Launch 编排 · 内存模型与Occupancy 等 4 项</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-3" data-initial="03" data-mid="topic-tabs::02-sharing-md" data-search="资源共享与调度 GPU虚拟化与共享 · CFS vs CUDA 调度 机制总览 五层虚拟化边界、核心机制对比、选型决策树 新 GPU 节点接入 Driver、containerd、Container Toolkit/CDI、Device Plugin、GPU Operator 与全链路验收 MIG 实战 裸机切分、GPU Operator 配置、Pod 申请、验证与重配风险 MPS 实战 MPS daemon、SM/显存限制、K8S 配置、验证与隔离边界 Time-Slicing 实战 replicas 配置、共享资源申请、验证、适用范围与常见误区 HAMi 开源方案 架构链路、Helm 部署、显存/算力申请、调度策略与排障 生产选型与论文映射 部署决策、监控兜底，以及 DeepShare/ElastiCo/Maestro 的机制落点 CFS vs CUDA 调度 Linux CFS与GPU调度器差异、抢占模型、为什么GPU不能直接套用CPU调度" title="资源共享与调度" aria-controls="topic-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">资源共享与调度</span><span class="tab-desc">GPU虚拟化与共享 · CFS vs CUDA 调度</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-4" data-initial="04" data-mid="topic-tabs::03-performance-metrics-md" data-search="性能指标与诊断 指标口径与层次 · GPU 活动与 SM 指标 · 显存容量与带宽指标 等 7 项 指标口径与层次 资源分配、容量、活动、效率与业务结果的区别，以及对象、单位和采样窗口 GPU 活动与 SM 指标 GPU Util、SM Active、Occupancy、Eligible/Issued、Warp Stall 与 Tensor 管线的定义和高低含义 显存容量与带宽指标 Used/Free、Allocated/Reserved、DRAM、实际/有效带宽、L2 命中和峰值的解释 互联、功耗与健康指标 PCIe/NVLink、NCCL algbw/busbw、功率能效、降频原因及 ECC/Xid 计算效率与业务指标 MFU/HFU、Roofline、扩展效率、TTFT/ITL/TPOT、Goodput、KV 命中和回收收益 利用率诊断链路 窗口对齐、数据质量、八种典型指标组合及其验证动作 瓶颈分类与排查 Compute/Memory-bandwidth/Memory-capacity/Communication 四类瓶颈排查 GPU 指标与性能预测 指标成为预测特征时的采样、归属、泛化与信息泄漏条件" title="性能指标与诊断" aria-controls="topic-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能指标与诊断</span><span class="tab-desc">指标口径与层次 · GPU 活动与 SM 指标 · 显存容量与带宽指标 等 7 项</span></span></button><button class="tab-button" type="button" role="tab" id="topic-tabs-tab-5" data-initial="05" data-mid="topic-tabs::14-interview-wrap-up-md" data-search="GPU 面试题库 基础机制、性能排障与平台设计三类面试问题，覆盖从单卡到集群的回答链路 基础机制高频题 CPU/GPU、CUDA、内存层次、数据路径、共享隔离的核心回答 性能与故障场景 GPU 利用率低、OOM、掉卡、通信慢、Pod 看不到 GPU 的诊断路径 GPU 平台系统设计 多租户 GPU 平台、资源抽象、调度、监控、弹性与容错设计" title="GPU 面试题库" aria-controls="topic-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">GPU 面试题库</span><span class="tab-desc">基础机制、性能排障与平台设计三类面试问题，覆盖从单卡到集群的回答链路</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="topic-tabs-panel-1" aria-labelledby="topic-tabs-tab-1" data-mid="topic-tabs::00-cpu-vs-gpu-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>GPU硬件直觉</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-1-sub-1" aria-controls="topic-tabs-panel-1-subpanel-1" aria-selected="true" title="CPU vs GPU 设计差异"><span class="subtab-title">CPU vs GPU 设计差异</span><span class="subtab-desc">设计目标、核心形态、内存体系、适合/不适合任务对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-2" aria-controls="topic-tabs-panel-1-subpanel-2" aria-selected="false" title="GPU硬件组件"><span class="subtab-title">GPU硬件组件</span><span class="subtab-desc">SM、CUDA Core、Tensor Core、HBM、L2 Cache、主流GPU规格对比</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-1-sub-3" aria-controls="topic-tabs-panel-1-subpanel-3" aria-selected="false" title="GPU互联与数据路径"><span class="subtab-title">GPU互联与数据路径</span><span class="subtab-desc">NVLink/NVSwitch、PCIe、RDMA/GPUDirect、HGX拓扑、NUMA亲和性</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-1-subpanel-1" aria-labelledby="topic-tabs-panel-1-sub-1" ><h2>核心概念</h2>
 <ul><li><strong>CPU 定位</strong>：低延迟 · 强控制流 · 通用计算 — 分支预测、乱序执行、大缓存，适合 OS 调度、业务逻辑、IO 编排、串行控制</li><li><strong>GPU 定位</strong>：高吞吐 · 数据并行 · 数值计算 — 大量轻量执行单元（SM）+ 高带宽显存（HBM），适合矩阵乘、卷积、Attention、batch 并行</li><li><strong>CPU-GPU 协作</strong>：CPU 做数据准备/控制/调度/kernel launch/IO；GPU 做大规模数值计算/Tensor Core 加速</li><li><strong>常见瓶颈</strong>：CPU↔GPU 数据搬运、显存带宽、kernel 并行度、多卡通信链路</li></ul>
 <h2>对比表</h2>
 <div class="table-scroll"><table>
@@ -1856,28 +1856,24 @@ stream2: H2D batch1 → kernel batch1 → D2H result1</code></pre>
 <div class="qa-a">
 <p>严格来说没有一一对应。<code>vruntime</code> 是 CFS 为了公平分配 CPU 时间定义的虚拟运行时间，用来决定哪个 OS task 更应该运行。GPU kernel 内部没有为每个 CUDA thread 维护类似 <code>vruntime</code> 的公平指标。GPU 更常看的指标是 active warps、occupancy、warp stall、SM Active、memory coalescing、HBM bandwidth 等，它们衡量的是硬件吞吐和延迟隐藏效果，而不是公平份额。</p>
 </div>
-</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::02-sharing-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::02-sharing-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CUDA编程模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能指标与诊断</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-4" aria-labelledby="topic-tabs-tab-4" data-mid="topic-tabs::03-performance-metrics-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标与诊断</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-4-sub-1" aria-controls="topic-tabs-panel-4-subpanel-1" aria-selected="true" title="性能指标体系"><span class="subtab-title">性能指标体系</span><span class="subtab-desc">TFLOPS、HBM带宽、Roofline模型、利用率/互联/能耗指标全景</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-2" aria-controls="topic-tabs-panel-4-subpanel-2" aria-selected="false" title="利用率诊断链路"><span class="subtab-title">利用率诊断链路</span><span class="subtab-desc">GPU-Util→SM Active→Occupancy→Warp Stall→Throughput 诊断路径</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-3" aria-controls="topic-tabs-panel-4-subpanel-3" aria-selected="false" title="瓶颈分类与排查"><span class="subtab-title">瓶颈分类与排查</span><span class="subtab-desc">Compute/Memory-bandwidth/Memory-capacity/Communication 四类瓶颈排查</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-4" aria-controls="topic-tabs-panel-4-subpanel-4" aria-selected="false" title="GPU 指标与性能预测边界"><span class="subtab-title">GPU 指标与性能预测边界</span><span class="subtab-desc">明确 GPU 页面负责指标语义，预测专题负责特征、标签、模型、评估与校准</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-4-subpanel-1" aria-labelledby="topic-tabs-panel-4-sub-1" ><h2>核心概念</h2>
+</div></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="topic-tabs::02-sharing-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="topic-tabs::02-sharing-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="2"><span class="tab-step-label">上一篇</span><span class="tab-step-title">CUDA编程模型</span></button><button type="button" class="tab-step tab-step-next" data-step-target="4"><span class="tab-step-label">下一篇</span><span class="tab-step-title">性能指标与诊断</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="topic-tabs-panel-4" aria-labelledby="topic-tabs-tab-4" data-mid="topic-tabs::03-performance-metrics-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>性能指标与诊断</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="topic-tabs-panel-4-sub-1" aria-controls="topic-tabs-panel-4-subpanel-1" aria-selected="true" title="指标口径与层次"><span class="subtab-title">指标口径与层次</span><span class="subtab-desc">资源分配、容量、活动、效率与业务结果的区别，以及对象、单位和采样窗口</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-2" aria-controls="topic-tabs-panel-4-subpanel-2" aria-selected="false" title="GPU 活动与 SM 指标"><span class="subtab-title">GPU 活动与 SM 指标</span><span class="subtab-desc">GPU Util、SM Active、Occupancy、Eligible/Issued、Warp Stall 与 Tensor 管线的定义和高低含义</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-3" aria-controls="topic-tabs-panel-4-subpanel-3" aria-selected="false" title="显存容量与带宽指标"><span class="subtab-title">显存容量与带宽指标</span><span class="subtab-desc">Used/Free、Allocated/Reserved、DRAM、实际/有效带宽、L2 命中和峰值的解释</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-4" aria-controls="topic-tabs-panel-4-subpanel-4" aria-selected="false" title="互联、功耗与健康指标"><span class="subtab-title">互联、功耗与健康指标</span><span class="subtab-desc">PCIe/NVLink、NCCL algbw/busbw、功率能效、降频原因及 ECC/Xid</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-5" aria-controls="topic-tabs-panel-4-subpanel-5" aria-selected="false" title="计算效率与业务指标"><span class="subtab-title">计算效率与业务指标</span><span class="subtab-desc">MFU/HFU、Roofline、扩展效率、TTFT/ITL/TPOT、Goodput、KV 命中和回收收益</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-6" aria-controls="topic-tabs-panel-4-subpanel-6" aria-selected="false" title="利用率诊断链路"><span class="subtab-title">利用率诊断链路</span><span class="subtab-desc">窗口对齐、数据质量、八种典型指标组合及其验证动作</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-7" aria-controls="topic-tabs-panel-4-subpanel-7" aria-selected="false" title="瓶颈分类与排查"><span class="subtab-title">瓶颈分类与排查</span><span class="subtab-desc">Compute/Memory-bandwidth/Memory-capacity/Communication 四类瓶颈排查</span></button><button class="subtab-button" type="button" role="tab" id="topic-tabs-panel-4-sub-8" aria-controls="topic-tabs-panel-4-subpanel-8" aria-selected="false" title="GPU 指标与性能预测"><span class="subtab-title">GPU 指标与性能预测</span><span class="subtab-desc">指标成为预测特征时的采样、归属、泛化与信息泄漏条件</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="topic-tabs-panel-4-subpanel-1" aria-labelledby="topic-tabs-panel-4-sub-1" ><h2>指标的对象与层次</h2>
+<p><strong>资源被分配、显存被占用、GPU 有活动、执行效率高、业务完成得快，是五个不同判断。</strong> 一个模型可以占着大量显存等待请求；一个通信 kernel 可以让 GPU 持续有活动，却没有增加模型的有效计算。</p>
+<div class="table-scroll">
+
 <div class="table-scroll"><table>
-<tr><th>指标族</th><th>代表指标</th><th>回答什么问题</th><th>常见误区</th></tr>
-<tr><td>算力</td><td>TFLOPS、TOPS、Tensor Core Util</td><td>计算单元的理论上限和实际吞吐</td><td>理论峰值不等于模型实际速度</td></tr>
-<tr><td>显存带宽</td><td>HBM GB/s、Memory Throughput</td><td>数据能否及时喂给计算单元</td><td>显存容量和显存带宽不是一回事</td></tr>
-<tr><td>显存容量</td><td>VRAM used、peak active memory</td><td>模型、激活、KV cache 能不能放下</td><td>显存占用高不代表 GPU 利用率高</td></tr>
-<tr><td>利用率</td><td>GPU-Util、SM Active、Occupancy</td><td>时间上是否有活、空间上是否铺满</td><td>GPU-Util 高不代表忙得有效</td></tr>
-<tr><td>互联</td><td>PCIe、NVLink、IB/RDMA、NCCL 时间</td><td>多卡和跨机通信是否拖慢</td><td>单卡指标无法解释多卡扩展效率</td></tr>
-<tr><td>能耗</td><td>Power、tokens/J、TFLOPS/W</td><td>成本、供电、散热和能效</td><td>只看吞吐不看 TCO</td></tr>
+<tr><th>层次</th><th>代表指标</th><th>定义必须说清的对象</th><th>指标高不自动意味着什么</th></tr>
+<tr><td>资源分配</td><td>GPU 数、配额、卡时分配率</td><td>可调度资源、物理卡/分片、统计时段</td><td>分配多不等于计算多</td></tr>
+<tr><td>状态容量</td><td>FB Used/Free、Allocated/Reserved、KV 池占用</td><td>设备、进程、框架分配器或缓存池</td><td>占用多不等于执行快</td></tr>
+<tr><td>执行活动</td><td>GPU Util、SM Active、Tensor/DRAM 活动</td><td>设备/SM/管线以及采样窗口</td><td>活动多不等于有效吞吐高</td></tr>
+<tr><td>指令推进</td><td>Occupancy、eligible/issued warp、stall</td><td>warp 驻留、发射条件与归一化分母</td><td>驻留多不等于可发射多</td></tr>
+<tr><td>执行效率</td><td>实际 FLOP/s、带宽、MFU/HFU、Roofline</td><td>必要工作/实际执行、字节层级、峰值口径</td><td>局部高效不等于端到端改善</td></tr>
+<tr><td>互联与健康</td><td>PCIe/NVLink、NCCL、功率/温度/错误</td><td>路径、方向、增量、时间与设备</td><td>带宽或功率高不等于瓶颈已确定</td></tr>
+<tr><td>业务结果</td><td>step time、TTFT/ITL/TPOT、goodput、JCT</td><td>请求、任务、测量起止点与 SLO</td><td>吞吐高不等于质量和延迟都合格</td></tr>
 </table></div>
-<div class="card card-m">
-<h3>GPU 性能指标全景</h3>
-<p>GPU 性能优化不要只看一个指标。面试中最好按“算力、显存、利用率、互联、能耗”五条线回答，然后用 Roofline 判断瓶颈。</p>
-<div class="metric-map">
-<div class="metric-card"><div class="metric-name">算力</div><div class="metric-value">TFLOPS / TOPS</div><p>衡量计算峰值和实际计算吞吐。关注理论峰值、实际 TFLOPS、Tensor Core 是否被用上。</p></div>
-<div class="metric-card"><div class="metric-name">显存带宽</div><div class="metric-value">GB/s · TB/s</div><p>衡量 HBM 读写速度。Softmax、LayerNorm、KV Cache 读取通常更受带宽限制。</p></div>
-<div class="metric-card"><div class="metric-name">显存容量</div><div class="metric-value">GB</div><p>决定模型权重、优化器状态、激活值和 KV Cache 能不能放下。</p></div>
-<div class="metric-card"><div class="metric-name">利用率</div><div class="metric-value">SM Active · Occupancy</div><p>用于判断 GPU 是否在忙，但不能单独代表模型效率或吞吐。</p></div>
-<div class="metric-card"><div class="metric-name">互联</div><div class="metric-value">NVLink · PCIe · IB</div><p>决定多卡训练、张量并行、流水并行和跨节点通信效率。</p></div>
-<div class="metric-card"><div class="metric-name">能耗</div><div class="metric-value">Watt · tokens/J</div><p>数据中心场景必须关注功耗、散热、供电和单位吞吐成本。</p></div>
+
 </div>
-</div>
+<h2>数值可比需要相同口径</h2>
+<ul><li><strong>对象一致</strong>：整卡、MIG 实例、进程、Pod 与请求不能混为一个实体；共享卡附上 Pod 标签，也不自动具有精确进程归属。</li><li><strong>窗口一致</strong>：设备采样周期、Prometheus 抓取周期和时间聚合窗口分别记录。某个 kernel 的 active-cycle 指标，不能直接与整分钟 elapsed-time 指标比较。</li><li><strong>单位一致</strong>：比例 0–1 与百分数 0–100；byte 与 bit；GB 与 GiB；FLOPs 与 FLOP/s；W 与 J。先换算，再比较。</li><li><strong>基线一致</strong>：同一模型、精度、输入输出长度、batch、并行度、缓存冷热和硬件配置。FP16 稠密实际计算不能除以宣传中的稀疏峰值。</li><li><strong>数据有效</strong>：缺失、过期、不支持和计数器复用不能当作零；累计 counter 与已有速率 gauge 采用不同查询方式。</li></ul>
 <div class="card card-s">
 <h3>指标之间的关系图</h3>
 <p>可以用下面这条链路理解性能指标：模型工作负载先决定计算量和访存量，再被 GPU 的算力、带宽、容量和互联约束，最终表现为吞吐、延迟和成本。</p>
@@ -1899,7 +1895,7 @@ stream2: H2D batch1 → kernel batch1 → D2H result1</code></pre>
 
 <rect x="290" y="165" width="170" height="85" rx="14" class="metric-node memory" fill="var(--card-solid, #ffffff)" stroke="var(--warn, #d97706)" stroke-opacity=".42" stroke-width="1.5"></rect>
 <text x="318" y="200" class="metric-label" fill="var(--txt, #172033)">Memory Roof</text>
-<text x="318" y="224" class="metric-desc" fill="var(--muted, #667085)">HBM bandwidth / capacity</text>
+<text x="318" y="224" class="metric-desc" fill="var(--muted, #667085)">HBM bandwidth</text>
 
 <rect x="540" y="95" width="170" height="95" rx="14" class="metric-node interconnect" fill="var(--card-solid, #ffffff)" stroke="var(--acc, #7c3aed)" stroke-opacity=".42" stroke-width="1.5"></rect>
 <text x="568" y="132" class="metric-label" fill="var(--txt, #172033)">Communication</text>
@@ -1916,436 +1912,266 @@ stream2: H2D batch1 → kernel batch1 → D2H result1</code></pre>
 <path d="M460 88 C500 88 505 142 540 142" class="metric-arrow" stroke="var(--border, #dbe4f0)" stroke-width="1.8" fill="none" marker-end="url(#metricArrow)"></path>
 <path d="M460 208 C500 208 505 142 540 142" class="metric-arrow" stroke="var(--border, #dbe4f0)" stroke-width="1.8" fill="none" marker-end="url(#metricArrow)"></path>
 <path d="M710 142 C750 142 755 142 795 142" class="metric-arrow" stroke="var(--border, #dbe4f0)" stroke-width="1.8" fill="none" marker-end="url(#metricArrow)"></path>
-<text x="300" y="314" class="metric-note" fill="var(--muted, #667085)">Roofline 判断：Arithmetic Intensity = FLOPs / Bytes；低于 ridge point 多半 memory-bound，高于 ridge point 才可能 compute-bound。</text>
+<text x="300" y="314" class="metric-note" fill="var(--muted, #667085)">Roofline 判断：Arithmetic Intensity = FLOPs / Bytes；比较计算与带宽上界；实际瓶颈还需结合时间线和热点计数器。</text>
 </svg>
 </div>
 </div>
-<div class="card card-s">
-<h3>计算性能：TFLOPS 不是实际速度</h3>
-<p>TFLOPS 是每秒浮点运算次数。厂商宣传的 A100 FP16 312 TFLOPS、H100 FP16 989 TFLOPS 都是理想条件下 Tensor Core 的理论峰值，真实模型通常达不到。</p>
-<table>
-<tr><th>精度</th><th>A100 理论峰值</th><th>H100 理论峰值</th><th>典型场景</th></tr>
-<tr><td>FP64</td><td>9.7 TFLOPS</td><td>34 TFLOPS</td><td>科学计算，AI 训练较少使用</td></tr>
-<tr><td>FP32</td><td>19.5 TFLOPS</td><td>67 TFLOPS</td><td>通用 CUDA 计算</td></tr>
-<tr><td>TF32</td><td>156 TFLOPS</td><td>494 TFLOPS</td><td>Tensor Core 加速的 FP32 训练</td></tr>
-<tr><td>FP16/BF16</td><td>312 TFLOPS</td><td>989 TFLOPS</td><td>混合精度训练、主流 LLM 训练</td></tr>
-<tr><td>FP8</td><td>不支持</td><td>1979 TFLOPS</td><td>H100 Transformer Engine，推理和部分训练</td></tr>
-<tr><td>INT8</td><td>624 TOPS</td><td>3958 TOPS</td><td>量化推理，吞吐优先</td></tr>
-</table>
-<div class="qa-section"><div class="qa-section-title">怎么估算理论峰值</div><p>简化理解：理论峰值 ≈ SM 数量 × 每个周期可完成的矩阵运算量 × 频率。Tensor Core 是矩阵乘加专用单元，所以 FP16/BF16/FP8 峰值远高于普通 FP32 CUDA Core。</p></div>
-<div class="qa-section"><div class="qa-section-title">为什么实际值低</div><p>真实模型会受到 HBM 带宽、kernel launch、算子碎片、通信等待、数据依赖、batch/shape 不规则和 Tensor Core 对齐条件影响。实际 TFLOPS 通常需要用 Nsight Compute、框架 profiler 或 MFU 估算。</p></div>
+<h2>高低与优化方向</h2>
+<p>“高”和“低”首先相对于同样任务、阶段与配置的基线。高值可能表示资源被有效使用，也可能表示该资源被低效工作占满；低值可能表示供给不足，也可能是合理的缓存复用或低需求。先建立可检验的解释，再看时间线与最终产出。</p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 你如何理解 GPU 利用率和性能之间的关系？</div>
+<div class="qa-a"><p>我会把“分到了资源、占着显存、有计算活动、执行效率高、业务产出好”分开。GPU Util 看 kernel 活动时间，SM Active 看 SM 在时间上的活动，Occupancy 看驻留 warp，带宽和计算吞吐解释执行限制，最后用任务时间和达标吞吐验证。不能从一个利用率百分比直接推出剩余算力或性能瓶颈。</p></div>
 </div>
-<div class="card card-d">
-<h3>Roofline 模型：判断 kernel 是缺算力还是缺数据</h3>
-<p>Roofline 把 kernel 的 FLOPs、Bytes、实际吞吐和硬件峰值放在一张图里，判断瓶颈是算力、显存带宽还是其他因素。</p>
-<table>
-<tr><th>要看什么</th><th>指标来源</th><th>说明</th></tr>
-<tr><td>Arithmetic Intensity</td><td>FLOPs / Bytes</td><td>低于 ridge point 通常偏 memory-bound</td></tr>
-<tr><td>Achieved FLOP/s</td><td>Nsight Compute / profiler</td><td>距离 compute roof 有多远</td></tr>
-<tr><td>Memory Throughput</td><td>Nsight / DCGM</td><td>是否接近 HBM roof</td></tr>
-<tr><td>Roofline 位置</td><td>Nsight Compute Roofline chart</td><td>判断优化方向：减少访存还是提高计算吞吐</td></tr>
-</table>
+<p>定义依据：<a href="https://docs.nvidia.com/deploy/archive/R535/nvml-api/structnvmlUtilization__t.html">NVML</a>、<a href="https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html">DCGM Profiling</a>、<a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html">Nsight Compute</a>。具体字段名和支持范围以实际设备、采集器与工具版本为准。</p></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-2" aria-labelledby="topic-tabs-panel-4-sub-2" hidden><h2>GPU Util：有 kernel 执行的时间比例</h2>
+<p><code>nvidia-smi utilization.gpu</code> 表示设备采样窗口内，至少一个 kernel 正在执行的时间占比，单位是百分比。设采样窗口为 <code>T</code>，其中有 kernel 执行的时间合计为 <code>t_busy</code>，则 <code>GPU Util = t_busy / T × 100%</code>。设备内部采样窗口、监控抓取周期和查询时间窗是三件事；每秒抓取一次，并不意味着设备精确统计了这整整一秒。<a href="https://docs.nvidia.com/deploy/archive/R535/nvml-api/structnvmlUtilization__t.html">NVML 定义</a></p>
+<div class="table-scroll">
 
-<div class="qa-section"><div class="qa-section-title">Roofline 和 GPU Utilization 的关系</div>
-<p><code>nvidia-smi GPU-Util</code> 只能告诉你 GPU 上有没有 kernel 在跑，Roofline 更进一步问：这个 kernel 的性能离硬件理论上限有多远？它是被内存带宽限制还是被计算峰值限制？所以 <strong>GPU Utilization 高不代表接近 Roofline</strong>。可能出现 GPU-Util = 100% 但 kernel 在 Roofline 图上离屋顶很远，原因可能是访存不合并、cache miss、occupancy 低、warp stall、Tensor Core 没用上、指令依赖、分支发散、kernel 太小等。</p>
-</div>
-
-<div class="qa-section"><div class="qa-section-title">怎么获取 Roofline？</div>
-<p>Nsight Compute 支持 Roofline 分析，常见做法：</p>
-<pre><code class="language-bash">ncu --set full ./your_program
-# 或使用带 Roofline 的 section
-ncu --section SpeedOfLight_RooflineChart ./your_program</code></pre>
-<p>然后在 Nsight Compute UI 里看 Roofline 图，它通常会展示 arithmetic intensity、achieved FLOP/s、memory roof、compute roof、kernel 点位，以及 FP32 / FP64 / Tensor Core 等不同 roof。也可以手动估算：Arithmetic Intensity = FLOPs / Bytes，Achieved Performance = FLOPs / Kernel Time，Memory Bandwidth Used = Bytes / Kernel Time，然后对比硬件峰值。</p>
-</div>
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 什么是 Roofline 模型？面试怎么回答？</div>
-<div class="qa-a">
-<p>先估 FLOPs 和 Bytes，算 Arithmetic Intensity，再和硬件 ridge point 比较，判断热点 kernel 是 memory-bound 还是 compute-bound。</p>
-<div class="qa-summary">Roofline 把 GPU 性能指标收敛成“缺数据还是缺算力”。</div>
-</div>
-</div>
-
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 为什么 Transformer 的 Attention 经常是瓶颈？</div>
-<div class="qa-a"><p>Self-Attention 的 QK^T 计算量随序列长度平方增长，同时需要频繁读写 Q、K、V 和 attention score。FlashAttention 的核心价值不是只减少 FLOPs，而是通过分块、在线 softmax 和重计算减少 HBM 读写。</p></div>
-</div>
-
-</div>
-<div class="card card-w">
-<h3>GPU 利用率：高 Util 不等于高效率</h3>
-<p><code>nvidia-smi</code> 的 GPU Utilization 表示采样窗口内 GPU 是否有 kernel 活跃，不能代表 Tensor Core 利用率、真实 TFLOPS 或端到端吞吐。</p>
-<table>
-<tr><th>指标</th><th>主要来源</th><th>真正含义</th><th>常见误区</th></tr>
-<tr><td>GPU Utilization</td><td><code>nvidia-smi</code></td><td>采样周期内至少有 kernel 在执行的时间比例</td><td>100% 可能只是小 kernel 很密集，不代表算力打满</td></tr>
-<tr><td>SM Active</td><td>DCGM / Nsight</td><td>SM 有活跃 warp 的时间比例</td><td>SM 忙不等于 Tensor Core 高效工作</td></tr>
-<tr><td>Tensor Core Util</td><td>Nsight Compute</td><td>Tensor Core 管线使用程度</td><td>FP32 或 shape 不对齐时可能很低</td></tr>
-<tr><td>Occupancy</td><td>Nsight Compute</td><td>每个 SM 上可驻留 warp 与理论上限的比例</td><td>高 occupancy 不一定高性能，低 occupancy 也可能是合理的寄存器/共享内存权衡</td></tr>
-<tr><td>Memory Throughput</td><td>Nsight / DCGM</td><td>HBM 带宽使用情况</td><td>高带宽可能说明 memory-bound，不一定是好事</td></tr>
-</table>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: nvidia-smi 显示 GPU Util 100%，但训练很慢，为什么？</div>
-<div class="qa-a"><p>可能是小 kernel 频繁启动、Tensor Core 没用上、CPU 数据加载慢、H2D/D2H 拷贝等待、多卡 NCCL 通信等待，或者模型本身 memory-bound。排查时要结合 Nsight Systems 看 timeline，再用 Nsight Compute 看单个 kernel 的 Tensor Core、SM、HBM 指标。</p></div>
-</div>
-</div>
-<div class="card card-d">
-<h3>多卡互联性能指标</h3>
-<p>多 GPU 训练/推理时，互联决定扩展效率。节点内优先看 NVLink/NVSwitch，节点间看 InfiniBand/RoCE 和 NCCL 拓扑。</p>
-<table>
-<tr><th>互联方式</th><th>典型带宽</th><th>拓扑</th><th>主要影响</th></tr>
-<tr><td>NVLink 3.0</td><td>A100 约 300 GB/s</td><td>GPU 点对点或经 NVSwitch</td><td>单机多卡 all-reduce、张量并行</td></tr>
-<tr><td>NVLink 4.0</td><td>H100 约 450 GB/s</td><td>GPU 点对点或经 NVSwitch</td><td>Hopper 单机扩展效率</td></tr>
-<tr><td>NVSwitch</td><td>高聚合带宽</td><td>单节点内近似全互联</td><td>降低拓扑不均衡影响</td></tr>
-<tr><td>PCIe 4.0 x16</td><td>约 32 GB/s 单向</td><td>树形，经 CPU 或 PCIe Switch</td><td>CPU-GPU 拷贝、无 NVLink 卡间通信</td></tr>
-<tr><td>PCIe 5.0 x16</td><td>约 64 GB/s 单向</td><td>树形</td><td>新一代 CPU-GPU 互联</td></tr>
-<tr><td>InfiniBand NDR</td><td>400 Gbps = 50 GB/s</td><td>跨节点网络</td><td>多节点 all-reduce、参数同步</td></tr>
-</table>
-<div class="qa-section"><div class="qa-section-title">扩展效率</div><p>线性扩展效率 = 多卡实际吞吐 /（单卡吞吐 × 卡数）。节点间扩展效率通常低于单节点，因为跨节点带宽和延迟远不如 NVLink/NVSwitch。</p></div>
-</div>
-<div class="card card-r">
-<h3>面试高频：如何判断瓶颈</h3>
-<div class="diag-grid">
-<div class="diag-item"><strong>SM Active 高 + HBM 高</strong><span>GPU 忙且大量访存，进一步看 Tensor Core 和 Roofline。</span></div>
-<div class="diag-item"><strong>SM Active 低 + HBM 高</strong><span>典型 memory-bound，优化访存、融合算子、减少 KV/激活读写。</span></div>
-<div class="diag-item"><strong>SM Active 低 + HBM 低</strong><span>GPU 没被喂饱，查 CPU、DataLoader、I/O、网络、调度等待。</span></div>
-<div class="diag-item"><strong>GPU Util 高 + TFLOPS 低</strong><span>可能是小 kernel、Tensor Core 未使用、shape 不对齐或通信 kernel 占比高。</span></div>
-<div class="diag-item"><strong>单卡快 + 多卡慢</strong><span>查 NCCL、拓扑、IB/RDMA、梯度 bucket、通信计算 overlap。</span></div>
-<div class="diag-item"><strong>显存够但仍慢</strong><span>容量不是瓶颈，可能是带宽、NUMA、PCIe、page cache 或数据 pipeline。</span></div>
-</div>
-</div>
-<div class="card card-r">
-<h3>GPU 性能面试题</h3>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: 如何计算一个模型训练需要多少显存？</div>
-<div class="qa-a">
-<p><strong>回答思路：</strong>先把显存拆成“模型状态 + 激活值 + 临时开销”，再说明不同优化策略会减少哪一部分。</p>
-<div class="qa-section"><div class="qa-section-title">1. 模型状态</div><p>包括参数、梯度和优化器状态。以 Adam + FP16 混合精度为例，常用粗估是每个参数约 16 bytes：FP16 参数 2 bytes、FP16 梯度 2 bytes、FP32 master weight 4 bytes、Adam 一阶动量 4 bytes、二阶动量 4 bytes。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 激活值</div><p>激活值和 batch size、sequence length、hidden size、层数强相关，训练时需要保留中间结果用于反向传播。长序列 LLM 里，激活值经常比直觉中更大。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. 临时开销</div><p>还要预留 CUDA workspace、attention score / KV cache、中间 tensor、通信 buffer、内存碎片等。实际跑训练时不能把显存算到 100%，通常要留安全余量。</p></div>
-<div class="qa-section"><div class="qa-section-title">4. 优化手段</div><p>ZeRO/FSDP 主要切分参数、梯度和优化器状态；activation checkpointing 通过重计算降低激活值；offload 把部分状态放到 CPU 或 NVMe；混合精度和量化降低单个元素字节数。</p></div>
-<div class="qa-summary">面试口径：显存 ≈ 模型状态 + 激活值 + 临时 workspace/通信 buffer。Adam + FP16 可先按参数量 × 16 bytes 粗估模型状态，再叠加激活值和安全余量。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: A100 和 H100 的主要区别是什么？</div>
-<div class="qa-a">
-<p><strong>回答思路：</strong>不要只背参数表，建议按“架构、算力、显存/带宽、互联、软件特性、部署代价”来讲。</p>
-<div class="qa-section"><div class="qa-section-title">1. 架构代际</div><p>A100 是 Ampere 架构，H100 是 Hopper 架构。H100 面向大模型训练和推理做了更多专用优化。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 计算能力</div><p>H100 的 FP16/BF16 Tensor Core 峰值明显高于 A100，并新增 FP8 Transformer Engine。对 LLM 训练和推理来说，FP8 能在合适场景下提升吞吐和降低显存占用。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. 显存与带宽</div><p>A100 80GB 使用 HBM2e，H100 80GB 使用 HBM3，H100 显存带宽更高。带宽提升对 memory-bound 算子、attention、KV cache 读取很重要。</p></div>
-<div class="qa-section"><div class="qa-section-title">4. 互联与扩展</div><p>H100 支持更高代际的 NVLink/NVSwitch，单机多卡和多机训练的通信效率更好，适合大规模并行训练。</p></div>
-<div class="qa-section"><div class="qa-section-title">5. 工程代价</div><p>H100 性能更强，但功耗、散热、供电和采购成本也更高。数据中心部署时要看机房能力、网络拓扑和整体 TCO，而不是只看单卡峰值。</p></div>
-<div class="qa-summary">面试口径：H100 相比 A100 的核心升级是 Hopper 架构、FP8/Transformer Engine、更高 Tensor Core 算力、更高 HBM 带宽和更强互联；代价是功耗和部署要求更高。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Tensor Core 为什么比 CUDA Core 快？</div>
-<div class="qa-a">
-<p><strong>回答思路：</strong>本质区别是 CUDA Core 做通用标量/向量运算，Tensor Core 是矩阵乘加专用单元，专门加速深度学习里的 GEMM。</p>
-<div class="qa-section"><div class="qa-section-title">1. 硬件定位不同</div><p>CUDA Core 更通用，适合执行标量或向量 FMA；Tensor Core 面向矩阵块乘加，可以在一个周期内完成小矩阵 tile 的大量乘加操作。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 工作负载匹配</div><p>神经网络里的 Linear、卷积、QKV projection、MLP、attention projection 最终都能转成矩阵乘。Tensor Core 正好针对这些高密度矩阵乘做了硬件加速。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. 精度与吞吐权衡</div><p>Tensor Core 通常使用 TF32、FP16、BF16、FP8、INT8 等精度格式，通过降低数据位宽和专用矩阵管线换取更高吞吐。</p></div>
-<div class="qa-section"><div class="qa-section-title">4. 使用条件</div><p>并不是所有算子都会自动高效使用 Tensor Core。shape 对齐、数据类型、矩阵维度、框架 kernel 选择都会影响 Tensor Core 利用率。</p></div>
-<div class="qa-summary">面试口径：Tensor Core 快是因为它不是“更快的 CUDA Core”，而是矩阵乘加专用硬件；深度学习核心算子大量是 GEMM，所以能获得数量级更高的吞吐。</div>
-</div>
-</div>
-<div class="qa" onclick="this.classList.toggle('open')">
-<div class="qa-q">Q: Memory Coalescing 是什么？</div>
-<div class="qa-a">
-<p><strong>回答思路：</strong>Memory Coalescing 讨论的是一个 warp 内的内存访问能不能合并成少量连续内存事务。</p>
-<div class="qa-section"><div class="qa-section-title">1. 基本定义</div><p>GPU 以 warp 为单位调度线程。如果同一个 warp 里的相邻线程访问连续、对齐的地址，硬件可以把多次访存合并成更少的 memory transaction。</p></div>
-<div class="qa-section"><div class="qa-section-title">2. 为什么重要</div><p>合并访问可以提高有效 HBM 带宽，减少访存事务数量，让 SM 少等数据。很多 memory-bound kernel 的优化重点就是提高访存连续性。</p></div>
-<div class="qa-section"><div class="qa-section-title">3. 反例</div><p>stride 访问、非对齐访问、随机访问、不同线程访问分散地址都会破坏 coalescing，导致同样的数据量需要更多 memory transaction。</p></div>
-<div class="qa-section"><div class="qa-section-title">4. 优化方向</div><p>常见做法包括调整数据布局、让线程映射到连续地址、使用 shared memory 做重排、向量化 load/store，以及减少不规则访问。</p></div>
-<div class="qa-summary">面试口径：Coalescing 的目标是让一个 warp 的访存尽量连续且对齐，把零散访存合并成少量事务，从而提升有效带宽。</div>
-</div>
-</div>
-</div>
-<div class="card card-d">
-<h3>官方参考</h3>
-<div class="resource-grid">
-<a class="resource-card" href="https://developer.nvidia.com/blog/nvidia-ampere-architecture-in-depth/"><div class="resource-type">official</div><div class="resource-title">NVIDIA Ampere Architecture</div><div class="resource-desc">A100 架构深度解析，SM、Tensor Core、HBM 详解。</div></a>
-<a class="resource-card" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/"><div class="resource-type">official</div><div class="resource-title">NVIDIA Hopper Architecture</div><div class="resource-desc">H100 架构深度解析，Transformer Engine、FP8、DPX。</div></a>
-<a class="resource-card" href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html"><div class="resource-type">official</div><div class="resource-title">Nsight Compute Profiling Guide</div><div class="resource-desc">GPU 性能分析指标详解，Roofline、Occupancy、Memory 分析。</div></a>
-<a class="resource-card" href="https://arxiv.org/abs/2205.05937"><div class="resource-type">paper</div><div class="resource-title">FlashAttention</div><div class="resource-desc">内存高效 Attention 算法，IO-Aware 优化经典论文。</div></a>
-</div>
-</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-2" aria-labelledby="topic-tabs-panel-4-sub-2" hidden><h2>诊断入口</h2>
-<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">业务慢或 GPU 看起来异常</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; nvidia-smi / DCGM 粗看 GPU-Util、显存、功耗、温度、进程</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; Nsight Systems 看 timeline：空洞、Memcpy、同步、NCCL、CPU 等待</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Nsight Compute 看热点 kernel：SM Active、Occupancy、Warp Stall、Throughput</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; 结合业务指标：step time、tokens/sec、QPS、TTFT、TPOT、P99</div></div></div>
-<h2>指标解释</h2>
 <div class="table-scroll"><table>
-<tr><th>指标</th><th>能说明什么</th><th>不能说明什么</th></tr>
-<tr><td>GPU-Util</td><td>采样窗口里 GPU 是否有 kernel 在跑</td><td>不能说明 SM 是否铺满、Tensor Core 是否用上</td></tr>
-<tr><td>memory.used</td><td>显存容量占用</td><td>不能说明 GPU 是否在计算</td></tr>
-<tr><td>SM Active</td><td>SM 空间覆盖度</td><td>不能说明每个 SM 内 warp 是否足够</td></tr>
-<tr><td>Occupancy</td><td>SM 内 active warp 是否够多</td><td>不是越高越好，不等于性能</td></tr>
-<tr><td>Warp Stall</td><td>warp 为什么不能发射</td><td>需要结合访存、同步、依赖和代码结构解释</td></tr>
-<tr><td>Compute / Memory Throughput</td><td>瓶颈更像算力还是显存带宽</td><td>不能解释 CPU、I/O、通信等待</td></tr>
-<tr><td>Tensor Core Util</td><td>AI 矩阵算力是否用起来</td><td>只对 GEMM/Conv/Attention 等相关</td></tr>
+<tr><th>观测</th><th>可能意味着什么、有什么影响</th><th>下一步判断</th></tr>
+<tr><td>高</td><td>kernel 执行时间连续；可能是有效计算，也可能是低效访存、通信或等待型 kernel</td><td>看 SM 覆盖、实际带宽、热点 kernel 与业务吞吐</td></tr>
+<tr><td>低</td><td>有较多无 kernel 的时间；可能流量少、CPU/I/O 供给慢、同步、阶段切换或提交开销大</td><td>在相同负载下对齐请求队列与 CPU/GPU 时间线；低需求时无需强行“拉高”</td></tr>
+<tr><td>持续为 0</td><td>所观测样本没有 kernel 活动，是闲置候选信号</td><td>核对数据有效性、进程归属、显存驻留和恢复请求；不能当作未来空闲保证</td></tr>
 </table></div>
-<div class="card card-w">
-<h3>GPU-Util 高不等于 GPU 真正用得好</h3>
-<p>判断一个 GPU “利用率高不高”，不要只看 <code>nvidia-smi</code> 里的 <code>GPU-Util</code>。它只能告诉你采样窗口里 GPU 时间上是否有 kernel 在跑，但不能告诉你 SM 是否铺满、warp 是否真的能发射、Tensor Core 是否用起来、瓶颈到底在计算还是显存。<code>nvidia-smi</code> 本身定位是 NVIDIA System Management Interface，用于监控和管理 NVIDIA GPU，并支持查询 GPU、显存、功耗、温度、时钟等系统级信息<a href="https://docs.nvidia.com/deploy/nvidia-smi/index.html">[nvidia-smi Documentation</a>]。</p>
-<div class="qa-summary">最推荐的判断链路：GPU-Util 看有没有活；SM Active 看活有没有铺满 SM；Occupancy 看 SM 里 warp 是否足够；Warp Stall 看 warp 是否真能执行；Compute/Memory Throughput 看瓶颈在哪；Tensor Core Util 看 AI 算力是否用上；最后用吞吐和延迟判断 GPU 忙得是否有效。</div>
+
 </div>
-<div class="card card-w">
-<h3>一条排查主线：从系统级到业务级</h3>
-<p>你可以把 GPU 利用率诊断想成十层漏斗。越往上越粗，适合快速判断；越往下越细，适合解释为什么慢。面试时不要一上来报一堆指标，而是先说你的排查顺序。</p>
-<pre><code>1. GPU 有没有活干？
-   看 GPU-Util。
-
-2. 显存只是占着，还是 GPU 真的在计算？
-   区分 memory.used 和 utilization.memory。
-
-3. 活有没有铺满 SM？
-   看 SM Active。
-
-4. SM 里面挂了多少 warp？
-   看 achieved occupancy / active warps。
-
-5. warp 是否真的能发射？
-   看 eligible warps、issued warps、stall reasons。
-
-6. 瓶颈在 compute 还是 memory？
-   看 compute throughput 和 memory throughput。
-
-7. AI workload 是否用上 Tensor Core？
-   看 tensor pipe / tensor instruction。
-
-8. 是否被功耗、温度、时钟限制？
-   看 power、clock、temperature、p-state。
-
-9. 端到端 timeline 有没有空洞？
-   用 Nsight Systems 看 CPU、CUDA、memcpy、NCCL。
-
-10. GPU 忙得是否有业务价值？
-    训练看 tokens/sec、samples/sec、step time、MFU；推理看 QPS、TTFT、TPOT、P99。</code></pre>
-<p>这个顺序的好处是：它不会把“设备看起来很忙”和“业务真的跑得快”混为一谈。很多线上问题的本质不是 GPU 不忙，而是 GPU 忙在了不该忙的地方，例如重计算、低效访存、通信等待、碎 kernel、错误 dtype 或无效 batch。</p>
+<p><strong>100% 不等于全部 SM 满负荷，更不等于峰值 FLOP/s。</strong> 一个小 kernel 连续运行也能让它很高。单纯的 CPU 等待或拷贝间隙不能直接解释同一张卡、同一窗口内持续 100% 的 kernel 活动；应检查其他进程、采样窗口或 GPU 上仍在执行的通信工作。</p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU Util 为 20%，能把剩下 80% 算力借给另一个任务吗？</div>
+<div class="qa-a"><p>不能直接这样算。20% 是历史窗口内有 kernel 执行的时间比例，不是资源配额，也不保证下一刻还有 80% 空间。要结合任务是否会恢复、显存能否容纳以及干扰情况决定。采用互斥门控时，则由恢复信号触发使用权交接。</p></div>
 </div>
-<div class="card card-w">
-<h3>第一层：GPU-Util 只看时间上有没有 kernel</h3>
-<p><code>GPU-Util</code> 回答的是一个非常粗的问题：在采样周期内，GPU 上是否有一个或多个 kernel 正在执行。它不是 SM 利用率，不是 CUDA Core 利用率，也不是 Tensor Core 利用率，更不是实际 FLOPS。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash"># 快速看当前 GPU 状态
-nvidia-smi
-
-# 持续刷新，观察利用率、功耗、温度等变化
-nvidia-smi dmon
-
-# 查询指定字段
-nvidia-smi --query-gpu=timestamp,index,name,utilization.gpu,utilization.memory,memory.used,memory.total,power.draw,temperature.gpu --format=csv -l 1</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么理解</div><p>如果 <code>GPU-Util</code> 长期低于 30%，大概率是 GPU 没喂饱，可能是数据加载慢、CPU 预处理慢、batch 太小、请求量不足、I/O 慢、kernel launch 间隔大或多卡通信等待。如果 <code>GPU-Util</code> 长期高于 80%，只能说明 GPU 时间上比较忙，后面还要继续判断它是不是忙得有效。</p></div>
-<div class="qa-section"><div class="qa-section-title">典型陷阱</div><p>一个很小的 kernel 如果持续运行，也可能让 <code>GPU-Util</code> 接近 100%。例如一张有 108 个 SM 的 A100，如果某个 kernel 只用到少数 SM，但一直不断执行，<code>GPU-Util</code> 可能很高，实际硬件并没有被铺满。</p></div>
+<h2>SM Active：时间和 SM 覆盖共同决定</h2>
+<p>设 GPU 有 <code>N</code> 个 SM，观察时长为 <code>T</code>；<code>a_i(t)</code> 在第 <code>i</code> 个 SM 上存在活跃 warp 时为 1，否则为 0。直观地，<code>SM Active = Σ_i ∫a_i(t)dt / (N × T)</code>。它是跨 SM、跨时间的活动比例，通常以 0–1 或百分比显示。活跃 warp 包括等待内存的 warp，不只包含正在完成算术指令的 warp。<a href="https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html">DCGM Profiling</a></p>
+<p><strong>低值既可能是 SM 没铺开，也可能是时间上有空洞。</strong> 例如假设有 100 个 SM：20 个 SM 活跃一整秒，或者 100 个 SM 只活跃 0.2 秒，SM Active 都约为 0.2；仅看平均值分不清这两种情况。前一种通常要检查 grid、batch 和任务规模，后一种先检查供给与调度间隙。</p>
+<p><strong>高值说明多数 SM 在多数时间有驻留工作，但不保证工作推进得快。</strong> 如果 active warp 多数在等待访存或依赖，仍可能吞吐低。应继续看 eligible warp、带宽、管线活动和执行时间。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU Util 高、SM Active 低，你怎么解释？</div>
+<div class="qa-a"><p>我先保证两者对应同一设备和时间范围。如果 kernel 持续运行，但只覆盖少量 SM，就会出现这种组合。接着看 grid 和工作量，尝试增大可并行的工作；同时检查带宽是否已成限制，不能直接把“SM 没铺满”理解成一定能线性加速。</p></div>
 </div>
-<div class="card card-w">
-<h3>第二层：显存占用不等于 GPU 利用率</h3>
-<p>显存占用和 GPU 计算利用率是两件事。<code>memory.used</code> 表示显存容量用了多少；<code>utilization.memory</code> 更偏采样周期内 device/global memory 是否在读写。模型参数、KV cache 或缓存 allocator 占着显存，不代表 GPU 正在高效计算。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">nvidia-smi --query-gpu=memory.used,memory.total,utilization.memory --format=csv -l 1</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p>显存高但 <code>GPU-Util</code> 低，常见于模型已经加载、KV cache 或 tensor 占着显存，但请求流量不足、CPU 没喂上或程序在等待。显存低但 <code>GPU-Util</code> 高，也很常见，例如某些小模型或小 batch 计算忙但显存占用不大。显存接近满说明 batch size、sequence length 或并发可能受限，也有 OOM 风险，但它不是“利用率高”的证据。</p></div>
+<h2>Occupancy：驻留多少 warp，不是有多少 warp 能立即执行</h2>
+<p>Occupancy 比较每个 SM 上驻留的 warp 数与硬件支持的最大驻留 warp 数。理论 occupancy 根据线程块大小、寄存器、共享内存和硬件上限计算；实际 occupancy 从运行期间观测。Nsight 的 <code>active</code>、<code>elapsed</code> 等归一化后缀与采集范围会影响数值，不能把不同工具中的同名百分比直接相除。<a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#sections-and-rules">Nsight Compute Occupancy</a></p>
+<p>假设某架构每个 SM 最多驻留 64 个 warp，某时刻驻留 16 个，则该时刻为 25%。这 16 个 warp 可能多数等待数据；它们不是 16 个“马上能发射”的 warp。</p>
+<div class="table-scroll">
+
+<div class="table-scroll"><table>
+<tr><th>观测</th><th>影响与可能原因</th><th>检查或优化</th></tr>
+<tr><td>低</td><td>可用于隐藏延迟的 warp 少；也可能是每个线程需要更多寄存器/共享内存的合理选择</td><td>查每 block 资源、grid、尾部不均衡；比较调整前后 kernel 时间</td></tr>
+<tr><td>高</td><td>驻留并发较多，有机会隐藏等待；仍可能全部卡在相同依赖上</td><td>查 eligible/issued、内存与同步，而不是继续追求驻留数量</td></tr>
+<tr><td>理论高、实际低</td><td>工作量不足、block 时长不均或尾部阶段可能拉低实际值</td><td>查看各阶段与 block 工作量，而不是只改寄存器限制</td></tr>
+</table></div>
+
 </div>
-<div class="card card-w">
-<h3>第三层：SM Active，看活有没有铺满 GPU</h3>
-<p><code>SM Active</code> 比 <code>GPU-Util</code> 更接近我们想知道的问题：GPU 上的 SM 有没有被广泛使用。可以粗略理解为，在所有 SM 和所有采样时间里，有多少比例的 SM 至少有 active warp。</p>
-<div class="qa-section"><div class="qa-section-title">为什么它比 GPU-Util 更细</div><p><code>GPU-Util</code> 是“这段时间 GPU 有没有 kernel”；<code>SM Active</code> 是“这些 SM 在这些时间里有没有活”。如果某个 kernel 只铺到少数 SM，它仍然可能让 <code>GPU-Util</code> 很高，但 <code>SM Active</code> 会暴露空间利用率不足的问题。</p></div>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash"># 用 Nsight Compute 采集完整指标
-ncu --set full ./your_program
+<p>强行限制寄存器以提高 occupancy，可能导致 spill 到 local memory，增加访存，反而变慢。<strong>调优目标是执行时间，occupancy 是解释资源与延迟隐藏关系的中间量。</strong></p>
+<h2>Eligible、Issued 与 Warp Stall：工作能否向前推进</h2>
+<p><code>active/resident</code> 表示 warp 驻留；<code>eligible</code> 表示当前具备发射条件；<code>issued</code> 表示被调度器选中并发射。相关指标可能按每调度器、每周期计数，也可能是周期占比，应先读单位。它们不能混成一个“warp 利用率”。</p>
+<p>Eligible 少、issue 槽频繁空闲，说明缺少可以执行的指令；原因可能是依赖、内存、同步或驻留工作不足。Eligible 多而部分 warp 未被选择，可能只是每周期发射能力有限：<code>Not Selected</code> 高并不必然是问题。只要持续有其他 warp 发射，某个 warp 等待不一定影响吞吐。</p>
+<div class="table-scroll">
 
-# 只采集 SM Active 相关指标
-ncu --metrics sm__cycles_active.avg.pct_of_peak_sustained_elapsed ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p><code>SM Active</code> 低，通常说明并行度不足，例如 batch 太小、grid 太小、算子规模太小或 kernel 设计没有铺开。<code>SM Active</code> 高但性能仍低，说明大多数 SM 时间上有活，但 warp 可能在 stall，或者计算/访存效率不好，需要继续看 occupancy、eligible warps 和 throughput。</p></div>
+<div class="table-scroll"><table>
+<tr><th>Stall 类型</th><th>核心含义</th><th>高时应核对什么</th></tr>
+<tr><td>Long Scoreboard</td><td>等待 L1TEX 路径相关的依赖结果，例如 global/local/texture load</td><td>缓存、访问合并、依赖链；不直接等同于 HBM 带宽饱和</td></tr>
+<tr><td>Short Scoreboard</td><td>等待 MIO 路径相关依赖，常涉及 shared memory 等</td><td>shared bank conflict、相关指令依赖和算子代码</td></tr>
+<tr><td>Barrier</td><td>等待线程同步条件</td><td>block 内负载是否不均、同步频率能否减少</td></tr>
+<tr><td>Math Pipe Throttle</td><td>目标计算管线暂时无法接收更多工作</td><td>指令集中于哪条管线、是否可增加独立指令或减少冗余</td></tr>
+<tr><td>MIO Throttle</td><td>MIO 指令队列压力</td><td>指令密度、shared/local 等访问及发射瓶颈</td></tr>
+<tr><td>Not Selected</td><td>warp 可发射，但该周期选择了其他 warp</td><td>先看 issue 是否充分；高值可能表示可选工作充足</td></tr>
+</table></div>
+
 </div>
-<div class="card card-w">
-<h3>第四层：Occupancy，看 SM 里有多少 warp 可调度</h3>
-<p><code>Occupancy</code> 可以粗略理解为：一个 SM 上 active warps 数量占该 SM 最大支持 active warps 数量的比例。它的作用是判断 SM 里是否有足够多的 warp 用来隐藏访存、依赖和执行延迟。</p>
-<div class="qa-section"><div class="qa-section-title">Theoretical vs Achieved</div><p><strong>Theoretical Occupancy</strong> 可以根据 launch 参数、block size、register 使用、shared memory 使用和 GPU 架构限制静态估算；<strong>Achieved Occupancy</strong> 是运行时真实采集到的结果。前者告诉你理论上最多能挂多少 warp，后者告诉你实际 workload 中挂了多少 warp。</p></div>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">ncu --set full ./your_program
+<p>Stall 指标可能来自采样次数或 warp 周期；分母不同，不能机械相加，也不能直接当成整个程序的停顿时间。<strong>先确认存在未被隐藏的等待，再优化其原因。</strong> <a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#warp-stall-reasons">Nsight Compute Warp Stall Reasons</a></p>
+<h2>Tensor 管线活动与 SM Throughput</h2>
+<p>Tensor 管线活动表示相关管线在统计周期中的活动程度。高值说明矩阵计算管线持续使用，但指令形状、精度、有效元素和额外计算仍影响实际 FLOP/s。低值对于搬运、归约、采样等任务可能正常；对于耗时占比很高的 GEMM，应检查 dtype、矩阵形状、选用的 kernel 和库。<a href="https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html">DCGM Tensor Activity</a></p>
+<p>Nsight 的 <code>SM Throughput</code>、<code>Compute Throughput</code> 等汇总通常由相关吞吐指标按工具规则组合，可能体现最繁忙的子管线相对峰值，<strong>不是“所有 ALU 的平均忙碌程度”，也不能一律当作实际 FLOP/s/理论 FLOP/s。</strong> 高值提示进一步展开子管线；低值提示查等待、工作规模和供给。不同架构先用工具查询可用指标及 breakdown。<a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#metrics-structure">Nsight Throughput Metrics</a></p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: Occupancy 和 SM Active 都高，为什么还很慢？</div>
+<div class="qa-a"><p>它们说明很多 SM 上驻留着工作，不保证这些工作每个周期都能发射。我会看 eligible warp 和 issue，再结合 stall 判断在等数据、依赖还是同步。即使发射充分，也要看执行的是有效计算还是重复搬运，最终用 kernel 时间和端到端吞吐验证。</p></div>
+</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-3" aria-labelledby="topic-tabs-panel-4-sub-3" hidden><h2>显存容量：Used、Free、Allocated、Reserved</h2>
+<p>设备显存 <code>Used/Free</code> 表示当前容量使用与剩余，单位是 byte、MiB 或 GiB；它包含的范围与框架统计不同。PyTorch 的 <code>memory_allocated</code> 统计张量等通过其分配器占用的内存，<code>memory_reserved</code> 统计缓存分配器管理的内存；CUDA context、其他库和其他进程的开销可能不在同一账本里。<a href="https://docs.pytorch.org/docs/stable/notes/cuda.html#cuda-memory-management">PyTorch CUDA Memory Management</a></p>
+<div class="table-scroll">
 
-# 常看 Nsight Compute 中的这些 section
-# Launch Statistics
-# Occupancy
-# Scheduler Statistics
+<div class="table-scroll"><table>
+<tr><th>观测</th><th>对系统的影响</th><th>正确判断与动作</th></tr>
+<tr><td>设备 Used 高、Free 低</td><td>并发、KV 增长和临时 workspace 空间受限，峰值时更易 OOM</td><td>拆出权重、激活/KV、临时区、其他进程，估计峰值后再准入</td></tr>
+<tr><td>Used 低</td><td>容量有余量</td><td>不代表计算、带宽或互联也有余量；增加 batch 前检查对应瓶颈</td></tr>
+<tr><td>Reserved 明显高于 Allocated</td><td>缓存池保留较多空间</td><td>可能是正常复用，也可能存在碎片；差值本身不是碎片率</td></tr>
+<tr><td>平均 Used 不高但 OOM</td><td>瞬时峰值、单次大申请、碎片、私有池或并发竞争可能使申请失败</td><td>查失败申请大小、峰值与内存快照，而不是只看低频面板</td></tr>
+</table></div>
 
-# 也可以指定 active warps 指标
-ncu --metrics sm__warps_active.avg.pct_of_peak_sustained_active ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">不要误解</div><p><strong>Occupancy 高不等于性能高。</strong>它只是说明 SM 上有足够多的 warp 可用于隐藏 latency。如果 kernel 已经 memory-bound，提高 occupancy 可能没有明显收益；如果为了提高 occupancy 而减少寄存器导致更多访存，反而可能变慢。面试时要强调：occupancy 是诊断指标，不是最终目标。</p></div>
 </div>
-<div class="card card-w">
-<h3>第五层：Warp Stall，看 warp 是否真的能发射</h3>
-<p>一个 warp 是 active，不代表它当前周期就能执行。更细地看，一个 warp 可能处于 active、eligible、selected 或 stalled 状态。真正影响吞吐的是：有多少 warp 已经 ready，可以被 scheduler 发射。</p>
-<pre><code>active warp：
-  驻留在 SM 上，还没结束。
-
-eligible warp：
-  当前周期已经准备好，可以发射指令。
-
-selected warp：
-  当前周期被 scheduler 选中发射。
-
-stalled warp：
-  因为内存、依赖、同步、barrier 等原因暂时不能发射。</code></pre>
-<div class="qa-section"><div class="qa-section-title">关键判断</div><p>如果 active warps 很多，但 eligible warps 很少，说明 SM 里看起来挂了很多 warp，但大部分都在等。此时 GPU 可能很忙，但忙得不高效。</p></div>
-<div class="qa-section"><div class="qa-section-title">常见 stall 原因</div><ul><li><strong>Long Scoreboard</strong>：通常表示在等 global memory / L2 / DRAM。</li><li><strong>Short Scoreboard</strong>：通常表示在等 shared memory 或短延迟依赖。</li><li><strong>Barrier</strong>：等待 <code>__syncthreads()</code> 或类似同步。</li><li><strong>Wait</strong>：指令依赖等待。</li><li><strong>Not Selected</strong>：有 eligible warp，但本周期没被 scheduler 选中。</li><li><strong>Math Pipe Throttle</strong>：计算管线压力大。</li><li><strong>MIO Throttle</strong>：memory input/output 管线压力大。</li></ul></div>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">ncu --set full ./your_program
-
-# 重点看：
-# Scheduler Statistics
-# Warp State Statistics
-# Source Counters</code></pre></div>
+<p><code>empty_cache()</code> 释放符合条件的未使用缓存块，不能释放仍被张量引用的显存。KV 的逻辑块被释放后，如果引擎仍保留整个预分配池，设备层 Used 也可能不下降。<strong>暂停计算、逻辑释放 KV、把显存归还给驱动，是三个不同动作。</strong> <a href="https://docs.pytorch.org/docs/stable/generated/torch.cuda.memory.empty_cache.html">PyTorch empty_cache</a></p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 显存占了 90%，GPU Util 为 0，矛盾吗？</div>
+<div class="qa-a"><p>不矛盾。显存是状态驻留，GPU Util 是计算执行的时间活动。模型权重、KV 和框架缓存可以长期保留，但任务此时在等请求或用户操作。借给另一个任务前，需要检查剩余容量；把前一个进程停算，并不会自动腾出这 90% 显存。</p></div>
 </div>
-<div class="card card-w">
-<h3>第六层：Compute Throughput，看算力侧是否接近峰值</h3>
-<p><code>Compute Throughput</code> 或 <code>SM Throughput</code> 更接近“算力有没有打满”这个问题。它回答的是计算侧吞吐达到硬件峰值的多少，而不是 GPU 时间上有没有活。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">ncu --set full ./your_program
+<h2>内存活动：utilization.memory 与 DRAM Active</h2>
+<p><code>NVML utilization.memory</code> 是采样窗口内设备内存发生读写的时间占比；<code>DRAM Active</code> 是设备内存收发数据的周期比例。它们都描述活动，不能替代显存容量，也不能不加区分地当作实际字节带宽除以峰值。<a href="https://docs.nvidia.com/deploy/archive/R535/nvml-api/structnvmlUtilization__t.html">NVML</a>、<a href="https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html">DCGM DRAM Activity</a></p>
+<p>高值说明内存接口持续有活动，可能是有效流式访问，也可能有重复或低效搬运。低值可能是计算密集、缓存复用充分，也可能是等待型访问、并行访存请求不足或上游没有供给。判断是否受带宽限制，还要看实际字节吞吐、访问效率和计算时间；带宽不高的内存依赖链也可能受访存延迟限制。</p>
+<h2>实际带宽、有效带宽与访存效率</h2>
+<p>设一次操作耗时 <code>t</code> 秒，实际在目标存储层传输了 <code>B_actual</code> 字节，则实际带宽是 <code>B_actual / t</code>。应用真正需要的数据量为 <code>B_useful</code>，则有效带宽是 <code>B_useful / t</code>。比较前明确是 HBM、L2、PCIe 还是网络，以及 GB/s（十进制）和 GiB/s（二进制）。缓存命中使某层流量变小，不能拿应用请求字节数直接当 HBM 实际流量。<a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#effective-bandwidth-calculation">CUDA 有效带宽</a></p>
+<div class="table-scroll">
 
-# 重点看：
-# GPU Speed Of Light Throughput
-# Compute Workload Analysis
+<div class="table-scroll"><table>
+<tr><th>观测</th><th>可能影响</th><th>下一步</th></tr>
+<tr><td>实际带宽接近同环境可达上限</td><td>继续增加并行度可能难以提速，共置任务更容易相互争用</td><td>减少搬运、提高复用、融合或压缩；验证数值要求</td></tr>
+<tr><td>实际带宽高、有效带宽低</td><td>很多流量没有转化为有用数据，浪费带宽</td><td>检查事务/sector 数、重复读取、数据布局与访问合并</td></tr>
+<tr><td>实际带宽低、访存等待高</td><td>可能是依赖串行、请求不足、随机访问或同步，不能排除内存瓶颈</td><td>用时间线和 kernel 计数器区分延迟、发射和带宽限制</td></tr>
+<tr><td>实际带宽低、计算吞吐高</td><td>数据复用可能良好，计算可能成为主要约束</td><td>核对热点计算管线和 Roofline，而非强行增加内存流量</td></tr>
+</table></div>
 
-# 示例指标
-ncu --metrics sm__throughput.avg.pct_of_peak_sustained_elapsed ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p><code>Compute Throughput</code> 高，可能是 compute-bound；<code>Compute Throughput</code> 低但 <code>SM Active</code> 高，说明 SM 有活但效率不高，需要看 stall、访存和指令 mix；<code>Compute Throughput</code> 低而 <code>Memory Throughput</code> 高，通常是 memory-bound；两者都低，可能是同步、依赖、分支、launch overhead 或数据不连续。</p></div>
 </div>
-<div class="card card-w">
-<h3>第七层：Memory Throughput，看是不是卡在显存和访问模式</h3>
-<p>很多 AI 算子并不是 compute-bound，而是 memory-bound。典型例子包括 LayerNorm、Softmax、Embedding、Gather/Scatter、Elementwise、小 batch inference。它们的共同特点是每读写一批数据，只做相对较少计算，算术强度不高。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">ncu --set full ./your_program
-
-# 重点看：
-# Memory Workload Analysis
-# GPU Speed Of Light Throughput
-# L1/TEX、L2、DRAM 相关指标</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p>如果 DRAM throughput 高、compute throughput 低，通常是 memory-bound。如果 L2 hit rate 低，说明访问局部性差。如果 global load/store 效率差，说明访存不合并或访问模式不友好。如果 memory util 高但业务吞吐低，可能是带宽被低效访问消耗掉了。</p></div>
-<div class="qa-section"><div class="qa-section-title">优化方向</div><p>常见优化包括 coalesced memory access、提高 L2/cache hit、减少 global memory 访问、使用 shared memory 做 tile 复用、融合算子减少中间结果读写，以及调整数据布局让同一个 warp 内访问更连续。</p></div>
+<p>教学例子：应用需要读取 32 MB，但分散访问导致目标层实际传输 128 MB，耗时 1 ms。有效带宽为 32 GB/s，实际带宽为 128 GB/s。访问合并后即使面板显示的实际带宽下降，只要任务耗时缩短，就是有效优化。这里的数字为构造示例，实际事务粒度和缓存行为取决于架构。</p>
+<h2>L2 命中率与内存事务</h2>
+<p>L2 命中率通常按指定请求或 sector 计数，计算命中数除以总查询数；必须明确读、写、sector/request 的口径。高值常意味着复用好、HBM 流量减少，但大量重复访问也可能让命中率高而程序仍慢。低值可能是缓存容量不足、访问冲突，也可能是合理的一次性流式读取。<strong>先问这些数据是否值得复用，再判断是否应该追求更高命中率。</strong> <a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#memory-workload-analysis">Nsight Memory Workload Analysis</a></p>
+<p>访问合并讨论同一 warp 的访问能否用较少事务完成。事务数相对有效字节过多，通常会增加流量和延迟；改善数据布局、线程到数据的映射或分块可能有帮助。不是所有多 sector 访问都低效：先根据操作宽度和实际所需字节计算合理事务数。Shared memory bank conflict 同样要看额外事务和 kernel 时间，而不是只凭冲突计数判定整体瓶颈。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 显存带宽低，为什么 kernel 还可能受内存限制？</div>
+<div class="qa-a"><p>带宽是单位时间传了多少数据，延迟是一次访问等多久。如果下一次访问依赖上一次返回，不能同时发出足够多请求，就可能一直等内存，但总带宽很低。此时要增加独立访问、改善局部性或隐藏延迟；单纯换一张峰值带宽更高的卡，收益未必明显。</p></div>
 </div>
-<div class="card card-w">
-<h3>第八层：Tensor Core Utilization，看 AI 算力是否用起来</h3>
-<p>对于 Transformer、GEMM、Conv、Attention 这类深度学习 workload，判断 GPU 是否用好，还必须看 Tensor Core 是否真正参与。模型跑在 GPU 上，不代表它用了 Tensor Core。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">ncu --set full ./your_program
+<h2>峰值与采样口径</h2>
+<p>低频设备采样可能漏掉短暂分配峰值。框架峰值计数应在目标区间开始前重置，并在异步工作完成后读取；同时保留设备侧和其他进程的记录。训练需区分前向、反向、优化器更新，推理需区分模型加载、Prefill、Decode 与缓存增长。<strong>容量按可能出现的峰值和可执行的预算控制，不能按平均显存做硬保证。</strong></p></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-4" aria-labelledby="topic-tabs-panel-4-sub-4" hidden><h2>PCIe、NVLink 与网络吞吐</h2>
+<p>链路吞吐是统计区间内传输字节数除以时间，单位通常为 B/s 或 GB/s；网络规格也常用 bit/s，8 bit 才是 1 byte。明确 TX/RX 的观察端、单链路还是全部链路，以及单向还是双向。链路理论规格、协议有效吞吐、应用实际吞吐不是同一个数。<a href="https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html">DCGM 互联指标</a></p>
+<p><strong>高吞吐</strong>说明链路承载了大量流量，若接近当前拓扑下的可达上限，模型加载、KV 迁移或集合通信可能受限。也要检查这些流量是否来自重复搬运。<strong>低吞吐</strong>可能是数据量小或通信被计算隐藏，也可能是小消息延迟、慢 rank、错误路径、NUMA 或链路异常。不能用“没有跑满带宽”排除通信瓶颈。</p>
+<p>性能下降时，比较同一消息大小与并发下的实际路径，核对 PCIe 代际/宽度、GPU-NIC 拓扑、错误/重传及请求发起时刻。路径选择影响端到端吞吐，拓扑图本身不是实测带宽。</p>
+<h2>NCCL 延迟、algbw 与 busbw</h2>
+<p><code>algbw</code> 是集合通信操作的逻辑数据大小除以耗时；<code>busbw</code> 根据 collective 类型和参与 rank 数进行归一化。若 AllReduce 的逻辑数据大小为 <code>S</code> 字节、时间为 <code>t</code> 秒、rank 数为 <code>n</code>，nccl-tests 使用 <code>algbw = S/t</code>，<code>busbw = algbw × 2(n−1)/n</code>。<strong>busbw 是测试的归一化口径，不是某一物理链路的直接读数。</strong> <a href="https://github.com/NVIDIA/nccl-tests/blob/master/doc/PERFORMANCE.md">NVIDIA nccl-tests</a></p>
+<div class="table-scroll">
 
-# 重点看：
-# GPU Speed Of Light Throughput
-# Compute Workload Analysis
-# Instruction Statistics
+<div class="table-scroll"><table>
+<tr><th>观测</th><th>可能意味着什么</th><th>怎么判断影响</th></tr>
+<tr><td>大消息 algbw/busbw 高</td><td>collective 吞吐较好</td><td>与相同 GPU 数、拓扑、数据类型和大小比较</td></tr>
+<tr><td>小消息带宽低、延迟基本固定</td><td>固定启动和同步代价占比大</td><td>看每轮通信次数及其关键路径延迟，而不是只追带宽</td></tr>
+<tr><td>NCCL 时间长，但链路流量低</td><td>某些 rank 进入晚、同步等待或通信进展受阻</td><td>对齐各 rank 的计算结束和 collective 进入时刻</td></tr>
+<tr><td>NCCL 占用高但 step 不变慢</td><td>可能与计算充分重叠</td><td>看未被重叠隐藏的通信时间；不能把所有 kernel 时长直接相加</td></tr>
+</table></div>
 
-# 示例 tensor 相关指标
-ncu --metrics sm__inst_executed_pipe_tensor.sum,sm__pipe_tensor_cycles_active.avg.pct_of_peak_sustained_elapsed ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">Tensor Core 没用起来的常见原因</div><ul><li>dtype 不合适，例如使用 FP32 但没有允许 TF32。</li><li>矩阵 shape 不友好，无法形成高效 tile。</li><li>没有走 cuBLAS、cuDNN、TensorRT、CUTLASS 等高性能实现。</li><li>框架配置禁用了 TF32 或混合精度。</li><li>算子 fallback 到普通 CUDA Core kernel。</li><li>batch 太小，矩阵规模太小。</li></ul></div>
-<div class="qa-section"><div class="qa-section-title">PyTorch 常见检查</div><pre><code class="language-python">import torch
-
-torch.backends.cuda.matmul.allow_tf32 = True
-torch.backends.cudnn.allow_tf32 = True</code></pre></div>
 </div>
-<div class="card card-w">
-<h3>第九层：Power / Clock / Thermal，看是不是被限频</h3>
-<p>如果 <code>GPU-Util</code> 高、<code>SM Active</code> 高，但性能仍低，还要检查功耗、温度和时钟。GPU 可能因为 power limit、thermal throttle、p-state、MIG/MPS 资源隔离或容器限制，导致看起来忙但实际频率和吞吐上不去。</p>
-<div class="qa-section"><div class="qa-section-title">怎么获取</div><pre><code class="language-bash">nvidia-smi -q -d POWER,CLOCK,TEMPERATURE,PERFORMANCE
-
-nvidia-smi --query-gpu=power.draw,power.limit,clocks.sm,clocks.mem,temperature.gpu,pstate --format=csv -l 1</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">怎么判断</div><p>如果 power draw 接近 power limit，可能功耗受限；温度持续很高，可能 thermal throttle；<code>clocks.sm</code> 低，可能被降频；p-state 不理想，可能没有进入高性能状态。训练吞吐突然下降时，除了看代码和通信，也要看这些节点级硬件状态。</p></div>
+<p>同步训练的整体进度受到慢 rank 限制。比较各 rank 的 step time、计算完成时刻和通信进入时间，可以区分“网络慢”和“大家在等一个计算慢的 rank”。多卡恢复还要保证 collective 的参与关系和顺序一致。</p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU Util 都很高，但多卡扩展很差，是网络带宽不够吗？</div>
+<div class="qa-a"><p>不一定。通信 kernel 也可能使 GPU 看起来很忙，而真正拖慢整体的是慢 rank 或同步。我要先对齐各 rank 的时间线，看大家什么时候进入 collective，再看链路吞吐和拓扑。如果通信确实在关键路径上，才进一步优化通信量、消息合并、放置或计算通信重叠。</p></div>
 </div>
-<div class="card card-w">
-<h3>第十层：端到端业务指标，看 GPU 忙得是否有价值</h3>
-<p>GPU 指标高，不代表业务性能好。真正的目标不是让 GPU 看起来忙，而是让训练吞吐、推理吞吐、延迟和成本达到预期。</p>
-<div class="qa-section"><div class="qa-section-title">训练场景看什么</div><p>训练中建议看 <code>samples/sec</code>、<code>tokens/sec</code>、<code>step time</code>、<code>MFU</code>、data loading time、communication time。如果 GPU 指标很高但 tokens/sec 低，可能是重计算、通信、低效 kernel 或数据 pipeline 让 GPU 忙在了低价值工作上。</p></div>
-<div class="qa-section"><div class="qa-section-title">推理场景看什么</div><p>推理中建议看 QPS、tokens/sec、TTFT、TPOT、P50/P90/P99 latency、batch size、queue time、KV cache memory。LLM 推理尤其要拆开 prefill 和 decode，因为 prefill 更偏计算密集，decode 常受 KV cache 读写、batch 组织和访存影响。</p></div>
+<h2>功率、能耗与单位 Token 成本</h2>
+<p>功率 <code>P</code> 的单位是 W，即 J/s；区间能耗 <code>E = ∫P(t)dt</code>，单位为 J。完成有效输出 Token 数为 <code>N</code>，则能效为 <code>N/E</code> tokens/J，反向是 <code>E/N</code> J/token。要明确统计的是 GPU、整机还是整个服务，以及是否包括空闲、加载、迁移与重算成本。</p>
+<p>高功率可能来自高强度有效计算，也可能是低效工作；低功率可能是空闲、访存型负载、限功耗或供给不足。<strong>单独看功率不能判断效率，应比较相同输出质量和延迟要求下的 tokens/J。</strong> 例：1000 tokens/s、500 W 对应 2 tokens/J；若调整后为 900 tokens/s、400 W，则为 2.25 tokens/J，但还要确认吞吐和延迟目标是否接受这一下降。</p>
+<p>单位 Token 的财务成本还包括设备折旧、CPU/网络/存储及运维，不能从 GPU 电耗直接推成完整服务成本。功率字段是瞬时还是平均、采样频率和测量范围应按设备与版本确认。<a href="https://docs.nvidia.com/deploy/nvidia-smi/index.html">nvidia-smi Power Readings</a></p>
+<h2>时钟、温度、P-state 与降频原因</h2>
+<p>SM/显存时钟通常用 MHz，温度用 °C，P-state 是离散性能状态。时钟升高可能提高相应管线或内存能力，但最终收益取决于瓶颈；时钟低也可能只是低需求下的正常节能。</p>
+<div class="table-scroll">
+
+<div class="table-scroll"><table>
+<tr><th>观测</th><th>可能影响</th><th>必须补充的证据</th></tr>
+<tr><td>高负载时吞吐下降、SM 时钟下降</td><td>计算能力可能受频率限制</td><td>对齐 power/thermal clock event reason、功率上限与时间线</td></tr>
+<tr><td>温度高</td><td>可能接近设备温控边界</td><td>查看该型号的阈值和热降频状态，不能设统一温度结论</td></tr>
+<tr><td>功率接近上限</td><td>可能发生功率管理</td><td>是否确实出现 power cap 原因，以及频率和吞吐变化</td></tr>
+<tr><td>P0 或其他高性能状态</td><td>设备处于相应工作状态</td><td>不等于算力满载；反之也不能只凭非 P0 判断异常</td></tr>
+</table></div>
+
 </div>
-<div class="card card-w">
-<h3>工具选择：每个工具解决不同层级的问题</h3>
-<p>不要指望一个工具回答所有问题。系统级状态用 <code>nvidia-smi</code> 和 DCGM；timeline 用 Nsight Systems；单 kernel 细节用 Nsight Compute；框架算子归因用 PyTorch Profiler。</p>
-<div class="qa-section"><div class="qa-section-title">nvidia-smi：系统级粗看</div><p>适合看 GPU-Util、显存占用、功耗、温度、时钟和进程。优点是方便快速，缺点是不能解释 kernel 为什么慢，也看不到 SM、warp、Tensor Core 细节。</p><pre><code class="language-bash">nvidia-smi
-nvidia-smi dmon -s pucvmet
-nvidia-smi --query-gpu=timestamp,index,utilization.gpu,utilization.memory,memory.used,memory.total,power.draw,clocks.sm,temperature.gpu --format=csv -l 1</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">DCGM / Prometheus / Grafana：生产监控</div><p>DCGM 提供 GPU 指标采集、健康检查、作业统计、拓扑等能力，适合集群监控和告警<a href="https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html">[Feature Overview — NVIDIA DCGM Documentation</a>]。</p><pre><code>DCGM_FI_DEV_GPU_UTIL
-DCGM_FI_DEV_FB_USED
-DCGM_FI_DEV_POWER_USAGE
-DCGM_FI_DEV_GPU_TEMP
-DCGM_FI_DEV_SM_CLOCK
-DCGM_FI_DEV_MEM_COPY_UTIL</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">Nsight Systems：端到端 timeline</div><p>Nsight Systems 适合看 CPU 线程、CUDA API、kernel、memcpy、stream、NCCL 等在时间线上如何交错；官方文档也建议通过 NVTX 或 profiler API 聚焦性能关键代码区域，减少无关数据干扰<a href="https://docs.nvidia.com/nsight-systems/UserGuide/index.html">[User Guide — Nsight Systems</a>]。</p><pre><code class="language-bash">nsys profile -t cuda,nvtx,osrt,cudnn,cublas -o report ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">Nsight Compute / NCU：单 kernel 深挖</div><p>Nsight Compute CLI 可以从命令行 profile 应用，并为选定 kernel 采集指标；它支持通过 section 或 metrics 选择采集内容，也支持按 kernel 名称过滤<a href="https://docs.nvidia.com/nsight-compute/NsightComputeCli/index.html">[Nsight Compute CLI</a>]。</p><pre><code class="language-bash">ncu --set full ./your_program
-ncu --kernel-name regex:your_kernel_name --set full ./your_program</code></pre></div>
-<div class="qa-section"><div class="qa-section-title">PyTorch Profiler：框架算子归因</div><p>PyTorch Profiler 适合把 Python / PyTorch op 和 CUDA kernel 对齐起来，回答哪个 op 最耗时、CPU 时间多还是 CUDA 时间多、是不是 DataLoader 慢、是不是有大量小 kernel。</p><pre><code class="language-python">import torch
-import torch.profiler as profiler
+<p>用 <code>nvidia-smi -q -d POWER,CLOCK,TEMPERATURE,PERFORMANCE</code> 读取状态，再关联同一业务阶段。<strong>观察到低频之后仍需区分“需求变少导致降频”和“降频限制了业务”。</strong> <a href="https://docs.nvidia.com/deploy/nvidia-smi/index.html#clocks-event-reasons">nvidia-smi Clock Event Reasons</a></p>
+<h2>ECC、Xid 与链路错误</h2>
+<p>ECC 要分可纠正/不可纠正错误、易失/累计计数以及内存位置。历史累计数高不等于本轮新故障；本轮持续新增错误、不可纠正事件或异常恢复则需要结合时间、设备与驱动日志处理。Xid 是事件类别编号，<strong>数值大不代表严重程度更高</strong>，应查具体代码含义。<a href="https://docs.nvidia.com/deploy/xid-errors/index.html">NVIDIA Xid Errors</a></p>
+<p>链路 CRC、重传或相关错误计数升高，可能降低有效吞吐或引发超时；先区分累计值和区间增量，并核对计数是否重置。错误为零也不排除软件同步、配置或负载不均问题。影响可靠性的设备应由平台健康策略处理，而不是通过降低 batch 掩盖。</p></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-5" aria-labelledby="topic-tabs-panel-4-sub-5" hidden><h2>FLOP/s、MFU 与 HFU</h2>
+<p>FLOPs 是浮点运算数量，FLOP/s 是每秒运算速率；TFLOP/s 是每秒万亿次浮点运算，一次乘加通常计两次。比较峰值时要固定型号、精度、稀疏/稠密、Tensor/通用计算路径和卡数。<code>实际指令运算量/耗时</code> 与 <code>模型必要运算量/耗时</code> 的分子不同，不能混用。</p>
+<p>设一步模型必要计算量为 <code>F_model</code> FLOPs，包含重计算等额外工作的硬件执行量为 <code>F_exec</code>，step 耗时为 <code>t</code> 秒，所有参与设备匹配口径的峰值之和为 <code>P_peak</code> FLOP/s，则：</p>
+<ul><li><code>MFU = F_model / (t × P_peak)</code>，衡量端到端时间内完成必要模型计算的效率。</li><li><code>HFU = F_exec / (t × P_peak)</code>，把额外实际计算也计入；测量或估计方式要说明。</li></ul>
+<p>MFU 高通常意味着同一模型计算更高效，但不能据此证明模型质量更好；MFU 低可能是通信、供给、访存、重计算或峰值分母选错。HFU 高而 MFU 较低，可能是额外计算多。两者与 GPU Util、Tensor 活动比例没有固定换算关系。<a href="https://arxiv.org/html/2204.02311v5#S4.SS1">PaLM §4.1</a></p>
+<p>教学例子：8 张卡各取 100 TFLOP/s 的匹配峰值，模型每步必要计算量 320 TFLOP，1 秒完成，MFU 为 40%。若加入重计算，实际执行 400 TFLOP、耗时 1.1 秒，HFU 约 45.5%，MFU 约 36.4%。这说明硬件“做更多计算”可能同时伴随有效效率下降。训练达到目标质量的时间还取决于步数和收敛行为。</p>
+<h2>Roofline 与算术强度</h2>
+<p>设计算量为 <code>F</code> FLOPs，目标存储层实际传输量为 <code>B</code> 字节，算术强度 <code>I = F/B</code>，单位 FLOP/B；该层可用带宽为 <code>BW</code> B/s，匹配计算峰值为 <code>P</code> FLOP/s。Roofline 给出的上界是 <code>min(P, BW × I)</code>。转折点 <code>I* = P/BW</code>。</p>
+<p>低算术强度意味着该模型下带宽上界更低；高算术强度使计算峰值可能成为上界。<strong>上界较低不等于程序已经跑到该上界。</strong> 点位远低于两条上界时，还要查依赖、延迟、并行度、提交或同步。增加没有业务价值的计算也会提高算术强度，不能视作优化。<a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#roofline-charts">Nsight Roofline</a></p>
+<p>例：计算量 10 GFLOPs，HBM 流量 2 GB，算术强度 5 FLOP/B；若峰值为 100 TFLOP/s、HBM 带宽为 1 TB/s，带宽对应上界为 5 TFLOP/s，理想下界为 2 ms。减少 HBM 流量或提高复用可以抬高带宽上界，仍需实测执行时间。</p>
+<h2>训练 step time、吞吐与扩展效率</h2>
+<p>Step time 是约定一步训练的墙钟时间，应说明是否覆盖梯度同步、优化器更新、数据准备及累积；吞吐是区间内完成的样本或有效 Token 数除以时间。Step 变短只有在 batch、梯度累积、序列长度和工作量可比时才直接意味着吞吐改善。</p>
+<p>设单卡可比吞吐为 <code>Q1</code>，<code>n</code> 卡吞吐为 <code>Qn</code>，线性扩展效率为 <code>Qn/(n×Q1)</code>。例如单卡 100 samples/s，8 卡 600，则为 75%。低值可能来自通信、负载不均、不同 batch 的执行效率或输入供给；单卡装不下同一任务时，不能硬套这个基线，应注明所用卡数基线和强/弱扩展口径。</p>
+<p>高吞吐、短 step 并不保证更快达到相同质量；padding、无效重试和改变训练语义都可能污染比较。看整体运行时间时，Checkpoint、评估和故障恢复是否计入也要一致。</p>
+<h2>TTFT、ITL、TPOT 与端到端延迟</h2>
+<p>设请求起点为 <code>t0</code>，首个输出 Token 时间为 <code>t1</code>，最后 Token 时间为 <code>tL</code>，输出数为 <code>N</code>：<code>TTFT = t1−t0</code>；相邻 Token 的 <code>ITL_i = t_i−t_(i−1)</code>；当 <code>N&gt;1</code> 时，请求平均 <code>TPOT = (tL−t1)/(N−1)</code>；完整响应延迟按约定终点减起点计算。客户端时间包含网络与前端路径，服务端时间未必包含，必须说明测量位置。<a href="https://docs.vllm.ai/en/stable/design/metrics/">vLLM Metrics</a></p>
+<div class="table-scroll">
 
-with profiler.profile(
-    activities=[
-        profiler.ProfilerActivity.CPU,
-        profiler.ProfilerActivity.CUDA,
-    ],
-    record_shapes=True,
-    profile_memory=True,
-    with_stack=True,
-) as prof:
-    for step, batch in enumerate(loader):
-        output = model(batch)
-        loss = output.sum()
-        loss.backward()
-        if step &gt; 10:
-            break
+<div class="table-scroll"><table>
+<tr><th>指标升高</th><th>用户感受或系统影响</th><th>优先检查</th></tr>
+<tr><td>TTFT</td><td>开始回复慢</td><td>排队、输入长度、Prefill、缓存命中、模型冷启动与前端路径</td></tr>
+<tr><td>ITL 尾部</td><td>生成过程中卡顿</td><td>长 Prefill 插入、抢占、通信、周期性阻塞、资源切换</td></tr>
+<tr><td>TPOT</td><td>平均生成速度慢</td><td>Decode 批量、权重/KV 访问、并行通信与竞争</td></tr>
+<tr><td>端到端延迟</td><td>请求整体完成慢</td><td>同时对齐 TTFT、输出长度和生成间隔</td></tr>
+</table></div>
 
-print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=20))</code></pre></div>
 </div>
-<div class="card card-w">
-<h3>实战路径：从 nvidia-smi 到 profiler</h3>
-<p>真实排障时，建议按下面的顺序走。先用低成本工具判断方向，再用 profiler 精确定位。</p>
-<div class="qa-section"><div class="qa-section-title">Step 1：先看 nvidia-smi</div><pre><code class="language-bash">nvidia-smi</code></pre><p>关注 GPU-Util、Memory-Usage、Power、Temperature 和进程。如果 <code>GPU-Util</code> 长期低，先怀疑数据加载、CPU preprocessing、batch 太小、I/O、请求量不足、kernel launch 太碎或多卡通信等待。如果 <code>GPU-Util</code> 长期高，继续判断是不是高效。</p></div>
-<div class="qa-section"><div class="qa-section-title">Step 2：用 Nsight Systems 看 timeline</div><pre><code class="language-bash">nsys profile -t cuda,nvtx,osrt,cudnn,cublas -o report ./your_program</code></pre><p>重点看 GPU timeline 是否有空洞、kernel 是否连续、CPU 是否频繁同步、<code>cudaMemcpy</code> 是否阻塞、NCCL 是否占大量时间。大量小 kernel 往往说明 launch overhead 高或算子太碎。</p></div>
-<div class="qa-section"><div class="qa-section-title">Step 3：用 Nsight Compute 看核心 kernel</div><pre><code class="language-bash">ncu --set full ./your_program</code></pre><p>重点看 SM Active、Achieved Occupancy、Compute Throughput、Memory Throughput、Warp Stall Reasons、Tensor Core Utilization。这里才能回答“这个 kernel 为什么慢”。</p></div>
+<p>低值一般改善体验，但要在相同请求分布与负载下比较。为降低延迟而过度缩小 batch，可能损失整体吞吐。平均 TPOT 会掩盖单次长暂停；P99 是对应样本群体的 99 分位，不能将各实例 P99 再取平均当全局 P99。</p>
+<p>引擎指标还要核对事件粒度：例如 vLLM 的 inter-token latency 指标可按相邻流式输出事件记录，一个事件可能包含多个 Token，此时它与真正逐 Token 间隔、按请求平均的 TPOT 不完全相同。输出不超过一个 Token 时，上式无定义；有的导出器记零、有的基准工具排除，这会改变聚合结果。<a href="https://docs.vllm.ai/en/stable/design/metrics/">vLLM 延迟口径</a></p>
+<h2>吞吐、Goodput、队列与批量</h2>
+<p>吞吐必须区分 requests/s、输入 tokens/s、输出 tokens/s，以及单请求生成速度和全服务总输出。Goodput 是在指定成功与 SLO 条件下的有效产出率；例如同时满足 TTFT 和 TPOT 上限的成功请求数/s。单位与达标条件由评价明确规定。</p>
+<p>大 batch 往往有机会改善计算或权重读取复用，但也增加 KV 占用、单轮时间与等待；小 batch 延迟可能较低，却未必充分利用设备。<strong>总 tokens/s 高，但 SLO 达标率下降，不能直接叫线上服务改善。</strong></p>
+<p>队列长度表示等待请求数；队列等待时间表示请求等待多久。高队列可能是需求超过容量或调度阻塞，低队列可能是容量充足，也可能是请求被前端拒绝。稳定系统中 Little 定律 <code>L = λW</code> 联系平均系统内请求数、有效到达率与平均停留时间；三者必须对应同一边界，不能把排队长度套到含执行的停留时间上。</p>
+<h2>KV Cache 占用与前缀命中率</h2>
+<p>KV Cache 使用比例通常比较已使用的缓存块与可用池大小，分母不是整张卡显存。高值可能意味着高并发、长上下文，也可能增加抢占或重算压力；低值可能是负载低、上下文短，不能单独证明配置过大。引擎保留一个大池时，设备显存 Used 高而 KV 逻辑利用率低是可能的。</p>
+<p>前缀命中率要说明按请求、Token 还是块统计，以及本地缓存还是外部缓存。高命中可能减少重复 Prefill，但不保证端到端快：若路由引起排队，或远端加载 KV 太慢，收益可能被抵消。低命中可能只是请求本来就不共享前缀。比较策略时同时看节省的 Prefill、缓存传输、TTFT 与吞吐。<a href="https://docs.vllm.ai/en/stable/design/metrics/">vLLM 缓存指标</a></p>
+<h2>集群资源与机会型推理的收益</h2>
+<div class="table-scroll">
+
+<div class="table-scroll"><table>
+<tr><th>指标</th><th>定义与分母</th><th>高低的意义与问题</th></tr>
+<tr><td>资源分配率</td><td>已分配 GPU 数/纳管可调度 GPU 数，或对应卡时之比</td><td>高值表示分出去了，不代表实际计算；异构或分片资源需分类型统计</td></tr>
+<tr><td>计算活动率</td><td>按明确设备/时间口径聚合的活动指标</td><td>高值不代表有效工作；均值会掩盖部分卡全忙、部分卡空闲</td></tr>
+<tr><td>JCT</td><td>通常从提交到完成的时间，需明确是否包括排队与启动</td><td>越低越好须建立在相同作业与资源条件下；分解等待、加载、执行和恢复</td></tr>
+<tr><td>交还延迟</td><td>从开发侧恢复请求到获得约定可执行能力的时间</td><td>高值损伤开发体验；仅发出停止通知不能作为完成点</td></tr>
+<tr><td>恢复延迟</td><td>从恢复触发到模型、状态和通信链路就绪</td><td>冷加载、KV 恢复或并行组重建可能占主导</td></tr>
+<tr><td>有效 Token 产出率</td><td>窗口内有效交付 Token 数/完整墙钟时间</td><td>分母包含加载、切换和重算；重复执行不能重复计产出</td></tr>
+</table></div>
+
 </div>
-<div class="card card-w">
-<h3>六种典型结论：如何把指标翻译成人话</h3>
-<p>面试和排障时，最重要的是把指标组合翻译成清晰结论。</p>
-<div class="qa-section"><div class="qa-section-title">A. GPU 没喂饱</div><pre><code>GPU-Util 低
-SM Active 低
-Nsight Systems 看到 GPU timeline 有空洞</code></pre><p>常见原因是 DataLoader 慢、CPU preprocessing 慢、batch 太小、I/O 慢、请求量不足、kernel launch 太碎或 CPU-GPU 同步。</p></div>
-<div class="qa-section"><div class="qa-section-title">B. GPU 时间上忙，但没铺满硬件</div><pre><code>GPU-Util 高
-SM Active 低
-Achieved Occupancy 低</code></pre><p>常见原因是 kernel grid 太小、batch 太小、并行度不足、算子规模小或 block 配置不合理。</p></div>
-<div class="qa-section"><div class="qa-section-title">C. SM 都有活，但效率低</div><pre><code>GPU-Util 高
-SM Active 高
-Occupancy 高
-Compute Throughput 低
-Memory Throughput 也低
-Warp Stall 高</code></pre><p>常见原因是指令依赖、同步、分支发散、访存模式差、barrier 多或 atomic 多。</p></div>
-<div class="qa-section"><div class="qa-section-title">D. Memory-bound</div><pre><code>SM Active 高
-Memory Throughput 高
-Compute Throughput 低
-Long Scoreboard stall 高</code></pre><p>优化方向是访存合并、提高 cache hit、减少 global memory 访问、使用 shared memory、融合算子、减少中间结果读写。</p></div>
-<div class="qa-section"><div class="qa-section-title">E. Compute-bound</div><pre><code>SM Active 高
-Compute Throughput 高
-Memory Throughput 不高</code></pre><p>优化方向是使用 Tensor Core、优化指令 mix、减少冗余计算、提高 tile 效率、使用更合适 dtype。</p></div>
-<div class="qa-section"><div class="qa-section-title">F. Tensor Core 没用起来</div><pre><code>GPU-Util 高
-SM Active 高
-Tensor Pipe / Tensor Core Util 低</code></pre><p>如果 workload 是 GEMM、Conv 或 Attention，需要检查 FP16/BF16/TF32 是否开启，shape 是否对齐，是否使用高性能库，是否 fallback 到普通 CUDA kernel，batch size 是否太小。</p></div>
+<p>构造例：10 分钟借用窗口有 2 分钟加载、1 分钟退出，其余 7 分钟生成 70,000 个有效 Token。生成期间约 166.7 tokens/s，但完整窗口只有约 116.7 tokens/s。比较机会型资源的价值时，应采用后一个口径，并另记录开发侧交还延迟。</p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 指标很多，最后到底优化什么？</div>
+<div class="qa-a"><p>训练看可比工作量下的有效吞吐，以及达到目标质量的时间；在线推理看延迟约束内的有效吞吐；闲置算力还要看交还延迟和扣除切换损失后的产出。GPU 活动、显存、带宽和 MFU 用于解释限制在哪里。一个局部指标改善，必须在最终目标上得到验证。</p></div>
+</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-6" aria-labelledby="topic-tabs-panel-4-sub-6" hidden><h2>从业务变化定位到执行原因</h2>
+<div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">固定比较条件</div><div class="flow-desc">模型、精度、输入长度、batch、缓存状态与设备配置</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">确认业务变化</div><div class="flow-desc">Step Time、TTFT/ITL、吞吐、失败率、排队或交还延迟</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">核对监控口径</div><div class="flow-desc">设备/进程归属、时间窗口、数据新鲜度、单位与计数器类型</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">定位执行阶段</div><div class="flow-desc">CPU 供给、GPU kernel、拷贝、通信、同步、加载和恢复</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">分析热点</div><div class="flow-desc">SM/warp、实际带宽、管线、缓存、功率与频率</div></div><div class="flow-step"><div class="flow-index">06</div><div class="flow-title">选择可验证动作</div><div class="flow-desc">每次改变可解释的因素，比较同条件下端到端结果</div></div></div>
+<p><strong>先判断有无等待需求，再讨论利用率偏低是否需要优化。</strong> 没有请求时设备空闲是正常现象；队列持续积压而 GPU 存在执行空洞，才需要解释供给、准入或执行链路的问题。不存在脱离负载的统一“30% 以下不正常”规则。</p>
+<h2>指标组合与判别动作</h2>
+<div class="table-scroll">
+
+<div class="table-scroll"><table>
+<tr><th>观测组合</th><th>可检验的解释</th><th>下一步证据</th><th>对应动作与代价</th></tr>
+<tr><td>Util、SM Active 都低，队列积压</td><td>CPU、I/O、同步或提交使 GPU 出现间隙</td><td>对齐数据就绪、API 提交、kernel 起止</td><td>改善供给、批量化或减少同步；不能只扩大 GPU 配额</td></tr>
+<tr><td>Util 高、SM Active 低</td><td>持续 kernel 只覆盖少数 SM，也可能存在口径差异</td><td>同窗分卡数据、grid、batch 与时间线</td><td>增加并行工作或调整 kernel；收益受带宽等约束</td></tr>
+<tr><td>SM Active/Occupancy 高，eligible 少</td><td>驻留 warp 大多在等依赖、内存或同步</td><td>stall 原因、issue 空洞、源码位置</td><td>缩短依赖、提高复用或增加独立工作；不是继续堆驻留数</td></tr>
+<tr><td>内存活动高、实际带宽接近可达上限</td><td>访存流量限制推进</td><td>有效/实际字节、热点耗时、Roofline</td><td>融合、复用或减少数据量；同时检查精度与寄存器代价</td></tr>
+<tr><td>带宽低、Long Scoreboard 高</td><td>可能受内存延迟或串行依赖限制</td><td>访问模式、缓存、并行未完成请求</td><td>改善局部性或增加独立访问；不能仅凭低带宽排除访存瓶颈</td></tr>
+<tr><td>NCCL 耗时长、链路流量低</td><td>慢 rank、同步等待、小消息或拓扑异常</td><td>各 rank 进入 collective 的时间与消息规模</td><td>修复负载不均、合并消息或改进放置，先确定原因</td></tr>
+<tr><td>显存平均不高却 OOM</td><td>短峰值、碎片、私有池或其他进程竞争</td><td>失败申请大小、峰值、allocator snapshot</td><td>调整并发、KV 预算和生命周期，保留足够峰值空间</td></tr>
+<tr><td>Util 高，时钟与吞吐下降</td><td>可能降频，也可能业务阶段改变</td><td>clock event reason、功率/温度、相同阶段基线</td><td>处理已确认的功率/散热约束；不能只凭功率高推定异常</td></tr>
+</table></div>
+
 </div>
-<h2>排查路径</h2>
-<pre><code>GPU-Util：
-  时间上有没有 kernel。
+<p>这些组合提供假设，不是排除其他原因的判决。多卡任务保留逐卡数据；“90% 和 10% 的均值为 50%”会掩盖明显的不均衡。不要让聚合后的平均值替代慢 rank 和热点分析。</p>
+<h2>监控、时间线和 kernel 分析分别解决什么</h2>
+<div class="table-scroll">
 
-SM Active：
-  kernel 有没有铺满 SM。
+<div class="table-scroll"><table>
+<tr><th>工具层次</th><th>主要问题</th><th>测量限制</th></tr>
+<tr><td>nvidia-smi / DCGM / Prometheus</td><td>哪个设备、何时出现利用率、容量或健康变化</td><td>采样不是完整事件轨迹；设备指标不自动等于进程贡献</td></tr>
+<tr><td>Nsight Systems / NVTX</td><td>CPU、CUDA API、kernel、memcpy 与同步在时间上如何交错</td><td>需要聚焦代表区间，并识别采集开销</td></tr>
+<tr><td>Nsight Compute</td><td>热点 kernel 的 warp、管线、访存和资源限制</td><td>可能重放或序列化 kernel；不能把采集时的端到端耗时直接当正常性能</td></tr>
+<tr><td>框架 profiler / 引擎请求指标</td><td>kernel 对应哪个算子、请求处于哪个阶段</td><td>CPU 时间、GPU 时间和异步重叠不能简单求和</td></tr>
+</table></div>
 
-Occupancy：
-  SM 里 active warp 是否足够。
-
-Eligible / Issued Warps：
-  warp 是否真的能发射。
-
-Warp Stall：
-  不能发射是在等什么。
-
-Compute Throughput：
-  计算管线是否接近峰值。
-
-Memory Throughput：
-  是否被显存带宽或访问模式卡住。
-
-Tensor Core Utilization：
-  AI 矩阵算力是否真的用起来。
-
-Power / Clock / Thermal：
-  是否被功耗、温度、时钟限制。
-
-业务指标：
-  GPU 忙，是否真的换来了 tokens/sec、samples/sec、QPS 和低延迟。</code></pre></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-3" aria-labelledby="topic-tabs-panel-4-sub-3" hidden><h2>诊断入口</h2>
+</div>
+<p>可先只读设备状态，再对可控实验选择 profiling 范围：</p>
+<pre><code class="language-bash">nvidia-smi --query-gpu=timestamp,uuid,utilization.gpu,utilization.memory,memory.used,memory.free,power.draw,clocks.sm,temperature.gpu --format=csv -l 1
+nvidia-smi -q -d POWER,CLOCK,TEMPERATURE,PERFORMANCE
+ncu --list-sections</code></pre>
+<p>按安装版本列出可用 section/metrics 后，选择热点 kernel 与小范围采集；不默认在共享生产任务上执行全量 replay。采集器可能争用硬件计数器，暂停 profiling 的空白样本不能当作空闲。<a href="https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#metric-collection">Nsight Compute 采集机制</a>、<a href="https://docs.nvidia.com/nsight-systems/UserGuide/index.html">Nsight Systems</a></p>
+<h2>闲置检测与使用权门控</h2>
+<p><strong>发现空闲与发现原任务恢复，采用的信号可能不同。</strong> 借用前，可以用原任务持续无 GPU 活动和显存条件筛选；推理接管后，整卡指标混入推理工作，不能继续用整卡 Util 判断开发任务是否恢复。</p>
+<p>对于 CUDA API 门控设计，开发侧的新计算请求可触发交还：先停止推理新提交，协调在途计算和多卡通信，再放行开发侧。指标用于验证切换后的活动和交还延迟。若两侧状态不能同时驻留，还要实际释放推理显存；关计算门不释放内存。</p>
+<p>数据缺失应记为未知。若使用 max_over_time(...)=0，只能说明纳入统计的样本为零，不能证明采样间隙不存在短 kernel。多卡任务的整组回收要明确所有成员卡的条件，避免一张卡闲置就错误代表整组。</p>
+<div class="qa open" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: GPU Util 长期 100%，业务吞吐还是低，你会怎么查？</div>
+<div class="qa-a"><p>我先固定输入、batch 和时间窗口，确认高利用率来自目标任务。然后用时间线看 GPU 在执行计算、搬运相关 kernel 还是通信。若小 kernel 只覆盖少量 SM，查并行度；若 SM 活跃但 warp 难以发射，查等待；若带宽或某条管线接近上限，查有效工作与冗余。最后验证 step time 或达标吞吐，不能把 Util 本身作为优化终点。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q: 低利用率应该回收，还是先优化任务？</div>
+<div class="qa-a"><p>先看任务是否确实在等待计算需求。如果开发者暂时没有 GPU 工作，可以按约定借用窗口；如果请求在排队但 GPU 没有被供给，就应该定位 CPU、I/O 或同步。回收策略还要满足使用权和恢复约定，不能把一个低利用率阈值同时当成性能诊断和删除任务的依据。</p></div>
+</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-7" aria-labelledby="topic-tabs-panel-4-sub-7" hidden><h2>诊断入口</h2>
 <div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">业务指标异常</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">-&gt; nvidia-smi / DCGM 看 GPU-Util、显存、功耗、PCIe/NVLink</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">-&gt; Nsight Systems 看 timeline：kernel / memcpy / NCCL / 空洞 / 同步</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">-&gt; Nsight Compute 看热点 kernel：compute、memory、occupancy、stall</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">-&gt; 扩展性实验：单卡、多卡、不同 batch、不同 seq_len 对比</div></div></div>
 <h2>指标解释</h2>
 <div class="table-scroll"><table>
@@ -2415,7 +2241,7 @@ Power / Clock / Thermal：
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 计算瓶颈和显存瓶颈能同时存在吗？</div>
 <div class="qa-a"><p>在同一个 kernel 上通常不会——Roofline 模型里一个点要么在斜线区域（memory-bound），要么在水平区域（compute-bound）。但在端到端场景中，不同 kernel 可以是不同瓶颈：prefill 阶段 compute-bound，decode 阶段 memory-bound，某些小算子 launch-bound。所以优化时需要针对不同阶段不同策略，这也是为什么推理引擎会把 prefill 和 decode 分开调度。</p></div>
-</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-4" aria-labelledby="topic-tabs-panel-4-sub-4" hidden><h2>从 GPU 指标到预测模型</h2>
+</div></div><div class="subtab-panel" role="tabpanel" id="topic-tabs-panel-4-subpanel-8" aria-labelledby="topic-tabs-panel-4-sub-8" hidden><h2>从 GPU 指标到预测模型</h2>
 <div class="flow flow-long" role="list"><div class="flow-step"><div class="flow-index">01</div><div class="flow-title">工作负载静态特征</div><div class="flow-desc">Shape、Batch、Sequence、FLOPs、显存需求</div></div><div class="flow-step"><div class="flow-index">02</div><div class="flow-title">硬件静态特征</div><div class="flow-desc">Peak FLOPS、HBM、SM 数、互联拓扑</div></div><div class="flow-step"><div class="flow-index">03</div><div class="flow-title">运行时观测</div><div class="flow-desc">SM Active、HBM 吞吐、NCCL 时间、功耗</div></div><div class="flow-step"><div class="flow-index">04</div><div class="flow-title">预测标签</div><div class="flow-desc">Step Time、Token/s、Peak Active Memory、MFU</div></div><div class="flow-step"><div class="flow-index">05</div><div class="flow-title">模型治理</div><div class="flow-desc">误差评估、校准、漂移检测、安全裕度</div></div></div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 为什么不能只用 GPU-Util 预测性能？</div>
