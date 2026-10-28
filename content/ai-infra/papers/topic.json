@@ -22,8 +22,8 @@
           "description": "LLM 多智能体推理调度、输出长度预测、CUDA VMM 弹性显存",
           "items": [
             {
-              "title": "5 分钟叙述",
-              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "title": "项目口述与机制追问",
+              "description": "从具体场景讲清问题、关键决策、执行过程与实验结果",
               "file": "01a-maestro-five-minute.md",
               "time": 5
             },
@@ -92,8 +92,8 @@
               "file": "02e-faq-paper.md"
             },
             {
-              "title": "主讲展开与追问",
-              "description": "背景动机 / 三个机制 / 两个预测模块 / 追问口径",
+              "title": "预测器与设计追问",
+              "description": "运行时间与共享干扰预测、误差影响与设计取舍",
               "file": "02f-talk.md"
             }
           ]
@@ -103,8 +103,8 @@
           "description": "训推弹性混部、资源形态变换、影子定价、干扰感知共置",
           "items": [
             {
-              "title": "5 分钟叙述",
-              "description": "问题背景、核心思路、关键机制与实验结论的完整口述稿",
+              "title": "项目口述与机制追问",
+              "description": "从具体场景讲清问题、关键决策、执行过程与实验结果",
               "file": "04a-elastico-five-minute.md",
               "time": 5
             },
