@@ -226,6 +226,25 @@
               "file": "21-distributed-serving-interview.md",
               "level": "精通",
               "time": 20
+            },
+            {
+              "title": "模型上线与弹性",
+              "description": "KServe 控制链、共享 GPU、KEDA/HPA 指标与容量反馈",
+              "level": "进阶",
+              "priority": 1,
+              "time": 24,
+              "subtabs": [
+                {
+                  "title": "KServe 模型服务平台",
+                  "description": "InferenceService、Runtime、设备准备与上线状态",
+                  "file": "27-kserve-platform.md"
+                },
+                {
+                  "title": "推理服务扩缩容",
+                  "description": "外部指标、冷启动、PD 容量与缩容排空",
+                  "file": "28-inference-autoscaling.md"
+                }
+              ]
             }
           ]
         },

@@ -52,7 +52,7 @@
 <h3>Volcano 定位与架构</h3>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-demo.png" alt="解锁 Kubernetes 批处理新范式：Volcano 调度引擎初体验" loading="lazy">
-<p class="caption">Volcano 是 Kubernetes 批处理调度的新范式：为 AI/ML、HPC 等高性能工作负载补齐默认调度器缺失的 Gang、队列与公平性能力。</p>
+<p class="caption">Volcano 面向 AI/ML、HPC 等高性能工作负载，提供 Gang、队列公平和批作业生命周期管理。</p>
 </div>
 <p>Volcano 是 CNCF 孵化的 Kubernetes 批处理调度系统，面向 AI/ML、HPC、Spark、Flink、Ray 等高性能工作负载。它通过 CRD 扩展 K8s 对象，再由 scheduler、controller manager、admission 协同完成批调度。</p>
 <div class="figure">
@@ -193,7 +193,7 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 为什么能避免 partial allocation？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">默认 K8s 问题</div><p>默认 kube-scheduler 逐 Pod 调度，可能只启动部分 worker，剩余 worker Pending。对 DDP / MPI / NCCL 这类强同步任务来说，部分 worker 启动没有意义，GPU 会空转，多个 Job 还可能互相占住部分资源形成死锁。</p></div>
+<div class="qa-section"><div class="qa-section-title">逐 Pod 放置的问题</div><p>未启用作业组调度时，调度器可能只放置部分 worker，剩余 worker Pending。强同步任务不能达到最低成员数时会等待，多个 Job 还可能互相占住部分资源。Kubernetes 1.37 已提供 Beta 的原生 Gang，默认关闭；需要启用 GenericWorkload、对应 API 和调度插件。原生 PodGroup 与 Volcano PodGroup 属于不同 API，不能混用字段。Gang 保证调度时的最低成员条件，不保证后续运行永远不发生故障。<a href="https://kubernetes.io/docs/concepts/scheduling-eviction/gang-scheduling/">官方 Gang 文档（2026-10-29 核对）</a></p></div>
 <div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达最低运行条件。调度器尝试分配后检查是否满足条件，再提交或回滚计划；实际绑定、镜像拉取和容器启动仍需分别完成。</p></div>
 <div class="qa-section"><div class="qa-section-title">代价</div><p>Gang 会提高正确性，但可能增加等待时间。大任务需要凑齐一组资源，小碎片不能随便启动它的一部分。</p></div>
 <div class="qa-summary">面试口径：Volcano 把“单 Pod 能不能跑”提升成“作业是否满足最低协同运行条件”，减少不足最低成员数的部分分配。</div>
@@ -202,7 +202,7 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 的局限是什么？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">已经解决</div><p>Volcano 解决了默认 K8s 在批任务里的核心缺口：Gang、Queue、多角色 Job、队列公平和部分抢占。</p></div>
+<div class="qa-section"><div class="qa-section-title">批作业管理</div><p>Volcano 将 Gang、Queue、多角色 Job、队列公平与抢占回收整合在批调度系统中。即使集群启用了原生 Gang，租户配额、借用回收及作业生命周期仍需相应的管理机制。</p></div>
 <div class="qa-section"><div class="qa-section-title">没有天然解决</div><p>它不天然解决运行时间预测、干扰感知共置、checkpoint-aware preemption、复杂异构 GPU 拓扑和超大规模全局优化。</p></div>
 <div class="qa-section"><div class="qa-section-title">什么时候要自研</div><p>当你需要 QAD 这类连续保障度、预测调度、共置干扰模型、代价感知抢占或千卡以上全局优化时，通常要自研 scheduler plugin 或独立调度层。</p></div>
 </div>
@@ -239,8 +239,9 @@ kubectl get crd | grep volcano</code></pre>
 <table>
 <tr><th>对象</th><th>作用</th><th>面试解释</th></tr>
 <tr><td>LocalQueue</td><td>namespace 内用户提交入口</td><td>用户只看到本 namespace 的队列</td></tr>
-<tr><td>ClusterQueue</td><td>集群级资源池和配额</td><td>平台管理员配置 quota、borrowing、flavor</td></tr>
+<tr><td>ClusterQueue</td><td>集群级队列及配额</td><td>平台管理员配置 quota、borrowing、flavor；不是物理资源池本身</td></tr>
 <tr><td>ResourceFlavor</td><td>资源类型 / 节点池抽象</td><td>A100、H100、spot、on-demand 等资源口味</td></tr>
+<tr><td>Cohort</td><td>多个队列的共享关系</td><td>结合额度、借用与回收规则管理共享</td></tr>
 <tr><td>Workload</td><td>一个待准入作业的抽象</td><td>包含 PodSet，Kueue 判断它是否可以开始</td></tr>
 </table>
 </div>
@@ -262,9 +263,14 @@ kubectl get crd | grep volcano</code></pre>
 <tr><th>维度</th><th>Kueue</th><th>Volcano</th></tr>
 <tr><td>架构</td><td>准入/排队层，复用 kube-scheduler</td><td>批调度系统，深度控制调度过程</td></tr>
 <tr><td>强项</td><td>队列、配额、ResourceFlavor、渐进式接入</td><td>Gang、Queue、Job 生命周期、调度插件</td></tr>
-<tr><td>升级风险</td><td>低，和 scheduler 解耦</td><td>相对高，和调度链路耦合更深</td></tr>
-<tr><td>控制粒度</td><td>准入层控制，Pod 绑定交给默认 scheduler</td><td>调度过程内控制，能做更细的 Permit / Reserve</td></tr>
+<tr><td>集成关注点</td><td>工作负载适配、准入状态与配额转换</td><td>调度插件、队列策略和作业控制器</td></tr>
+<tr><td>控制粒度</td><td>准入层控制，Pod 绑定由配置的调度器执行</td><td>通过 Session、Action、Plugin 组织分配和抢占回收</td></tr>
 </table>
+</div>
+<div class="card card-d">
+<h3>额度准入与设备分配</h3>
+<p>Kueue 批准 Workload，表示所配置的额度和准入条件得到满足。Pod 后续仍可能因为设备属性、拓扑、卷、污点或实际容量而 Pending。接入 DRA 时，需要将设备需求映射到队列计账资源；设备选择、节点侧准备和容器注入仍是后续阶段。<a href="https://kueue.sigs.k8s.io/docs/tasks/run/dra/">Kueue DRA 指南</a></p>
+<p>共享 GPU 要同时处理卡数、每卡显存及算力限制。例如申请两份设备，每份 4Gi 显存，额度应核算总计 8Gi；不能仅看到一个 gpumem 字段就漏掉卡数，也不能转换后再重复扣账。具体转换配置依集成版本确认。<a href="https://www.lixueduan.com/posts/kubernetes/65-kueue-p4-hami-vgpu/">Kueue 与 HAMi 计账示例</a></p>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: ResourceFlavor 为什么重要？</div>
