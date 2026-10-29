@@ -17,7 +17,7 @@
   <main class="wrap">
   <section class="topic-hero" aria-label="主题概览"><div class="hero-copy"><h1>LLM 推理系统</h1><p class="sub">推理总览 · 请求生命周期 · Prefill/Decode · KV Cache · 量化 · 投机解码 · 多 LoRA · 性能优化 · 引擎选型 · 部署运维</p></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="llm-inference-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 5</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" data-mid="llm-inference-tabs::00-e2e-pipeline-md" data-search="端到端链路 Prompt 进模型后内部发生了什么：6 阶段完整流程、Tokenization、Continuous Batching、请求生命周期 全景：6 阶段端到端推理 请求封装 → Tokenization(BPE) → 调度(Continuous Batching) → Prefill → Decode → 流式返回 请求生命周期与调度 从 API 接入到 KV Cache 回收：scheduler 职责、PagedAttention、常见问题定位" title="端到端链路" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">端到端链路</span><span class="tab-desc">Prompt 进模型后内部发生了什么：6 阶段完整流程、Tokenization、Continuous Batching、请求生命周期</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" data-mid="llm-inference-tabs::03-prefill-md" data-search="Prefill 与 Decode Prefill 阶段 · Decode 阶段 Prefill 阶段 计算密集、TTFT、首 token 延迟 Decode 阶段 逐 token 生成、memory-bound、TPOT" title="Prefill 与 Decode" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Prefill 与 Decode</span><span class="tab-desc">Prefill 阶段 · Decode 阶段</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" data-mid="llm-inference-tabs::05-kv-cache-attention-md" data-search="KV Cache 与 Attention KV Cache 与 Attention · KV Cache 显存预算实算 · PagedAttention 图解 等 6 项 KV Cache 与 Attention KV 缓存、PagedAttention、FlashAttention、GQA KV Cache 显存预算实算 320KB/token 推导、GQA/MQA 缩小倍数、KV 量化 trade-off PagedAttention 图解 用 SVG 示意图 + 例子讲透 block、block table、与 OS 分页类比 图解：tiling 与 online softmax 标准 attention 慢在哪、什么是 tiling、SRAM/HBM 层级、经典追问 与 vLLM 深入 FlashAttention V1/V2、复杂度对比、vLLM 抢占/swapping/recomputation KV 面试：原理与计算 8 道缓存机制、显存估算、并行分片与量化追问 KV 面试：系统设计 8 道前缀复用、准入回收、VMM 与效果验证追问" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV Cache 与 Attention · KV Cache 显存预算实算 · PagedAttention 图解 等 6 项</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" data-mid="llm-inference-tabs::06-performance-bottlenecks-md" data-search="性能与优化 性能指标与瓶颈 · 优化技术概览 · 投机解码 等 4 项 指标与瓶颈总览 TTFT、TPOT、吞吐、显存与利用率的端到端解释 Decode 为何 Memory-bound 70B FP16 batch=1 Decode 的 FLOPs、访存量和算术强度实算 逐算子 Bound 分类 QKV、FFN、Softmax、Norm 和 KV Cache 在 Prefill/Decode 的瓶颈差异 优化技术概览 Batching、量化、投机解码、Prefix Cache 投机解码 Draft+Verify、拒绝采样、Medusa/EAGLE/Lookahead、Tree Attention 模型量化 W4A16/W8A8、GPTQ/AWQ/SmoothQuant/FP8、per-tensor/channel/group、KV cache 量化" title="性能与优化" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能与优化</span><span class="tab-desc">性能指标与瓶颈 · 优化技术概览 · 投机解码 等 4 项</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" data-mid="llm-inference-tabs::08-serving-engines-md" data-search="多模型服务与引擎 推理引擎对比 · 多 LoRA 服务 · 系统设计：多模型 LLM 推理 等 6 项 推理引擎对比 AI Infra 视角 · 学习路线 · 13 题面试清单 多 LoRA 服务 LoRA 原理、Punica BGMV、S-LoRA、权重管理、vLLM 多 LoRA 配置 系统设计：多模型 LLM 推理 模型驻留、内存管理、请求路由、排队策略 系统设计：KV 缓存管理 分页管理、前缀共享、层级存储 部署运维与SLO TTFT/TPOT分位数、弹性扩缩容、CUDA Graph、生产Checklist、5 道深度面试题 分布式推理与训推问答 10 道副本选型、PD 分离、KV 传输、混部与版本切换题" title="多模型服务与引擎" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多模型服务与引擎</span><span class="tab-desc">推理引擎对比 · 多 LoRA 服务 · 系统设计：多模型 LLM 推理 等 6 项</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" data-mid="llm-inference-tabs::00-e2e-pipeline-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>端到端链路</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="llm-inference-tabs-panel-1-sub-1" aria-controls="llm-inference-tabs-panel-1-subpanel-1" aria-selected="true" title="全景：6 阶段端到端推理"><span class="subtab-title">全景：6 阶段端到端推理</span><span class="subtab-desc">请求封装 → Tokenization(BPE) → 调度(Continuous Batching) → Prefill → Decode → 流式返回</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-1-sub-2" aria-controls="llm-inference-tabs-panel-1-subpanel-2" aria-selected="false" title="请求生命周期与调度"><span class="subtab-title">请求生命周期与调度</span><span class="subtab-desc">从 API 接入到 KV Cache 回收：scheduler 职责、PagedAttention、常见问题定位</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1-subpanel-1" aria-labelledby="llm-inference-tabs-panel-1-sub-1" ><h3>完整推理链路概览</h3>
+<section class="tabs-shell" data-tabs data-tabs-id="llm-inference-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 6</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">LLM 推理系统化模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="LLM 推理系统化模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="llm-inference-tabs-tab-1" data-initial="01" data-mid="llm-inference-tabs::00-e2e-pipeline-md" data-search="端到端链路 Prompt 进模型后内部发生了什么：6 阶段完整流程、Tokenization、Continuous Batching、请求生命周期 全景：6 阶段端到端推理 请求封装 → Tokenization(BPE) → 调度(Continuous Batching) → Prefill → Decode → 流式返回 请求生命周期与调度 从 API 接入到 KV Cache 回收：scheduler 职责、PagedAttention、常见问题定位" title="端到端链路" aria-controls="llm-inference-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">端到端链路</span><span class="tab-desc">Prompt 进模型后内部发生了什么：6 阶段完整流程、Tokenization、Continuous Batching、请求生命周期</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-2" data-initial="02" data-mid="llm-inference-tabs::03-prefill-md" data-search="Prefill 与 Decode Prefill 阶段 · Decode 阶段 Prefill 阶段 计算密集、TTFT、首 token 延迟 Decode 阶段 逐 token 生成、memory-bound、TPOT" title="Prefill 与 Decode" aria-controls="llm-inference-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">Prefill 与 Decode</span><span class="tab-desc">Prefill 阶段 · Decode 阶段</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-3" data-initial="03" data-mid="llm-inference-tabs::05-kv-cache-attention-md" data-search="KV Cache 与 Attention KV Cache 与 Attention · KV Cache 显存预算实算 · PagedAttention 图解 等 6 项 KV Cache 与 Attention KV 缓存、PagedAttention、FlashAttention、GQA KV Cache 显存预算实算 320KB/token 推导、GQA/MQA 缩小倍数、KV 量化 trade-off PagedAttention 图解 用 SVG 示意图 + 例子讲透 block、block table、与 OS 分页类比 图解：tiling 与 online softmax 标准 attention 慢在哪、什么是 tiling、SRAM/HBM 层级、经典追问 与 vLLM 深入 FlashAttention V1/V2、复杂度对比、vLLM 抢占/swapping/recomputation KV 面试：原理与计算 8 道缓存机制、显存估算、并行分片与量化追问 KV 面试：系统设计 8 道前缀复用、准入回收、VMM 与效果验证追问" title="KV Cache 与 Attention" aria-controls="llm-inference-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">KV Cache 与 Attention</span><span class="tab-desc">KV Cache 与 Attention · KV Cache 显存预算实算 · PagedAttention 图解 等 6 项</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-4" data-initial="04" data-mid="llm-inference-tabs::06-performance-bottlenecks-md" data-search="性能与优化 性能指标与瓶颈 · 优化技术概览 · 投机解码 等 4 项 指标与瓶颈总览 TTFT、TPOT、吞吐、显存与利用率的端到端解释 Decode 为何 Memory-bound 70B FP16 batch=1 Decode 的 FLOPs、访存量和算术强度实算 逐算子 Bound 分类 QKV、FFN、Softmax、Norm 和 KV Cache 在 Prefill/Decode 的瓶颈差异 优化技术概览 Batching、量化、投机解码、Prefix Cache 投机解码 Draft+Verify、拒绝采样、Medusa/EAGLE/Lookahead、Tree Attention 模型量化 W4A16/W8A8、GPTQ/AWQ/SmoothQuant/FP8、per-tensor/channel/group、KV cache 量化" title="性能与优化" aria-controls="llm-inference-tabs-panel-4" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">性能与优化</span><span class="tab-desc">性能指标与瓶颈 · 优化技术概览 · 投机解码 等 4 项</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-5" data-initial="05" data-mid="llm-inference-tabs::08-serving-engines-md" data-search="多模型服务与引擎 推理引擎对比 · 多 LoRA 服务 · 系统设计：多模型 LLM 推理 等 6 项 推理引擎对比 AI Infra 视角 · 学习路线 · 13 题面试清单 多 LoRA 服务 LoRA 原理、Punica BGMV、S-LoRA、权重管理、vLLM 多 LoRA 配置 系统设计：多模型 LLM 推理 模型驻留、内存管理、请求路由、排队策略 系统设计：KV 缓存管理 分页管理、前缀共享、层级存储 部署运维与SLO TTFT/TPOT分位数、弹性扩缩容、CUDA Graph、生产Checklist、5 道深度面试题 分布式推理与训推问答 10 道副本选型、PD 分离、KV 传输、混部与版本切换题" title="多模型服务与引擎" aria-controls="llm-inference-tabs-panel-5" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">多模型服务与引擎</span><span class="tab-desc">推理引擎对比 · 多 LoRA 服务 · 系统设计：多模型 LLM 推理 等 6 项</span></span></button><button class="tab-button" type="button" role="tab" id="llm-inference-tabs-tab-6" data-initial="06" data-mid="llm-inference-tabs::22-vllm-runtime-md" data-search="请求路由与分布式缓存 vLLM 请求执行 · PD 分离与编排 · Kthena 路由实现 等 5 项 vLLM 请求执行 V1 进程、迭代调度、APC 块生命周期与显存计算 PD 分离与编排 P/D 选址、代理串联、KV 传输、租约与失败清理 Kthena 路由实现 ModelRoute/ModelServer、两类缓存索引与 PD 分组 llm-d 缓存路由 EPP、KV events、热点控制与跨副本 P2P 共享 缓存路由实验与排障 对照分组、冷热缓存、指标分母与故障诊断" title="请求路由与分布式缓存" aria-controls="llm-inference-tabs-panel-6" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">请求路由与分布式缓存</span><span class="tab-desc">vLLM 请求执行 · PD 分离与编排 · Kthena 路由实现 等 5 项</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1" aria-labelledby="llm-inference-tabs-tab-1" data-mid="llm-inference-tabs::00-e2e-pipeline-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>端到端链路</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="llm-inference-tabs-panel-1-sub-1" aria-controls="llm-inference-tabs-panel-1-subpanel-1" aria-selected="true" title="全景：6 阶段端到端推理"><span class="subtab-title">全景：6 阶段端到端推理</span><span class="subtab-desc">请求封装 → Tokenization(BPE) → 调度(Continuous Batching) → Prefill → Decode → 流式返回</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-1-sub-2" aria-controls="llm-inference-tabs-panel-1-subpanel-2" aria-selected="false" title="请求生命周期与调度"><span class="subtab-title">请求生命周期与调度</span><span class="subtab-desc">从 API 接入到 KV Cache 回收：scheduler 职责、PagedAttention、常见问题定位</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="llm-inference-tabs-panel-1-subpanel-1" aria-labelledby="llm-inference-tabs-panel-1-sub-1" ><h3>完整推理链路概览</h3>
 <p>一个 prompt 从输入到输出，大体会经历 <strong>6 个阶段</strong>。核心本质是：模型先并行"读懂"整段输入，建立上下文状态和 KV cache，然后再进入自回归生成循环，每次只预测下一个 token。</p>
 <img src="../../../resources/images/llm-inference/e2e-inference-pipeline.svg" alt="LLM 端到端推理链路" style="width:100%;max-width:1040px;margin:12px 0 8px 0;border-radius:8px;" loading="lazy"/>
 <p style="font-size:0.85em;color:var(--text-secondary);margin:0 0 20px 0;">示意图：6 阶段推理端到端链路（Prefill/Decode 两阶段、KV Cache 增长、SLO 指标标注）</p>
@@ -2198,7 +2198,231 @@ response = client.chat.completions.create(
 <div class="qa-q">Q10：RL 训推协同里，权重更新和 KV Cache 有什么关系？</div>
 <div class="qa-a"><p>Rollout 用某一策略版本生成轨迹，训练更新后将新权重同步给推理实例。系统需记录轨迹对应的策略版本，并控制更新与生成的并发边界。旧 KV 由旧权重产生，通常不能直接接到新权重上继续生成。</p><p><strong>追问：怎样切换版本？</strong>可以让在途请求继续使用旧版本，新请求路由到新版本；或排空后整体切换并使缓存失效。异步 rollout 还要记录策略滞后并按训练算法处理，不能只靠缓存管理解决。权重分片与推理并行布局不同，也要付出重排和传输成本。</p></div>
 </div>
-<p>路由、迁移、混部和版本切换题按系统约束推导具体设计；上述耗时数字是示例估算，不是框架性能承诺。</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="llm-inference-tabs::08-serving-engines-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="llm-inference-tabs::08-serving-engines-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能与优化</span></button></div></div></article></div></section>
+<p>路由、迁移、混部和版本切换题按系统约束推导具体设计；上述耗时数字是示例估算，不是框架性能承诺。</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="llm-inference-tabs::08-serving-engines-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="llm-inference-tabs::08-serving-engines-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="4"><span class="tab-step-label">上一篇</span><span class="tab-step-title">性能与优化</span></button><button type="button" class="tab-step tab-step-next" data-step-target="6"><span class="tab-step-label">下一篇</span><span class="tab-step-title">请求路由与分布式缓存</span></button></div></div></article><article class="tab-panel" role="tabpanel" id="llm-inference-tabs-panel-6" aria-labelledby="llm-inference-tabs-tab-6" data-mid="llm-inference-tabs::22-vllm-runtime-md" data-subtabs hidden><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>请求路由与分布式缓存</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="llm-inference-tabs-panel-6-sub-1" aria-controls="llm-inference-tabs-panel-6-subpanel-1" aria-selected="true" title="vLLM 请求执行"><span class="subtab-title">vLLM 请求执行</span><span class="subtab-desc">V1 进程、迭代调度、APC 块生命周期与显存计算</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-6-sub-2" aria-controls="llm-inference-tabs-panel-6-subpanel-2" aria-selected="false" title="PD 分离与编排"><span class="subtab-title">PD 分离与编排</span><span class="subtab-desc">P/D 选址、代理串联、KV 传输、租约与失败清理</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-6-sub-3" aria-controls="llm-inference-tabs-panel-6-subpanel-3" aria-selected="false" title="Kthena 路由实现"><span class="subtab-title">Kthena 路由实现</span><span class="subtab-desc">ModelRoute/ModelServer、两类缓存索引与 PD 分组</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-6-sub-4" aria-controls="llm-inference-tabs-panel-6-subpanel-4" aria-selected="false" title="llm-d 缓存路由"><span class="subtab-title">llm-d 缓存路由</span><span class="subtab-desc">EPP、KV events、热点控制与跨副本 P2P 共享</span></button><button class="subtab-button" type="button" role="tab" id="llm-inference-tabs-panel-6-sub-5" aria-controls="llm-inference-tabs-panel-6-subpanel-5" aria-selected="false" title="缓存路由实验与排障"><span class="subtab-title">缓存路由实验与排障</span><span class="subtab-desc">对照分组、冷热缓存、指标分母与故障诊断</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="llm-inference-tabs-panel-6-subpanel-1" aria-labelledby="llm-inference-tabs-panel-6-sub-1" ><h2>请求进入 vLLM 后，谁决定下一步计算</h2>
+<p>vLLM 的实例内部同时管理多条请求。API 进程负责协议、输入预处理和流式输出；EngineCore 中的 Scheduler 决定每轮处理哪些请求、各处理多少 token；KVCacheManager 管理缓存块；GPU Worker 中的 ModelRunner 准备张量、调用模型并执行采样。一个模型副本可以跨多个 GPU，不能把一个 HTTP 请求等同于一个 GPU Pod。</p>
+<pre><code class="language-text">HTTP 请求 → 模板渲染与 tokenization → EngineCore 的等待队列
+  → Scheduler：本轮 token 预算、序列数限制、KV 空间检查
+  → KVCacheManager：查可复用块，为新增 token 分配块
+  → Executor / GPU Worker / ModelRunner：前向计算、采样
+  → 更新已计算 token 数与请求状态 → 流式返回
+  → 完成或取消：解除请求对缓存块的引用</code></pre>
+<p>外层路由器选择模型副本，实例内 Scheduler 组织计算批次，Kubernetes 调度器决定 Pod 放在哪个节点。这三个调度决策的对象和时间尺度不同。</p>
+<h2>Continuous Batching 与 Chunked Prefill</h2>
+<p>静态批处理等待整个批次完成再接收下一批。Continuous Batching 在迭代边界移除完成请求、加入新请求，提高不同输出长度混合时的执行效率。它仍受 KV 容量、每轮 token 预算和最大并发序列数限制。</p>
+<p>Chunked Prefill 把长输入的预填充拆成若干轮，允许同一轮包含已有请求的 decode 和新请求的部分 prefill。以简化预算为例：一轮最多计算 512 个 token，64 条 decode 请求各需一个 token，剩余 448 个预算可用于长输入。下一轮重新决策。真实实现还会受到块对齐、投机 token、编码器预算和不同调度配置影响。</p>
+<p>预算过大，长 prefill 可能拉长 decode 的迭代时间；过小，则可能增加长输入的排队和调度开销。调优时同时测 TTFT、ITL/TPOT、吞吐以及满足 SLO 的请求比例，不能只看总 token/s。</p>
+<h2>APC 的索引和生命周期</h2>
+<p>Automatic Prefix Caching 复用已计算的相同前缀。普通全注意力模型的 KV 依赖前面的 token，因此块的身份需要包含前缀依赖：</p>
+<pre><code class="language-text">H0 = hash(初始状态, tokens[0:b], 额外标识)
+H1 = hash(H0, tokens[b:2b], 额外标识)
+H2 = hash(H1, tokens[2b:3b], 额外标识)</code></pre>
+<p>额外标识可包含 LoRA、多模态输入和租户 cache salt。独立引擎天然处在各自模型上下文中；做外部共享时还需要明确模型版本、tokenizer、位置编码、KV dtype、布局等兼容条件。文字相同而 chat template 不同，最终 token 序列也可能不同。</p>
+<p>vLLM 的块池记录物理块 ID、内容 hash、引用计数和空闲队列指针。请求通过块表引用物理块。查到可复用块后先增加引用并从空闲队列移除，再分配新块，防止刚命中的缓存被覆盖。</p>
+<p>请求完成会解除引用；引用计数归零的块可进入空闲队列，内容仍可能保留。只有后续分配覆盖该块时，才移除缓存索引。因此“请求结束”与“缓存立即消失”不是同一件事。普通 APC 以完整块为复用粒度，末尾不足一块的公共部分不能直接按完整块命中。</p>
+<h2>一个块级例子</h2>
+<p>设块大小为 4 个 token，缓存中已有前缀 <code>ABCD | EFGH | IJKL</code>。新请求为 <code>ABCD | EFGH | IJXY | Z</code>：前两块共 8 个 token 可复用，第三块发生变化，后续链式 hash 也随之变化。这里的字母代表 token ID，不代表字符。</p>
+<p>缓存命中减少重复 prefill，但生成新 token 时仍要执行模型，并读取需要的历史 KV。已有前缀全部命中也不意味着请求零耗时：还有路由、等待、输入处理、末尾状态计算及后续生成。</p>
+<h2>显存与延迟的定量检查</h2>
+<p>对使用常规 KV 的全注意力 decoder，单序列未考虑并行分片时：</p>
+<p>\[ M_{KV}=2L H_{KV} d_h T s \]</p>
+<p>其中 2 对应 K 与 V，L 为层数，H_KV 为 KV 头数，d_h 为头维度，T 为已缓存 token 数，s 为每个元素的字节数。示例 L=32、H_KV=8、d_h=128、FP16：每 token 为 128 KiB，8192 token 共 1 GiB。批内总量应按实际共享物理块计算；GQA 看 KV 头数，TP 下也不能无条件把总量除以 TP，因为部分配置会复制 KV 头。MLA、滑动窗口和混合注意力需要使用对应结构重新计算。</p>
+<p>显存预算还包括权重、激活峰值、CUDA Graph、通信和工作区。KV 容量不足可能导致请求等待或抢占重算；不能把老版本 swap 行为概括成所有 V1 实现的默认策略。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：一条请求进入 vLLM 后如何执行？</div>
+<div class="qa-a"><p>输入先经过模板和分词进入 EngineCore。Scheduler 在每轮预算内选择请求，KVCacheManager 查前缀并分配新增空间，再把本轮 token 交给 Worker 执行。执行结果回来后更新状态、采样并流式输出。完成和取消都要回收请求占用，已经形成的缓存块可以保留供后续请求复用。</p><p>继续追问时，分别展开等待队列、token 预算、块表和取消清理。不要把 API 层、实例级批处理与跨副本路由混在一起。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：PagedAttention、FlashAttention、Prefix Caching 有什么关系？</div>
+<div class="qa-a"><p>PagedAttention 通过块表支持不连续的 KV 物理存放；FlashAttention 通过分块和算子融合降低 attention 的中间数据访存；Prefix Caching 识别已经算过的前缀并复用 KV。它们分别处理存储寻址、算子执行和跨请求重复计算，可以组合使用。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：GPU 利用率高，但 TTFT 很差，应如何定位？</div>
+<div class="qa-a"><p>先把 TTFT 拆成入口等待、实例排队、预处理、实际 prefill 和首个结果返回。检查输入长度分布、未命中 token 数、等待请求和 KV 压力，再看迭代耗时与 GPU kernel 时间线。高 GPU 利用率只说明采样窗口中 GPU 忙，无法证明排队合理或计算都对业务有用。可能需要限流、调整 token 预算、改善缓存命中或增加副本，具体取决于耗时分解。</p></div>
+</div>
+<p>来源：<a href="https://github.com/vllm-project/vllm/blob/cf3f6405b849f2b672d93af0c4cf4e5e6dc6bd1b/docs/design/arch_overview.md">vLLM 进程架构</a>、<a href="https://github.com/vllm-project/vllm/blob/cf3f6405b849f2b672d93af0c4cf4e5e6dc6bd1b/docs/design/prefix_caching.md">APC 设计与块生命周期</a>。核对日期：2026-10-29；数值例子为公式推算。</p></div><div class="subtab-panel" role="tabpanel" id="llm-inference-tabs-panel-6-subpanel-2" aria-labelledby="llm-inference-tabs-panel-6-sub-2" hidden><h2>PD 分离中的三项职责</h2>
+<p>一次请求的 Prefill 和 Decode 可以在不同实例上执行。Prefill 处理输入并产生 KV；Decode 使用这些状态逐 token 生成。端到端流程由请求级编排组件串联，KV 的搬运交给引擎 Connector 和传输后端，各实例的内部 Scheduler 继续负责自己的计算队列。</p>
+<div class="table-scroll"><table>
+<tr><th>职责</th><th>典型组件</th><th>维护的状态</th></tr>
+<tr><td>选择 P/D，衔接请求和响应</td><td>Router、Proxy 或 Routing Sidecar</td><td>请求 ID、目标实例、阶段、截止时间、重试状态</td></tr>
+<tr><td>管理 KV 的可读性、读取和释放</td><td>引擎 KV Connector</td><td>源块/目标块、传输描述、异步完成、引用或租约</td></tr>
+<tr><td>执行本地模型计算</td><td>vLLM Scheduler、KVCacheManager、Worker</td><td>token 预算、块表、本地等待和运行请求</td></tr>
+</table></div>
+<p>Kubernetes 调度器负责部署 P/D Pod，并不逐请求发起 Prefill 后再调用 Decode。</p>
+<h2>vLLM NIXL 的典型拉取链路</h2>
+<pre><code class="language-text">客户端 → 请求编排组件：原始 prompt、生成参数
+编排组件 → P：预填充请求，附远端 decode 所需控制信息
+P：排队、分配 KV、计算 prompt，保留输出块
+P → 编排组件：KV 传输元数据
+编排组件 → D：请求 + KV 传输元数据
+D Connector：分配目标空间，通过 NIXL 从 P 读取 KV
+D：确认所需状态可用后进入生成，流式返回
+完成 / 取消 / 超时 → 双端解除引用、回收请求与传输资源</code></pre>
+<p>常见接口会把发给 P 的请求限制为 <code>max_tokens=1</code>，并用 <code>kv_transfer_params</code> 衔接 D。具体首 token 的衔接由代理与连接器协议处理，不能直接把 P 的一次输出和 D 的完整输出拼接。HTTP 控制链路上传递的是定位和协调信息，KV 张量通常走引擎间的数据通路。</p>
+<p>当前 NixlConnector 的 prefiller 租约会保留块等待 D 读取；D 排队期间可通过心跳延长租约；没有心跳或读取通知且租约到期时释放。这个机制解决的是跨阶段资源生命周期，不能用一个普通 HTTP 超时完全替代。</p>
+<h2>llm-d 与 Kthena 怎样实现编排</h2>
+<p><strong>llm-d</strong>：Gateway/Proxy 咨询 EPP，EPP 的 PD profile 先选择 D，并由 decider 判断是否需要远端 P；需要时再选择 P。代理将请求交给 D Pod 前的 Routing Sidecar，sidecar 调 P、接收 KV 元数据，再交给本地 D。vLLM 在适当配置下可以走 D-only；不能把这种回退能力套到所有引擎。</p>
+<p><strong>Kthena</strong>：ModelRoute 定位 ModelServer；<code>pdGroup</code> 描述 P/D 角色与分组。当前 Router 的 scheduler 普通评分路径先选 D，再从同组候选选 P。Router 中的 NIXL HTTP connector 负责先请求 P，再把响应中的 <code>kv_transfer_params</code> 填入 D 请求。它与 vLLM 内部同名技术栈中的 KV Connector 位于不同层。</p>
+<p>两者都可能先确定 D 的位置，再执行 P 的计算。<strong>选址顺序与计算依赖顺序可以不同。</strong>先选 D 有利于考虑 decode 的容量、已有前缀和最终输出负载，再为它选择合适的 P。</p>
+<h2>为什么分离，以及何时不划算</h2>
+<p>Prefill 与 Decode 的资源需求、批处理方式和延迟目标不同。分离后可独立选择并行配置、扩缩容和控制 prefill 对 decode 迭代的干扰。代价包括模型副本、网络传输、跨阶段排队、预留 KV 和故障处理。</p>
+<p>可用下面的简化分解判断 TTFT 来源，各项需要使用不重叠的测量边界：</p>
+<p>\[ TTFT \approx T_{入口}+W_P+C_P+T_{KV}+W_D+C_{首个输出} \]</p>
+<p>传输可能与部分计算重叠，因此真实端到端耗时应从 trace 观察关键路径，不能直接相加所有 span。假设实际需要搬运 1 GiB KV、有效链路吞吐为 25 GB/s，仅数据传输下界约 43 ms，还没有计算握手、内存拷贝、排队和布局转换。短 prompt、小流量或慢网络中，这个额外成本可能超过收益。</p>
+<p>PD 的目标常是改善尾部 ITL 或满足更多请求的 SLO；不能承诺任何负载下总吞吐都会提高。先用聚合实例和 Chunked Prefill 建立基线，再验证分离收益。</p>
+<h2>阶段失败的处理</h2>
+<div class="table-scroll"><table>
+<tr><th>失败点</th><th>应观察什么</th><th>处理原则</th></tr>
+<tr><td>P 未完成</td><td>P 错误、请求截止时间、存活实例</td><td>在预算内重新选择或走已验证的本地 prefill 回退</td></tr>
+<tr><td>P 完成但 D 排队</td><td>源 KV 持有量、租约、D 队列</td><td>限制在途预填充，避免源 KV 占满；延续或终止租约</td></tr>
+<tr><td>KV 传输失败</td><td>块缺失、兼容性、网络错误</td><td>由支持的恢复路径重算/重传，禁止使用未完成 KV</td></tr>
+<tr><td>流式输出已经开始</td><td>已输出 token 数、断连时间</td><td>不透明重试整条请求；显式失败或使用专门续传协议</td></tr>
+<tr><td>客户端取消</td><td>两阶段请求和传输是否退出</td><td>传播取消，清理引用；以租约兜底泄漏</td></tr>
+</table></div>
+<p>跨实例传输需核对模型权重版本、KV dtype、块大小、attention 后端以及 TP/PP 布局。不同并行度能否互通取决于连接器的具体支持，不能仅凭模型名字相同认定可用。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：请求先去 P 再去 D，中间究竟是谁调度？</div>
+<div class="qa-a"><p>请求级 Router 或代理负责选 P/D 和串联 RPC；vLLM Connector 负责 KV 数据传输，各实例内部 Scheduler 负责本地执行。以 llm-d 为例，EPP 做选址，D 前的 routing sidecar 先调 P，取得 KV 元数据后调用 D，D 再通过 NIXL 读取 P 的 KV 并开始生成。P 侧在读取完成或租约到期后释放对应资源。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：多轮对话的 KV 在 D 上，下一轮为什么可能还要传回 P？</div>
+<div class="qa-a"><p>D 拥有前一轮生成 token 对应的 KV，而 P 可能只保留了旧输入。下一轮完整上下文包含这些生成内容。如果只固定单向 P→D，P 仍可能重算一段已有历史。双向 KV 或跨副本共享可让 P 拉取已有历史，再计算新增后缀。是否值得取决于可复用长度、缓存保留时间和传输成本；需要会话元数据和有效的块生命周期。</p></div>
+</div>
+<p>来源：<a href="https://github.com/vllm-project/vllm/blob/cf3f6405b849f2b672d93af0c4cf4e5e6dc6bd1b/docs/features/nixl_connector_usage.md">vLLM NIXL 使用与租约</a>、<a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/docs/architecture/disaggregation/pd-disaggregation.md">llm-d PD 编排</a>、<a href="https://github.com/volcano-sh/kthena/blob/45d12f13ebb31a88a04723fd82fa7be550633825/pkg/kthena-router/connectors/nixl.go">Kthena NIXL 代理实现</a>。核对日期：2026-10-29。</p></div><div class="subtab-panel" role="tabpanel" id="llm-inference-tabs-panel-6-subpanel-3" aria-labelledby="llm-inference-tabs-panel-6-sub-3" hidden><h2>从模型名到具体实例</h2>
+<p>Kthena 为模型服务提供部署管理和请求路由。一次推理请求进入 Router 后，先根据模型名和请求规则匹配 ModelRoute，再选择目标 ModelServer，最后在其后端 Pod 中进行过滤和评分。模型内部计算由 vLLM、SGLang 等引擎执行。</p>
+<pre><code class="language-text">HTTP 请求
+  → 认证 / 限流与请求解析
+  → ModelRoute：模型名、header 规则、目标及权重
+  → ModelServer：实际模型、引擎类型、Pod selector、流量策略
+  → 候选 Pod 过滤 → 调度插件评分 → 选择实例
+  → 聚合式转发，或 PD connector 编排 P/D
+  → 流式响应与在途计数更新
+
+旁路控制信息：
+  Kubernetes Watch → Controller → Pod / 路由对象快照
+  引擎 metrics → Backend 适配 / Metrics Fetcher → 调度数据</code></pre>
+<p>ModelRoute 的目标权重适合版本或模型流量分配；Pod 评分处理同一目标内部的负载与缓存局部性。两层权重不是同一组参数。调度器需要先满足模型、角色、健康、LoRA 等硬条件，再比较性能分数，不能让高缓存分数覆盖不兼容条件。</p>
+<h2><code>prefix-cache</code> 的实际做法</h2>
+<p>当前源码中，<code>prefix-cache</code> 是轻量级历史路由索引。它将提取出的 prompt 字符串按固定<strong>字节数</strong>分块，初始 hash 包含模型名，每个后续 hash 包含上一个 hash 与本块内容，使用 xxHash 形成前缀链。</p>
+<p>索引结构为 <code>model → prefix hash → pods</code>，并用 LRU 限制元数据量。Score 查找历史匹配的候选 Pod，按匹配块数占当前参与匹配块数的比例评分；PostSchedule 把本次前缀与选定 Pod 关联。源码默认分块为 64 字节、最多处理前 128 块、保留 top-K 匹配候选，但这些是配置默认值，不能视为 vLLM 的 token block 大小。</p>
+<p>这个索引记录的是“此前把相似输入送到了哪里”。它没有证明 GPU 上的 KV 仍然存在：请求可能失败，缓存可能被淘汰，Pod 可能重启，聊天模板与 tokenizer 也可能产生不同的实际 token。若输入超过匹配上限，得分还只覆盖被检查的前缀，不能解释为完整 prompt 的缓存命中比例。</p>
+<h2><code>kvcache-aware</code> 的状态来源</h2>
+<p>当前主线还包含独立的 <code>kvcache-aware</code> 插件：token 级分块匹配，支持从 Redis 查询 runtime sidecar 写入的块映射，也支持从 KV 事件维护的内存索引评分。请求 tokenization、块 key 与引擎侧上报必须兼容。</p>
+<div class="table-scroll"><table>
+<tr><th>维度</th><th><code>prefix-cache</code></th><th><code>kvcache-aware</code> 当前实现</th></tr>
+<tr><td>匹配输入</td><td>prompt 字节块</td><td>token 块</td></tr>
+<tr><td>状态来源</td><td>之前的路由决定</td><td>runtime 映射或 KV 事件</td></tr>
+<tr><td>索引存储</td><td>Router 本地缓存</td><td>Redis 或事件驱动内存索引</td></tr>
+<tr><td>优点</td><td>部署简单，额外依赖少</td><td>更接近引擎实际缓存状态</td></tr>
+<tr><td>代价</td><td>缓存淘汰后可能误判</td><td>分词、事件传递、索引更新与故障处理</td></tr>
+</table></div>
+<p>因此不能笼统说“Kthena 的 prefix 插件一定实时查询 vLLM 的每一块 KV”，也不能因设计文档位于 proposal 目录就断言其功能尚未实现。判断依据是所部署版本的代码和实际启用配置。</p>
+<h2>负载和缓存怎样共同影响选址</h2>
+<p>前缀复用减少未命中的 prefill，排队则可能抵消节省。可以用一个设计层面的成本模型解释选择，注意这不是 Kthena 所有插件的统一源码公式：</p>
+<p>\[ \widehat{T}_i = \widehat{W}_i + \widehat{C}_{prefill}(T-H_i) + \widehat{T}_{transfer,i} \]</p>
+<p>T 为输入 token 数，H_i 为实例 i 可用的连续前缀长度，W_i 为预计排队时间。比如 A 命中 90% 但排队 800 ms、剩余计算 50 ms；B 完全未命中但只需 300 ms prefill 且不用排队，B 的预计 TTFT 更低。所有数字是说明取舍的假设值。</p>
+<p>真实系统可将 least-request、延迟、缓存等插件组合，并对分数归一化、设置权重。还要及时记录在途请求，否则连续多次选择会把流量集中到同一个看似空闲的 Pod。请求数相同也不代表负载相同，长 prompt 与长输出对资源占用不同。</p>
+<h2>PD 分组和失败边界</h2>
+<p>ModelServer 的 <code>pdGroup.groupKey</code> 用标签值定义兼容分组，<code>prefillLabels</code>、<code>decodeLabels</code> 区分角色。普通调度路径先选 D，再在同组中选 P。分组有助于防止不兼容的 P/D 配对，但不能替代对模型版本、并行布局与连接器网络的校验。</p>
+<p>生产排障应同时查看候选集为什么被过滤、各插件得分、最终选定实例、P/D 阶段耗时、引擎实际命中与错误。索引命中率高而引擎命中率低，首先检查索引陈旧、模板/tokenizer 不一致、块大小与配置、Pod 重建及模型版本。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：Kthena 收到请求后如何分发？</div>
+<div class="qa-a"><p>先用 ModelRoute 做模型和流量规则匹配，再定位 ModelServer 及其候选 Pod。Router 从 watch 与引擎 metrics 维护状态，先过滤不可用或不兼容实例，再结合在途请求、延迟和缓存亲和评分。聚合部署直接转发；PD 部署还要选择兼容的 P/D 对并由 connector 串联两个阶段。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：前缀缓存匹配为什么不等于命中了真实 KV？</div>
+<div class="qa-a"><p>轻量 prefix-cache 根据历史路由推测缓存位置，真实 KV 则由引擎分配和淘汰，两者不在同一状态机里。事件驱动索引能缩小偏差，但仍有传播时延。路由选择只影响性能，最终能否复用必须由引擎根据实际块和兼容性判断，不能因为路由分数高就跳过必要计算。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：Kthena、KTransformers 和 Volcano 是一类东西吗？</div>
+<div class="qa-a"><p>Kthena 主要处理模型服务编排和请求路由；KTransformers 是推理执行与异构计算方向的框架；Volcano 主要做 Kubernetes 作业和资源调度。它们可以位于一条服务链路的不同层，不能仅因为名字相近就互换解释。</p></div>
+</div>
+<p>来源：<a href="https://kthena.volcano.sh/docs/architecture/kthena-router">Router 架构</a>、<a href="https://github.com/volcano-sh/kthena/blob/45d12f13ebb31a88a04723fd82fa7be550633825/pkg/kthena-router/scheduler/plugins/prefix_cache.go">prefix-cache 源码</a>、<a href="https://github.com/volcano-sh/kthena/blob/45d12f13ebb31a88a04723fd82fa7be550633825/pkg/kthena-router/scheduler/plugins/kvcache_aware.go">kvcache-aware 源码</a>、<a href="https://github.com/volcano-sh/kthena/blob/45d12f13ebb31a88a04723fd82fa7be550633825/pkg/kthena-router/scheduler/scheduler_impl.go">PD 选址实现</a>。核对日期：2026-10-29；当前主线能力需与部署版本对应。</p></div><div class="subtab-panel" role="tabpanel" id="llm-inference-tabs-panel-6-subpanel-4" aria-labelledby="llm-inference-tabs-panel-6-sub-4" hidden><h2>多副本的 KV 复用有两条数据路径</h2>
+<p>每个 vLLM 副本有自己的缓存。单实例开启 APC，并不会让其他副本自动看到这些 KV。多副本复用可以把请求送到缓存所在实例，也可以把缓存搬到承担请求的实例。</p>
+<div class="table-scroll"><table>
+<tr><th>机制</th><th>移动什么</th><th>主要状态</th><th>成本</th></tr>
+<tr><td>缓存亲和路由</td><td>HTTP 请求</td><td>前缀到实例的索引、实例负载</td><td>索引、选址及热点不均衡</td></tr>
+<tr><td>跨实例 KV 共享</td><td>KV 数据</td><td>内容 key、缓存层级、源/目标块、传输生命周期</td><td>网络、内存拷贝、兼容性与清理</td></tr>
+<tr><td>KV Offload</td><td>GPU 与 CPU/SSD 等层之间的 KV</td><td>存储位置、预取和淘汰策略</td><td>容量收益与额外访问延迟</td></tr>
+<tr><td>PD 传输</td><td>同一请求 P 阶段产出的 KV</td><td>P/D 关联、源块保留与读取完成</td><td>阶段交接和在途状态</td></tr>
+</table></div>
+<p>同一个服务可以组合四种机制，但开启其中一种不会自动拥有其他三种。语义缓存存储相似问题的答案，也不同于精确前缀 KV 复用。</p>
+<h2>llm-d 的控制流与数据流</h2>
+<pre><code class="language-text">客户端 → Gateway / L7 Proxy ──请求──→ 选定的引擎或 Routing Sidecar
+                    │
+                    └─ ext-proc → EPP：Filter → Score → Pick
+                                      ↑
+            Pod 发现、metrics、KV events、在途请求状态
+
+KV 数据：引擎/缓存层 ←──── NIXL 等传输通路 ────→ 引擎/缓存层</code></pre>
+<p>InferencePool 通过 selector 关联模型服务端点与 EPP；EPP 决定后端，但通常不承担整条响应流的 L7 转发。PD 情况下，Routing Sidecar 负责把一次外部请求变成阶段间的请求序列。</p>
+<h2>近似索引与事件驱动索引</h2>
+<p>近似实现根据曾经发送的 prompt 前缀维护本地 LRU 索引，成本低，但不知道引擎后续的准确淘汰状态。精确匹配路径先取得模板渲染后的 token ID，再通过 KV 事件跟踪块的位置：</p>
+<ul><li><code>BlockStored</code>：某实例、某存储层出现了相应内容块。</li><li><code>BlockRemoved</code>：移除指定实例/层上的块位置。</li><li><code>AllBlocksCleared</code>：清空该实例对应的记录。</li></ul>
+<p>EPP 查询索引，计算候选实例持有的<strong>连续可用前缀</strong>。例如请求块为 <code>[B0,B1,B2,B3]</code>，A 有 B0、B1，B 只有 B2、B3，那么在普通前缀复用中 A 命中两块，B 命中零块。后半段内容相同不能替代前面的 attention 状态。</p>
+<p>当前实现可通过短期 speculative indexing 在路由后先插入预测条目，弥补请求已路由、真实事件尚未到达的窗口；后续由事件确认或 TTL 过期清理。这是性能预测状态，不是 KV 已计算完成的证明。</p>
+<p>多 EPP 副本可各自订阅所有模型 Pod 的事件，分别维护内存索引；也有外部 Redis/Valkey 后端。独立订阅避免每次查询依赖远端存储，但放大订阅数与元数据内存。事件传播、断连、重启和 speculative entries 都意味着索引是近实时视图；即使文档使用“precise”，也不能据此承诺任意时刻强一致或零误判。</p>
+<h2>缓存热点如何与负载均衡协调</h2>
+<p>强制将所有相同前缀发送到一个 Pod，可能把命中率做高却把队列压满。当前 llm-d 指南组合前缀亲和与 token 负载：优先留在缓存温暖的端点，超过校准的处理能力后扩展可选端点，再按待处理 token 负载选择。</p>
+<p>路由关注的是未命中 token 的计算量、已有 decode 占用、KV 容量和目标延迟。可以用成本估计比较“在缓存实例等待”和“在另一个实例重算/拉取”；统一的固定权重只是实现方式之一。不同版本教程可能使用 <code>prefix-cache-scorer</code> 与 queue/KV 利用率评分，也可能使用 affinity filter 与 token-load scorer，应记录版本后再解释配置。</p>
+<h2>真正跨副本共享时多了什么</h2>
+<p>当前 llm-d 的实验性 P2P 指南利用 vLLM OffloadingConnector，从另一副本的 <strong>CPU offload 层</strong>通过 NIXL 拉取 KV。EPP 的精确索引用于找到源，source producer 决定是否值得搬运，sidecar 把远端源信息交给引擎。这条具体路线不能描述成“所有 GPU 直接共享同一块显存”。</p>
+<p>成本比较至少包括：源端排队、CPU 内存读取、网络、目标 CPU/GPU 数据搬运和目标剩余 prefill。选择远端源需要同时满足模型及 KV 布局兼容、足够的可复用长度、源存活、缓存未被淘汰。指南要求一致的块大小、hash 相关配置和 TP 布局，并把该路径标为 experimental。</p>
+<h2>版本差异如何读</h2>
+<p>llm-d 的组件与配置名称持续演化。阅读旧教程时先记录其 llm-d、EPP/router、vLLM、Gateway API Inference Extension 版本，再定位对应配置。旧文章里的 <code>llm-d-inference-scheduler</code>、tokenizer sidecar、scorer 名称，不能直接与当前 <code>llm-d-router</code> 的目录和参数一一替换。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：vLLM 多副本如何复用 KV Cache？</div>
+<div class="qa-a"><p>先在每个实例启用前缀复用，再由外层路由尽量把相同前缀送到已有缓存的副本。llm-d 的 EPP 可以根据历史路由近似判断，也可以用 tokenization 和 KV events 建立块位置索引，并结合负载选择。如果必须把请求放到别的实例，才需要额外的 KV 传输或共享缓存能力；索引本身不会搬运 KV。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：缓存命中率越高，性能一定越好吗？</div>
+<div class="qa-a"><p>不一定。集中到一个副本会增加排队，远端命中还可能增加传输。应看端到端 TTFT、ITL 和 SLO goodput，并同时观察实际复用 token、未命中计算量、负载偏斜与传输字节。索引预测命中与引擎实际复用要分开统计。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：llm-d 与 Kthena 应该怎样比较？</div>
+<div class="qa-a"><p>二者都覆盖模型服务的请求路由，均需结合缓存与负载。llm-d 在 Gateway/Proxy、EPP、Routing Sidecar 和引擎之间划分职责；Kthena 有 ModelRoute/ModelServer 和独立 Router，并通过插件与 connector 选址、串联 PD。比较应落到依赖、协议、状态源、引擎支持和运维成本，而不是仅比较一个“缓存感知”标签。</p></div>
+</div>
+<p>来源：<a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/docs/architecture/kv-management/prefix-cache-aware-routing.md">llm-d 前缀路由</a>、<a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/docs/architecture/kv-management/kv-indexer.md">KV 索引及事件</a>、<a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/guides/precise-prefix-cache-routing/README.md">当前精确路由部署指南</a>、<a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/guides/p2p-kv-cache-sharing/README.md">P2P 共享实验指南</a>。核对日期：2026-10-29。</p></div><div class="subtab-panel" role="tabpanel" id="llm-inference-tabs-panel-6-subpanel-5" aria-labelledby="llm-inference-tabs-panel-6-sub-5" hidden><h2>用对照实验识别优化来自哪里</h2>
+<p>多副本推理至少应比较单实例 APC、普通多副本负载均衡、缓存感知路由，以及启用实际 KV 传输后的配置。每次只改变一个机制，并固定模型版本、硬件、TP/PP、最大上下文、输入输出分布与请求速率。下面是实验设计，不是已经运行得到的性能结果。</p>
+<div class="table-scroll"><table>
+<tr><th>实验组</th><th>改变项</th><th>能回答的问题</th></tr>
+<tr><td>A</td><td>单实例，APC 关闭/开启</td><td>引擎内部重复 prefill 能省多少</td></tr>
+<tr><td>B</td><td>两个相同实例，普通负载均衡，APC 开启</td><td>流量打散造成多少局部性损失</td></tr>
+<tr><td>C</td><td>同两实例，近似前缀路由</td><td>路由历史能否有效预测缓存位置</td></tr>
+<tr><td>D</td><td>同两实例，KV 事件索引</td><td>更准确的缓存位置是否值得额外开销</td></tr>
+<tr><td>E</td><td>D 加跨副本 KV 传输</td><td>热点溢出或迁移时，搬运是否优于重算</td></tr>
+<tr><td>F</td><td>对比聚合部署与 PD 分离</td><td>分离后 SLO 收益是否覆盖传输与容量成本</td></tr>
+</table></div>
+<p>每组至少包括冷缓存、稳定热缓存、热点倾斜、无公共前缀和缓存失效五种输入形态。缓存实验必须记录 warm-up，不能用冷缓存的基线对比预热过的优化组。</p>
+<h2>构造可解释的请求</h2>
+<ol><li>使用固定长 system/document 前缀，每条请求仅修改后缀，测连续前缀复用。</li><li>在前缀中间修改一个 token，检查命中长度是否在变化点附近中断。</li><li>构造长度相同但内容不同的输入，检验所谓加速是否只是预热或并发变化。</li><li>注入大量新前缀造成淘汰，再重放旧前缀，比较路由预测和引擎实际复用。</li><li>测试副本重启/新增后的行为，记录索引清理、缓存冷启动与流量收敛。</li></ol>
+<p>模板、tokenizer 与多模态编码必须固定。按字符拼接只能构造文本，实际长度应以引擎 tokenization 为准。避免把 request ID、随机时间戳放到公共前缀开头。</p>
+<h2>指标的统计对象与分母</h2>
+<div class="table-scroll"><table>
+<tr><th>指标</th><th>定义与单位</th><th>解释边界</th></tr>
+<tr><td>TTFT</td><td>客户端发出请求到收到首个输出 token，ms</td><td>包含网络与排队，按请求统计 P50/P95/P99</td></tr>
+<tr><td>ITL</td><td>同一请求相邻输出 token 到达间隔，ms</td><td>流式缓冲可能造成多个 token 一次到达，需说明采集口径</td></tr>
+<tr><td>TPOT</td><td>常用口径为首 token 后生成耗时/(输出 token 数−1)，ms/token</td><td>单 token 输出不能按此公式计算，均值不能代替 ITL 尾部</td></tr>
+<tr><td>真实前缀复用率</td><td>引擎实际复用 token / 被查询的 prompt token</td><td>使用同一窗口累计量的比值，不能把各实例比率简单平均</td></tr>
+<tr><td>路由预测命中</td><td>路由索引预计可用的块/被检查的块</td><td>与 GPU 实际驻留不同，截断匹配时尤其需要说明分母</td></tr>
+<tr><td>输出吞吐</td><td>测量窗口内输出 token / 秒</td><td>固定是否含失败、取消和 warm-up</td></tr>
+<tr><td>SLO goodput</td><td>同时满足成功条件与延迟目标的请求数 / 秒</td><td>先明确目标，不能仅凭吞吐增长宣布改善</td></tr>
+<tr><td>KV 传输</td><td>字节数、完成时延、失败率、有效 GB/s</td><td>同时记录有效复用 token，避免大量无益搬运</td></tr>
+<tr><td>负载偏斜</td><td>各 Pod 在途 token、队列长度和利用率分布</td><td>请求数均匀不代表 token 工作量均匀</td></tr>
+</table></div>
+<h2>排障练习</h2>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：开了缓存路由，命中率提高但 P99 TTFT 变差，下一步做什么？</div>
+<div class="qa-a"><p>先看命中率来自路由索引还是引擎，再检查各 Pod 的等待时间和未完成 token。若真实命中提高但流量集中，调低亲和强度或加入饱和溢出；若只是假命中，检查事件延迟、淘汰、重启与模板一致性。比较同一请求速率下的 TTFT 分解和 SLO goodput，不能用更低的负载掩盖问题。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：PD 以后 ITL 改善，但 TTFT 变差，正常吗？</div>
+<div class="qa-a"><p>可能正常。P 与 D 解耦减少了长 prefill 对 decode 迭代的干扰，但额外增加 P 排队、KV 传输和 D 接续。通过阶段 trace 判断哪一项增加，再考虑 P/D 比例、带宽、在途上限或对短输入走聚合路径。应按业务目标决定是否接受这个取舍。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：没有 GPU 集群时能验证到哪一步？</div>
+<div class="qa-a"><p>可以用代码阅读、请求日志样例和离散事件模拟验证选址规则、成本比较、状态失效与重试流程。模拟结果不能证明真实 KV 命中或 GPU 性能。需要 GPU 的部分包括模型实际运行、KV 传输完成、数值正确性以及端到端性能；汇报时分别记录完成了哪些验证。</p></div>
+</div>
+<p>可执行部署以官方对应版本的 <a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/guides/precise-prefix-cache-routing/README.md">精确路由指南</a> 与 <a href="https://github.com/llm-d/llm-d/blob/361e1b7678ea228675b99ef7b8b5acfe7e295969/guides/pd-disaggregation/README.md">PD 指南</a> 为准；上述对照分组与诊断题是独立设计的验证方案。</p></div></div></div><div class="tab-panel-footer"><button type="button" class="tab-done" data-mid="llm-inference-tabs::22-vllm-runtime-md" aria-pressed="false"><span class="tab-done-icon" aria-hidden="true">✓</span><span class="tab-done-label">标记为已浏览</span></button><div class="tab-last-seen" data-mid="llm-inference-tabs::22-vllm-runtime-md" hidden><span class="tab-last-seen-label">上次学习</span><span class="tab-last-seen-value"></span></div><div class="tab-step-row"><button type="button" class="tab-step tab-step-prev" data-step-target="5"><span class="tab-step-label">上一篇</span><span class="tab-step-title">多模型服务与引擎</span></button></div></div></article></div></section>
   </main>
 </div>
 <footer class="site-footer">

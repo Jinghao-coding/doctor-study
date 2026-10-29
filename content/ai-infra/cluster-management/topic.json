@@ -48,6 +48,11 @@
                   "title": "自研队列设计",
                   "description": "原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller",
                   "file": "01e-native-k8s-queue-design.md"
+                },
+                {
+                  "title": "队列机制与异构调度",
+                  "description": "配额与准入、Gang、借用回收、异构核算与并发反馈",
+                  "file": "07-volcano-queue-runtime.md"
                 }
               ]
             },

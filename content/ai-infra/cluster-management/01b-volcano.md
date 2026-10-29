@@ -34,20 +34,20 @@ kubectl get crd | grep volcano</code></pre>
 <h3>三大核心对象关系</h3>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-core-crd-cover.png" alt="Volcano 三大核心对象解析：Queue、PodGroup、VolcanoJob" loading="lazy">
-<p class="caption">Volcano 三大核心对象：Queue（资源池）、PodGroup（Gang 调度单元）、VolcanoJob（批作业抽象）。</p>
+<p class="caption">Volcano 三大核心对象：Queue（逻辑资源队列）、PodGroup（Gang 调度单元）、VolcanoJob（批作业抽象）。</p>
 </div>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-object-model.svg" alt="Volcano 对象关系概念图" loading="lazy">
-<p class="caption">Volcano 对象模型：Queue 管资源池，VolcanoJob 管用户作业，PodGroup 管 Gang 调度，TaskInfo 是 Pod 的调度内部包装。</p>
+<p class="caption">Volcano 对象模型：Queue 管配额与公平策略，VolcanoJob 管用户作业，PodGroup 管 Gang 调度，TaskInfo 是 Pod 的调度内部包装。</p>
 </div>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-core-crd.png" alt="Volcano Queue PodGroup VolcanoJob 关系图" loading="lazy">
-<p class="caption">Queue 是资源池，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
+<p class="caption">Queue 是逻辑资源队列，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
 </div>
 <table>
 <tr><th>对象</th><th>核心含义</th><th>关键字段</th><th>面试重点</th></tr>
 <tr><td>Queue</td><td>多租户资源队列</td><td><code>weight</code>、<code>capability</code>、<code>deserved</code>、<code>reclaimable</code></td><td>资源隔离、弹性借用、reclaim</td></tr>
-<tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>All-or-Nothing，避免 partial allocation</td></tr>
+<tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>满足最低成员条件后提交分配，减少 partial allocation</td></tr>
 <tr><td>VolcanoJob</td><td>批作业抽象，包含多个 task</td><td><code>schedulerName</code>、<code>minAvailable</code>、<code>tasks</code>、<code>policies</code>、<code>plugins</code>、<code>queue</code></td><td>多角色训练任务、生命周期策略</td></tr>
 </table>
 </div>
@@ -56,10 +56,10 @@ kubectl get crd | grep volcano</code></pre>
 <h3>Queue：多租户资源管理</h3>
 <table>
 <tr><th>字段</th><th>作用</th><th>面试解释</th></tr>
-<tr><td><code>weight</code></td><td>按比例分配资源</td><td>适合资源软约束，空闲时可以动态共享</td></tr>
-<tr><td><code>deserved</code></td><td>队列期望应得资源</td><td>表达 fair-share / deserved resource</td></tr>
+<tr><td><code>weight</code></td><td>按比例分配资源</td><td>由 proportion 插件计算软份额，空闲时可共享</td></tr>
+<tr><td><code>deserved</code></td><td>队列期望应得资源</td><td>由 capacity 插件解释配置的期望份额</td></tr>
 <tr><td><code>capability</code></td><td>队列可用资源硬上限</td><td>防止某队列超用整个集群</td></tr>
-<tr><td><code>reclaimable</code></td><td>资源是否可被回收</td><td>空闲借用和高优队列回收的基础</td></tr>
+<tr><td><code>reclaimable</code></td><td>资源是否可被回收</td><td>控制该队列额外占用能否被其他队列回收</td></tr>
 </table>
 </div>
 
@@ -104,7 +104,7 @@ kubectl get crd | grep volcano</code></pre>
 <tr><td>Plugin</td><td>给 Action 提供算法函数</td><td>例如 gang、drf、proportion、priority、binpack</td></tr>
 <tr><td>Session</td><td>一次调度周期的上下文</td><td>保存 Jobs、Queues、Nodes 以及插件注册的排序/过滤/抢占函数</td></tr>
 </table>
-<p>关键机制：<code>OpenSession</code> 时插件把函数注册到 Session；随后 actions 按配置顺序执行，并调用 Session 里的算法函数；最后 <code>CloseSession</code> 清理和提交状态。</p>
+<p>关键机制：<code>OpenSession</code> 时插件把函数注册到 Session；随后 actions 按配置顺序执行，并调用 Session 里的算法函数；分配计划在 Action 中通过 Statement 提交或回滚，最后 <code>CloseSession</code> 执行插件收尾与状态更新。</p>
 </div>
 
 <div class="card card-d">
@@ -113,9 +113,9 @@ kubectl get crd | grep volcano</code></pre>
 <tr><th>Action</th><th>做什么</th><th>面试抓手</th></tr>
 <tr><td><code>enqueue</code></td><td>把 Pending 的 PodGroup / Job 判断为可入队，更新为 Inqueue</td><td>解决“作业能不能进入队列”</td></tr>
 <tr><td><code>allocate</code></td><td>给 Inqueue 任务分配节点资源，选择最合适的 Node</td><td>核心资源分配动作，类似 Filter + Score + Bind 的组合</td></tr>
-<tr><td><code>backfill</code></td><td>利用碎片资源调度适合插空的任务</td><td>提高利用率，但不能破坏主要调度目标</td></tr>
+<tr><td><code>backfill</code></td><td>对 BestEffort 的 Pending/Pipelined task 补充调度（以当前源码为准）</td><td>不等于根据预计运行时间做 EASY 式插空</td></tr>
 <tr><td><code>reclaim</code></td><td>从超额使用队列回收资源</td><td>队列间公平性和资源借用回收</td></tr>
-<tr><td><code>preempt</code></td><td>同队列或跨队列中按优先级抢占低优任务</td><td>高优任务保障，注意抢占代价</td></tr>
+<tr><td><code>preempt</code></td><td>在同队列内按规则选择任务抢占；跨队列回收由 reclaim 等路径处理</td><td>高优任务保障，注意抢占代价</td></tr>
 <tr><td><code>shuffle</code></td><td>打散或重排任务，缓解局部不优</td><td>较少面试深挖，知道存在即可</td></tr>
 </table>
 <pre><code class="language-text">runOnce
@@ -130,7 +130,7 @@ kubectl get crd | grep volcano</code></pre>
 <table>
 <tr><th>对象</th><th>在哪一层</th><th>真实含义</th></tr>
 <tr><td>VolcanoJob</td><td>CRD / controller 层</td><td>用户提交的批作业对象，包含 tasks、policies、plugins 等</td></tr>
-<tr><td>PodGroup</td><td>CRD / scheduler 层</td><td>Gang 调度单元，表达一组 Pod 的 all-or-nothing 语义</td></tr>
+<tr><td>PodGroup</td><td>CRD / scheduler 层</td><td>Gang 调度单元，表达一组 Pod 的最低成员与资源条件</td></tr>
 <tr><td>JobInfo</td><td>scheduler cache / Session 层</td><td>调度器内部的 Job wrapper，本质更接近 PodGroup 的调度视角</td></tr>
 <tr><td>TaskInfo</td><td>scheduler cache / Session 层</td><td>Pod 的 wrapper，一个 TaskInfo 基本对应一个 Pod</td></tr>
 <tr><td>QueueInfo</td><td>scheduler cache / Session 层</td><td>Queue 的调度视图，保存 allocated、deserved、capability 等状态</td></tr>
@@ -143,19 +143,19 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Queue、PodGroup、VolcanoJob 三者是什么关系？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">核心含义</div><p>Queue 是租户资源视角，PodGroup 是调度原子性视角，VolcanoJob 是用户提交的批作业视角。</p></div>
-<div class="qa-section"><div class="qa-section-title">运行链路</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 属于哪个资源池；PodGroup 决定这组 Pod 是否满足 minMember / minResources，可以 all-or-nothing 启动；VolcanoJob 自己定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
-<div class="qa-section"><div class="qa-section-title">面试易错点</div><p>不要把 VolcanoJob 等同于 PodGroup。VolcanoJob 是用户作业；PodGroup 是调度器用于 Gang 的原子单元；Queue 是资源治理对象。</p></div>
-<div class="qa-summary">记忆：Queue = 资源池；PodGroup = Gang 原子单元；VolcanoJob = 批作业结构。</div>
+<div class="qa-section"><div class="qa-section-title">核心含义</div><p>Queue 是租户资源视角，PodGroup 是最低协同运行条件视角，VolcanoJob 是用户提交的批作业视角。</p></div>
+<div class="qa-section"><div class="qa-section-title">运行链路</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 适用哪些配额与公平策略；PodGroup 决定这组 Pod 是否满足 minMember / minResources，满足后可提交相应分配；容器启动仍是异步过程；VolcanoJob 自己定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
+<div class="qa-section"><div class="qa-section-title">面试易错点</div><p>不要把 VolcanoJob 等同于 PodGroup。VolcanoJob 是用户作业；PodGroup 是调度器进行 Gang 判断的作业分组；Queue 是资源治理对象。</p></div>
+<div class="qa-summary">记忆：Queue = 配额与公平策略；PodGroup = Gang 条件；VolcanoJob = 批作业结构。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 为什么能避免 partial allocation？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">默认 K8s 问题</div><p>默认 kube-scheduler 逐 Pod 调度，可能只启动部分 worker，剩余 worker Pending。对 DDP / MPI / NCCL 这类强同步任务来说，部分 worker 启动没有意义，GPU 会空转，多个 Job 还可能互相占住部分资源形成死锁。</p></div>
-<div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达 all-or-nothing 语义。资源不满足时整组等待；资源满足时整体进入运行。</p></div>
+<div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达最低运行条件。调度器尝试分配后检查是否满足条件，再提交或回滚计划；实际绑定、镜像拉取和容器启动仍需分别完成。</p></div>
 <div class="qa-section"><div class="qa-section-title">代价</div><p>Gang 会提高正确性，但可能增加等待时间。大任务需要凑齐一组资源，小碎片不能随便启动它的一部分。</p></div>
-<div class="qa-summary">面试口径：Volcano 把“单 Pod 能不能跑”提升成“整个 Job 能不能一起跑”，避免部分 worker 白占 GPU。</div>
+<div class="qa-summary">面试口径：Volcano 把“单 Pod 能不能跑”提升成“作业是否满足最低协同运行条件”，减少不足最低成员数的部分分配。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -192,3 +192,5 @@ kubectl get crd | grep volcano</code></pre>
 </div>
 </div>
 </div>
+
+<p>机制核对：2026-10-29。<a href="https://volcano.sh/docs/concepts/queue/">Queue 字段</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/backfill/backfill.go">backfill 实现</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/preempt/preempt.go">preempt 实现</a>。安装示例固定为 1.12.0；新增源码解释对应所链接版本，部署时核对实际配置。</p>

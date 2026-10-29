@@ -17,7 +17,7 @@
   <main class="wrap">
   <section class="topic-hero" aria-label="主题概览"><div class="hero-copy"><h1>GPU 集群管理</h1><p class="sub">调度框架 · 多租户 · 拓扑通信 · 故障容错</p></div></section>
 
-<section class="tabs-shell" data-tabs data-tabs-id="cluster-management-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 3</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 集群管理内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="GPU 集群管理内容模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="cluster-management-tabs-tab-1" data-initial="01" data-mid="cluster-management-tabs::01a-framework-overview-md" data-search="框架与多租户 调度框架 · 多租户管理 框架总览 默认 K8s 缺口、框架选型地图、面试回答套路 Volcano 架构、Queue、PodGroup、VolcanoJob、Gang、生命周期策略 Kueue LocalQueue、ClusterQueue、ResourceFlavor、Workload、准入排队 YuniKorn / Run:ai 层级队列、Application 调度、商业 GPU 虚拟化平台 自研队列设计 原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller 多租户管理 配额、隔离、公平性与资源治理" title="框架与多租户" aria-controls="cluster-management-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">框架与多租户</span><span class="tab-desc">调度框架 · 多租户管理</span></span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-2" data-initial="02" data-mid="cluster-management-tabs::03-topology-communication-md" data-search="通信与容错 拓扑与通信 · 故障与弹性 拓扑与通信 GPU 拓扑、NCCL 通信与作业放置 故障与弹性 Checkpoint、重试、容错与弹性训练" title="通信与容错" aria-controls="cluster-management-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">通信与容错</span><span class="tab-desc">拓扑与通信 · 故障与弹性</span></span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-3" data-initial="03" data-mid="cluster-management-tabs::06-qa-md" data-search="面试问答 集群管理高频问题与回答要点" title="面试问答" aria-controls="cluster-management-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">面试问答</span><span class="tab-desc">集群管理高频问题与回答要点</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="cluster-management-tabs-panel-1" aria-labelledby="cluster-management-tabs-tab-1" data-mid="cluster-management-tabs::01a-framework-overview-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>框架与多租户</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-1" aria-controls="cluster-management-tabs-panel-1-subpanel-1" aria-selected="true" title="框架总览"><span class="subtab-title">框架总览</span><span class="subtab-desc">默认 K8s 缺口、框架选型地图、面试回答套路</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-2" aria-controls="cluster-management-tabs-panel-1-subpanel-2" aria-selected="false" title="Volcano"><span class="subtab-title">Volcano</span><span class="subtab-desc">架构、Queue、PodGroup、VolcanoJob、Gang、生命周期策略</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-3" aria-controls="cluster-management-tabs-panel-1-subpanel-3" aria-selected="false" title="Kueue"><span class="subtab-title">Kueue</span><span class="subtab-desc">LocalQueue、ClusterQueue、ResourceFlavor、Workload、准入排队</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-4" aria-controls="cluster-management-tabs-panel-1-subpanel-4" aria-selected="false" title="YuniKorn / Run:ai"><span class="subtab-title">YuniKorn / Run:ai</span><span class="subtab-desc">层级队列、Application 调度、商业 GPU 虚拟化平台</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-5" aria-controls="cluster-management-tabs-panel-1-subpanel-5" aria-selected="false" title="自研队列设计"><span class="subtab-title">自研队列设计</span><span class="subtab-desc">原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-6" aria-controls="cluster-management-tabs-panel-1-subpanel-6" aria-selected="false" title="多租户管理"><span class="subtab-title">多租户管理</span><span class="subtab-desc">配额、隔离、公平性与资源治理</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-1" aria-labelledby="cluster-management-tabs-panel-1-sub-1" ><div class="card card-m">
+<section class="tabs-shell" data-tabs data-tabs-id="cluster-management-tabs"><div class="tabs-toolbar"><button class="module-toggle" type="button" aria-pressed="false">折叠模块</button><div class="module-current"><span>当前模块</span><strong></strong></div><div class="module-progress"><span class="module-progress-label">学习进度</span><span class="module-progress-bar"><span class="module-progress-fill" style="width:0%"></span></span><span class="module-progress-text">0 / 3</span></div><div class="module-actions"><button type="button" class="module-action" data-action="export" title="导出本页学习进度为 JSON">导出</button><button type="button" class="module-action" data-action="import" title="从 JSON 文件导入学习进度">导入</button><button type="button" class="module-action module-action-danger" data-action="reset" title="清空本页学习进度">重置</button><input type="file" class="module-import-input" accept="application/json,.json" hidden></div></div><div class="tabs-nav"><div class="module-resizer" role="separator" aria-orientation="vertical" aria-label="拖动调整模块导航宽度" title="拖动调整宽度"></div><button class="module-collapse" type="button" aria-pressed="false" title="折叠模块导航">‹</button><div class="tabs-nav-head"><div><div class="tabs-kicker">Module Switcher</div><div class="tabs-title">GPU 集群管理内容模块</div></div><input class="tabs-filter" type="search" placeholder="搜索模块..." aria-label="搜索内容模块"></div><div class="tabs-list" role="tablist" aria-label="GPU 集群管理内容模块"><div class="tab-group tab-group-flat"><button class="tab-button active" type="button" role="tab" id="cluster-management-tabs-tab-1" data-initial="01" data-mid="cluster-management-tabs::01a-framework-overview-md" data-search="框架与多租户 调度框架 · 多租户管理 框架总览 默认 K8s 缺口、框架选型地图、面试回答套路 Volcano 架构、Queue、PodGroup、VolcanoJob、Gang、生命周期策略 Kueue LocalQueue、ClusterQueue、ResourceFlavor、Workload、准入排队 YuniKorn / Run:ai 层级队列、Application 调度、商业 GPU 虚拟化平台 自研队列设计 原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller 队列机制与异构调度 配额与准入、Gang、借用回收、异构核算与并发反馈 多租户管理 配额、隔离、公平性与资源治理" title="框架与多租户" aria-controls="cluster-management-tabs-panel-1" aria-selected="true"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">框架与多租户</span><span class="tab-desc">调度框架 · 多租户管理</span></span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-2" data-initial="02" data-mid="cluster-management-tabs::03-topology-communication-md" data-search="通信与容错 拓扑与通信 · 故障与弹性 拓扑与通信 GPU 拓扑、NCCL 通信与作业放置 故障与弹性 Checkpoint、重试、容错与弹性训练" title="通信与容错" aria-controls="cluster-management-tabs-panel-2" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">通信与容错</span><span class="tab-desc">拓扑与通信 · 故障与弹性</span></span></button><button class="tab-button" type="button" role="tab" id="cluster-management-tabs-tab-3" data-initial="03" data-mid="cluster-management-tabs::06-qa-md" data-search="面试问答 集群管理高频问题与回答要点" title="面试问答" aria-controls="cluster-management-tabs-panel-3" aria-selected="false"><span class="tab-progress" aria-hidden="true"></span><span class="tab-text"><span class="tab-title">面试问答</span><span class="tab-desc">集群管理高频问题与回答要点</span></span></button></div></div></div><div class="tabs-panels"><article class="tab-panel active" role="tabpanel" id="cluster-management-tabs-panel-1" aria-labelledby="cluster-management-tabs-tab-1" data-mid="cluster-management-tabs::01a-framework-overview-md" data-subtabs ><div class="tab-panel-head"><div class="tab-panel-kicker">内容模块</div><h2>框架与多租户</h2><div class="subtabs-nav" role="tablist" aria-label="相关知识点"><button class="subtab-button active" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-1" aria-controls="cluster-management-tabs-panel-1-subpanel-1" aria-selected="true" title="框架总览"><span class="subtab-title">框架总览</span><span class="subtab-desc">默认 K8s 缺口、框架选型地图、面试回答套路</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-2" aria-controls="cluster-management-tabs-panel-1-subpanel-2" aria-selected="false" title="Volcano"><span class="subtab-title">Volcano</span><span class="subtab-desc">架构、Queue、PodGroup、VolcanoJob、Gang、生命周期策略</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-3" aria-controls="cluster-management-tabs-panel-1-subpanel-3" aria-selected="false" title="Kueue"><span class="subtab-title">Kueue</span><span class="subtab-desc">LocalQueue、ClusterQueue、ResourceFlavor、Workload、准入排队</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-4" aria-controls="cluster-management-tabs-panel-1-subpanel-4" aria-selected="false" title="YuniKorn / Run:ai"><span class="subtab-title">YuniKorn / Run:ai</span><span class="subtab-desc">层级队列、Application 调度、商业 GPU 虚拟化平台</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-5" aria-controls="cluster-management-tabs-panel-1-subpanel-5" aria-selected="false" title="自研队列设计"><span class="subtab-title">自研队列设计</span><span class="subtab-desc">原生 K8s 不支持超额排队时，如何设计 AIJob Queue Controller</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-6" aria-controls="cluster-management-tabs-panel-1-subpanel-6" aria-selected="false" title="队列机制与异构调度"><span class="subtab-title">队列机制与异构调度</span><span class="subtab-desc">配额与准入、Gang、借用回收、异构核算与并发反馈</span></button><button class="subtab-button" type="button" role="tab" id="cluster-management-tabs-panel-1-sub-7" aria-controls="cluster-management-tabs-panel-1-subpanel-7" aria-selected="false" title="多租户管理"><span class="subtab-title">多租户管理</span><span class="subtab-desc">配额、隔离、公平性与资源治理</span></button></div></div><div class="tab-panel-body"><div class="subtabs-panels"><div class="subtab-panel active" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-1" aria-labelledby="cluster-management-tabs-panel-1-sub-1" ><div class="card card-m">
 <h3>为什么不能只用 K8S 默认调度器</h3>
 <p>K8S 默认调度器适合每个 Pod 独立调度的在线服务。但 GPU 训练任务通常需要一组 Pod 同时启动、长时间运行、拓扑敏感、多租户公平和抢占恢复。默认 scheduler 没有任务级队列、没有作业级配额、没有 Gang 语义，也不能表达“超过 10 张 GPU 后继续提交但排队”。</p>
 <table>
@@ -82,20 +82,20 @@ kubectl get crd | grep volcano</code></pre>
 <h3>三大核心对象关系</h3>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-core-crd-cover.png" alt="Volcano 三大核心对象解析：Queue、PodGroup、VolcanoJob" loading="lazy">
-<p class="caption">Volcano 三大核心对象：Queue（资源池）、PodGroup（Gang 调度单元）、VolcanoJob（批作业抽象）。</p>
+<p class="caption">Volcano 三大核心对象：Queue（逻辑资源队列）、PodGroup（Gang 调度单元）、VolcanoJob（批作业抽象）。</p>
 </div>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-object-model.svg" alt="Volcano 对象关系概念图" loading="lazy">
-<p class="caption">Volcano 对象模型：Queue 管资源池，VolcanoJob 管用户作业，PodGroup 管 Gang 调度，TaskInfo 是 Pod 的调度内部包装。</p>
+<p class="caption">Volcano 对象模型：Queue 管配额与公平策略，VolcanoJob 管用户作业，PodGroup 管 Gang 调度，TaskInfo 是 Pod 的调度内部包装。</p>
 </div>
 <div class="figure">
 <img src="../../../resources/images/volcano/volcano-core-crd.png" alt="Volcano Queue PodGroup VolcanoJob 关系图" loading="lazy">
-<p class="caption">Queue 是资源池，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
+<p class="caption">Queue 是逻辑资源队列，PodGroup 是 Gang 调度单元，VolcanoJob 是批作业抽象。</p>
 </div>
 <table>
 <tr><th>对象</th><th>核心含义</th><th>关键字段</th><th>面试重点</th></tr>
 <tr><td>Queue</td><td>多租户资源队列</td><td><code>weight</code>、<code>capability</code>、<code>deserved</code>、<code>reclaimable</code></td><td>资源隔离、弹性借用、reclaim</td></tr>
-<tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>All-or-Nothing，避免 partial allocation</td></tr>
+<tr><td>PodGroup</td><td>一组强关联 Pod 的 Gang 单元</td><td><code>minMember</code>、<code>minResources</code>、<code>priorityClassName</code>、<code>queue</code></td><td>满足最低成员条件后提交分配，减少 partial allocation</td></tr>
 <tr><td>VolcanoJob</td><td>批作业抽象，包含多个 task</td><td><code>schedulerName</code>、<code>minAvailable</code>、<code>tasks</code>、<code>policies</code>、<code>plugins</code>、<code>queue</code></td><td>多角色训练任务、生命周期策略</td></tr>
 </table>
 </div>
@@ -103,10 +103,10 @@ kubectl get crd | grep volcano</code></pre>
 <h3>Queue：多租户资源管理</h3>
 <table>
 <tr><th>字段</th><th>作用</th><th>面试解释</th></tr>
-<tr><td><code>weight</code></td><td>按比例分配资源</td><td>适合资源软约束，空闲时可以动态共享</td></tr>
-<tr><td><code>deserved</code></td><td>队列期望应得资源</td><td>表达 fair-share / deserved resource</td></tr>
+<tr><td><code>weight</code></td><td>按比例分配资源</td><td>由 proportion 插件计算软份额，空闲时可共享</td></tr>
+<tr><td><code>deserved</code></td><td>队列期望应得资源</td><td>由 capacity 插件解释配置的期望份额</td></tr>
 <tr><td><code>capability</code></td><td>队列可用资源硬上限</td><td>防止某队列超用整个集群</td></tr>
-<tr><td><code>reclaimable</code></td><td>资源是否可被回收</td><td>空闲借用和高优队列回收的基础</td></tr>
+<tr><td><code>reclaimable</code></td><td>资源是否可被回收</td><td>控制该队列额外占用能否被其他队列回收</td></tr>
 </table>
 </div>
 <div class="card card-s">
@@ -148,7 +148,7 @@ kubectl get crd | grep volcano</code></pre>
 <tr><td>Plugin</td><td>给 Action 提供算法函数</td><td>例如 gang、drf、proportion、priority、binpack</td></tr>
 <tr><td>Session</td><td>一次调度周期的上下文</td><td>保存 Jobs、Queues、Nodes 以及插件注册的排序/过滤/抢占函数</td></tr>
 </table>
-<p>关键机制：<code>OpenSession</code> 时插件把函数注册到 Session；随后 actions 按配置顺序执行，并调用 Session 里的算法函数；最后 <code>CloseSession</code> 清理和提交状态。</p>
+<p>关键机制：<code>OpenSession</code> 时插件把函数注册到 Session；随后 actions 按配置顺序执行，并调用 Session 里的算法函数；分配计划在 Action 中通过 Statement 提交或回滚，最后 <code>CloseSession</code> 执行插件收尾与状态更新。</p>
 </div>
 <div class="card card-d">
 <h3>Volcano Actions：一轮调度做哪些动作</h3>
@@ -156,9 +156,9 @@ kubectl get crd | grep volcano</code></pre>
 <tr><th>Action</th><th>做什么</th><th>面试抓手</th></tr>
 <tr><td><code>enqueue</code></td><td>把 Pending 的 PodGroup / Job 判断为可入队，更新为 Inqueue</td><td>解决“作业能不能进入队列”</td></tr>
 <tr><td><code>allocate</code></td><td>给 Inqueue 任务分配节点资源，选择最合适的 Node</td><td>核心资源分配动作，类似 Filter + Score + Bind 的组合</td></tr>
-<tr><td><code>backfill</code></td><td>利用碎片资源调度适合插空的任务</td><td>提高利用率，但不能破坏主要调度目标</td></tr>
+<tr><td><code>backfill</code></td><td>对 BestEffort 的 Pending/Pipelined task 补充调度（以当前源码为准）</td><td>不等于根据预计运行时间做 EASY 式插空</td></tr>
 <tr><td><code>reclaim</code></td><td>从超额使用队列回收资源</td><td>队列间公平性和资源借用回收</td></tr>
-<tr><td><code>preempt</code></td><td>同队列或跨队列中按优先级抢占低优任务</td><td>高优任务保障，注意抢占代价</td></tr>
+<tr><td><code>preempt</code></td><td>在同队列内按规则选择任务抢占；跨队列回收由 reclaim 等路径处理</td><td>高优任务保障，注意抢占代价</td></tr>
 <tr><td><code>shuffle</code></td><td>打散或重排任务，缓解局部不优</td><td>较少面试深挖，知道存在即可</td></tr>
 </table>
 <pre><code class="language-text">runOnce
@@ -172,7 +172,7 @@ kubectl get crd | grep volcano</code></pre>
 <table>
 <tr><th>对象</th><th>在哪一层</th><th>真实含义</th></tr>
 <tr><td>VolcanoJob</td><td>CRD / controller 层</td><td>用户提交的批作业对象，包含 tasks、policies、plugins 等</td></tr>
-<tr><td>PodGroup</td><td>CRD / scheduler 层</td><td>Gang 调度单元，表达一组 Pod 的 all-or-nothing 语义</td></tr>
+<tr><td>PodGroup</td><td>CRD / scheduler 层</td><td>Gang 调度单元，表达一组 Pod 的最低成员与资源条件</td></tr>
 <tr><td>JobInfo</td><td>scheduler cache / Session 层</td><td>调度器内部的 Job wrapper，本质更接近 PodGroup 的调度视角</td></tr>
 <tr><td>TaskInfo</td><td>scheduler cache / Session 层</td><td>Pod 的 wrapper，一个 TaskInfo 基本对应一个 Pod</td></tr>
 <tr><td>QueueInfo</td><td>scheduler cache / Session 层</td><td>Queue 的调度视图，保存 allocated、deserved、capability 等状态</td></tr>
@@ -184,19 +184,19 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Queue、PodGroup、VolcanoJob 三者是什么关系？</div>
 <div class="qa-a">
-<div class="qa-section"><div class="qa-section-title">核心含义</div><p>Queue 是租户资源视角，PodGroup 是调度原子性视角，VolcanoJob 是用户提交的批作业视角。</p></div>
-<div class="qa-section"><div class="qa-section-title">运行链路</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 属于哪个资源池；PodGroup 决定这组 Pod 是否满足 minMember / minResources，可以 all-or-nothing 启动；VolcanoJob 自己定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
-<div class="qa-section"><div class="qa-section-title">面试易错点</div><p>不要把 VolcanoJob 等同于 PodGroup。VolcanoJob 是用户作业；PodGroup 是调度器用于 Gang 的原子单元；Queue 是资源治理对象。</p></div>
-<div class="qa-summary">记忆：Queue = 资源池；PodGroup = Gang 原子单元；VolcanoJob = 批作业结构。</div>
+<div class="qa-section"><div class="qa-section-title">核心含义</div><p>Queue 是租户资源视角，PodGroup 是最低协同运行条件视角，VolcanoJob 是用户提交的批作业视角。</p></div>
+<div class="qa-section"><div class="qa-section-title">运行链路</div><p>VolcanoJob 提交后会关联一个 Queue，并自动创建 PodGroup。Queue 决定这个 Job 适用哪些配额与公平策略；PodGroup 决定这组 Pod 是否满足 minMember / minResources，满足后可提交相应分配；容器启动仍是异步过程；VolcanoJob 自己定义 tasks、policies、plugins、maxRetry 等批任务语义。</p></div>
+<div class="qa-section"><div class="qa-section-title">面试易错点</div><p>不要把 VolcanoJob 等同于 PodGroup。VolcanoJob 是用户作业；PodGroup 是调度器进行 Gang 判断的作业分组；Queue 是资源治理对象。</p></div>
+<div class="qa-summary">记忆：Queue = 配额与公平策略；PodGroup = Gang 条件；VolcanoJob = 批作业结构。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Volcano 为什么能避免 partial allocation？</div>
 <div class="qa-a">
 <div class="qa-section"><div class="qa-section-title">默认 K8s 问题</div><p>默认 kube-scheduler 逐 Pod 调度，可能只启动部分 worker，剩余 worker Pending。对 DDP / MPI / NCCL 这类强同步任务来说，部分 worker 启动没有意义，GPU 会空转，多个 Job 还可能互相占住部分资源形成死锁。</p></div>
-<div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达 all-or-nothing 语义。资源不满足时整组等待；资源满足时整体进入运行。</p></div>
+<div class="qa-section"><div class="qa-section-title">Volcano 做法</div><p>Volcano 用 PodGroup 的 <code>minMember</code> 和 <code>minResources</code> 表达最低运行条件。调度器尝试分配后检查是否满足条件，再提交或回滚计划；实际绑定、镜像拉取和容器启动仍需分别完成。</p></div>
 <div class="qa-section"><div class="qa-section-title">代价</div><p>Gang 会提高正确性，但可能增加等待时间。大任务需要凑齐一组资源，小碎片不能随便启动它的一部分。</p></div>
-<div class="qa-summary">面试口径：Volcano 把“单 Pod 能不能跑”提升成“整个 Job 能不能一起跑”，避免部分 worker 白占 GPU。</div>
+<div class="qa-summary">面试口径：Volcano 把“单 Pod 能不能跑”提升成“作业是否满足最低协同运行条件”，减少不足最低成员数的部分分配。</div>
 </div>
 </div>
 <div class="qa" onclick="this.classList.toggle('open')">
@@ -232,7 +232,8 @@ kubectl get crd | grep volcano</code></pre>
 <div class="qa-summary">面试口径：preempt 看任务优先级，reclaim 看队列资源公平。</div>
 </div>
 </div>
-</div></div><div class="subtab-panel" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-3" aria-labelledby="cluster-management-tabs-panel-1-sub-3" hidden><div class="card card-m">
+</div>
+<p>机制核对：2026-10-29。<a href="https://volcano.sh/docs/concepts/queue/">Queue 字段</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/backfill/backfill.go">backfill 实现</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/preempt/preempt.go">preempt 实现</a>。安装示例固定为 1.12.0；新增源码解释对应所链接版本，部署时核对实际配置。</p></div><div class="subtab-panel" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-3" aria-labelledby="cluster-management-tabs-panel-1-sub-3" hidden><div class="card card-m">
 <h3>Kueue 解决什么问题</h3>
 <p>Kueue 的核心不是“给 Pod 打分”，而是“作业能不能被准入”。它适合你不想替换默认 scheduler，但需要 LocalQueue、ClusterQueue、ResourceFlavor、borrowing 和公平共享的场景。</p>
 <table>
@@ -468,7 +469,63 @@ status:
 <tr><td>用 ResourceQuota 做硬限制</td><td>超额提交直接 Forbidden，不符合“正常提交、超额排队”的诉求</td></tr>
 <tr><td>完全相信 Volcano Queue capability</td><td>它只能当底线 guardrail，不能当唯一账本——pending 统计、队列位置、用户级公平、单任务合法性、业务优先级、审计计费都还得平台层做</td></tr>
 </table>
-</div></div><div class="subtab-panel" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-6" aria-labelledby="cluster-management-tabs-panel-1-sub-6" hidden><div class="card card-m">
+</div></div><div class="subtab-panel" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-6" aria-labelledby="cluster-management-tabs-panel-1-sub-6" hidden><h2>队列调度从哪些对象开始</h2>
+<p>Volcano 的 Queue 是组织资源分配和公平策略的逻辑对象，包含一组 PodGroup。它可以与物理 GPU 池关联，但 Queue 本身不等于一组固定节点。PodGroup 描述最低协同运行条件；VolcanoJob 描述用户作业的角色、副本和生命周期，由 controller 创建所需对象。</p>
+<pre><code class="language-text">用户作业 → API 校验身份、资源声明和运行配置
+  → VolcanoJob controller 创建 Pod / PodGroup
+  → Scheduler cache 汇总 Nodes、Jobs、Queues
+  → OpenSession：插件注册排序、准入、可分配、可回收等函数
+  → 按配置执行 actions：enqueue、allocate、reclaim 等
+  → 分配计划提交，异步绑定 / 驱逐
+  → Pod 真实状态经 watch 回到 cache，下一轮重算</code></pre>
+<p>Action 决定当前做哪一步，Plugin 提供该步使用的规则，Session 提供一次周期的状态。API 接收成功、准入成功、完成节点绑定、容器启动和服务健康，是不同的完成条件。</p>
+<h2>配额字段必须与插件一起解释</h2>
+<div class="table-scroll"><table>
+<tr><th>字段/状态</th><th>含义</th><th>容易混淆的地方</th></tr>
+<tr><td><code>guarantee.resource</code></td><td>为队列保留的资源底线</td><td>与可借用的软份额不同，其他队列不能使用其保留额度</td></tr>
+<tr><td><code>deserved</code></td><td>capacity 插件使用的期望份额</td><td>超出后可成为回收对象；不是绝对的启动时间保证</td></tr>
+<tr><td><code>weight</code></td><td>proportion 插件计算份额的相对权重</td><td>不能当作所有插件都生效的固定份额</td></tr>
+<tr><td><code>capability</code></td><td>队列资源使用上限</td><td>需结合集群及其他队列 guarantee 得到可用上界</td></tr>
+<tr><td><code>reclaimable</code></td><td>该队列额外占用是否允许被其他队列回收</td><td>标记可回收不等于受害作业已有 checkpoint</td></tr>
+<tr><td>allocated / inqueue / reserved</td><td>已分配、已准入和暂记的不同用量</td><td>核算要明确集合并避免重复计数</td></tr>
+</table></div>
+<p>配置应满足相应资源维度上的 <code>guarantee ≤ deserved ≤ capability</code>。已配置字段是否生效取决于插件和版本；不能只展示 Queue YAML 就声称所有保障都成立。</p>
+<h2>一次借用与回收</h2>
+<p>假设同一资源维度有 16 张可用 GPU，A/B 的 deserved 各为 8，capability 各为 16，guarantee 各为 2。A 使用 12 张、B 使用 4 张时，A 超出软份额使用了 4 张。B 需求增加到 8 张后，调度器可以从 A 选择可回收任务，释放相应资源供 B 使用。</p>
+<p>需要检查受害任务所在节点和卡型是否满足 B、受害者是否允许驱逐、A 的最低保障与作业 gang 约束是否被破坏、终止耗时是否在容忍范围内。若 A 的作业不能拆分，回收量可能大于 4；如果没有合法受害者，B 可能继续等待。公平份额不能消除作业不可分割与拓扑限制。</p>
+<h2><code>enqueue</code>、<code>allocate</code>、<code>reclaim</code>、<code>preempt</code>、<code>backfill</code></h2>
+<div class="table-scroll"><table>
+<tr><th>Action</th><th>当前主线中的关键职责</th><th>不能直接推导的能力</th></tr>
+<tr><td>enqueue</td><td>检查 Job/PodGroup 准入，推进 Pending → Inqueue</td><td>已准入不保证立即有节点可运行</td></tr>
+<tr><td>allocate</td><td>排序队列/作业/任务，节点过滤与评分，尝试分配</td><td>总 GPU 数足够不代表型号、拓扑和 gang 都可满足</td></tr>
+<tr><td>reclaim</td><td>在不同队列间选择可回收的额外占用，调用插件判断受害者</td><td>不负责应用 checkpoint 或服务流量迁移</td></tr>
+<tr><td>preempt</td><td>在同队列任务间按规则抢占，也有作业内任务处理</td><td>不能把它概括为任意跨队列高优抢占</td></tr>
+<tr><td>backfill</td><td>当前源码筛选 BestEffort 的 Pending/Pipelined task 进行补充调度</td><td>不是默认根据预计运行时间做 EASY 式作业插空</td></tr>
+</table></div>
+<p>上述解释对应 classic actions 的源码，新增 gangpreempt/gangreclaim 等路径需分别核对。实际动作顺序由配置决定，不能背成不可变流水线。</p>
+<h2>Gang 的承诺边界</h2>
+<p>调度器尝试为作业安排足够的成员，通过 JobReady 等条件决定分配计划是否可以提交，不满足时回滚本轮未提交的分配。<code>minMember</code> 表达最低成员数；可弹性作业的最低数可以小于全部副本。</p>
+<p>Gang 减少了资源只给一部分 worker、其他 worker 长期等不到资源的问题，但 Kubernetes 绑定、镜像拉取、容器启动仍是异步过程。节点故障或启动失败需要 Job controller 的重试/重启策略处理；“原子调度条件”不等于所有进程在同一时刻健康。</p>
+<h2>异构队列与自动选卡</h2>
+<p>一个租户逻辑队列可以允许多种设备，但资源准入和实际放置必须保留设备维度：厂商、型号、显存、驱动/runtime、算子支持、互联、存储和镜像。不同 GPU 都用 <code>nvidia.com/gpu</code> 时，这个扩展资源名只表达数量；标签可以约束放置，却不会自动形成 A100/H100 分开的配额账本。</p>
+<p>两种常见实现是按卡型建子队列并在上层统一入口，或保留统一逻辑队列、增加设备类别与用量核算。国产卡需要对应 device plugin / DRA 驱动和容器运行环境；把多个资源数字加在一起并不能让训练代码跨厂商兼容。</p>
+<p>自动选卡应先过滤技术上不能运行的设备，再估计候选组合的排队时间、运行时间、成本及 SLO 达成情况。使用历史性能画像时记录模型、batch、并行规模、精度和输入分布。预测失准要回到实际反馈修正，并保留用户指定类型或禁迁移的约束。</p>
+<h2>并发准入与故障反馈</h2>
+<p>多个候选如果都只读取同一份已分配快照，可能同时看到余量。实现应在一次决策域内对通过检查的候选暂记额度，后续候选看到已准入与暂记占用；重试按作业 ID 去重；失败、终态和过期时释放。多副本 admission 服务还需统一决策域，例如 leader、带版本的持久状态或原子预留，不能依赖各进程独立 map 获得全局硬保障。</p>
+<p>物理资源尚在 Terminating 时不能当作已经空闲。调度失败应记录可解释原因：配额不足、gang 不满足、设备不兼容、节点资源碎片、拓扑不满足、插件拒绝或绑定失败。业务平台状态最终要与 Kubernetes 真实对象收敛。</p>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：基于 Volcano，怎样设计一套队列调度？</div>
+<div class="qa-a"><p>先按租户和资源约束定义 Queue，把最低启动条件放到 PodGroup，作业生命周期交给 Job controller。调度层用配额插件判断准入和可分配额度，再按队列公平、作业优先级及节点约束分配。允许借用时明确软份额、硬上限和回收规则。执行后通过 watch 反馈，处理并发预留、重试和失败清理，并向用户暴露排队原因。平台特有规则可接插件或 Extender，但要说明启用配置与故障策略。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：一个 Queue 能混合 A100、H100 和国产卡吗？</div>
+<div class="qa-a"><p>逻辑上可以统一管理，但必须分别表达资源类型和兼容性。配额核算要知道占用了哪种设备，放置时要检查镜像、算子、显存和通信。最容易落地的是统一租户入口、内部按卡型子队列管理；进一步自动选卡则需要性能画像与约束过滤。统一队列不意味着所有卡可以互换，也不意味着同一个分布式作业可以任意混卡。</p></div>
+</div>
+<div class="qa" onclick="this.classList.toggle('open')">
+<div class="qa-q">Q：高优任务回收在线推理资源，怎样保证服务？</div>
+<div class="qa-a"><p>资源抢占与服务迁移需要协同。可计划回收时先在目标位置预留资源、启动和加载模型，通过健康与容量验证后接流量，再排空旧实例并释放。若本地调度器已强制驱逐旧 Pod，只能依靠存活容量和恢复速度降低影响。PDB 不能保证阻止所有调度抢占；需要预留容量、回收宽限期和明确的服务优先级规则。</p></div>
+</div>
+<p>来源：<a href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/">Kubernetes 抢占与 PDB</a>、<a href="https://volcano.sh/docs/concepts/queue/">Queue 字段</a>、<a href="https://volcano.sh/docs/scheduler/overview/">调度框架</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/plugins/capacity/capacity.go">capacity 插件</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/preempt/preempt.go">preempt</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/reclaim/reclaim.go">reclaim</a>、<a href="https://github.com/volcano-sh/volcano/blob/ac7f6a4dfe30d992c3b293ea5974c646e3da5da7/pkg/scheduler/actions/backfill/backfill.go">backfill</a>。核对日期：2026-10-29；异构选卡与业务恢复部分为基于约束的设计讨论。</p></div><div class="subtab-panel" role="tabpanel" id="cluster-management-tabs-panel-1-subpanel-7" aria-labelledby="cluster-management-tabs-panel-1-sub-7" hidden><div class="card card-m">
 <h3>多租户管理：为什么&quot;配额&quot;不是简单地&quot;分一下 GPU&quot;？</h3>
 <p>多租户管理的本质问题是：<strong>如何在保证每个租户基本权益的前提下，最大化集群利用率？</strong></p>
 <p>最简单的方案是&quot;固定配额&quot;——A 团队分 40 张 GPU，B 团队分 60 张 GPU，互不干扰。问题是：A 团队晚上不用 GPU，B 团队晚上要跑实验，但 B 不能用 A 闲置的 GPU——因为&quot;那是 A 的配额&quot;。结果集群利用率只有 40%。</p>

@@ -228,6 +228,51 @@
               "time": 20
             }
           ]
+        },
+        {
+          "title": "请求路由与分布式缓存",
+          "items": [
+            {
+              "title": "vLLM 请求执行",
+              "description": "V1 进程、迭代调度、APC 块生命周期与显存计算",
+              "file": "22-vllm-runtime.md",
+              "level": "进阶",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "PD 分离与编排",
+              "description": "P/D 选址、代理串联、KV 传输、租约与失败清理",
+              "file": "23-pd-orchestration.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "Kthena 路由实现",
+              "description": "ModelRoute/ModelServer、两类缓存索引与 PD 分组",
+              "file": "24-kthena-router.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "llm-d 缓存路由",
+              "description": "EPP、KV events、热点控制与跨副本 P2P 共享",
+              "file": "25-llmd-cache-routing.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 20
+            },
+            {
+              "title": "缓存路由实验与排障",
+              "description": "对照分组、冷热缓存、指标分母与故障诊断",
+              "file": "26-cache-routing-validation.md",
+              "level": "精通",
+              "priority": 1,
+              "time": 15
+            }
+          ]
         }
       ]
     }
