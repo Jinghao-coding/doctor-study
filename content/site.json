@@ -30,8 +30,8 @@
       "slug": "ai-infra/papers",
       "source": "content/ai-infra/papers/topic.json",
       "output": "pages/ai-infra/papers/index.html",
-      "description": "Maestro、DeepShare、ElastiCo 与 SagePilot 的系统设计、实现细节、资源预测、调度机制和面试问答。",
-      "tags": ["papers", "maestro", "deepshare", "elastico", "sagepilot"],
+      "description": "Maestro、DeepShare、ElastiCo、SagePilot 与 Crater 的系统设计、平台工程、资源调度和面试问答。",
+      "tags": ["papers", "maestro", "deepshare", "elastico", "sagepilot", "crater"],
       "color": "c1"
     },
     {

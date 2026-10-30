@@ -1,6 +1,6 @@
 {
   "title": "论文工作",
-  "subtitle": "Maestro · DeepShare · ElastiCo · 多目标性能预测 · SagePilot · 字节 Lumen 实习 · 面试问答",
+  "subtitle": "Maestro · DeepShare · ElastiCo · 多目标性能预测 · SagePilot · Crater · 字节 Lumen 实习 · 面试问答",
   "kicker": "Research Work",
   "tags": [
     "papers",
@@ -8,7 +8,8 @@
     "deepshare",
     "elastico",
     "performance-prediction",
-    "sagepilot"
+    "sagepilot",
+    "crater"
   ],
   "output": "pages/ai-infra/papers/index.html",
   "layout": [
@@ -210,6 +211,30 @@
               "file": "05e-sagepilot-interview-evidence.md",
               "level": "进阶",
               "priority": 1,
+              "time": 10
+            }
+          ]
+        },
+        {
+          "title": "Crater 开源算力平台",
+          "description": "开发、训练与推理流程、CLI 与 Agent 入口、特色调度及 Kthena 集成",
+          "items": [
+            {
+              "title": "平台完整口述与架构",
+              "description": "共享异构算力、开发到模型服务的端到端流程、平台特点和职责",
+              "file": "08a-crater-platform-story.md",
+              "time": 8
+            },
+            {
+              "title": "CLI 与特色调度",
+              "description": "结构化命令接口、队内用户限额、超时等待保护与准入记账",
+              "file": "08b-crater-cli-scheduling.md",
+              "time": 10
+            },
+            {
+              "title": "Kthena 推理集成",
+              "description": "原生对象、账户队列、P/D 与多节点、请求路由和资源释放",
+              "file": "08c-crater-kthena-integration.md",
               "time": 10
             }
           ]

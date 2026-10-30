@@ -223,21 +223,21 @@
 
 <div class="card card-s">
 <h3>Crater 开源平台追问</h3>
-<p class="text-muted">简历原文："主导基于 Kubernetes 的 GPU 集群管理平台 Crater...已在实验室稳定运行 1.5 年，纳管 250+ 张 GPU、日均调度 200+ 任务，Apache-2.0 开源。"这是工程能力的重要证明。</p>
+<p class="text-muted">Crater 是面向多团队共享异构算力的云原生 AI 训练与推理平台，提供 Web、CLI、开发环境、训练作业与模型服务管理，采用 Apache-2.0 开源。2026-10-21 项目材料记录北航实验室纳管 250+ 张 GPU、日均调度 200+ 任务，并在之江实验室、启元实验室等机构部署应用。</p>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Crater 和 Volcano/Kubeflow 有什么区别？为什么不直接用现成的？</div>
-<div class="qa-a"><p>Volcano 提供了队列、优先级、gang scheduling 等基础能力，但它是<strong>通用的</strong>批调度器，缺少科研场景需要的功能：(1) 配额管理是硬划分，没有 DeepShare/ElastiCo 那种弹性借用；(2) 没有用户管理、审批流程、账户计费——科研集群需要导师审批学生的 GPU 使用；(3) 没有一键 LLM 训练/推理的作业模板，用户要写完整 YAML；(4) 没有集成 Jupyter/WebIDE/终端开发环境，科研用户需要交互式开发。Kubeflow 更偏 ML pipeline，不是集群管理平台。Crater 在 Volcano 基础上做了面向科研场景的封装和增强，整合了 DeepShare 和 ElastiCo 的调度能力，提供 Web 控制台降低使用门槛。</p></div>
+<div class="qa-a"><p>Crater 使用 Volcano 完成队列、成组调度和设备放置，平台把用户、账户、配额、镜像、模型和数据接到开发、训练与推理流程中。用户可以通过 Web 或 CLI 启动环境、提交任务、部署模型、查看日志与监控；管理员可以治理持续低利用率占用。调度定制通过 Extender 接入队内用户限额和超时等待保护，模型服务则通过 Kthena 管理角色拓扑和请求路由。与工作流编排平台比较时，Crater 的重点是多人共享集群中的算力交付与运行治理。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: 250 张 GPU 的集群，你作为项目负责人最头疼的技术问题是什么？</div>
-<div class="qa-a"><p>最头疼的是<strong>多用户场景下的 GPU 资源争用和占卡不释放问题</strong>。实验室场景下学生经常启动 Jupyter 后忘记关，GPU 被占着但利用率为 0。我们做了：(1) 占卡检测——Agent 监控 GPU 利用率，连续 N 分钟低于阈值就通知用户，超时自动回收；(2) 交互式任务有最长运行时间限制（默认 12 小时，可以续期）；(3) 训练任务必须在容器内跑，容器退出自动释放资源；(4) 空闲 GPU 标记和自动推荐。另外一个挑战是多型号 GPU（A100/A800/3090/4090/V100 混合），不同作业对 GPU 型号有不同要求，调度器需要感知拓扑和型号约束。</p></div>
+<div class="qa-a"><p>核心问题是<strong>资源被占用、用户实际获得服务，以及平台记录之间需要持续核对</strong>。例如开发环境还在占卡但长期没有 GPU 活动，或者作业已经创建却仍在等待准入。平台把任务、用户和监控指标关联，按配置筛选持续低利用率作业并提醒、回收；配额核算区分已准入与仍在等待的作业，避免把“提交成功”当成“已经运行”。多卡任务还需要等待保护，限制后续相同资源上的候选准入，让释放出来的资源有机会凑齐。</p></div>
 </div>
 
 <div class="qa" onclick="this.classList.toggle('open')">
 <div class="qa-q">Q: Crater 的技术栈是 Go/React/Helm，你在其中写了多少代码？哪部分最复杂？</div>
-<div class="qa-a"><p>我是项目负责人，核心后端（Go）大约 70% 是我写的，包括自定义 Controller、Scheduler Plugin、API Server、配额管理逻辑；前端（React/TypeScript）主要是两个师弟做的，我做了架构设计和 Code Review；Helm Chart 和部署脚本是我写的。最复杂的部分是<strong>调度器和 K8s controller 的设计</strong>——队列状态机、配额超分/回收逻辑、和 Volcano 的协同、多维度抢占顺序的正确性保证。调试调度器问题非常痛苦，因为状态分布在 etcd、scheduler cache、node agent 多处，需要全链路 tracing。</p></div>
+<div class="qa-a"><p>我是创建者、项目负责人和维护者，主导架构与核心功能研发，重点包括异构设备、任务与配额管理、定制准入、状态协调及面向用户和 Agent 的操作入口。工程难点可以具体展开为：怎样在同一轮准入中累计预留额度，怎样限制超时等待任务的阻塞范围，以及模型部署怎样贯通权限、角色资源、运行就绪和请求路由。</p></div>
 </div>
 </div>
 
