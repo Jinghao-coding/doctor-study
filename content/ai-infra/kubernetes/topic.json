@@ -215,6 +215,14 @@
               "time": 30
             },
             {
+              "title": "存储拓扑与联合调度",
+              "description": "WaitForFirstConsumer、VolumeBinding、PV/PVC 暂记与回滚、容量跟踪和挂载排障",
+              "file": "09j-volume-topology-scheduling.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 18
+            },
+            {
               "title": "CNI 与 kube-proxy 深度",
               "description": "跨节点 Pod 通信、Calico/Cilium/Flannel、iptables/IPVS/eBPF 与 EndpointSlice",
               "file": "12-cni-kube-proxy-deep.md",

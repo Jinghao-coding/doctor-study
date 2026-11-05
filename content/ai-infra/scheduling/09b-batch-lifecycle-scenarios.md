@@ -1,16 +1,18 @@
 ## 场景一：Gang Scheduling
 
-分布式训练通常需要多个 Worker/Rank 同时启动；如果只调度了一部分，已占 GPU 的 Pod 也无法有效训练，形成资源死锁式浪费。
+分布式训练通常需要足够的 Worker/Rank 形成协同运行集合；如果只调度了一部分，已占 GPU 的 Pod 可能一直等待其他成员，造成资源浪费。
 
 ```flow
-作业提交 | 声明 minAvailable、角色和资源需求
-队列准入 | 判断配额、优先级和整组可用性
-资源预留 | 对候选节点执行原子 Reserve
-Permit | 等待所有成员满足条件
-Bind | 成组提交，失败时整体回滚
+作业提交 | 声明框架对应的最低成员数、角色和资源需求
+队列准入 | 判断配额与准入策略
+试分配或预留 | 逐步记入候选节点占用，避免重复承诺资源
+整组就绪检查 | 判断是否满足最低运行条件
+提交与执行 | 推进绑定和启动，根据失败位置释放预留或恢复作业
 ```
 
 Gang 不代表所有 Pod 同一时刻物理启动，而是避免“部分成员长期占着资源却无法形成可运行集合”。
+
+Scheduling Framework 的成组调度插件可以使用 Reserve、Permit 和 Unreserve；Volcano 则通过自身的 Session、Statement 和 Gang 插件组织分配。未提交的预留可以回滚，已经成功绑定或启动的 Pod 需要另行处理，不能假定多 Pod 绑定具有跨对象事务原子性。[Scheduling Framework](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/)
 
 ## 场景二：Backfill
 

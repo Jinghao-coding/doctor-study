@@ -1,6 +1,6 @@
 {
   "title": "AI Agent",
-  "subtitle": "ReAct · 工具调用 · 记忆 · 多 Agent 协作 · 工程实践",
+  "subtitle": "ReAct · 工具调用 · 记忆 · 持久执行 · 多 Agent 协作 · 工程实践",
   "kicker": "AI Infra Foundation",
   "tags": [
     "agent",
@@ -60,6 +60,27 @@
           ]
         },
         {
+          "title": "运行时与协作",
+          "items": [
+            {
+              "title": "Agent Runtime 与持久执行",
+              "description": "任务状态、Checkpoint、幂等重试、暂停恢复、取消传播、预算与背压",
+              "file": "08-agent-runtime-durable-execution.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 20
+            },
+            {
+              "title": "多 Agent 协作与上下文",
+              "description": "委派契约、并行汇合、状态合并、Context/Memory、MCP/A2A 与协作评估",
+              "file": "09-multi-agent-coordination.md",
+              "level": "进阶",
+              "priority": 3,
+              "time": 18
+            }
+          ]
+        },
+        {
           "title": "深度专题",
           "items": [
             {
@@ -91,4 +112,5 @@
       ]
     }
   ],
-  "sections": []}
+  "sections": []
+}
